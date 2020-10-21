@@ -12,7 +12,7 @@ function StartPage(props) {
     return (
         <div style={{color: 'white'}}>
             <div style={{margin: 'auto', width: '50%'}}>
-                <img style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src={logo} />
+                <img style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src={logo} alt='logo' />
                 <Typography align="center" variant="h4">Mix freely.</Typography>
                 <Typography align="center" variant="h4">Connect and collaborate.</Typography>
                 <Typography align="center" variant="h4">Press play.</Typography>
