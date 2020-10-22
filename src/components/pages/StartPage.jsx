@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
-import logo from '../images/logo.png';
+import logo from '../../images/logo.png';
 
 function StartPage(props) {
     const colors = {
