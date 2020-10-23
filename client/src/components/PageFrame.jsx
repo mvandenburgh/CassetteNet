@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { AppBar, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
 import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon } from '@material-ui/icons';
+import { Link } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
+import UserContext from '../contexts/UserContext';
 
 
 const drawerWidth = 240;
@@ -48,9 +50,11 @@ const useStyles = makeStyles((theme) => ({
   },
   navbar: {
     backgroundColor: '#404A54',
-    position: 'fixed',
+    position: 'relative',
     top: '0',
     left: theme.spacing(7),
+    width: `calc(100% - ${theme.spacing(7)}px)`,
+    marginBotton: '100px'
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -104,9 +108,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function SideBar(props) {
+function PageFrame(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const { user, setUser } = useContext(UserContext);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -123,7 +128,7 @@ function SideBar(props) {
       <AppBar className={classes.navbar} position="static">
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
-            LoggedInUser {/* TODO: get from dummy data */ }
+            {user.username} {/* TODO: get from dummy data */ }
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
@@ -161,37 +166,39 @@ function SideBar(props) {
             </div>
             <Divider />
                 <List>
-                    <ListItem button>
+                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
                             <CassetteTapeIcon />    
                         </ListItemIcon>
                         <ListItemText primary="My Mixtapes" />
                     </ListItem>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <AtmosphereSoundsIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Atmosphere Sounds" />
-                    </ListItem>
-                    <ListItem button>
+                    <Link to="/atmosphere">
+                      <ListItem button>
+                          <ListItemIcon>
+                              <AtmosphereSoundsIcon />    
+                          </ListItemIcon>
+                          <ListItemText primary="Atmosphere Sounds" />
+                      </ListItem>
+                    </Link>
+                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
                             <FollowedUsersIcon />    
                         </ListItemIcon>
                         <ListItemText primary="Followed Users" />
                     </ListItem>
-                    <ListItem button>
+                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
                             <FavoritedMixtapesIcon />    
                         </ListItemIcon>
                         <ListItemText primary="Favorited Mixtapes" />
                     </ListItem>
-                    <ListItem button>
+                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
                             <InboxIcon />    
                         </ListItemIcon>
                         <ListItemText primary="Inbox" />
                     </ListItem>
-                    <ListItem button>
+                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
                             <AnonymousMixtapesIcon />    
                         </ListItemIcon>
@@ -204,4 +211,4 @@ function SideBar(props) {
   );
 }
 
-export default SideBar;
+export default PageFrame;
