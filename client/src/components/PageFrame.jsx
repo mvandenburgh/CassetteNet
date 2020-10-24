@@ -115,7 +115,7 @@ function PageFrame(props) {
 
   // TODO: add setUser to destructuring when needed
     // Removed for now to avoid build warnings
-  const { user } = useContext(UserContext);
+  //const { user } = useContext(UserContext);
 
   const handleDrawerOpen = () => {
     setOpen(true);

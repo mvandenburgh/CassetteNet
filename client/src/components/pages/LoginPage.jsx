@@ -5,6 +5,7 @@ import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
 import TextField from '@material-ui/core/TextField';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import { Link } from 'react-router-dom';
 
 function LoginPage(props) {
     const colors = {
@@ -46,6 +47,9 @@ function LoginPage(props) {
                         </Grid>
                     </Grid>
                     <TextField label="Password" margin="normal" />
+                    <Link to="/">
+                        <Button style={{margin: '1em', backgroundColor: colors.loginButton}} fullWidth variant="contained">LOGIN</Button>
+                    </Link>
                 </Grid>
             </div>
         </div>
