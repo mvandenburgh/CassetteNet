@@ -3,9 +3,10 @@ import testData from '../../testData/users.json'
 import { Button, Grid, Typography } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
-import { Link } from 'react-router-dom';
+import TextField from '@material-ui/core/TextField';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
-function StartPage(props) {
+function LoginPage(props) {
     const colors = {
         buttonContainer: '#0A1941',
         loginButton: '#115628',
@@ -32,24 +33,23 @@ function StartPage(props) {
         <div style={{color: 'white', left: 0}}>
             <div style={{margin: 'auto', width: '50%'}}>
                 <img style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src={logo} alt='logo' />
-                <Typography align="center" variant="h4">Mix freely.</Typography>
-                <Typography align="center" variant="h4">Connect and collaborate.</Typography>
-                <Typography align="center" variant="h4">Press play.</Typography>
             </div>
             <br />
             <div style={{backgroundColor: 'blue', left: '25%', width: '50%', margin: 'auto'}}>
-                <Grid container justify="center" style={{padding: '5%', backgroundColor: colors.buttonContainer}}>
-                    <Link to="/login">
-                        <Button onClick={() => loginAsUser()} style={{margin: '1em', backgroundColor: colors.loginButton}} fullWidth variant="contained">LOGIN</Button>
-                    </Link>
-                    <Button style={{margin: '1em', backgroundColor: colors.signUpButton}} fullWidth variant="contained">SIGN UP</Button>
-                    <Button onClick={() => loginAsGuest()} style={{margin: '1em', backgroundColor: colors.guestButton}} fullWidth variant="contained">CONTINUE AS GUEST</Button>
-                        
-                        
+                <Grid container justify="center" style={{padding: '5%', backgroundColor: "#7230ff"}}>
+                    <Grid container spacing={1} alignItems="flex-end">
+                        <Grid item>
+                            <AccountCircle />
+                        </Grid>
+                        <Grid item>
+                            <TextField label="Username" margin="normal" />
+                        </Grid>
+                    </Grid>
+                    <TextField label="Password" margin="normal" />
                 </Grid>
             </div>
         </div>
     );
 }
 
-export default StartPage;
+export default LoginPage;
