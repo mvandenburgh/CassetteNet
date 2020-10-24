@@ -9,7 +9,7 @@ import UserContext from '../contexts/UserContext';
 
 
 const drawerWidth = 240;
-const drawerBgColor = '#6C8995'
+const drawerBgColor = '#6C8995';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -112,6 +112,10 @@ function PageFrame(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const { user, setUser } = useContext(UserContext);
+
+  // TODO: add setUser to destructuring when needed
+    // Removed for now to avoid build warnings
+  const { user } = useContext(UserContext);
 
   const handleDrawerOpen = () => {
     setOpen(true);
