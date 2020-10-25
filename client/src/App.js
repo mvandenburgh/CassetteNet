@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import PageFrame from './components/PageFrame';
 import StartPage from './components/pages/StartPage';
 import AtmospherePage from './components/pages/AtmospherePage';
+import InboxPage from './components/pages/InboxPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 import UserContext from './contexts/UserContext';
 
@@ -23,6 +24,7 @@ function App() {
                 <Switch>
                   <Route exact path="/" component={StartPage} /> {/* TODO: should redirect to dashboard when logged in */}
                   <Route exact path="/atmosphere" component={AtmospherePage} />
+                  <Route exact path="/inbox" component={InboxPage} />
                   <Route exact path="/NotFound" component={NotFoundPage}/>
                 </Switch>
               </div>
