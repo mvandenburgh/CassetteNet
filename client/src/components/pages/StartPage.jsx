@@ -17,6 +17,9 @@ function StartPage(props) {
     const { setUser } = useContext(UserContext);
 
     const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
+
+    
+
     const loginAsUser = () => setUser({ username: 'User0', isGuest: false, isLoggedIn: true });
 
     return (

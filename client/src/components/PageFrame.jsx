@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
+
 import { AppBar, Badge, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
-import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon,MoodBad as NotFoundIcon } from '@material-ui/icons';
+import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon,MoodBad as NotFoundIcon, PersonAdd as SignUpIcon } from '@material-ui/icons';
+
 import { Link } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import UserContext from '../contexts/UserContext';
@@ -176,23 +178,31 @@ function PageFrame(props) {
                       </ListItemIcon>
                       <ListItemText primary="My Mixtapes" />
                     </ListItem>
-                  </Link>
+                    </Link>
                   <Link to="/atmosphere">
-                    <ListItem button>
-                        <ListItemIcon>
-                            <AtmosphereSoundsIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Atmosphere Sounds" />
-                    </ListItem>
-                  </Link>
-                  <Link to="/NotFound">
-                    <ListItem button>
-                        <ListItemIcon>
-                            <NotFoundIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Page Not Found" />
-                    </ListItem>
-                  </Link>
+                      <ListItem button>
+                          <ListItemIcon>
+                              <AtmosphereSoundsIcon />    
+                          </ListItemIcon>
+                          <ListItemText primary="Atmosphere Sounds" />
+                      </ListItem>
+                    </Link>
+                    <Link to="/NotFound">
+                      <ListItem button>
+                          <ListItemIcon>
+                              <NotFoundIcon />    
+                          </ListItemIcon>
+                          <ListItemText primary="Page Not Found" />
+                      </ListItem>
+                    </Link>
+                    <Link to="/SignUp">
+                      <ListItem button>
+                          <ListItemIcon>
+                              <SignUpIcon />    
+                          </ListItemIcon>
+                          <ListItemText primary="Sign Up" />
+                      </ListItem>
+                    </Link>
                   <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
                           <FollowedUsersIcon />    

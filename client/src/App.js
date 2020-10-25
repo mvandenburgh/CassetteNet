@@ -7,6 +7,7 @@ import LoginPage from './components/pages/LoginPage';
 import MyMixtapesPage from './components/pages/MyMixtapesPage';
 import AtmospherePage from './components/pages/AtmospherePage';
 import InboxPage from './components/pages/InboxPage';
+import SignUpPage from './components/pages/SignUpPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 import UserContext from './contexts/UserContext';
 
@@ -31,6 +32,7 @@ function App() {
                   <Route exact path="/mymixtapes" component={MyMixtapesPage} />
                   <Route exact path="/inbox" component={InboxPage} />
                   <Route exact path="/NotFound" component={NotFoundPage}/>
+                  <Route exact path="/SignUp" component={SignUpPage}/>
                 </Switch>
               </div>
         </BrowserRouter>
