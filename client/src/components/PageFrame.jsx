@@ -169,54 +169,56 @@ function PageFrame(props) {
             </div>
             <Divider />
                 <List>
+                  <Link to="/mymixtapes">
+                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <CassetteTapeIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="My Mixtapes" />
+                    </ListItem>
+                  </Link>
+                  <Link to="/atmosphere">
+                    <ListItem button>
+                        <ListItemIcon>
+                            <AtmosphereSoundsIcon />    
+                        </ListItemIcon>
+                        <ListItemText primary="Atmosphere Sounds" />
+                    </ListItem>
+                  </Link>
+                  <Link to="/NotFound">
+                    <ListItem button>
+                        <ListItemIcon>
+                            <NotFoundIcon />    
+                        </ListItemIcon>
+                        <ListItemText primary="Page Not Found" />
+                    </ListItem>
+                  </Link>
+                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <FollowedUsersIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="Followed Users" />
+                  </ListItem>
+                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <FavoritedMixtapesIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="Favorited Mixtapes" />
+                  </ListItem>
+                  <Link to="/inbox">
                     <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
-                            <CassetteTapeIcon />    
+                            <InboxIcon />    
                         </ListItemIcon>
-                        <ListItemText primary="My Mixtapes" />
+                        <ListItemText primary="Inbox" />
                     </ListItem>
-                    <Link to="/atmosphere">
-                      <ListItem button>
-                          <ListItemIcon>
-                              <AtmosphereSoundsIcon />    
-                          </ListItemIcon>
-                          <ListItemText primary="Atmosphere Sounds" />
-                      </ListItem>
-                    </Link>
-                    <Link to="/NotFound">
-                      <ListItem button>
-                          <ListItemIcon>
-                              <NotFoundIcon />    
-                          </ListItemIcon>
-                          <ListItemText primary="Page Not Found" />
-                      </ListItem>
-                    </Link>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <FollowedUsersIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Followed Users" />
-                    </ListItem>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <FavoritedMixtapesIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Favorited Mixtapes" />
-                    </ListItem>
-                    <Link to="/inbox">
-                      <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                          <ListItemIcon>
-                              <InboxIcon />    
-                          </ListItemIcon>
-                          <ListItemText primary="Inbox" />
-                      </ListItem>
-                    </Link>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <AnonymousMixtapesIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Anonymous Mixtapes" />
-                    </ListItem>
+                  </Link>
+                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <AnonymousMixtapesIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="Anonymous Mixtapes" />
+                  </ListItem>
                 </List>
             <Divider />
         </Drawer>
