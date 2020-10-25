@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Fab, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import MixtapeList from '../MixtapeList';
 
 function MyMixtapesPage(props) {
