@@ -195,12 +195,14 @@ function PageFrame(props) {
                         </ListItemIcon>
                         <ListItemText primary="Favorited Mixtapes" />
                     </ListItem>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <InboxIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Inbox" />
-                    </ListItem>
+                    <Link to="/inbox">
+                      <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                          <ListItemIcon>
+                              <InboxIcon />    
+                          </ListItemIcon>
+                          <ListItemText primary="Inbox" />
+                      </ListItem>
+                    </Link>
                     <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
                             <AnonymousMixtapesIcon />    
