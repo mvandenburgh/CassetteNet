@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import { AppBar, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
+
+import { AppBar, Badge, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
 import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon,MoodBad as NotFoundIcon, PersonAdd as SignUpIcon } from '@material-ui/icons';
+
 import { Link } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import UserContext from '../contexts/UserContext';
@@ -169,13 +171,15 @@ function PageFrame(props) {
             </div>
             <Divider />
                 <List>
+                  <Link to="/mymixtapes">
                     <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <CassetteTapeIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="My Mixtapes" />
+                      <ListItemIcon>
+                          <CassetteTapeIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="My Mixtapes" />
                     </ListItem>
-                    <Link to="/atmosphere">
+                    </Link>
+                  <Link to="/atmosphere">
                       <ListItem button>
                           <ListItemIcon>
                               <AtmosphereSoundsIcon />    
@@ -199,32 +203,35 @@ function PageFrame(props) {
                           <ListItemText primary="Sign Up" />
                       </ListItem>
                     </Link>
+                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <FollowedUsersIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="Followed Users" />
+                  </ListItem>
+                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <FavoritedMixtapesIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="Favorited Mixtapes" />
+                  </ListItem>
+                  <Link to="/inbox">
                     <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
-                            <FollowedUsersIcon />    
+                            {/* TODO: get actual number of messages in inbox */}
+                            <Badge badgeContent={4} color="error">
+                              <InboxIcon />
+                            </Badge>
                         </ListItemIcon>
-                        <ListItemText primary="Followed Users" />
+                        <ListItemText primary="Inbox" />
                     </ListItem>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <FavoritedMixtapesIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Favorited Mixtapes" />
-                    </ListItem>
-                    <Link to="/inbox">
-                      <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                          <ListItemIcon>
-                              <InboxIcon />    
-                          </ListItemIcon>
-                          <ListItemText primary="Inbox" />
-                      </ListItem>
-                    </Link>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <AnonymousMixtapesIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Anonymous Mixtapes" />
-                    </ListItem>
+                  </Link>
+                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <AnonymousMixtapesIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="Anonymous Mixtapes" />
+                  </ListItem>
                 </List>
             <Divider />
         </Drawer>
