@@ -16,7 +16,7 @@ function StartPage(props) {
     const { setUser } = useContext(UserContext);
 
     const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
-
+    
     return (
         <div style={{color: 'white', left: 0}}>
             <div style={{margin: 'auto', width: '50%'}}>

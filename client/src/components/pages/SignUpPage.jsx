@@ -62,6 +62,7 @@ function SignUpPage(props) {
     return (
         <div  style={{ color: 'white' }}>
       <Typography align="center" variant="h3">
+      <br/>
           Sign Up Fields
       <br/>
       <br/>
@@ -98,6 +99,9 @@ function SignUpPage(props) {
             id="custom-css-outlined-input"
             />
           </Grid>
+          <Button variant="filled" color="inherit">
+            Create My Account
+        </Button>
         </Grid>
       </div>
     </div>
