@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import PageFrame from './components/PageFrame';
 import StartPage from './components/pages/StartPage';
+import MyMixtapesPage from './components/pages/MyMixtapesPage';
 import AtmospherePage from './components/pages/AtmospherePage';
 import InboxPage from './components/pages/InboxPage';
 import NotFoundPage from './components/pages/NotFoundPage';
@@ -24,6 +25,7 @@ function App() {
                 <Switch>
                   <Route exact path="/" component={StartPage} /> {/* TODO: should redirect to dashboard when logged in */}
                   <Route exact path="/atmosphere" component={AtmospherePage} />
+                  <Route exact path="/mymixtapes" component={MyMixtapesPage} />
                   <Route exact path="/inbox" component={InboxPage} />
                   <Route exact path="/NotFound" component={NotFoundPage}/>
                 </Switch>

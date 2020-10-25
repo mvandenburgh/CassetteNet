@@ -10,7 +10,10 @@ function StartPage(props) {
         signUpButton: '#561111',
         guestButton: '#6B6B6B',
     }
-    const { user, setUser } = useContext(UserContext);
+
+    // TODO: add user to destructuring when needed
+    // Removed for now to avoid build warnings
+    const { setUser } = useContext(UserContext);
 
     const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
 
