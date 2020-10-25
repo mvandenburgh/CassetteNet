@@ -191,6 +191,14 @@ function PageFrame(props) {
                           <ListItemText primary="Page Not Found" />
                       </ListItem>
                     </Link>
+                    <Link to="/SignUp">
+                      <ListItem button>
+                          <ListItemIcon>
+                              <AtmosphereSoundsIcon />    
+                          </ListItemIcon>
+                          <ListItemText primary="Atmosphere Sounds" />
+                      </ListItem>
+                    </Link>
                     <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
                             <FollowedUsersIcon />    
