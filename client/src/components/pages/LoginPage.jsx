@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import testData from '../../testData/users.json'
 import { Button, Grid, Typography } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
@@ -15,18 +14,6 @@ function LoginPage(props) {
         guestButton: '#6B6B6B',
     }
     const { user, setUser } = useContext(UserContext);
-    const usersList = testData.users.map(user => 
-        user.username,
-        user.password,
-        user.email,
-        user.verified,
-        user.favoritedMixtapes, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
-        user.followedUsers, // array of other user object ids
-        user.admin, // true if user is an admin
-        user.uniqueId, // unique alphanumeric id (length 4)
-        user.profilePicture // raw image data for user's profile picture
-     )
-
     const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
     const loginAsUser = () => setUser({ username: 'User0', isGuest: false, isLoggedIn: true });
 
