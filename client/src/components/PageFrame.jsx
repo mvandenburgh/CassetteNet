@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import { AppBar, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
+import { AppBar, Badge, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
 import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon,MoodBad as NotFoundIcon } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
@@ -208,7 +208,10 @@ function PageFrame(props) {
                   <Link to="/inbox">
                     <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
-                            <InboxIcon />    
+                            {/* TODO: get actual number of messages in inbox */}
+                            <Badge badgeContent={4} color="error">
+                              <InboxIcon />
+                            </Badge>
                         </ListItemIcon>
                         <ListItemText primary="Inbox" />
                     </ListItem>

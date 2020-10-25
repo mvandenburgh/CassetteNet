@@ -15,7 +15,7 @@ function App() {
   const [user, setUser] = useState({
     username: null,
     isGuest: true,
-    isLoggedIn: false,
+    isLoggedIn: true,
   });
 
   return (
