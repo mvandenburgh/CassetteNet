@@ -2,14 +2,14 @@ import React, { useContext, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { AppBar, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
-import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon } from '@material-ui/icons';
+import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon,MoodBad as NotFoundIcon } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import UserContext from '../contexts/UserContext';
 
 
 const drawerWidth = 240;
-const drawerBgColor = '#6C8995'
+const drawerBgColor = '#6C8995';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -111,7 +111,10 @@ const useStyles = makeStyles((theme) => ({
 function PageFrame(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const { user, setUser } = useContext(UserContext);
+
+  // TODO: add setUser to destructuring when needed
+    // Removed for now to avoid build warnings
+  const { user } = useContext(UserContext);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -180,6 +183,14 @@ function PageFrame(props) {
                           <ListItemText primary="Atmosphere Sounds" />
                       </ListItem>
                     </Link>
+                    <Link to="/NotFound">
+                      <ListItem button>
+                          <ListItemIcon>
+                              <NotFoundIcon />    
+                          </ListItemIcon>
+                          <ListItemText primary="Page Not Found" />
+                      </ListItem>
+                    </Link>
                     <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
                             <FollowedUsersIcon />    
@@ -192,12 +203,14 @@ function PageFrame(props) {
                         </ListItemIcon>
                         <ListItemText primary="Favorited Mixtapes" />
                     </ListItem>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <InboxIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Inbox" />
-                    </ListItem>
+                    <Link to="/inbox">
+                      <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                          <ListItemIcon>
+                              <InboxIcon />    
+                          </ListItemIcon>
+                          <ListItemText primary="Inbox" />
+                      </ListItem>
+                    </Link>
                     <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
                         <ListItemIcon>
                             <AnonymousMixtapesIcon />    
