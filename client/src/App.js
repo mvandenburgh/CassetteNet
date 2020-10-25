@@ -10,7 +10,7 @@ function App() {
   const [user, setUser] = useState({
     username: null,
     isGuest: false,
-    loggedIn: false,
+    isLoggedIn: false,
   });
 
   return (
