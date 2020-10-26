@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import PageFrame from './components/PageFrame';
 import StartPage from './components/pages/StartPage';
@@ -15,10 +15,13 @@ import ViewMixtapePage from './components/pages/ViewMixtapePage';
 
 function App() {
   const [user, setUser] = useState({
-    username: null,
     isGuest: true,
-    isLoggedIn: true,
+    isLoggedIn: false,
   });
+
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(user));
+  }, [JSON.stringify(user)]);
 
   return (
     <div className="App">
@@ -27,7 +30,7 @@ function App() {
             <PageFrame invisible={!user.isLoggedIn} />
               <div style={{ position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: 'calc(100vw - 73px)'}}>
                 <Switch>
-                  <Route exact path="/" component={user.isGuest ? StartPage : DashboardPage} /> {/* TODO: should redirect to dashboard when logged in */}
+                  <Route exact path="/" component={user.isLoggedIn ? DashboardPage : StartPage} /> {/* TODO: should redirect to dashboard when logged in */}
                   <Route exact path="/login" component={LoginPage} />
                   <Route exact path="/atmosphere" component={AtmospherePage} />
                   <Route exact path="/mixtape/:id" component={ViewMixtapePage} />

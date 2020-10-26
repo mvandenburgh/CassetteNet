@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Fab, List, ListItem, ListItemText } from '@material-ui/core';
 import { Delete as DeleteIcon } from '@material-ui/icons';
+import { getUser } from '../utils/api';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
@@ -12,47 +13,9 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   ...draggableStyle,
 });
 
-// TODO: move to JSON file
-const sampleMixtapes = [
-  {
-    id: 0,
-    name: 'mixtape1',
-    collaborators: ['user1, user2'],
-    favorites: '50k',
-    cover: 'https://lh3.googleusercontent.com/proxy/7eEAgbTWh23DfrW43yeKQ3z8v9nCip-7giCYcAKGMAGDtoCJKvLWdkS-TnvToo6gztayXKU3EdyDiT_9vHepm98jkhSxD06Zhy2Y97WXl_6WxA_YO7fyRxTDRKcBuf46jYV5O6UjCCDQ',
-  },
-  {
-    id: 1,
-    name: 'mixtape2',
-    collaborators: ['user1, user2'],
-    favorites: '10k',
-    cover: 'https://lh3.googleusercontent.com/proxy/7eEAgbTWh23DfrW43yeKQ3z8v9nCip-7giCYcAKGMAGDtoCJKvLWdkS-TnvToo6gztayXKU3EdyDiT_9vHepm98jkhSxD06Zhy2Y97WXl_6WxA_YO7fyRxTDRKcBuf46jYV5O6UjCCDQ',
-  },
-  {
-    id: 2,
-    name: 'mixtape3',
-    collaborators: ['user1, user2'],
-    favorites: '10k',
-    cover: 'https://lh3.googleusercontent.com/proxy/7eEAgbTWh23DfrW43yeKQ3z8v9nCip-7giCYcAKGMAGDtoCJKvLWdkS-TnvToo6gztayXKU3EdyDiT_9vHepm98jkhSxD06Zhy2Y97WXl_6WxA_YO7fyRxTDRKcBuf46jYV5O6UjCCDQ',
-  },
-  {
-    id: 3,
-    name: 'mixtape4',
-    collaborators: ['user1, user2'],
-    favorites: '10k',
-    cover: 'https://lh3.googleusercontent.com/proxy/7eEAgbTWh23DfrW43yeKQ3z8v9nCip-7giCYcAKGMAGDtoCJKvLWdkS-TnvToo6gztayXKU3EdyDiT_9vHepm98jkhSxD06Zhy2Y97WXl_6WxA_YO7fyRxTDRKcBuf46jYV5O6UjCCDQ',
-  },
-  {
-    id: 4,
-    name: 'mixtape5',
-    collaborators: ['user1, user2'],
-    favorites: '10k',
-    cover: 'https://lh3.googleusercontent.com/proxy/7eEAgbTWh23DfrW43yeKQ3z8v9nCip-7giCYcAKGMAGDtoCJKvLWdkS-TnvToo6gztayXKU3EdyDiT_9vHepm98jkhSxD06Zhy2Y97WXl_6WxA_YO7fyRxTDRKcBuf46jYV5O6UjCCDQ',
-  },
-];
 
 function MixtapeList(props) {
-  const [mixtapes, setMixtapes] = useState(sampleMixtapes);
+  const [mixtapes, setMixtapes] = useState(props.mixtapes);
 
   const history = useHistory();
 
@@ -122,7 +85,7 @@ function MixtapeList(props) {
                         <ListItemText>{mixtape.name}</ListItemText>
                       </div>
                       <ListItemText style={{ left:'20%', marginRight: '10%' }}>
-                        {mixtape.collaborators}
+                        {mixtape.collaborators.map(collaborator => getUser(collaborator.user))}
                       </ListItemText>
                       <ListItemText style={{ marginRight: '10%' }}>
                         {mixtape.favorites}

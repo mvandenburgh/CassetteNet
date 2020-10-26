@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
 import TextField from '@material-ui/core/TextField';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { getUser } from '../../utils/api';
 
 function LoginPage(props) {
     const colors = {
@@ -13,9 +14,25 @@ function LoginPage(props) {
         signUpButton: '#561111',
         guestButton: '#6B6B6B',
     }
+
+    const history = useHistory();
+
     const { user, setUser } = useContext(UserContext);
-    const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
-    const loginAsUser = () => setUser({ username: 'User0', isGuest: false, isLoggedIn: true });
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const loginAsUser = () => {
+        const loggedInUser = getUser(username, password);
+        console.log(loggedInUser);
+        if (loggedInUser) setUser({isLoggedIn: true, isGuest: false, ...loggedInUser});
+        history.push('/');
+    }
+
+    
+
+    const handleUsername = (e) => setUsername(e.target.value);
+    const handlePassword = (e) => setPassword(e.target.value);
 
     return (
         <div style={{color: 'white', left: 0}}>
@@ -30,13 +47,11 @@ function LoginPage(props) {
                             <AccountCircle />
                         </Grid>
                         <Grid item>
-                            <TextField label="Username" margin="normal" />
+                            <TextField onChange={handleUsername} label="Username" margin="normal" />
                         </Grid>
                     </Grid>
-                    <TextField label="Password" margin="normal" />
-                    <Link to="/">
-                        <Button style={{margin: '1em', backgroundColor: colors.loginButton}} fullWidth variant="contained">LOGIN</Button>
-                    </Link>
+                    <TextField onChange={handlePassword} label="Password" margin="normal" />
+                    <Button onClick={loginAsUser} style={{margin: '1em', backgroundColor: colors.loginButton}} fullWidth variant="contained">LOGIN</Button>
                 </Grid>
             </div>
         </div>

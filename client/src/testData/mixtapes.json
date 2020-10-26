@@ -1,0 +1,580 @@
+{
+    "mixtapes": [
+        {
+            "_id": "5f86204f496f3470bbf40a83",
+            "name": "Evening Acoustic",
+            "public": false,
+            "collaborators": [
+                {
+                    "user": "5f862052790b506769c6a0dc",
+                    "permissions": "owner"
+                }
+            ],
+            "songs": [
+                "0NSqOUjf55rgVEqN7e9fhb",
+                "1C042FLYy7rP3MfnkOcnha",
+                "6pOiBHK2mMiSNnPsYNGsEc",
+                "7tkOm1ZNcIg4lKu0XCQgCq",
+                "7GaolPg6f0qNwZPDXSriR0",
+                "6dRKRVyjzxa2efBCXZez6R",
+                "2avzCVT0Zo4dgkp2vBgHOJ",
+                "1mjuGwCsomm1O8rqsx1nC4",
+                "54zNVHj8N3wjCb4UpqSvKw",
+                "25CXUUZD2FDegmlHePvXvw",
+                "3LApsNoXrlZHPIhGNdo8P1"
+            ]
+        },
+        {
+            "_id": "5f86204f7c6513b0822b8e92",
+            "name": "Rock Classics",
+            "public": true,
+            "collaborators": [
+                {
+                    "user": "5f862052c1a979a3a2ed3f5f",
+                    "permissions": "owner"
+                },
+                {
+                    "user": "5f8620527be7474503dc14db",
+                    "permissions": "viewer"
+                }
+            ],
+            "songs": [
+                "0hCB0YR03f6AmQaHbwWDe8",
+                "2aoo2jlRnM3A0NyLQqMN2f",
+                "08mG3Y1vljYA6bvDt4Wqkj",
+                "1RJeiAIwR9pZBgJA8ndZLL",
+                "66lOpKgTyFjOrac4S1s94g",
+                "2EqlS6tkEnglzr7tkKAAYD",
+                "39shmbIHICJ2Wxnk1fPSdz",
+                "2KmEgiY8fQs0G6WNxtzQKr",
+                "24NwBd5vZ2CK8VOQVnqdxr",
+                "57JVGBtBLCfHw2muk5416J",
+                "5uvosCdMlFdTXhoazkTI5R"
+            ]
+        },
+        {
+            "_id": "5f86205019653c36d11b3eac",
+            "name": "Late Night Vibes",
+            "public": true,
+            "collaborators": [
+                {
+                    "user": "5f8620522b25e503eae65d48",
+                    "permissions": "owner"
+                }
+            ],
+            "songs": [
+                "7GdGBGwFMg21mY9kNpNKXI",
+                "1HIkv4ULSAxJZPt2PYdYoV",
+                "0vQH42DnQe4F0i7uxlcY0t",
+                "3kd9BSkFUN7bQnVTILspFX",
+                "6DNH2EiIWRCczFstity4N2",
+                "2bqvn860XasNbI5OSHwjtt",
+                "1xKNnjZkSyj2QbkqruJyCr",
+                "7FQ2JgfdkBcBb3BEbu8Axf",
+                "1NGPZKzplieiPc5g6lAJ49",
+                "3WIjTtXpbu1dViSMQYfID5",
+                "3zYomc4obtzqmHbI7BJRBT"
+            ]
+        },
+        {
+            "_id": "5f86205097700519e84592ee",
+            "name": "Late Night Jazz",
+            "public": false,
+            "collaborators": [
+                {
+                    "user": "5f8620526e36397b104e4d93",
+                    "permissions": "owner"
+                }
+            ],
+            "songs": [
+                "21Jm2Njh72h2WWLSRmiGT5",
+                "5DHU96HUvat8gddLT8IhFO",
+                "6uEDQ3D4Lx83fZwbgLn895",
+                "3HtrgoW2iPVupeM8SU3718",
+                "0hNhCLpa4cYWwQ5OBCdbu6",
+                "5c83f2kFIeNNch1hvyNwGj",
+                "3djYspll15Mm2azjKSV55Y",
+                "24XHqHf8NZQqu9x4MPEAWh",
+                "58eWz82VjBZLNwL6u4li7F",
+                "43q6DpZwCKDe8G7RHC936s",
+                "3Aj7zxN0GKJCTXwm7FpePK"
+            ]
+        },
+        {
+            "_id": "5f862050c0f6c5ed07bc5910",
+            "name": "Timeless Love Songs",
+            "public": true,
+            "collaborators": [
+                {
+                    "user": "5f862052612170a681f0c33a",
+                    "permissions": "owner"
+                },
+                {
+                    "user": "5f862052790b506769c6a0dc",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f8620527c48459301e64551",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052851a1c4fc47ec0a8",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052ca931dafa4e76c9a",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052311869e97db484e0",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f8620527f494b95eb42b017",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052bac11be654870c80",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620523012f33140efe579",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052e429ce0be8c0a60e",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052f8b3174290284978",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052dfa0655ed1be67e6",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f8620529c688fae15ac71dd",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f8620527322a7d4b1abb774",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f86205208690596de2c7d1b",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052be49fb900daf6b03",
+                    "permissions": "viewer"
+                }
+            ],
+            "songs": [
+                "0mqTcM8kuu2IYPotMt7AzS",
+                "17VegeBoHvMlIByrdu64KR",
+                "3U4isOIWM3VvDubwSI3y7a",
+                "0CmIALzGn4vHIHJG4n3Q4z",
+                "1Omt5bfz1tZUCqd26HxbS0",
+                "34gCuhDGsG4bRPIf9bb02f",
+                "2DjWsDGgL1xNbhnr7f6t5F",
+                "6z5Yh7kOKeLjqIsNdokIpU",
+                "3SdTKo2uVsxFblQjpScoHy",
+                "1ckU1EhAO0Nr73QYw24SWJ",
+                "3ERa3mEeOnrh2Mc47qM6T1"
+            ]
+        },
+        {
+            "_id": "5f8620506ae1ab2b5aaeca07",
+            "name": "Calm Vibes",
+            "public": true,
+            "collaborators": [
+                {
+                    "user": "5f862052790b506769c6a0dc",
+                    "permissions": "owner"
+                },
+                {
+                    "user": "5f8620528477ee36df99d276",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052f8b3174290284978",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052a2b58c971d5b819d",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f86205201f5c9d9c39d4c5e",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f86205282161de646963fab",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052e5a3d78b0e6ad53d",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620528ca1af4a5f055e22",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f86205236fdb7b3619f27c2",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620522df5ae67242119d6",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f8620522b25e503eae65d48",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f86205255a51d454ea53a92",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052f87457a6a3d14999",
+                    "permissions": "viewer"
+                }
+            ],
+            "songs": [
+                "0r8M4zqlJeV0XPtCxyQ6fn",
+                "4YxLJVcYXgN1Kxb67BvxEZ",
+                "6j6bxCtwV7aw6cQk9HVTor",
+                "3vM5WFlaaxJjCMWsQYLwZI",
+                "1rIlWy93o6je85WpMpxg6Y",
+                "6gDt7eZjJNIkzLj9jVEBZo",
+                "6I2mlN0j24YN87ke0mAthD",
+                "4WkE0CevaR93XEmPokzQTp",
+                "03P8X4jeamfDN208vUJK8k",
+                "6OQcOlYGnrH4HeiyjvyCOo",
+                "0E97LEEOz5rk6wAJr6rNI3"
+            ]
+        },
+        {
+            "_id": "5f8620516371adde64b81f42",
+            "name": "Acoustic Soul",
+            "public": true,
+            "collaborators": [
+                {
+                    "user": "5f8620523012f33140efe579",
+                    "permissions": "owner"
+                },
+                {
+                    "user": "5f8620521a6c4234497784a4",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052a5a4e1996be69a22",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052b4725159325a232f",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052530f418bcee6f531",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620522daa4a5c9dc71b48",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052a7c842eb7d90a3de",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620527f134cccc51b4f36",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052099ea8260dbb8d05",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052744b5ec0ecc7ab29",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620529abf3d2aae2ff577",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620525fe23587fb6ea0b7",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620523e05a6a843875125",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052f9d293ace515b815",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052022c400f05935829",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052e6119796634feb2c",
+                    "permissions": "editor"
+                }
+            ],
+            "songs": [
+                "4If5wEl5u76l2FcrGNE5AE",
+                "5BhEJz8HuJttbVbKNJ3NFO",
+                "2a8LoldsEpzYbwAs7uf4Sl",
+                "0P8cENEqN7W3U6rZohIaCJ",
+                "12GVuNDjD80UjEmkO46Hd8",
+                "4qPsuCJ6GunSYBS7V0MYNR",
+                "5QbW9NImzz0DwyF25CfWAq",
+                "0X6urbVPZcWoeb68fTsmV3",
+                "1vTfSWBXwH0Aih8vpTu0xi",
+                "1EgqV6SBNDEY1kspPMiUby",
+                "1UQdvPrkLvzvU4ktYCRHCu"
+            ]
+        },
+        {
+            "_id": "5f8620518e2aeed07faec255",
+            "name": "All Out 10s",
+            "public": false,
+            "collaborators": [
+                {
+                    "user": "5f862052efb4ed3d023d00dc",
+                    "permissions": "owner"
+                }
+            ],
+            "songs": [
+                "1Slwb6dOYkBlWal1PGtnNg",
+                "2GpHJb7xGNBaIDTrBxjIu6",
+                "6F5c58TMEs1byxUstkzVeM",
+                "5yDL13y5giogKs2fSNf7sj",
+                "6v3KW9xbzN5yKLt9YKDYA2",
+                "13P5rwmk2EsoFRIz9UCeh9",
+                "6g1NlCpW7fgqDnWbCCDrHl",
+                "4evmHXcjt3bTUHD1cvny97",
+                "6QfS2wq5sSC1xAJCQsTSlj",
+                "0FDzzruyVECATHXKHFs9eJ",
+                "7cgu4JBW3hq1GwTM1ilkKQ"
+            ]
+        },
+        {
+            "_id": "5f862051532be631abbee7c8",
+            "name": "Chill + Atmospheric",
+            "public": true,
+            "collaborators": [
+                {
+                    "user": "5f86205208690596de2c7d1b",
+                    "permissions": "owner"
+                },
+                {
+                    "user": "5f862052a6086fe835b2dab2",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052833ff8f9af4b5440",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052e00577e3172840b0",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052a81e94753896a5be",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f8620522d5ea04f363264d0",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052a5a4e1996be69a22",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052c85275456726d920",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052b4725159325a232f",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f8620525fe23587fb6ea0b7",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052be49fb900daf6b03",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f86205276c46b676074edfd",
+                    "permissions": "editor"
+                }
+            ],
+            "songs": [
+                "6x6XKEUcCJGUACD4Xh7KuP",
+                "0I74VCDu3RbCMuyToTUtzl",
+                "5ND2EmYyhWRJq6iCdENkgZ",
+                "0B0hFMSIYac3LS1z2PEsrQ",
+                "1SjjLslk4Ov9IqCE3G8nID",
+                "0LQqaXgLL3e3dkPBpkwlGU",
+                "3jpdfoWVvhMDVkVrJmiVOc",
+                "7BSMSvK0WxrDeI98bswYa8",
+                "2YQdxGS9tPTajcvO2yRMuE",
+                "2nxQPAZV2pe9TOFL52nTMu",
+                "5o5SVIrVETWIQFMdgPFXPt"
+            ]
+        },
+        {
+            "_id": "5f8620512cafaee86ecd00c1",
+            "name": "Chill as Folk",
+            "public": false,
+            "collaborators": [
+                {
+                    "user": "5f8620529436af85347ceffa",
+                    "permissions": "owner"
+                },
+                {
+                    "user": "5f862052f7df452bd6a8d82f",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620522bdb46d2e7fde67f",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f8620521d3a2b6905a13b9e",
+                    "permissions": "viewer"
+                }
+            ],
+            "songs": [
+                "3zr2s3o2Ye1j6t0ZMdoUYi",
+                "25J4d78ESH2MgAJoIakB8O",
+                "38ydcsbayM4oX21Hhu84DT",
+                "0szmjOw9XbtbQYWz0GvXSp",
+                "726E9Bz9YOJUD65r155ZXQ",
+                "6J0OvmRxVmiRyLeJ0aBryf",
+                "4ktZEbOKEnx5svwITaKwqK",
+                "12AZ6nSJdq3bYgVeza8nSE",
+                "2V6DAmBQMKUkXFw5rcbRF2",
+                "7HOTm58hiTnCjpSJq4OvJs",
+                "47KDDZgFiX1w6RFOuLXsSn"
+            ]
+        },
+        {
+            "_id": "5f862052febdbc59ecb5c028",
+            "name": "Gold School",
+            "public": false,
+            "collaborators": [
+                {
+                    "user": "5f86205280611136c4aa8663",
+                    "permissions": "owner"
+                }
+            ],
+            "songs": [
+                "03tqyYWC9Um2ZqU0ZN849H",
+                "7LR85XLWw2yXqKBSI5brbG",
+                "5A6OHHy73AR5tLxgTc98zz",
+                "5FEXPoPnzueFJQCPRIrC3c",
+                "0cNJ3huiV99wvUN1tmQLTL",
+                "35QGdv6aFbIaLM0Ozr3rHt",
+                "57QFOU3f7O0gDLadxv5z8w",
+                "0AA6zq5ArZ1sSH7VIMi4NK",
+                "3XQY8kDjI8LARMIC9xkxQk",
+                "6BdgtqiV3oXNqBikezwdvC",
+                "1kMuU3TNQvHbqvXCWBodmP"
+            ]
+        },
+        {
+            "_id": "5f862052066d9931b3d49190",
+            "name": "Calm Down",
+            "public": true,
+            "collaborators": [
+                {
+                    "user": "5f862052800385b0d2f6f16e",
+                    "permissions": "owner"
+                },
+                {
+                    "user": "5f8620527c48459301e64551",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f86205266174c85ee0fc619",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052e4bce6763fd919af",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052e3f10b50233f2b38",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052a6b95276eb78a909",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052158f279df778a5bd",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f86205285fc5d4eac765af3",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f8620523012f33140efe579",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f86205276c46b676074edfd",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f8620527f494b95eb42b017",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052242197a8b1f7637c",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052b43c19ff968bf44f",
+                    "permissions": "editor"
+                },
+                {
+                    "user": "5f862052cac45d6ec9ad0d8e",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052e2c1b73ba4a28022",
+                    "permissions": "viewer"
+                },
+                {
+                    "user": "5f862052ff4f53b5357f7904",
+                    "permissions": "viewer"
+                }
+            ],
+            "songs": [
+                "25J4d78ESH2MgAJoIakB8O",
+                "3tchJ8gDgMdaSxpaLxlr1F",
+                "1J8XsaDbekfEP0vmyLcu7w",
+                "185WVQvIuyv2FF0mAFbRvI",
+                "3tH2AWcU1XTpV4BwirC819",
+                "4q8AGDL52LwEQMjq1k9d5F",
+                "73q8Er6tGTXnHWk2juT9qG",
+                "1wOR1yWj7PlnQRbL5QneuJ",
+                "0oTtnnedK0C4unALxVTPhz",
+                "0pNA2zQRy93duN1zqbcL3T",
+                "4fkAWGCbxNizyNwsHlrajH"
+            ]
+        }
+    ]
+}
