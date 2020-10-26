@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List, ListItem, ListItemText } from '@material-ui/core';
+import { getMixtape } from '../utils/api';
 
-const sampleSongs = [
-    {
-        name: 'song1',
-        artist: 'artist2',
-    },
-    {
-        name: 'song3',
-        artist: 'artist1',
-    },
-];
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     userSelect: 'none',
@@ -22,10 +13,8 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   });
 
 function Mixtape(props) {
-    const [songs, setSongs] = useState(sampleSongs);
+    const [mixtape, setMixtape] = useState(getMixtape(props.id));
 
-    // :id url param, will be useful later
-    // const mixtapeId = props.id;
 
     const onDragEnd = (result) => {
       if (!result.destination) {
@@ -33,11 +22,11 @@ function Mixtape(props) {
       }
   
       // set new list order
-      const newArray = [...songs];
-      const [removed] = newArray.splice(result.source.index, 1);
-      newArray.splice(result.destination.index, 0, removed);
-  
-      setSongs(newArray);
+      const newSongOrder = [...mixtape.songs];
+      const [removed] = newSongOrder.splice(result.source.index, 1);
+      newSongOrder.splice(result.destination.index, 0, removed);
+      mixtape.songs = newSongOrder;
+      setMixtape(mixtape);
     };
   
     return (
@@ -49,7 +38,7 @@ function Mixtape(props) {
               ref={provided.innerRef}
               style={{width: '70%'}}
             >
-              {songs.map((song, index) => (
+              {mixtape.songs.map((song, index) => (
                 <Draggable
                   key={`item${index}`}
                   draggableId={`item${index}`}
@@ -69,7 +58,8 @@ function Mixtape(props) {
                     >
                       <div style={{left: '0', marginRight: '10%' }}>
                         <img style={{width: '30%', height: '30%'}} src={song.cover} alt='mixtape_cover'></img>
-                        <ListItemText>{song.name}</ListItemText>
+                        {/* TODO: fetch actual song names from API */}
+                        <ListItemText>{song.name || `song_${mixtape.songs[index]}`}</ListItemText>
                       </div>
                       
                     </ListItem>

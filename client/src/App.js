@@ -14,10 +14,15 @@ import ViewMixtapePage from './components/pages/ViewMixtapePage';
 
 
 function App() {
-  const [user, setUser] = useState({
-    isGuest: true,
-    isLoggedIn: false,
-  });
+  // check if user is logged in
+  let userDefault = JSON.parse(localStorage.getItem('user'));
+  if (!userDefault) {
+    userDefault = {
+      isGuest: true,
+      isLoggedIn: false,
+    };
+  }
+  const [user, setUser] = useState(userDefault);
 
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user));

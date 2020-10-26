@@ -33,12 +33,14 @@ function MixtapeList(props) {
   };
 
   // TODO: popup window confirmation
-  const deleteMixtape = (id) => {
+  const deleteMixtape = (id, event) => {
+    event.stopPropagation();
+    
     setMixtapes(mixtapes.filter(mixtape => mixtape.id !== id));
   };
 
   const openMixtape = (index) => {
-    history.push(`/mixtape/${mixtapes[index].id}`);
+    history.push(`/mixtape/${mixtapes[index]._id}`);
   };
 
   return (
@@ -90,7 +92,7 @@ function MixtapeList(props) {
                       <ListItemText style={{ marginRight: '10%' }}>
                         {mixtape.favorites}
                       </ListItemText>
-                      <Fab onClick={() => deleteMixtape(mixtape.id)} color="primary" aria-label="delete">
+                      <Fab onClick={(e) => deleteMixtape(mixtape._id, e)} color="primary" aria-label="delete">
                         <DeleteIcon />
                       </Fab>
                     </ListItem>
