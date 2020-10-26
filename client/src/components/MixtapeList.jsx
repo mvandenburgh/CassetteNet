@@ -36,7 +36,7 @@ function MixtapeList(props) {
   const deleteMixtape = (id, event) => {
     event.stopPropagation();
     
-    setMixtapes(mixtapes.filter(mixtape => mixtape.id !== id));
+    setMixtapes(mixtapes.filter(mixtape => mixtape._id !== id));
   };
 
   const openMixtape = (index) => {
