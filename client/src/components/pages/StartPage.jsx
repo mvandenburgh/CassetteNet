@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import logo from '../../images/logo.png';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 
 function StartPage(props) {
