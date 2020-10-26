@@ -1,11 +1,9 @@
 import React, { useContext, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
-
 import { AppBar, Badge, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
-import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon,MoodBad as NotFoundIcon, PersonAdd as SignUpIcon } from '@material-ui/icons';
-
-import { Link } from 'react-router-dom';
+import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
+import { Link, useHistory } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import UserContext from '../contexts/UserContext';
 
@@ -113,6 +111,7 @@ const useStyles = makeStyles((theme) => ({
 function PageFrame(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const history = useHistory();
 
   // TODO: add setUser to destructuring when needed
     // Removed for now to avoid build warnings
@@ -171,14 +170,14 @@ function PageFrame(props) {
             </div>
             <Divider />
                 <List>
-                  <Link to="/mymixtapes">
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                  {/* <Link to="/mymixtapes"> */}
+                    <ListItem onClick={() => history.push('/mymixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
                           <CassetteTapeIcon />    
                       </ListItemIcon>
                       <ListItemText primary="My Mixtapes" />
                     </ListItem>
-                    </Link>
+                  {/* </Link> */}
                   <Link to="/atmosphere">
                       <ListItem button>
                           <ListItemIcon>

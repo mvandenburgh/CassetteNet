@@ -10,6 +10,7 @@ import InboxPage from './components/pages/InboxPage';
 import SignUpPage from './components/pages/SignUpPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 import UserContext from './contexts/UserContext';
+import ViewMixtapePage from './components/pages/ViewMixtapePage';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
                   <Route exact path="/" component={user.isGuest ? StartPage : DashboardPage} /> {/* TODO: should redirect to dashboard when logged in */}
                   <Route exact path="/login" component={LoginPage} />
                   <Route exact path="/atmosphere" component={AtmospherePage} />
+                  <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                   <Route exact path="/mymixtapes" component={MyMixtapesPage} />
                   <Route exact path="/inbox" component={InboxPage} />
                   <Route exact path="/NotFound" component={NotFoundPage}/>
