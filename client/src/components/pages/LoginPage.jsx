@@ -55,8 +55,6 @@ function LoginPage(props) {
 
     const classes = useStyles();
 
-    const history = useHistory();
-
     const { user, setUser } = useContext(UserContext);
 
     const [username, setUsername] = useState('');
@@ -69,6 +67,7 @@ function LoginPage(props) {
         history.push('/');
     }
 
+    const history = useHistory();
     const goBack = () => { history.push('/') }
 
     const handleUsername = (e) => setUsername(e.target.value);
@@ -76,14 +75,15 @@ function LoginPage(props) {
 
     return (
         <div  style={{ color: 'white', left:0 }}>
-      <Typography align="center" variant="h3">
+      
       <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
         <ArrowBackIcon/>
       </IconButton>
       <br/>
-          Log In
+          
       <br/>
       <br/>
+      <Typography align="center" variant="h3">Log In
       </Typography>
       <div className={classes.margin}>
         

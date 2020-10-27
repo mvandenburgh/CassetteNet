@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
-import { Button, Grid, Card, Box, Typography } from '@material-ui/core';
+import { Button, Grid, IconButton, Card, Box, Typography } from '@material-ui/core';
 import indigo from '@material-ui/core/colors/indigo';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import { DataGrid } from '@material-ui/data-grid';
 import logo from '../../images/logo.png';
 import { makeStyles } from "@material-ui/core/styles";
 import UserContext from '../../contexts/UserContext';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { useHistory } from 'react-router-dom';
 
 function DashboardPage(props) {
     const colors = {
@@ -82,8 +84,14 @@ function DashboardPage(props) {
 
     const { user, setUser } = useContext(UserContext);
 
+    const history = useHistory();
+    const goBack = () => { history.push('/') }
+
     return (
         <div style={{margin: '20px', background: 'transparent', height: '100%', width: '100%'}}>
+            <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
+                <ArrowBackIcon/>
+            </IconButton>
             <Box id='popular' className={classes.box_container} borderRadius={16} {...containerBorderProps}> 
                 <Typography variant="headline" component="h1">Popular Mixtapes This Week</Typography>
                 <Box className={classes.title_row} borderRadius={16} {...rowBorderProps}> 

@@ -39,6 +39,7 @@ function App() {
                   <Route exact path="/" component={Directory} />
                   <Route exact path="/start" component={StartPage} /> {/* TODO: should redirect to dashboard when logged in */}
                   <Route exact path="/login" component={LoginPage} />
+                  <Route exact path="/dashboard" component={DashboardPage} />
                   <Route exact path="/atmosphere" component={AtmospherePage} />
                   <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                   <Route exact path="/mymixtapes" component={MyMixtapesPage} />

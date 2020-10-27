@@ -22,6 +22,8 @@ function Directory() {
             <br/>
             <Button onClick={ () => history.push('/login') } variant="outlined" style={{margin: '1em'}}>Login Page</Button>
             <br/>
+            <Button onClick={ () => history.push('/dashboard') } variant="outlined" style={{margin: '1em'}}>Dashboard Page</Button>
+            <br/>
             <Button onClick={ () => history.push('/atmosphere') } variant="outlined" style={{margin: '1em'}}>Atmosphere Page</Button>
             <br/>
             <Button onClick={ () => history.push('/mixtape/:id') } variant="outlined" style={{margin: '1em'}}>View Mixtape Page</Button>
