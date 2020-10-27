@@ -63,7 +63,7 @@ function SignUpPage(props) {
         <div  style={{ color: 'white' }}>
       <Typography align="center" variant="h3">
       <br/>
-          Sign Up Fields
+          Sign Up
       <br/>
       <br/>
       </Typography>
