@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import { AppBar, Badge, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
+import { AppBar, Badge, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar, Button } from '@material-ui/core';
 import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
@@ -115,7 +115,9 @@ function PageFrame(props) {
 
   // TODO: add setUser to destructuring when needed
     // Removed for now to avoid build warnings
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+
+  const logout = () => {setUser({ isLoggedIn: false }); history.push('/');}
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -147,6 +149,7 @@ function PageFrame(props) {
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
+          <Button onClick={() => logout()} style={{margin: '1em', backgroundColor: '#4f7aa1', align: 'right'}} variant="contained">Logout</Button>
         </Toolbar>
       </AppBar>
       <Drawer
