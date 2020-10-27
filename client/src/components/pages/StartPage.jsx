@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Button, Grid, IconButton, Typography } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 function StartPage(props) {
     const colors = {
@@ -17,11 +18,19 @@ function StartPage(props) {
     const { setUser } = useContext(UserContext);
 
     const history = useHistory();
+    const goBack = () => { history.push('/') }
 
     const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
 
     return (
         <div style={{color: 'white', left: 0}}>
+            <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
+                <ArrowBackIcon/>
+            </IconButton>
+            <br/>
+                
+            <br/>
+            <br/>
             <div style={{margin: 'auto', width: '50%'}}>
                 <img style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src={logo} alt='logo' />
                 <Typography align="center" variant="h4">Mix freely.</Typography>
