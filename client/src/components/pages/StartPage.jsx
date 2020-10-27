@@ -3,6 +3,8 @@ import { Button, Grid, Typography } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
+import HidePageFrameContext from '../../contexts/HidePageFrameContext';
+import NavigateContext from '../../contexts/NavigateContext.js';
 
 function StartPage(props) {
     const colors = {
@@ -15,6 +17,7 @@ function StartPage(props) {
     // TODO: add user to destructuring when needed
     // Removed for now to avoid build warnings
     const { setUser } = useContext(UserContext);
+    const { setNavigate } = useContext(NavigateContext);
 
     const history = useHistory();
 

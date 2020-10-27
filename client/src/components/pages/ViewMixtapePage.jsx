@@ -2,6 +2,9 @@ import React from 'react';
 import { Grid, Paper } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import { getMixtape, getUsername } from '../../utils/api';
+import HidePageFrameContext from '../../contexts/HidePageFrameContext';
+import NavigateContext from '../../contexts/NavigateContext.js';
+
 
 function ViewMixtapePage(props) {
     const mixtape = getMixtape(props.match.params.id);

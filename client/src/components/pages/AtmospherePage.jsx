@@ -1,6 +1,8 @@
 import React from 'react';
 import { Card, CardContent, CardMedia, IconButton, Grid, Typography, makeStyles, useTheme } from '@material-ui/core';
 import { SkipNext as SkipNextIcon, SkipPrevious as SkipPreviousIcon, PlayArrow as PlayArrowIcon } from '@material-ui/icons';
+import HidePageFrameContext from '../../contexts/HidePageFrameContext';
+import NavigateContext from '../../contexts/NavigateContext.js';
 
 const useStyles = makeStyles((theme) => ({
   root: {

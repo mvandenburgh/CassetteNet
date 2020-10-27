@@ -6,6 +6,8 @@ import { DataGrid } from '@material-ui/data-grid';
 import logo from '../../images/logo.png';
 import { makeStyles } from "@material-ui/core/styles";
 import UserContext from '../../contexts/UserContext';
+import HidePageFrameContext from '../../contexts/HidePageFrameContext';
+import NavigateContext from '../../contexts/NavigateContext.js';
 
 function DashboardPage(props) {
     const colors = {
