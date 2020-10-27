@@ -78,7 +78,7 @@ function Mixtape(props) {
                     >
                       <Checkbox style={{ display: isEditing ? '' : 'none' }} />
                       <div style={{left: '0', marginRight: '10%' }}>
-                        <img style={{width: '30%', height: '30%'}} src={song.cover} alt='mixtape_cover'></img>
+                        <img style={{width: '70px', height: '70px'}} src={`https://img.youtube.com/vi/${song.id}/1.jpg`} alt='mixtape_cover'></img>
                         {/* TODO: fetch actual song names from API */}
                         <ListItemText>{song.name || `song_${mixtape.songs[index]}`}</ListItemText>
                         
