@@ -2,8 +2,6 @@ import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Avatar, Divider, Grid, List, ListItem, ListItemText, ListItemAvatar, Typography } from '@material-ui/core';
 import UserContext from '../../contexts/UserContext';
-import HidePageFrameContext from '../../contexts/HidePageFrameContext';
-import NavigateContext from '../../contexts/NavigateContext.js';
 import { getInboxMessages } from '../../utils/api';
 
 const useStyles = makeStyles((theme) => ({

@@ -2,8 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Grid } from '@material-ui/core';
 import MixtapeList from '../MixtapeList';
 import UserContext from '../../contexts/UserContext';
-import HidePageFrameContext from '../../contexts/HidePageFrameContext';
-import NavigateContext from '../../contexts/NavigateContext.js';
 import { getMyMixtapes } from '../../utils/api';
 
 function MyMixtapesPage(props) {

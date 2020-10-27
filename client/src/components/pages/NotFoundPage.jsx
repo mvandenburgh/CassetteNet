@@ -1,7 +1,5 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
-import HidePageFrameContext from '../../contexts/HidePageFrameContext';
-import NavigateContext from '../../contexts/NavigateContext.js';
 
 
 function NotFoundPage() {

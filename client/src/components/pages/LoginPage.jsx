@@ -8,8 +8,6 @@ import {
   } from '@material-ui/core/styles';
 import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
-import HidePageFrameContext from '../../contexts/HidePageFrameContext';
-import NavigateContext from '../../contexts/NavigateContext.js';
 import TextField from '@material-ui/core/TextField';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -60,29 +58,26 @@ function LoginPage(props) {
     const history = useHistory();
 
     const { user, setUser } = useContext(UserContext);
-    const { navigate, setNavigate } = useContext(NavigateContext);
-    const { hidePF, setHidePF } = useContext(HidePageFrameContext);
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    
 
-    // const loginAsUser = () => {
-    //     const loggedInUser = getUser(username, password);
-    //     console.log(loggedInUser);
-    //     if (loggedInUser) setUser({isLoggedIn: true, isGuest: false, ...loggedInUser});
-    //     history.push('/');
-    // }
+    const loginAsUser = () => {
+        const loggedInUser = getUser(username, password);
+        console.log(loggedInUser);
+        if (loggedInUser) setUser({isLoggedIn: true, isGuest: false, ...loggedInUser});
+        history.push('/');
+    }
 
-    // const goBack = () => { history.push('/'); }
+    const goBack = () => { history.push('/') }
 
     const handleUsername = (e) => setUsername(e.target.value);
     const handlePassword = (e) => setPassword(e.target.value);
 
     return (
-        <div  style={{ color: 'white' }}>
+        <div  style={{ color: 'white', left:0 }}>
       <Typography align="center" variant="h3">
-      <IconButton color="secondary" aria-label="back">
+      <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
         <ArrowBackIcon/>
       </IconButton>
       <br/>
