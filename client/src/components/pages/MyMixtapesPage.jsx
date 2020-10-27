@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, IconButton } from '@material-ui/core';
 import MixtapeList from '../MixtapeList';
 import UserContext from '../../contexts/UserContext';
 import { getMyMixtapes } from '../../utils/api';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { useHistory } from 'react-router-dom';
 
 function MyMixtapesPage(props) {
     let { user, setUser } = useContext(UserContext);
@@ -11,8 +13,19 @@ function MyMixtapesPage(props) {
     }
     const { _id } = user;
     const mixtapes = getMyMixtapes(_id);
+
+    const history = useHistory();
+    const goBack = () => { history.push('/') }
+
     return (
         <div>
+            <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
+                <ArrowBackIcon/>
+            </IconButton>
+            <br/>
+                
+            <br/>
+            <br/>
             <Grid container justify="center">
                 <h1>My Mixtapes</h1>
             </Grid>

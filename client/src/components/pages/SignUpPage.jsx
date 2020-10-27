@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Button, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Button, Grid, IconButton, makeStyles, Typography } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
@@ -11,6 +11,8 @@ import {
   } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { useHistory } from 'react-router-dom';
 
 function SignUpPage(props) {
     const CssTextField = withStyles({
@@ -57,10 +59,19 @@ function SignUpPage(props) {
 
     const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
 
+    const history = useHistory();
+    const goBack = () => { history.push('/') }
 
     //TODO: Possibly re-align fields
     return (
-        <div  style={{ color: 'white' }}>
+        <div  style={{ color: 'white', left:0}}>
+            <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
+                <ArrowBackIcon/>
+            </IconButton>
+            <br/>
+                
+            <br/>
+            <br/>
       <Typography align="center" variant="h3">
       <br/>
           Sign Up

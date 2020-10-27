@@ -11,6 +11,7 @@ import SignUpPage from './components/pages/SignUpPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 import UserContext from './contexts/UserContext';
 import ViewMixtapePage from './components/pages/ViewMixtapePage';
+import Directory from './components/Directory';
 
 
 function App() {
@@ -35,8 +36,10 @@ function App() {
             <PageFrame invisible={!user.isLoggedIn} />
               <div style={{ position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: 'calc(100vw - 73px)'}}>
                 <Switch>
-                  <Route exact path="/" component={user.isLoggedIn ? DashboardPage : StartPage} /> {/* TODO: should redirect to dashboard when logged in */}
+                  <Route exact path="/" component={Directory} />
+                  <Route exact path="/start" component={StartPage} /> {/* TODO: should redirect to dashboard when logged in */}
                   <Route exact path="/login" component={LoginPage} />
+                  <Route exact path="/dashboard" component={DashboardPage} />
                   <Route exact path="/atmosphere" component={AtmospherePage} />
                   <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                   <Route exact path="/mymixtapes" component={MyMixtapesPage} />

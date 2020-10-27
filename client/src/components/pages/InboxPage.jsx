@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Avatar, Divider, Grid, List, ListItem, ListItemText, ListItemAvatar, Typography } from '@material-ui/core';
+import { Avatar, Divider, Grid, IconButton, List, ListItem, ListItemText, ListItemAvatar, Typography } from '@material-ui/core';
 import UserContext from '../../contexts/UserContext';
 import { getInboxMessages } from '../../utils/api';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,9 +27,18 @@ function InboxPage() {
 
     const messages = getInboxMessages(user._id);
 
+    const history = useHistory();
+    const goBack = () => { history.push('/') }
 
     return (
-        <div style={{color: 'white'}}>
+        <div style={{color: 'white', left:0}}>
+            <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
+                <ArrowBackIcon/>
+            </IconButton>
+            <br/>
+                
+            <br/>
+            <br/>
             <Grid container align="center" justify="center">
                 <h1>Your messages</h1>
             </Grid>
