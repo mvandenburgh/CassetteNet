@@ -166,7 +166,7 @@ function PageFrame(props) {
   const playerRef = useRef(null);
 
   setInterval(() => {
-    if (playerRef.current) 
+    if (playerRef.current && playing) 
       localStorage.setItem('timestamp', playerRef.current.getCurrentTime());
   }, 1000);
 

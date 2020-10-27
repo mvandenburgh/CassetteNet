@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { List, ListItem, ListItemText } from '@material-ui/core';
-import { PlayCircleFilledWhite as PlayIcon } from '@material-ui/icons';
+import { AppBar, Button, Toolbar, Checkbox, List, ListItem, ListItemText } from '@material-ui/core';
+import { PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddCircleIcon } from '@material-ui/icons';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import { getMixtape } from '../utils/api';
@@ -18,6 +18,9 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 function Mixtape(props) {
     const [mixtape, setMixtape] = useState(getMixtape(props.id));
 
+    const isEditing = props.isEditing;
+    const setIsEditing = props.setIsEditing;
+
     const { setCurrentSong } = useContext(CurrentSongContext);
 
     const { playing, setPlaying } = useContext(PlayingSongContext);
@@ -26,7 +29,7 @@ function Mixtape(props) {
       if (!result.destination) {
         return;
       }
-  
+
       // set new list order
       const newSongOrder = [...mixtape.songs];
       const [removed] = newSongOrder.splice(result.source.index, 1);
@@ -49,11 +52,17 @@ function Mixtape(props) {
               ref={provided.innerRef}
               style={{width: '70%'}}
             >
+              <Toolbar style={{backgroundColor: 'purple', display: isEditing ? '' : 'none'}}>
+                  <Button onClick={() => setIsEditing(false)} variant="contained">DONE</Button>
+                  <AddCircleIcon style={{position: 'absolute', right: '10%'}} />
+                  <DeleteIcon style={{position: 'absolute', right: '5%'}} />
+              </Toolbar>
               {mixtape.songs.map((song, index) => (
                 <Draggable
                   key={`item${index}`}
                   draggableId={`item${index}`}
                   index={index}
+                  isDragDisabled={!isEditing}
                 >
                   {(provided, snapshot) => (
                     // TODO: This list item should be a seperate component
@@ -67,13 +76,14 @@ function Mixtape(props) {
                         provided.draggableProps.style
                       )}
                     >
+                      <Checkbox style={{ display: isEditing ? '' : 'none' }} />
                       <div style={{left: '0', marginRight: '10%' }}>
                         <img style={{width: '30%', height: '30%'}} src={song.cover} alt='mixtape_cover'></img>
                         {/* TODO: fetch actual song names from API */}
                         <ListItemText>{song.name || `song_${mixtape.songs[index]}`}</ListItemText>
                         
                       </div>
-                      <PlayIcon onClick={() => playSong(index)} style={{position: 'absolute', right: '10%'}} />
+                      <PlayIcon onClick={() => playSong(index)} style={{display: isEditing ? 'none' : '', position: 'absolute', right: '10%'}} />
                     </ListItem>
                   )}
                 </Draggable>
