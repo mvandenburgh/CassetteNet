@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { List, ListItem, ListItemText } from '@material-ui/core';
+import { PlayCircleFilledWhite as PlayIcon } from '@material-ui/icons';
+import CurrentSongContext from '../contexts/CurrentSongContext';
+import PlayingSongContext from '../contexts/PlayingSongContext';
 import { getMixtape } from '../utils/api';
 
 
@@ -15,6 +18,9 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 function Mixtape(props) {
     const [mixtape, setMixtape] = useState(getMixtape(props.id));
 
+    const { setCurrentSong } = useContext(CurrentSongContext);
+
+    const { playing, setPlaying } = useContext(PlayingSongContext);
 
     const onDragEnd = (result) => {
       if (!result.destination) {
@@ -28,7 +34,12 @@ function Mixtape(props) {
       mixtape.songs = newSongOrder;
       setMixtape(mixtape);
     };
-  
+
+    const playSong = (index) => {
+      setPlaying(true);
+      setCurrentSong({ mixtape: props.id, song: mixtape.songs[index] })
+    };
+
     return (
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId='droppable'>
@@ -60,8 +71,9 @@ function Mixtape(props) {
                         <img style={{width: '30%', height: '30%'}} src={song.cover} alt='mixtape_cover'></img>
                         {/* TODO: fetch actual song names from API */}
                         <ListItemText>{song.name || `song_${mixtape.songs[index]}`}</ListItemText>
+                        
                       </div>
-                      
+                      <PlayIcon onClick={() => playSong(index)} style={{position: 'absolute', right: '10%'}} />
                     </ListItem>
                   )}
                 </Draggable>

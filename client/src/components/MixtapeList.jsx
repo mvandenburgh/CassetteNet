@@ -83,7 +83,7 @@ function MixtapeList(props) {
                       )}
                     >
                       <div style={{left: '0', marginRight: '10%' }}>
-                        <img style={{width: '30%', height: '30%'}} src={mixtape.cover} alt='mixtape_cover'></img>
+                        <img style={{width: '30%', height: '30%'}} src={mixtape.coverImage} alt='mixtape_cover'></img>
                         <ListItemText>{mixtape.name}</ListItemText>
                       </div>
                       <ListItemText style={{ left:'20%', marginRight: '10%' }}>

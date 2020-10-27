@@ -1,12 +1,15 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import { AppBar, Badge, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar, Button } from '@material-ui/core';
-import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
+import { AppBar, Badge, Button, Typography, InputBase, Divider, Drawer, Grid, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
+import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
 import Autosuggest from 'react-autosuggest';
 import { useHistory } from 'react-router-dom';
+import ReactPlayer from 'react-player';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import UserContext from '../contexts/UserContext';
+import CurrentSongContext from '../contexts/CurrentSongContext';
+import PlayingSongContext from '../contexts/PlayingSongContext';
 
 
 const drawerWidth = 240;
@@ -56,6 +59,12 @@ const useStyles = makeStyles((theme) => ({
     left: theme.spacing(7),
     width: `calc(100% - ${theme.spacing(7)}px)`,
     marginBotton: '100px'
+  },
+  player: {
+    left: theme.spacing(7),
+    width: `calc(100% - ${theme.spacing(7)}px)`,
+    bottom: '0',
+    position: 'relative',
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -154,11 +163,27 @@ function PageFrame(props) {
   const [open, setOpen] = useState(false);
   const history = useHistory();
 
+  const playerRef = useRef(null);
+
+  setInterval(() => {
+    if (playerRef.current) 
+      localStorage.setItem('timestamp', playerRef.current.getCurrentTime());
+  }, 1000);
+
   // TODO: add setUser to destructuring when needed
     // Removed for now to avoid build warnings
   const { user, setUser } = useContext(UserContext);
 
   const logout = () => {setUser({ isLoggedIn: false }); history.push('/');}
+
+  const { currentSong } = useContext(CurrentSongContext);
+
+  const { playing, setPlaying } = useContext(PlayingSongContext);
+
+  const handlePlayPause = () => {
+    setPlaying(!playing);
+    playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -306,6 +331,17 @@ function onSuggestionsClearRequested() {
                 </List>
             <Divider />
         </Drawer>
+        <AppBar style={{ display: currentSong ? '' : 'none', top: 'auto', bottom: 0,}}>
+          <Toolbar>
+            <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong ? currentSong.song : ''}`} />
+            <Grid className={classes.player} container justify="center">
+              <div onClick={handlePlayPause}>
+                {playing ? <PauseIcon /> : <PlayIcon />}
+              </div>
+            </Grid>
+          </Toolbar>
+        </AppBar>
+        
     </div>
   );
 }
