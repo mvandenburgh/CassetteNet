@@ -29,9 +29,7 @@ function ViewMixtapePage(props) {
                 <h4>{`Created by ${getUsername(owner)} ${mixtape.songs.length} songs, XX mins`}</h4>
             </Paper>
             <Grid container justify="center">
-                <Grid style={{backgroundColor: '#236067', overflow: 'auto', width: '90%', maxHeight: '50vh',}} container justify="center">
                     <Mixtape isEditing={isEditing} setIsEditing={setIsEditing} id={props.match.params.id} />
-                </Grid>
                 {/* <ReactPlayer style={{display: 'none'}} playing={playing} url={'https://www.youtube.com/watch?v=GT4IC9fgxiw'} /> */}
             </Grid>
             <div onClick={() => setIsEditing(!isEditing)} style={{position: 'fixed', right: '10%', top: '15%'}}>
