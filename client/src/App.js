@@ -15,7 +15,7 @@ import CurrentSongContext from './contexts/CurrentSongContext';
 import PlayingSongContext from './contexts/PlayingSongContext';
 import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
-
+import ChangePasswordPage from './components/pages/ChangePasswordPage';
 
 function App() {
   // check if user is logged in
@@ -64,6 +64,7 @@ function App() {
                       <Route exact path="/inbox" component={InboxPage} />
                       <Route exact path="/NotFound" component={NotFoundPage}/>
                       <Route exact path="/SignUp" component={SignUpPage}/>
+                      <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
                       <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
                     </Switch>
                   </div>
