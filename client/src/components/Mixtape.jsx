@@ -40,7 +40,7 @@ function Mixtape(props) {
 
     const playSong = (index) => {
       setPlaying(true);
-      setCurrentSong({ mixtape: props.id, song: mixtape.songs[index] })
+      setCurrentSong({ mixtape: props.id, song: mixtape.songs[index].id })
     };
 
     return (

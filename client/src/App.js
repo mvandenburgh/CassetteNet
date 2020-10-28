@@ -14,6 +14,7 @@ import UserContext from './contexts/UserContext';
 import CurrentSongContext from './contexts/CurrentSongContext';
 import PlayingSongContext from './contexts/PlayingSongContext';
 import Directory from './components/Directory';
+import ListeningRoomPage from './components/pages/ListeningRoomPage';
 
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
                       <Route exact path="/inbox" component={InboxPage} />
                       <Route exact path="/NotFound" component={NotFoundPage}/>
                       <Route exact path="/SignUp" component={SignUpPage}/>
+                      <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
                     </Switch>
                   </div>
             </BrowserRouter>
