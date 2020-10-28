@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { AppBar, Box, Grid, Tabs, Tab, Typography } from '@material-ui/core';
+import { AppBar, Box, Grid, Paper, Tabs, Tab, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Mixtape from '../Mixtape';
-
-
-// const mixtape = JSON.parse('"{"_id":"5f86204f496f3470bbf40a83","name":"Evening Acoustic","public":false,"collaborators":[{"user":"5f862052790b506769c6a0dc","permissions":"owner"}],"songs":[{"id":"GT4IC9fgxiw","name":"The Staves - Make It Holy [Official Video]"},{"id":"GhDnyPsQsB0","name":"Bon Iver - re: Stacks"},{"id":"qUG7iUnbtdA","name":"Puzzle Muteson - By Night"},{"id":"-BufEpzy1Vc","name":"Marissa Nadler~Baby, I Will Leave You In The Morning"}],"coverImage":"https://i.scdn.co/image/ab67706f00000003bdd580456b856d8e1176ffb1"}"');
+import CurrentSongContext from '../../contexts/CurrentSongContext';
 
 
 function TabPanel(props) {
@@ -42,6 +40,8 @@ function a11yProps(index) {
 }));
 
 class ListeningRoomPage extends Component {
+    static contextType = CurrentSongContext;
+
     state = {
         currentTab: 0
     };
@@ -50,12 +50,14 @@ class ListeningRoomPage extends Component {
         this.setState({currentTab: newValue});
     };
 
-    render() {
-        
+    componentDidMount() {
+        const { currentSong, setCurrentSong } = this.context;
+        setCurrentSong(null);
+    }
 
+    render() {
         return (
-            <div>
-                <Grid style={{padding: '5%'}} container justify="center">
+                <Grid container justify="center">
                     <Grid item style={{width: '80%'}}>
                         <AppBar position="static">
                             <Tabs value={this.state.currentTab} onChange={this.handleChange.bind(this)} centered={true} variant="fullWidth">
@@ -66,15 +68,39 @@ class ListeningRoomPage extends Component {
                     </Grid>
                     <Grid item style={{width: '80%', backgroundColor: 'cyan'}}>
                         <TabPanel value={this.state.currentTab} index={0}>
-                            {/* <Mixtape mixtape={'5f86204f496f3470bbf40a83'} /> */}
-                            <h1>Test</h1>
+                            <Grid>
+                                <Grid item xs={10}>
+                                    <Paper>
+                                        <Typography>
+                                            <h1>{"<Listening Room Name>"}</h1>
+                                            <h3>{"Listening to <mixtape_name>"}</h3>
+                                        </Typography>
+                                    </Paper>
+                                </Grid>
+                            </Grid>
+                            <Grid style={{height: '50%'}} container>
+                                <Grid container xs={9}>
+                                    <Mixtape id={'5f86204f496f3470bbf40a83'} />
+                                </Grid>
+                                <Grid container xs={3} style={{backgroundColor: ''}}>
+                                    <Grid item xs={12} style={{backgroundColor: 'white', height: '50%'}} >
+                                        <Paper style={{backgroundColor: "#ACDCFF"}}>
+                                            <Typography alignItems="center" variant="h4">Listeners</Typography>
+                                        </Paper>
+                                    </Grid>
+                                    <Grid item xs={12} style={{backgroundColor: 'white', height: '50%'}} >
+                                        <Paper style={{backgroundColor: "#ACDCFF"}}>
+                                            <Typography alignItems="center" variant="h4">Chat</Typography>
+                                        </Paper>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
                         </TabPanel>
                         <TabPanel value={this.state.currentTab} index={1}>
 
                         </TabPanel>
                     </Grid>
                 </Grid>
-            </div>
         )
     }
 }

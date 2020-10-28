@@ -50,7 +50,7 @@ function Mixtape(props) {
             <List
               {...provided.droppableProps}
               ref={provided.innerRef}
-              style={{width: '70%'}}
+              style={{width: '90%'}}
             >
               <Toolbar style={{backgroundColor: 'purple', display: isEditing ? '' : 'none'}}>
                   <Button onClick={() => setIsEditing(false)} variant="contained">DONE</Button>
@@ -67,7 +67,6 @@ function Mixtape(props) {
                   {(provided, snapshot) => (
                     // TODO: This list item should be a seperate component
                     <ListItem
-                      
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}

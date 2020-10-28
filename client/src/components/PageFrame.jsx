@@ -257,7 +257,7 @@ const [value, setValue] = useState('');
                 </List>
             <Divider />
         </Drawer>
-        <AppBar style={{ display: currentSong ? '' : 'none', top: 'auto', bottom: 0,}}>
+        <AppBar style={{ height: '10%', display: currentSong ? '' : 'none', top: 'auto', bottom: 0,}}>
           <Toolbar>
             <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong ? currentSong.song : ''}`} />
             <Grid className={classes.player} container justify="center">
