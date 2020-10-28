@@ -37,7 +37,10 @@ function Directory() {
             <Button onClick={ () => history.push('/NotFound') } variant="outlined" style={{margin: '1em'}}>Not Found Page</Button>
             <br/>
             <Button onClick={ () => history.push('/viewuser') } variant="outlined" style={{margin: '1em'}}>View User Page</Button>
-
+            <br/>
+            <Button onClick={ () => history.push('/SignUp') } variant="outlined" style={{margin: '1em'}}>Sign Up Page</Button>
+            <br/>
+            <Button onClick={ () => history.push('/listeningroom') } variant="outlined" style={{margin: '1em'}}>Listening Room Page</Button>
 
             
         </div>
