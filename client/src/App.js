@@ -10,6 +10,7 @@ import InboxPage from './components/pages/InboxPage';
 import SignUpPage from './components/pages/SignUpPage';
 import NotFoundPage from './components/pages/NotFoundPage';
 import ViewMixtapePage from './components/pages/ViewMixtapePage';
+import ViewUserPage from './components/pages/ViewUserPage';
 import UserContext from './contexts/UserContext';
 import CurrentSongContext from './contexts/CurrentSongContext';
 import PlayingSongContext from './contexts/PlayingSongContext';
@@ -60,6 +61,7 @@ function App() {
                       <Route exact path="/atmosphere" component={AtmospherePage} />
                       <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                       <Route exact path="/mymixtapes" component={MyMixtapesPage} />
+                      <Route exact path="/viewuser" component={ViewUserPage} />
                       <Route exact path="/inbox" component={InboxPage} />
                       <Route exact path="/NotFound" component={NotFoundPage}/>
                       <Route exact path="/SignUp" component={SignUpPage}/>
