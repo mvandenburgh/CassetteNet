@@ -53,16 +53,16 @@ function App() {
                 <PageFrame invisible={!user.isLoggedIn} />
                   <div style={{ position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: 'calc(100vw - 73px)'}}>
                     <Switch>
-                      <Route exact path="/" component={user.isLoggedIn ? DashboardPage : StartPage} /> {/* TODO: should redirect to dashboard when logged in */}
+                      <Route exact path="/" component={Directory} />
+                      <Route exact path="/start" component={StartPage} /> {/* TODO: should redirect to dashboard when logged in */}
                       <Route exact path="/login" component={LoginPage} />
+                      <Route exact path="/dashboard" component={DashboardPage} />
                       <Route exact path="/atmosphere" component={AtmospherePage} />
                       <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                       <Route exact path="/mymixtapes" component={MyMixtapesPage} />
                       <Route exact path="/inbox" component={InboxPage} />
                       <Route exact path="/NotFound" component={NotFoundPage}/>
                       <Route exact path="/SignUp" component={SignUpPage}/>
-                      <Route exact path="/dashboard" component={DashboardPage} />
-                      <Route exact path="/atmosphere" component={AtmospherePage} />
                     </Switch>
                   </div>
             </BrowserRouter>

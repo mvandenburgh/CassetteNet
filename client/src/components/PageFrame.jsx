@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { AppBar, Badge, Button, Typography, InputBase, Divider, Drawer, Grid, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
 import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
-import Autosuggest from 'react-autosuggest';
 import { useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
@@ -118,45 +117,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-  ////////////////////////////////////////////
-
-// Imagine you have a list of languages that you'd like to autosuggest.
-const languages = [
-  {
-    name: 'C',
-    year: 1972
-  },
-  {
-    name: 'Elm',
-    year: 2012
-  },
-];
- 
-// Teach Autosuggest how to calculate suggestions for any given input value.
-const getSuggestions = value => {
-  value = String(value.value);
-  const inputValue = value.trim().toLowerCase();
-  const inputLength = inputValue.length;
- 
-  return inputLength === 0 ? [] : languages.filter(lang =>
-    lang.name.toLowerCase().slice(0, inputLength) === inputValue
-  );
-};
-
-// When suggestion is clicked, Autosuggest needs to populate the input
-// based on the clicked suggestion. Teach Autosuggest how to calculate the
-// input value for every given suggestion.
-const getSuggestionValue = suggestion => suggestion.name;
- 
-// Use your imagination to render suggestions.
-const renderSuggestion = suggestion => (
-  <div>
-    {suggestion.name}
-  </div>
-);
-  //////////////////////////////////////////////
-
-
 
 function PageFrame(props) {
   const classes = useStyles();
@@ -195,32 +155,6 @@ function PageFrame(props) {
 
   ////////////////////////////////////////////////
 const [value, setValue] = useState('');
-const [suggestions, setSuggestions] = useState([]);
-
-function onChange(newValue) {
-  newValue = newValue.nativeEvent.data
-  setValue(newValue);
-}
-
-const inputProps = {
-  placeholder: 'Type a programming language',
-  value,
-  onChange: onChange
-};
-
-// Autosuggest will call this function every time you need to update suggestions.
-// You already implemented this logic above, so just use it.
-function onSuggestionsFetchRequested(value) {
-  console.log("onSuggestoinsFetchRequested value: ", value.value);
-  setSuggestions(getSuggestions(value.value));
-}
-
-// Autosuggest will call this function every time you need to clear suggestions.
-function onSuggestionsClearRequested() {
-  console.log("onSuggestionsClearRequested");
-  setSuggestions([]);
-}
-//////////////////////////////////////////////
 
   if (props.invisible) {
     return (<div />);
@@ -245,14 +179,6 @@ function onSuggestionsClearRequested() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
-          <Autosuggest
-        suggestions={suggestions}
-        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-        onSuggestionsClearRequested={onSuggestionsClearRequested}
-        getSuggestionValue={getSuggestionValue}
-        renderSuggestion={renderSuggestion}
-        inputProps={inputProps}
-      />
           <Button onClick={() => logout()} style={{margin: '1em', backgroundColor: '#4f7aa1', align: 'right'}} variant="contained">Logout</Button>
         </Toolbar>
       </AppBar>
