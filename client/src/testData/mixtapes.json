@@ -11,10 +11,22 @@
                 }
             ],
             "songs": [
-                "GT4IC9fgxiw",
-                "GhDnyPsQsB0",
-                "qUG7iUnbtdA",
-                "-BufEpzy1Vc"
+                { 
+                    "id": "GT4IC9fgxiw",
+                    "name": "The Staves - Make It Holy [Official Video]"
+                },
+                { 
+                    "id": "GhDnyPsQsB0",
+                    "name": "Bon Iver - re: Stacks"
+                },
+                { 
+                    "id": "qUG7iUnbtdA",
+                    "name": "Puzzle Muteson - By Night"
+                },
+                { 
+                    "id": "-BufEpzy1Vc",
+                    "name": "Marissa Nadler~Baby, I Will Leave You In The Morning"
+                }
             ],
             "coverImage": "https://i.scdn.co/image/ab67706f00000003bdd580456b856d8e1176ffb1"
         },
