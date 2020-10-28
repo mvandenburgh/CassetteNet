@@ -125,6 +125,9 @@ const suggestionsSongs = [
   {title: 'Watermelon Sugar', artist: 'Harry Styles' },
   {title: 'Circles', artist: 'Post Malone'},
   {title: 'Better Now', artist: 'Post Malone'},
+  {title: 'Stand by Me', artist: 'Ben. E King'},
+  {title: 'Sucker', artist: 'Jonas Brothers'},
+  {title: 'Slow Dancing in the Dark', artist:'Joji'},
 ];
 
 
