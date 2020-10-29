@@ -5,6 +5,7 @@ import StartPage from './components/pages/StartPage';
 import DashboardPage from './components/pages/DashboardPage';
 import LoginPage from './components/pages/LoginPage';
 import MyMixtapesPage from './components/pages/MyMixtapesPage';
+import FavoritedMixtapesPage from './components/pages/FavoritedMixtapesPage';
 import AtmospherePage from './components/pages/AtmospherePage';
 import InboxPage from './components/pages/InboxPage';
 import SignUpPage from './components/pages/SignUpPage';
@@ -17,8 +18,12 @@ import PlayingSongContext from './contexts/PlayingSongContext';
 import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
+<<<<<<< HEAD
 import FollowedUsersPage from './components/pages/FollowedUsersPage';
 
+=======
+import AdminPage from './components/pages/AdminPage';
+>>>>>>> cada09cc22c51d80fbd2419104ec64d17b37d7a8
 function App() {
   // check if user is logged in
   let userDefault = JSON.parse(localStorage.getItem('user'));
@@ -63,12 +68,14 @@ function App() {
                       <Route exact path="/atmosphere" component={AtmospherePage} />
                       <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                       <Route exact path="/mymixtapes" component={MyMixtapesPage} />
+                      <Route exact path="/favoritedmixtapes" component={FavoritedMixtapesPage} />
                       <Route exact path="/viewuser" component={ViewUserPage} />
                       <Route exact path="/followedusers" component={FollowedUsersPage}/>
                       <Route exact path="/inbox" component={InboxPage} />
                       <Route exact path="/NotFound" component={NotFoundPage}/>
                       <Route exact path="/SignUp" component={SignUpPage}/>
                       <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
+                      <Route exact path="/Admin" component={AdminPage}/>
                       <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
                     </Switch>
                   </div>
