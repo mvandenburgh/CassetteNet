@@ -17,6 +17,7 @@ import PlayingSongContext from './contexts/PlayingSongContext';
 import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
+import FollowedUsersPage from './components/pages/FollowedUsersPage';
 
 function App() {
   // check if user is logged in
@@ -63,6 +64,7 @@ function App() {
                       <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                       <Route exact path="/mymixtapes" component={MyMixtapesPage} />
                       <Route exact path="/viewuser" component={ViewUserPage} />
+                      <Route exact path="/followedusers" component={FollowedUsersPage}/>
                       <Route exact path="/inbox" component={InboxPage} />
                       <Route exact path="/NotFound" component={NotFoundPage}/>
                       <Route exact path="/SignUp" component={SignUpPage}/>
