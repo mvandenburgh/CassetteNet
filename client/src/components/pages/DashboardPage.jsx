@@ -10,140 +10,147 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
 
 function DashboardPage(props) {
+    var popularMixtapes = [
+        {
+            name: 'Calm Vibes',
+            collaborators: 'biglion179',
+            favorites: 15
+        },
+        {
+            name: 'Acoustic Soul',
+            collaborators: 'lazykoala317, tinygoose218',
+            favorites: 48,
+        },       
+        ];
+
+    var userActivities = [
+        "DrizzyD favorited a mixtape: summertime",
+        "bob created a new mixtape: bob's hits"
+    ];
+
     const colors = {
-        buttonContainer: '#0A1941',
-        mixtapeRows: '#1c108f'
+        namePfpContainer: blueGrey[900],
+        tabsContainer: blueGrey[900],
+        mixtapeRowColor: blueGrey[800]
     }
 
-    const containerBorderProps = {
-        bgcolor: 'background.paper',
-        borderColor: blueGrey[800],
-        m: 1,
-        border: 1,
-        boxShadow: 6,
-      };
+    const MixtapeRows = ({mixtapes}) => (
+        <>
+          {mixtapes.map(mixtape => (
+            <Box style={{
+                margin: "5px",
+                padding: "10px",
+                backgroundColor: blueGrey[700],
+                display: "flex", 
+                flexDirection: "row",
+                borderRadius: 6,
+                fontSize: 12,
+            }}>
+                <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.name} </Box>
+                <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.collaborators} </Box>
+                <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.favorites} </Box>
+    
+            </Box>
+          ))}
+        </>
+        ); 
 
-      const rowBorderProps = {
-        bgcolor: 'background.paper',
-        borderColor: '#1c108f',
-        m: 1,
-        border: 1,
-        boxShadow: 6,
-      };
-
-    const useStyles = makeStyles((theme) => ({
-        box_container: {
-            padding: theme.spacing(2),
-            marginLeft: '100px',
-            marginRight: '100px',
-            marginTop: '50px',
-            marginBottom: '50px',
-            textAlign: 'center',
-            color:  theme.palette.info.contrastText,
-            background: blueGrey[800],
-            maxHeight: 300, 
-            overflow: 'auto'
-        },
-        box_row: {
-            padding: theme.spacing(2),
-            margin: '10px',
-            textAlign: 'center',
-            //display: 'inline',
-            color:  'white',//theme.palette.text.secondary,
-            background: colors.mixtapeRows,
-        },
-        title_row: {
-            padding: theme.spacing(2),
-            margin: '10px',
-            color:  'white',//theme.palette.text.secondary,
-            background: colors.mixtapeRows,
-            height: '50%',
-            
-        },
-        name_col: {
-            margin: '10px',
-            textAlign: 'left',
-            color:  'white',//theme.palette.text.secondary,
-            background: colors.mixtapeRows,
-        },
-        collaborators_col: {
-            margin: '10px',
-            textAlign: 'center',
-            color:  'white',//theme.palette.text.secondary,
-            background: colors.mixtapeRows,
-        },
-        favorites_col: {
-            margin: '10px',
-            textAlign: 'right',
-            color:  'white',//theme.palette.text.secondary,
-            background: colors.mixtapeRows,
-        },
-    }));
-
-    const classes = useStyles();
-
-    const { user, setUser } = useContext(UserContext);
+    const ActivityRows = ({activities}) => (
+      <>
+      {activities.map(activity => (
+        <Box style={{
+            margin: "5px",
+            padding: "10px",
+            backgroundColor: blueGrey[700],
+            display: "flex", 
+            flexDirection: "row",
+            borderRadius: 6,
+            fontSize: 12,
+        }}>
+            <Box style={{ display: 'flex', justifyContent: "center"}}> {activity} </Box>
+        </Box>
+      ))}
+    </>
+    ); 
 
     const history = useHistory();
     const goBack = () => { history.push('/') }
 
+    const [value, setValue] = React.useState(0);
+  
+    const handleChange = (event, newValue) => {
+      setValue(newValue);
+    };
+
     return (
-        <div style={{margin: '20px', background: 'transparent', height: '100%', width: '100%'}}>
+        <div  style={{ color: 'white', left:0 }}>
             <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
                 <ArrowBackIcon/>
             </IconButton>
-            <Box id='popular' className={classes.box_container} borderRadius={16} {...containerBorderProps}> 
-                <Typography variant="headline" component="h1">Popular Mixtapes This Week</Typography>
-                <Box className={classes.title_row} borderRadius={16} {...rowBorderProps}> 
-                    <Typography variant="headline" component="h2"  align="left">
+            <br/>
+            <Box style={{ 
+                    backgroundColor: blueGrey[900],
+                    //marginRight: '50px',
+                    margin: 'auto',
+                    padding: '10px',
+                    textAlign: "center",
+                    borderRadius: 6,
+                    boxShadow: 6,
+                    width: '80%'
+                }}> 
+                <Typography variant="h3"> Popular Mixtapes This Week</Typography>
+                <br/>
+                <Box style={{backgroundColor: blueGrey[900], width: "99%", display: "flex", flexDirection: "row"}} >
+                    <Box style={{ backgroundColor: blueGrey[800],
+                                width: "33%",
+                                textAlign: "center",
+                                boxShadow: "3",
+                                borderRadius: 6
+                                }}>
                         Name
-                    </Typography>
-                    <Typography variant="headline" component="h2"  align="center">
+                    </Box>
+                    <Box style={{ backgroundColor: blueGrey[800],
+                                width: "33%",
+                                textAlign: "center",
+                                boxShadow: 3,
+                                borderRadius: 6
+                                }}>
                         Collaborators
-                    </Typography>
-                    <Typography variant="headline" component="h2" align="right">
+                    </Box>
+                    <Box style={{ backgroundColor: blueGrey[800],
+                                width: "34%",
+                                textAlign: "center",
+                                boxShadow: "3",
+                                borderRadius: 6
+                                }}>
                         Favorites
-                    </Typography>
+                    </Box>
                 </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    <Box className={classes.name_col}>summertime</Box>
-                    <Box className={classes.collaborators_col}>DrizzyD</Box>
-                    <Box className={classes.favorites_col}>109K</Box>
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    blocc 2
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    blocc A
-                </Box>
-                <Box className={classes.box_row}> 
-                    blocc B
-                </Box>
-                <Box className={classes.box_row}> 
-                    blocc C
+                <Box style={{
+                        marginTop: "5px",
+                        backgroundColor: colors.tabsContainer
+                        }}> 
+                    <MixtapeRows mixtapes={popularMixtapes} />
                 </Box>
             </Box>
-            <Box id='follower_activity' className={classes.box_container} borderRadius={16} {...containerBorderProps}> 
-                <Typography variant="headline" component="h1">
-                    Followed User Activity
-                </Typography>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    DrizzyD favorited a mixtape: summertime
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    bob created a new mixtape: bob's hits
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    blocc 6
-                </Box>
-                <Box className={classes.box_row}> 
-                    blocc D
-                </Box>
-                <Box className={classes.box_row}> 
-                    blocc E
-                </Box>
-                <Box className={classes.box_row}> 
-                    blocc F
+
+            <br/>
+            <Box style={{ 
+                    backgroundColor: blueGrey[900],
+                    margin: 'auto',
+                    padding: '10px',
+                    textAlign: "center",
+                    borderRadius: 6,
+                    boxShadow: 6,
+                    width: '80%'
+                    }}> 
+                <Typography variant="h3">Followed User Activity</Typography>
+                <br/>
+                <Box style={{
+                        marginTop: "5px",
+                        backgroundColor: colors.tabsContainer,
+                        }}> 
+                    <ActivityRows activities={userActivities} />
                 </Box>
             </Box>
         </div>
