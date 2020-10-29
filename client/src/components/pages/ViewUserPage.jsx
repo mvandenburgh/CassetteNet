@@ -50,19 +50,55 @@ function TabPanel(props) {
     },
   }));
 
+  var favorites = [
+    {
+        name: 'Evening Acoustic',
+        collaborators: 'purplefish313, brownmeercat530',
+        favorites: 106
+    },
+    {
+        name: 'Rock Classics',
+        collaborators: 'silverbutterfly863, brownmeercat530',
+        favorites: 93,
+    },       
+    ];
+
+    var theirMixtapes = [
+        {
+            name: 'Calm Vibes',
+            collaborators: 'biglion179',
+            favorites: 15
+        },
+        {
+            name: 'Acoustic Soul',
+            collaborators: 'lazykoala317, tinygoose218',
+            favorites: 48,
+        },       
+        ];
+
     const MixtapeRows = ({mixtapes}) => (
     <>
       {mixtapes.map(mixtape => (
         <Box style={{
             margin: "5px",
             padding: "10px",
-            backgroundColor: blueGrey[700]
-        }} className="mixtape" key={mixtape}>{mixtape}</Box>
+            backgroundColor: blueGrey[700],
+            display: "flex", 
+            flexDirection: "row",
+            borderRadius: 6,
+            fontSize: 12,
+        }}>
+            <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.name} </Box>
+            <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.collaborators} </Box>
+            <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.favorites} </Box>
+
+        </Box>
       ))}
     </>
     ); 
 
-  var favorites = users[1].favoritedMixtapes;
+  //var favorites = users[1].favoritedMixtapes;
+
   
 
 function ViewUserPage(props) {
@@ -106,9 +142,13 @@ function ViewUserPage(props) {
                 <Box style={{display: 'inline-flex', 
                             flexDirection: 'row', 
                             backgroundColor: colors.namePfpContainer, 
-                            marginRight: '10px',  
-                            width: '90%', 
-                            height: '10%'}} boxShadow={3} borderRadius={12}>
+                            marginRight: '10px',
+                            marginBottom: '30px',
+                            paddingLeft: '20px',
+                            paddingTop: '20px',  
+                            paddingBottom: '20px',
+                            width: '85%', 
+                            height: '30%'}} boxShadow={3} borderRadius={12}>
                     <ReactRoundedImage image={pfp} roundedSize="1" imageWidth="300" imageHeight="300" />
                     <div style={{display: 'inline-flex', flexDirection: 'column', paddingLeft: '30px', }}>
                         <span style={{display: 'inline-flex', flexDirection: 'row', paddingTop: '30px', paddingBottom: '30px', height: '25%',}}>
@@ -118,10 +158,10 @@ function ViewUserPage(props) {
                         <Typography style={{ fontSize: '20px'}} variant="h3">User since: 9/22/20</Typography>
                         <Typography style={{ fontSize: '20px'}} variant="h3">Last seen: 10/29/20</Typography>
                         <Typography style={{ fontSize: '20px'}} variant="h3">Followers: 203</Typography>
-                        <Button variant="outlined" style={{paddingLeft: '10px', marginTop: '10px', width: '20px', color: 'white'}}>Follow</Button>
+                        <Button variant="outlined" style={{padding: '10px', marginTop: '10px', height: '40px', width: '20px', backgroundColor: blueGrey[600], color: 'white'}}>Follow</Button>
                     </div>
                 </Box>
-                <Box style={{width: '90%', backgroundColor: colors.tabsContainer}} boxShadow={3} borderRadius={12}>
+                <Box style={{width: '86%', backgroundColor: colors.tabsContainer}} boxShadow={3} borderRadius={12}>
                     <AppBar position="static">
                         <Tabs style={{backgroundColor: blueGrey[900]}} variant="fullWidth" value={value} onChange={handleChange} aria-label="simple tabs example">
                             <Tab label="Created Mixtapes" />
@@ -159,11 +199,42 @@ function ViewUserPage(props) {
                                 marginTop: "5px",
                                 backgroundColor: colors.tabsContainer
                                 }}> 
-                            <MixtapeRows mixtapes={favorites} />
+                            <MixtapeRows mixtapes={theirMixtapes} />
                         </Box>
                     </TabPanel>
                     <TabPanel value={value} index={1}>
-                        Item Two
+                    <Box style={{backgroundColor: blueGrey[900], width: "99%", display: "flex", flexDirection: "row"}} >
+                            <Box style={{ backgroundColor: blueGrey[800],
+                                          width: "33%",
+                                          textAlign: "center",
+                                          boxShadow: "3",
+                                          borderRadius: 6
+                                        }}>
+                                Name
+                            </Box>
+                            <Box style={{ backgroundColor: blueGrey[800],
+                                          width: "33%",
+                                          textAlign: "center",
+                                          boxShadow: 3,
+                                          borderRadius: 6
+                                        }}>
+                                Collaborators
+                            </Box>
+                            <Box style={{ backgroundColor: blueGrey[800],
+                                          width: "34%",
+                                          textAlign: "center",
+                                          boxShadow: "3",
+                                          borderRadius: 6
+                                        }}>
+                                Favorites
+                            </Box>
+                        </Box>
+                        <Box style={{
+                                marginTop: "5px",
+                                backgroundColor: colors.tabsContainer
+                                }}> 
+                            <MixtapeRows mixtapes={favorites} />
+                        </Box>
                     </TabPanel>
                 </Box>
             </div>
