@@ -10,6 +10,8 @@ import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import UserContext from '../contexts/UserContext';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
+import H5AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 
 
 const drawerWidth = 240;
@@ -279,15 +281,16 @@ function PageFrame(props) {
                 </List>
             <Divider />
         </Drawer>
-        <AppBar style={{ height: '10%', display: currentSong ? '' : 'none', top: 'auto', bottom: 0,}}>
-          <Toolbar>
-            <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong ? currentSong.song : ''}`} />
-            <Grid className={classes.player} container justify="center">
-              <div onClick={handlePlayPause}>
+        <AppBar style={{ backgroundColor: '#fff', display: currentSong ? '' : 'none', top: 'auto', bottom: 0,}}>
+          {/* <Toolbar> */}
+            {/* <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong ? currentSong.song : ''}`} /> */}
+            <Grid className={classes.player} container justify="center" >
+              {/* <div onClick={handlePlayPause}>
                 {playing ? <PauseIcon /> : <PlayIcon />}
-              </div>
+              </div> */}
+              <H5AudioPlayer style={{width: '95%'}} />
             </Grid>
-          </Toolbar>
+          {/* </Toolbar> */}
         </AppBar>
         
     </div>
