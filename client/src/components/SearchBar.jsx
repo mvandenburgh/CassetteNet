@@ -123,10 +123,11 @@ function DropDown(props) {
 
 function SearchBar(props) {
     const classes = useStyles();
+    const { showDropdown } = props;
     return (
         <div className={classes.search}>
             <Grid container style={{border: '2px solid black'}}>
-                <DropDown />
+                {showDropdown ? <DropDown /> : undefined}
                 <Autocomplete 
                 size="small"
                 freeSolo 

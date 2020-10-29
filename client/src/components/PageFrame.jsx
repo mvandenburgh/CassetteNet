@@ -130,7 +130,7 @@ function PageFrame(props) {
           <Typography className={classes.title} variant="h6" noWrap>
             {user.username} {/* TODO: get from dummy data */ }
           </Typography>
-          <SearchBar />
+          <SearchBar showDropdown />
           <Button onClick={() => logout()} style={{margin: '1em', backgroundColor: '#4f7aa1', align: 'right'}} variant="contained">Logout</Button>
         </Toolbar>
       </AppBar>
