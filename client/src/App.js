@@ -20,8 +20,9 @@ import ListeningRoomPage from './components/pages/ListeningRoomPage';
 import ViewAccountPage from './components/pages/ViewAccountPage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
 import FollowedUsersPage from './components/pages/FollowedUsersPage';
-
+import AnonymousMixtapesPage from './components/pages/AnonymousMixtapesPage';
 import ViewAdminPage from './components/pages/ViewAdminPage';
+
 import AdminPage from './components/pages/AdminPage';
 function App() {
   // check if user is logged in
@@ -70,6 +71,7 @@ function App() {
                       <Route exact path="/favoritedmixtapes" component={FavoritedMixtapesPage} />
                       <Route exact path="/viewuser" component={ViewUserPage} />
                       <Route exact path="/followedusers" component={FollowedUsersPage}/>
+                      <Route exact path="/anonymousmixtapes" component={AnonymousMixtapesPage}/>
                       <Route exact path="/inbox" component={InboxPage} />
                       <Route exact path="/NotFound" component={NotFoundPage}/>
                       <Route exact path="/SignUp" component={SignUpPage}/>
