@@ -3,6 +3,7 @@
         {
             "_id": "5f86204f496f3470bbf40a83",
             "name": "Evening Acoustic",
+            "favorites": "9,000,240",
             "public": false,
             "collaborators": [
                 {
@@ -116,7 +117,7 @@
                     "permissions": "owner"
                 },
                 {
-                    "user": "5f862052790b506769c6a0dc",
+                    "user": "5f862052790b506769c6a0dc1",
                     "permissions": "viewer"
                 },
                 {
@@ -193,7 +194,9 @@
         {
             "_id": "5f8620506ae1ab2b5aaeca07",
             "name": "Calm Vibes",
+            "favorites": "250,204,198",
             "public": true,
+            "coverImage": "https://cdn.playlists.net/images/playlists/image/medium/710af1e503f204b92b0c3c46f0310df6.jpg",
             "collaborators": [
                 {
                     "user": "5f862052790b506769c6a0dc",
@@ -249,17 +252,11 @@
                 }
             ],
             "songs": [
-                "0r8M4zqlJeV0XPtCxyQ6fn",
-                "4YxLJVcYXgN1Kxb67BvxEZ",
-                "6j6bxCtwV7aw6cQk9HVTor",
-                "3vM5WFlaaxJjCMWsQYLwZI",
-                "1rIlWy93o6je85WpMpxg6Y",
-                "6gDt7eZjJNIkzLj9jVEBZo",
-                "6I2mlN0j24YN87ke0mAthD",
-                "4WkE0CevaR93XEmPokzQTp",
-                "03P8X4jeamfDN208vUJK8k",
-                "6OQcOlYGnrH4HeiyjvyCOo",
-                "0E97LEEOz5rk6wAJr6rNI3"
+                { "id": "xQOO2xGQ1Pc", "name": "Justin Bieber - Lonely" },
+                { "id": "AG-erEMhumc", "name": "Tate McRae - you broke me first " },
+                { "id": "v4eRF82oYtA", "name": "FIFA FLAME - Old News" },
+                { "id": "24u3NoPvgMw", "name": "Conan Gray - Heather " },
+                { "id": "NAo38Q9c4xA", "name": "ZAYN - Better" }
             ]
         },
         {

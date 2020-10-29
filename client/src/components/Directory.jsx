@@ -30,8 +30,8 @@ function Directory() {
             <br/>
             <Button onClick={ () => history.push('/favoritedmixtapes') } variant="outlined" style={{margin: '1em'}}>View Favorite Mixtapes Page</Button>
             <br/>
-            <Button onClick={ () => history.push('/mixtape/:id') } variant="outlined" style={{margin: '1em'}}>View Mixtape Page</Button>
-            <br/>
+            {/* <Button onClick={ () => history.push('/mixtape/:id') } variant="outlined" style={{margin: '1em'}}>View Mixtape Page</Button> */}
+            {/* <br/> */}
             <Button onClick={ () => history.push('/mymixtapes') } variant="outlined" style={{margin: '1em'}}>My Mixtapes Page</Button>
             <br/>
             <Button onClick={ () => history.push('/inbox') } variant="outlined" style={{margin: '1em'}}>Inbox Page</Button>
