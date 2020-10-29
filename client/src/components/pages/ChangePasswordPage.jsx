@@ -14,6 +14,11 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
 import {green} from '@material-ui/core/colors';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 function ChangePasswordPage(props) {
     const CssTextField = withStyles({
@@ -37,7 +42,15 @@ function ChangePasswordPage(props) {
           },
         },
       })(TextField);
+    const [open, setOpen] = React.useState(false);
 
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
        
     const colors = {
         buttonContainer: '#0A1941',
@@ -79,6 +92,20 @@ function ChangePasswordPage(props) {
                 
             <br/>
             <br/>
+
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Password saved!</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Your new password was saved!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button align="center" onClick={handleClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Typography align="center" variant="h3">
       <br/>
           Change Password
@@ -102,7 +129,7 @@ function ChangePasswordPage(props) {
             variant="outlined" type="Password" label="Reenter New Password" />
           </Grid>
           <ThemeProvider theme={theme}>
-            <Button variant="contained" color="primary" className={classes.margin}>
+            <Button onClick={handleClickOpen} variant="contained" color="primary" className={classes.margin}>
                 Save New Password
             </Button>
           </ThemeProvider>
