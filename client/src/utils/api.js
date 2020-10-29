@@ -70,6 +70,23 @@ function getMixtape(_id) {
 
 /**
  * 
+ * @param {*} _id id of the user who's favorited mixtapes we want
+ */
+function getFavoritedMixtapes(_id) {
+    let user;
+    for (const usr of users) {
+        if (usr._id === _id) {
+            user = usr;
+            break;
+        }
+    }
+    if (!user) return [];
+    
+    return user.favoritedMixtapes.map(mixtapeId => getMixtape(mixtapeId));
+}
+
+/**
+ * 
  * @param {*} _id id of the user who's inbox messages we want
  */
 function getInboxMessages(_id) {
@@ -81,5 +98,6 @@ export {
     getUsername,
     getMixtape,
     getMyMixtapes,
+    getFavoritedMixtapes,
     getInboxMessages,
 };
