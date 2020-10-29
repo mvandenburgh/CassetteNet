@@ -18,7 +18,7 @@ import PlayingSongContext from './contexts/PlayingSongContext';
 import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
-
+import AdminPage from './components/pages/AdminPage';
 function App() {
   // check if user is logged in
   let userDefault = JSON.parse(localStorage.getItem('user'));
@@ -69,6 +69,7 @@ function App() {
                       <Route exact path="/NotFound" component={NotFoundPage}/>
                       <Route exact path="/SignUp" component={SignUpPage}/>
                       <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
+                      <Route exact path="/Admin" component={AdminPage}/>
                       <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
                     </Switch>
                   </div>
