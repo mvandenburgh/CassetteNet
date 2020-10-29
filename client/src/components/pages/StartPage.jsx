@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-//import testData from '../../testData/users.json'
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Button, Grid, IconButton, Typography } from '@material-ui/core';
 import logo from '../../images/logo.png';
+import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
-import { Link } from 'react-router-dom';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 function StartPage(props) {
     const colors = {
@@ -12,24 +12,26 @@ function StartPage(props) {
         signUpButton: '#561111',
         guestButton: '#6B6B6B',
     }
-    const { user, setUser } = useContext(UserContext);
-    // const usersList = testData.users.map(user => 
-    //     user.username,
-    //     user.password,
-    //     user.email,
-    //     user.verified,
-    //     user.favoritedMixtapes, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
-    //     user.followedUsers, // array of other user object ids
-    //     user.admin, // true if user is an admin
-    //     user.uniqueId, // unique alphanumeric id (length 4)
-    //     user.profilePicture // raw image data for user's profile picture
-    //  )
+
+    // TODO: add user to destructuring when needed
+    // Removed for now to avoid build warnings
+    const { setUser } = useContext(UserContext);
+
+    const history = useHistory();
+    const goBack = () => { history.push('/') }
 
     const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
     const loginAsUser = () => setUser({ username: 'User0', isGuest: false, isLoggedIn: true });
 
     return (
         <div style={{color: 'white', left: 0}}>
+            <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
+                <ArrowBackIcon/>
+            </IconButton>
+            <br/>
+                
+            <br/>
+            <br/>
             <div style={{margin: 'auto', width: '50%'}}>
                 <img style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src={logo} alt='logo' />
                 <Typography align="center" variant="h4">Mix freely.</Typography>
@@ -39,13 +41,9 @@ function StartPage(props) {
             <br />
             <div style={{backgroundColor: 'blue', left: '25%', width: '50%', margin: 'auto'}}>
                 <Grid container justify="center" style={{padding: '5%', backgroundColor: colors.buttonContainer}}>
-                    <Link to="/login">
-                        <Button onClick={() => loginAsUser()} style={{margin: '1em', backgroundColor: colors.loginButton}} fullWidth variant="contained">LOGIN</Button>
-                    </Link>
-                    <Button style={{margin: '1em', backgroundColor: colors.signUpButton}} fullWidth variant="contained">SIGN UP</Button>
-                    <Button onClick={() => loginAsGuest()} style={{margin: '1em', backgroundColor: colors.guestButton}} fullWidth variant="contained">CONTINUE AS GUEST</Button>
-                        
-                        
+                        <Button onClick={() => history.push('/login')} style={{margin: '1em', backgroundColor: colors.loginButton}} fullWidth variant="contained">LOGIN</Button>
+                        <Button style={{margin: '1em', backgroundColor: colors.signUpButton}} fullWidth variant="contained">SIGN UP</Button>
+                        <Button onClick={() => loginAsGuest()} style={{margin: '1em', backgroundColor: colors.guestButton}} fullWidth variant="contained">CONTINUE AS GUEST</Button>
                 </Grid>
             </div>
         </div>

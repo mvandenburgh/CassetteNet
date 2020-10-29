@@ -1,11 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import { AppBar, Typography, InputBase, Divider, Drawer, List, IconButton, ListItem, ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
-import { Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon } from '@material-ui/icons';
-import { Link } from 'react-router-dom';
+import { AppBar, Badge, Button, Typography, InputBase, Divider, Drawer, Grid, List, IconButton, ListItem, ListItemIcon, ListItemText, TextField, Toolbar } from '@material-ui/core';
+import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
+import { useHistory } from 'react-router-dom';
+import ReactPlayer from 'react-player';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
+import SearchBar from './SearchBar';
 import UserContext from '../contexts/UserContext';
+import CurrentSongContext from '../contexts/CurrentSongContext';
+import PlayingSongContext from '../contexts/PlayingSongContext';
+import H5AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 
 
 const drawerWidth = 240;
@@ -56,6 +62,12 @@ const useStyles = makeStyles((theme) => ({
     width: `calc(100% - ${theme.spacing(7)}px)`,
     marginBotton: '100px'
   },
+  player: {
+    left: theme.spacing(7),
+    width: `calc(100% - ${theme.spacing(7)}px)`,
+    bottom: '0',
+    position: 'relative',
+  },
   menuButton: {
     marginRight: theme.spacing(2),
   },
@@ -68,54 +80,36 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     left: drawerWidth + 20,
   },
-  search: {
-    position: 'absolute',
-    right: '5%',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  },
 }));
+
+
 
 function PageFrame(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const { user, setUser } = useContext(UserContext);
+  const history = useHistory();
+
+  const playerRef = useRef(null);
+
+  setInterval(() => {
+    if (playerRef.current && playing) 
+      localStorage.setItem('timestamp', playerRef.current.getCurrentTime());
+  }, 1000);
 
   // TODO: add setUser to destructuring when needed
     // Removed for now to avoid build warnings
-  //const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+
+  const logout = () => {setUser({ isLoggedIn: false }); history.push('/');}
+
+  const { currentSong } = useContext(CurrentSongContext);
+
+  const { playing, setPlaying } = useContext(PlayingSongContext);
+
+  const handlePlayPause = () => {
+    setPlaying(!playing);
+    playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -124,6 +118,8 @@ function PageFrame(props) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+
   if (props.invisible) {
     return (<div />);
   }
@@ -134,19 +130,8 @@ function PageFrame(props) {
           <Typography className={classes.title} variant="h6" noWrap>
             {user.username} {/* TODO: get from dummy data */ }
           </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search..."
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
+          <SearchBar showDropdown />
+          <Button onClick={() => logout()} style={{margin: '1em', backgroundColor: '#4f7aa1', align: 'right'}} variant="contained">Logout</Button>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -170,47 +155,72 @@ function PageFrame(props) {
             </div>
             <Divider />
                 <List>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <CassetteTapeIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="My Mixtapes" />
+                    <ListItem onClick={() => history.push('/mymixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <CassetteTapeIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="My Mixtapes" />
                     </ListItem>
-                    <Link to="/atmosphere">
-                      <ListItem button>
-                          <ListItemIcon>
-                              <AtmosphereSoundsIcon />    
-                          </ListItemIcon>
-                          <ListItemText primary="Atmosphere Sounds" />
-                      </ListItem>
-                    </Link>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                    <ListItem onClick={() => history.push('/atmosphere')} button>
                         <ListItemIcon>
-                            <FollowedUsersIcon />    
+                            <AtmosphereSoundsIcon />    
                         </ListItemIcon>
-                        <ListItemText primary="Followed Users" />
+                        <ListItemText primary="Atmosphere Sounds" />
                     </ListItem>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                    <ListItem onClick={() => history.push('/NotFound')} button>
                         <ListItemIcon>
-                            <FavoritedMixtapesIcon />    
+                            <NotFoundIcon />    
                         </ListItemIcon>
-                        <ListItemText primary="Favorited Mixtapes" />
+                        <ListItemText primary="Page Not Found" />
                     </ListItem>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                    <ListItem onClick={() => history.push('/SignUp')} button>
                         <ListItemIcon>
-                            <InboxIcon />    
+                            <SignUpIcon />    
                         </ListItemIcon>
-                        <ListItemText primary="Inbox" />
+                        <ListItemText primary="Sign Up" />
                     </ListItem>
-                    <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
-                        <ListItemIcon>
-                            <AnonymousMixtapesIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Anonymous Mixtapes" />
-                    </ListItem>
+                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <FollowedUsersIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="Followed Users" />
+                  </ListItem>
+                  <ListItem onClick={() => history.push('/favoritedmixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <FavoritedMixtapesIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="Favorited Mixtapes" />
+                  </ListItem>
+                  <ListItem onClick={() => history.push('/inbox')} button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          {/* TODO: get actual number of messages in inbox */}
+                          <Badge badgeContent={4} color="error">
+                            <InboxIcon />
+                          </Badge>
+                      </ListItemIcon>
+                      <ListItemText primary="Inbox" />
+                  </ListItem>
+                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                      <ListItemIcon>
+                          <AnonymousMixtapesIcon />    
+                      </ListItemIcon>
+                      <ListItemText primary="Anonymous Mixtapes" />
+                  </ListItem>
                 </List>
             <Divider />
         </Drawer>
+        <AppBar style={{ backgroundColor: '#fff', display: currentSong ? '' : 'none', top: 'auto', bottom: 0,}}>
+          {/* <Toolbar> */}
+            {/* <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong ? currentSong.song : ''}`} /> */}
+            <Grid className={classes.player} container justify="center" >
+              {/* <div onClick={handlePlayPause}>
+                {playing ? <PauseIcon /> : <PlayIcon />}
+              </div> */}
+              <H5AudioPlayer style={{width: '95%'}} />
+            </Grid>
+          {/* </Toolbar> */}
+        </AppBar>
+        
     </div>
   );
 }

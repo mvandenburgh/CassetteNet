@@ -1,11 +1,18 @@
-import React, { useContext } from 'react';
-import testData from '../../testData/users.json'
-import { Button, Grid, Typography } from '@material-ui/core';
+import React, { useContext, useState } from 'react';
+import { Button, Grid, Typography, makeStyles, IconButton } from '@material-ui/core';
+import {
+    alpha,
+    ThemeProvider,
+    withStyles,
+    createMuiTheme,
+  } from '@material-ui/core/styles';
 import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
 import TextField from '@material-ui/core/TextField';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import { Link } from 'react-router-dom';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { useHistory } from 'react-router-dom';
+import { getUser } from '../../utils/api';
 
 function LoginPage(props) {
     const colors = {
@@ -14,46 +21,94 @@ function LoginPage(props) {
         signUpButton: '#561111',
         guestButton: '#6B6B6B',
     }
-    const { user, setUser } = useContext(UserContext);
-    const usersList = testData.users.map(user => 
-        user.username,
-        user.password,
-        user.email,
-        user.verified,
-        user.favoritedMixtapes, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
-        user.followedUsers, // array of other user object ids
-        user.admin, // true if user is an admin
-        user.uniqueId, // unique alphanumeric id (length 4)
-        user.profilePicture // raw image data for user's profile picture
-     )
 
-    const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
-    const loginAsUser = () => setUser({ username: 'User0', isGuest: false, isLoggedIn: true });
+    const CssTextField = withStyles({
+        root: {
+            '& label':{
+                color:'white'
+            },
+        '& label.Mui-focused': {
+            color: 'black',
+            },
+            '& .MuiInput-underline:after': {
+                borderBottomColor: 'green',
+              },
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'white',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'black',
+            },
+          },
+        },
+      })(TextField);
+
+      const useStyles = makeStyles((theme) => ({
+        margin: {
+            margin: theme.spacing(1),
+          },
+        TextStyle:{
+            color:"white",
+        }
+      }));
+
+    const classes = useStyles();
+
+    const { user, setUser } = useContext(UserContext);
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const loginAsUser = () => {
+        const loggedInUser = getUser(username, password);
+        console.log(loggedInUser);
+        if (loggedInUser) setUser({isLoggedIn: true, isGuest: false, ...loggedInUser});
+        history.push('/');
+    }
+
+    const history = useHistory();
+    const goBack = () => { history.push('/') }
+
+    const handleUsername = (e) => setUsername(e.target.value);
+    const handlePassword = (e) => setPassword(e.target.value);
 
     return (
-        <div style={{color: 'white', left: 0}}>
-            <div style={{margin: 'auto', width: '50%'}}>
-                <img style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src={logo} alt='logo' />
-            </div>
-            <br />
-            <div style={{backgroundColor: 'blue', left: '25%', width: '50%', margin: 'auto'}}>
-                <Grid container justify="center" style={{padding: '5%', backgroundColor: "#7230ff"}}>
-                    <Grid container spacing={1} alignItems="flex-end">
-                        <Grid item>
-                            <AccountCircle />
-                        </Grid>
-                        <Grid item>
-                            <TextField label="Username" margin="normal" />
-                        </Grid>
-                    </Grid>
-                    <TextField label="Password" margin="normal" />
-                    <Link to="/">
-                        <Button style={{margin: '1em', backgroundColor: colors.loginButton}} fullWidth variant="contained">LOGIN</Button>
-                    </Link>
-                </Grid>
-            </div>
-        </div>
-    );
+        <div style={{ color: 'white', left:0 }}>
+      
+      <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
+        <ArrowBackIcon/>
+      </IconButton>
+      <br/>
+          
+      <br/>
+      <br/>
+      <Typography align="center" variant="h3">Log In
+      </Typography>
+      <div className={classes.margin}>
+        
+        <Grid container spacing={1} alignItems="center" direction="column">
+          <Grid item>
+          <CssTextField
+            className={classes.margin}
+            onChange={(e) => handleUsername(e)}
+            value={username}
+            variant="outlined" label="Username" />
+          </Grid>
+          <Grid item>
+          <CssTextField
+            className={classes.margin}
+            onChange={(e) => handlePassword(e)}
+            value={password}
+            variant="outlined" type="Password" label="Password" />
+          </Grid>
+          <Button variant="filled" color="inherit" onClick={loginAsUser}>
+            Log In
+        </Button>
+        </Grid>
+      </div>
+    </div>
+  );
 }
 
 export default LoginPage;
