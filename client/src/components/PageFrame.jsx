@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import { AppBar, Badge, Button, Typography, InputBase, Divider, Drawer, Grid, List, IconButton, ListItem, ListItemIcon, ListItemText, TextField, Toolbar } from '@material-ui/core';
-import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Search as SearchIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
-import { Autocomplete } from '@material-ui/lab';
+import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
+import SearchBar from './SearchBar';
 import UserContext from '../contexts/UserContext';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
@@ -80,55 +80,8 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     left: drawerWidth + 20,
   },
-  search: {
-    position: 'absolute',
-    right: '5%',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  },
 }));
 
-
-const suggestionsSongs = [
-  {title: 'Watermelon Sugar', artist: 'Harry Styles' },
-  {title: 'Circles', artist: 'Post Malone'},
-  {title: 'Better Now', artist: 'Post Malone'},
-  {title: 'Stand by Me', artist: 'Ben. E King'},
-  {title: 'Sucker', artist: 'Jonas Brothers'},
-  {title: 'Slow Dancing in the Dark', artist:'Joji'},
-];
 
 
 function PageFrame(props) {
@@ -177,33 +130,7 @@ function PageFrame(props) {
           <Typography className={classes.title} variant="h6" noWrap>
             {user.username} {/* TODO: get from dummy data */ }
           </Typography>
-          
-          
-
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <Autocomplete 
-            size="small"
-            style={{height:35,width:300}}
-            className={classes.inputInput}
-            freeSolo 
-            disableClearable
-            options={suggestionsSongs.map((option)=>option.title)}
-            renderInput={(params)=>(
-              <TextField
-              
-              {...params}
-              label="Search..."
-              
-              variant="outlined"
-              InputProps={{ ...params.InputProps, type: 'search' }}
-              />
-            )}
-            />
-          </div>
-          
+          <SearchBar />
           <Button onClick={() => logout()} style={{margin: '1em', backgroundColor: '#4f7aa1', align: 'right'}} variant="contained">Logout</Button>
         </Toolbar>
       </AppBar>
