@@ -17,6 +17,7 @@ import CurrentSongContext from './contexts/CurrentSongContext';
 import PlayingSongContext from './contexts/PlayingSongContext';
 import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
+import ViewAccountPage from './components/pages/ViewAccountPage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
 import AdminPage from './components/pages/AdminPage';
 function App() {
@@ -70,6 +71,7 @@ function App() {
                       <Route exact path="/SignUp" component={SignUpPage}/>
                       <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
                       <Route exact path="/Admin" component={AdminPage}/>
+                      <Route exact path="/ViewAccount" component={ViewAccountPage}/>
                       <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
                     </Switch>
                   </div>
