@@ -53,6 +53,8 @@ function Directory() {
             <Button onClick={ () => history.push('/ViewAccount') } variant="outlined" style={{margin: '1em'}}>View Account Page</Button>
             <br/>
             <Button onClick={ () => history.push('/ViewAdminPage') } variant="outlined" style={{margin: '1em'}}>View Admin Account Page</Button>
+            <br/>
+            <Button onClick={ () => history.push('/SearchResultsPage') } variant="outlined" style={{margin: '1em'}}>View Search Results Page</Button>
 
         </div>
     );
