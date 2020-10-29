@@ -18,11 +18,12 @@ import {
 } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import { Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon } from '@material-ui/icons';
+import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon } from '@material-ui/icons';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import { getMixtape, getUsername } from '../utils/api';
 import { Autocomplete } from '@material-ui/lab';
+import { useHistory } from 'react-router-dom';
 import SettingsModal from './permissions/SettingsModal';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
@@ -36,6 +37,8 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 
 
 function Mixtape(props) {
+    const history = useHistory();
+
     const [mixtape, setMixtape] = useState(getMixtape(props.id));
 
     const [songsToDelete, setSongsToDelete] = useState([]);
@@ -203,7 +206,18 @@ function Mixtape(props) {
                             </Grid>
                           </Grid>
                         :
-                          <Button startIcon={<EditIcon />} onClick={() => setIsEditing(true)} style={{position: 'absolute', right: '5%'}} variant="contained">EDIT</Button>
+                          <Grid container>
+                            <Button startIcon={<EditIcon />} onClick={() => setIsEditing(true)} style={{position: 'absolute', right: '5%'}} variant="contained">EDIT</Button>
+                            <Button
+                              style={{marginRight: '5%', float: 'right', backgroundColor: 'steelblue'}}
+                              variant="contained"
+                              color="secondary"
+                              startIcon={<MusicNoteIcon />}
+                              onClick={() => history.push('/listeningroom')}
+                            >
+                              Create Listening Room
+                            </Button>
+                          </Grid>
                       }
                   </Toolbar>
                   {mixtape.songs.map((song, index) => (
