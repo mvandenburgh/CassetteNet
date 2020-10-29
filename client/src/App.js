@@ -18,12 +18,9 @@ import PlayingSongContext from './contexts/PlayingSongContext';
 import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
-<<<<<<< HEAD
 import FollowedUsersPage from './components/pages/FollowedUsersPage';
 
-=======
 import AdminPage from './components/pages/AdminPage';
->>>>>>> cada09cc22c51d80fbd2419104ec64d17b37d7a8
 function App() {
   // check if user is logged in
   let userDefault = JSON.parse(localStorage.getItem('user'));
