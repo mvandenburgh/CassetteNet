@@ -257,7 +257,7 @@ function PageFrame(props) {
                       </ListItemIcon>
                       <ListItemText primary="Followed Users" />
                   </ListItem>
-                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                  <ListItem onClick={() => history.push('/favoritedmixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
                           <FavoritedMixtapesIcon />    
                       </ListItemIcon>

@@ -5,6 +5,7 @@ import StartPage from './components/pages/StartPage';
 import DashboardPage from './components/pages/DashboardPage';
 import LoginPage from './components/pages/LoginPage';
 import MyMixtapesPage from './components/pages/MyMixtapesPage';
+import FavoritedMixtapesPage from './components/pages/FavoritedMixtapesPage';
 import AtmospherePage from './components/pages/AtmospherePage';
 import InboxPage from './components/pages/InboxPage';
 import SignUpPage from './components/pages/SignUpPage';
@@ -62,6 +63,7 @@ function App() {
                       <Route exact path="/atmosphere" component={AtmospherePage} />
                       <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                       <Route exact path="/mymixtapes" component={MyMixtapesPage} />
+                      <Route exact path="/favoritedmixtapes" component={FavoritedMixtapesPage} />
                       <Route exact path="/viewuser" component={ViewUserPage} />
                       <Route exact path="/inbox" component={InboxPage} />
                       <Route exact path="/NotFound" component={NotFoundPage}/>
