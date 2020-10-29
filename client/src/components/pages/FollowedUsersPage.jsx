@@ -10,10 +10,27 @@ import donna_pfp from '../../images/donna.jpg';
 import pepe_pfp from '../../images/pepe_pfp.png';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
+import { Autocomplete } from '@material-ui/lab';
 
 
 function FollowedUsersPage(props) {
+  const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+       
   const [highlightedRow, setHighlightedRow] = useState(null);
 
   const colors = {
@@ -51,6 +68,14 @@ function FollowedUsersPage(props) {
         pfp: pepe_pfp
     },
 ]
+const suggestedUsers = [
+  {name: 'DDrizzy123'},
+  {name: 'TempAdmin'},
+  {name: 'TempAdmin12'},
+  {name: 'PartyPooper123'},
+  {name: 'BobMarley'},
+  {name: 'CoolName'},
+];
 
   const FollowedUserRows = ({followedUsers}) => (
     <>
@@ -96,7 +121,38 @@ function FollowedUsersPage(props) {
   const goBack = () => { history.push('/') }
 
   return (
+    
       <div  style={{ color: 'white', left: 0 }}>
+        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Follow a User!</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Enter the username of the user you wish to follow
+          </DialogContentText>
+          <Autocomplete 
+                        size="small"
+                        style={{width:300}}
+                        freeSolo 
+                        disableClearable
+                        options={suggestedUsers.map((option)=>option.name)}
+                        renderInput={(params)=>(
+                        <TextField
+                        {...params}
+                        backgroundColor='white'
+                        label="Search..."
+                        margin="normal"
+                        variant="filled"
+                        InputProps={{ ...params.InputProps, type: 'search' }}
+                        />
+                        )}
+                        />
+        </DialogContent>
+        <DialogActions>
+          <Button align="center" onClick={handleClose} color="primary">
+            Follow
+          </Button>
+        </DialogActions>
+      </Dialog>
           <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
             <ArrowBackIcon/>
           </IconButton>
@@ -105,7 +161,7 @@ function FollowedUsersPage(props) {
           <br/>
           <Box style={{ width: "25%", display: 'flex', paddingLeft: '120px'}}>
                 <br/>
-                <Button variant="contained" boxShadow={3} style={{ margin:'auto', backgroundColor: colors.searchButtonColor}}> Search for User</Button>
+                <Button onClick={handleClickOpen} variant="contained" boxShadow={3} style={{ margin:'auto', backgroundColor: colors.searchButtonColor}}> Search for User</Button>
         </Box>
           <div style={{ width: "70%", margin: 'auto'}}>
             <FollowedUserRows followedUsers={theirFollowedUsers} />
