@@ -95,7 +95,7 @@ function SettingsModal(props) {
                     <Grid item xs={4} style={{ height: '70%' }}>
                         <Grid container style={{height: '80%'}} >
                             <Typography align="center" variant="h5">Permissions</Typography>
-                            <Grid item xs={12} style={{overflow: 'auto', maxHeight: '100%' }}>
+                            <Grid item xs={12} style={{borderRadius: '2%', overflow: 'auto', maxHeight: '100%' }}>
                                 <TableContainer component={Paper}>
                                     <Table>
                                         <TableHead>
@@ -147,14 +147,14 @@ function SettingsModal(props) {
                                     />
                                 </Grid>
                                 <Grid item xs={1}>
-                                    <Button variant="contained" style={{width: '90%', height: '100%'}}><AddIcon /></Button>
+                                    <Button style={{marginTop:'1em'}} variant="contained"><AddIcon /></Button>
                                 </Grid>
                                 <Grid item xs={1} style={{width: '100%', height: '100%'}} />
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item xs={2} />
-                    <Grid item xs={4} style={{margin: '10% 0'}}>
+                    <Grid item xs={3} />
+                    <Grid item xs={3} style={{margin: '10% 0'}}>
                         <Grid container justify="center" alignItems="center" style={{height: '50%'}}>
                             <Grid item xs={12} justify="center">
                                 <FormControlLabel
