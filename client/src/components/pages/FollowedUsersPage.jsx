@@ -14,11 +14,16 @@ import { useHistory } from 'react-router-dom';
 
 
 function FollowedUsersPage(props) {
+  const [highlightedRow, setHighlightedRow] = useState(null);
+
   const colors = {
       followedUserRowColor: blueGrey[900],
+      followedUserRowMouseOverColor: blueGrey[500],
       unfollowButtonColor: lightBlue[500],
       searchButtonColor: lightBlue[700],
   }
+
+  
 
   var theirFollowedUsers = [
     {
@@ -49,49 +54,49 @@ function FollowedUsersPage(props) {
 
   const FollowedUserRows = ({followedUsers}) => (
     <>
-      {followedUsers.map(user => (
-        <Box style={{
-            margin: "5px",
-            padding: "10px",
-            
-            backgroundColor: colors.followedUserRowColor,
-            display: "flex", 
-            flexDirection: "row",
-            borderRadius: 6,
-            fontSize: 12,
-        }} boxShadow={3}>
-            <Box style={{ width: "33%", display: 'flex', flexDirection: 'row', marginLeft: '15px'}}>
-                <ReactRoundedImage image={user.pfp} roundedSize="1" imageWidth="100" imageHeight="100" />
-                <br/>
-                <Box style={{ fontSize: '15pt', width: "50%", display: 'flex', justifyContent: "left", marginLeft: '15px'}}> {user.name}#{user.id} </Box>
-            </Box>
-            
-            <Box style={{ fontSize: '12pt', marginLeft: '50px', width: "33%", display: 'flex', flexDirection: 'column'}}> 
-                Last seen: {user.last_seen}
-                <br/>
-                <br/>
-                User since: {user.user_since}
-                <br/>
-                <br/>
-                Followers: {user.followers}
-            </Box>
-            <Box style={{ width: "25%", display: 'flex', justifyContent: "left"}}>
-                <br/>
-                <Button variant="contained" boxShadow={3} style={{ marginTop: '20px', height: '45px', width: '80px', backgroundColor: colors.unfollowButtonColor}}> Unfollow</Button>
-            </Box>
-        </Box>
+      {followedUsers.map((user, index) => (
+        <div onMouseEnter={() => setHighlightedRow(index)} onMouseLeave={() => setHighlightedRow(null)}>
+          <Box style={{
+              margin: "5px",
+              padding: "10px",
+              backgroundColor: index === highlightedRow ? colors.followedUserRowMouseOverColor : colors.followedUserRowColor,
+              cursor: 'pointer',
+              display: "flex", 
+              flexDirection: "row",
+              borderRadius: 6,
+              fontSize: 12,
+          }} boxShadow={3}>
+              <Box style={{ width: "33%", display: 'flex', flexDirection: 'row', marginLeft: '15px'}}>
+                  <ReactRoundedImage image={user.pfp} roundedSize="1" imageWidth="100" imageHeight="100" />
+                  <br/>
+                  <Box style={{ fontSize: '15pt', width: "50%", display: 'flex', justifyContent: "left", marginLeft: '15px'}}> {user.name}#{user.id} </Box>
+              </Box>
+              
+              <Box style={{ fontSize: '12pt', marginLeft: '50px', width: "33%", display: 'flex', flexDirection: 'column'}}> 
+                  Last seen: {user.last_seen}
+                  <br/>
+                  <br/>
+                  User since: {user.user_since}
+                  <br/>
+                  <br/>
+                  Followers: {user.followers}
+              </Box>
+              <Box style={{ width: "25%", display: 'flex', justifyContent: "left"}}>
+                  <br/>
+                  <Button variant="contained" boxShadow={3} style={{ marginTop: '20px', height: '45px', width: '80px', backgroundColor: colors.unfollowButtonColor}}> Unfollow</Button>
+              </Box>
+          </Box>
+        </div>
       ))}
     </>
-    ); 
-
+  );
 
 
   const history = useHistory();
   const goBack = () => { history.push('/') }
 
   return (
-      <div  style={{ color: 'white', left:0 }}>
-    
+      <div  style={{ color: 'white', left: 0 }}>
           <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
             <ArrowBackIcon/>
           </IconButton>
@@ -106,7 +111,7 @@ function FollowedUsersPage(props) {
             <FollowedUserRows followedUsers={theirFollowedUsers} />
           </div>
       </div>
-);
+  );
 }
 
 export default FollowedUsersPage;
