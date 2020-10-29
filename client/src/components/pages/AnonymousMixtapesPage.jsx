@@ -10,9 +10,18 @@ import { users } from '../../testData/users.json'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
 
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { TextFields, TextFieldsSharp } from '@material-ui/icons';
+
 
 const MixtapeRows = ({mixtapes}) => (
     <>
+    
       {mixtapes.map(mixtape => (
         <Box style={{
             margin: "5px",
@@ -40,6 +49,16 @@ function AnonymousMixtapesPage(props) {
   const colors = {
 
   }
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   var anonMixtapes = [
     {
@@ -70,7 +89,31 @@ function AnonymousMixtapesPage(props) {
 
   return (
       <div  style={{ color: 'white', left:0 }}>
-
+          <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Write a Message!</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Give some feedback on the mixtape!
+          </DialogContentText>
+          <TextField
+            multiline
+            rows={17}
+            style={{height:'300px',width:'400px'}}
+            autoFocus
+            variant="filled"
+            margin="dense"
+            id="name"
+            label="Message"
+            type="email"
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button align="center" onClick={handleClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
         <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
             <ArrowBackIcon/>
         </IconButton>
@@ -78,8 +121,7 @@ function AnonymousMixtapesPage(props) {
         <Typography variant="h3" style={{textAlign: "center"}}>Mixtapes Anonymous</Typography>
         <br/>
         <Grid container direction="row">
-        <Grid sz={1}>
-        </Grid>
+        
         <Box style={{backgroundColor: blueGrey[900], marginLeft:"170px",width: "80%", display: "flex", flexDirection: "row", borderRadius: 3, padding: '5px' }} >
             <Box style={{ backgroundColor: blueGrey[900],
                             width: "33%",
@@ -106,7 +148,7 @@ function AnonymousMixtapesPage(props) {
                 Favorite-Comment-Share
             </Box>
         </Box>
-        <Box style={{
+        <Box onClick={handleClickOpen} style={{
                         marginLeft:"170px",
                         marginTop: '5px',
                         marginRight: '10px',
