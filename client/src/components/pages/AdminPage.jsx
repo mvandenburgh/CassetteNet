@@ -157,53 +157,59 @@ function AdminPage(props) {
         <br/>
         <br/>
         <Box flexDirection="row" >
-            <Box id='popular' className={classes.box_container} borderRadius={10} {...containerBorderProps}> 
-                <Typography variant="headline" component="h1">Current Admins</Typography>
-            
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    DDrizzy123
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    TempAdmin
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    TempAdmin12
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    PartyPooper123
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    BobMarley
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    CoolName
-                </Box>
-                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
-                    NoobMaster
-                </Box>
-            </Box>
-                <Typography style={{ fontSize: '40px'}} variant="h3">Add An Admin</Typography>
-                
-            <Autocomplete 
-                size="small"
-                style={{width:300}}
-                className={classes.inputInput}
-                freeSolo 
-                disableClearable
-                options={suggestedUsers.map((option)=>option.name)}
-                renderInput={(params)=>(
-                <TextField
-                {...params}
-                backgroundColor='white'
-                label="Search..."
-                margin="normal"
-                variant="filled"
-                InputProps={{ ...params.InputProps, type: 'search' }}
-                />
-                )}
-                />
-            <Button variant="outlined" style={{padding: '10px', marginTop: '10px', height: '40px', width: '200px', backgroundColor: blueGrey[600], color: 'white'}}>Add Admin</Button>
-           
+            <Grid container>
+                <Grid item xs={6}>
+                    <Box id='popular' style={{width: '100%'}} className={classes.box_container} borderRadius={10} {...containerBorderProps}> 
+                        <Typography variant="headline" component="h1">Current Admins</Typography>
+                    
+                        <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
+                            DDrizzy123
+                        </Box>
+                        <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
+                            TempAdmin
+                        </Box>
+                        <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
+                            TempAdmin12
+                        </Box>
+                        <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
+                            PartyPooper123
+                        </Box>
+                        <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
+                            BobMarley
+                        </Box>
+                        <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
+                            CoolName
+                        </Box>
+                        <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}> 
+                            NoobMaster
+                        </Box>
+                    </Box>
+                </Grid>
+                <Grid item xs={3} />
+                <Grid item xs={3}>
+                    <Typography style={{ fontSize: '40px'}} variant="h3">Add An Admin</Typography>
+                        
+                    <Autocomplete 
+                        size="small"
+                        style={{width:300}}
+                        className={classes.inputInput}
+                        freeSolo 
+                        disableClearable
+                        options={suggestedUsers.map((option)=>option.name)}
+                        renderInput={(params)=>(
+                        <TextField
+                        {...params}
+                        backgroundColor='white'
+                        label="Search..."
+                        margin="normal"
+                        variant="filled"
+                        InputProps={{ ...params.InputProps, type: 'search' }}
+                        />
+                        )}
+                        />
+                    <Button variant="outlined" style={{padding: '10px', marginTop: '10px', height: '40px', width: '200px', backgroundColor: blueGrey[600], color: 'white'}}>Add Admin</Button>
+                </Grid>
+            </Grid>
 
         </Box>
         
