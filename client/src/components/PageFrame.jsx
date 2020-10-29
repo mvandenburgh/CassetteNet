@@ -186,16 +186,17 @@ function PageFrame(props) {
             </div>
             <Autocomplete 
             size="small"
-            style={{width:300}}
+            style={{height:35,width:300}}
             className={classes.inputInput}
             freeSolo 
             disableClearable
             options={suggestionsSongs.map((option)=>option.title)}
             renderInput={(params)=>(
               <TextField
+              
               {...params}
               label="Search..."
-              margin="normal"
+              
               variant="outlined"
               InputProps={{ ...params.InputProps, type: 'search' }}
               />
