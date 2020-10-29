@@ -135,6 +135,7 @@ function AdminPage(props) {
         <Box style={{display: 'inline-flex', 
                             flexDirection: 'row', 
                             backgroundColor: colors.namePfpContainer, 
+                            marginLeft:'100px',
                             marginRight: '10px',
                             marginBottom: '30px',
                             paddingLeft: '20px',
@@ -151,13 +152,14 @@ function AdminPage(props) {
                     </div>
         </Box>
         <br/>
-        <Button variant="outlined" style={{padding: '50px', marginTop: '10px', height: '40px', width: '200px', backgroundColor: blueGrey[600], color: 'white'}}>Fill Database</Button>
-        <Button variant="outlined" style={{marginLeft:'500px', padding: '50px', marginTop: '10px', height: '40px', width: '200px', backgroundColor: blueGrey[600], color: 'white'}}>Clear Database</Button>
+        <Button variant="outlined" style={{marginLeft:'100px', padding: '50px', marginTop: '10px', height: '40px', width: '200px', backgroundColor: blueGrey[600], color: 'white'}}>Fill Database</Button>
+        <Button variant="outlined" style={{marginLeft:'200px', padding: '50px', marginTop: '10px', height: '40px', width: '200px', backgroundColor: blueGrey[600], color: 'white'}}>Clear Database</Button>
         <br/>
         <br/>
         <br/>
         <Box flexDirection="row" >
-            <Grid container>
+            <Grid container style={{marginLeft:'100px'}}>
+            
                 <Grid item xs={6}>
                     <Box id='popular' style={{width: '100%'}} className={classes.box_container} borderRadius={10} {...containerBorderProps}> 
                         <Typography variant="headline" component="h1">Current Admins</Typography>
@@ -185,7 +187,7 @@ function AdminPage(props) {
                         </Box>
                     </Box>
                 </Grid>
-                <Grid item xs={3} />
+                <Grid item xs={1} />
                 <Grid item xs={3}>
                     <Typography style={{ fontSize: '40px'}} variant="h3">Add An Admin</Typography>
                         
