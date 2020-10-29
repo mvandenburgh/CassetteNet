@@ -3,6 +3,9 @@ import { Button, Grid, IconButton, makeStyles, Typography } from '@material-ui/c
 import FormControl from '@material-ui/core/FormControl';
 import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
+import Google from '../../images/Google.png';
+import FB from '../../images/facebook.png';
+import { CardMedia } from '@material-ui/core';
 import {
     alpha,
     ThemeProvider,
@@ -50,6 +53,12 @@ function SignUpPage(props) {
           },
         TextStyle:{
             color:"white",
+        },
+        photo:{
+          height:'100px',
+          width:'100px',
+          marginLeft:'20px',
+          marginRight:'20px',
         }
       }));
     const classes = useStyles();
@@ -81,7 +90,10 @@ function SignUpPage(props) {
       <div className={classes.margin}>
         
         <Grid container spacing={1} alignItems="center" direction="column">
-          
+          <Grid item sz={1}>
+          <a href="SignUp"><img src={Google} className={classes.photo} alt="Google"/></a>
+          <a href="SignUp"><img src={FB} className={classes.photo} alt="Google"/></a>
+          </Grid>
           <Grid item>
           <CssTextField
             className={classes.margin}
