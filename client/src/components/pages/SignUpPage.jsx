@@ -16,8 +16,24 @@ import TextField from '@material-ui/core/TextField';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 function SignUpPage(props) {
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+
     const CssTextField = withStyles({
         root: {
             '& label':{
@@ -73,16 +89,44 @@ function SignUpPage(props) {
 
     //TODO: Possibly re-align fields
     return (
+      
+
         <div  style={{ color: 'white', left:0}}>
+          
             <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
                 <ArrowBackIcon/>
             </IconButton>
-      <Typography align="center" variant="h3">
+
+
+            <Typography align="center" variant="h3">
       <br/>
           Sign Up
       <br/>
       <br/>
       </Typography>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Pick a Username!</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Type your desired Username:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Username"
+            type="email"
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button align="center" onClick={handleClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+     
       <div className={classes.margin}>
       <Typography align="center" variant="h5">
           You can sign up by connecting 
@@ -92,8 +136,8 @@ function SignUpPage(props) {
       </Typography>
         <Grid container spacing={1} alignItems="center" direction="column">
           <Grid item sz={1}>
-          <a href="SignUp"><img src={Google} className={classes.photo} alt="Google"/></a>
-          <a href="SignUp"><img src={FB} className={classes.photo} alt="Google"/></a>
+          <img src={Google} onClick={handleClickOpen} className={classes.photo} alt="Google"/>
+          <img src={FB} onClick={handleClickOpen} className={classes.photo} alt="Google"/>
           </Grid>
           <Typography align="center" variant="h5">
         <br/>
