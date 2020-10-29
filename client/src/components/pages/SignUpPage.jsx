@@ -77,10 +77,6 @@ function SignUpPage(props) {
             <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
                 <ArrowBackIcon/>
             </IconButton>
-            <br/>
-                
-            <br/>
-            <br/>
       <Typography align="center" variant="h3">
       <br/>
           Sign Up
@@ -88,12 +84,22 @@ function SignUpPage(props) {
       <br/>
       </Typography>
       <div className={classes.margin}>
-        
+      <Typography align="center" variant="h5">
+          You can sign up by connecting 
+          <br/>to your Google or Facebook account:
+      <br/>
+      <br/>
+      </Typography>
         <Grid container spacing={1} alignItems="center" direction="column">
           <Grid item sz={1}>
           <a href="SignUp"><img src={Google} className={classes.photo} alt="Google"/></a>
           <a href="SignUp"><img src={FB} className={classes.photo} alt="Google"/></a>
           </Grid>
+          <Typography align="center" variant="h5">
+        <br/>
+          Or sign up the regular way below:
+        <br/>
+      </Typography>
           <Grid item>
           <CssTextField
             className={classes.margin}
