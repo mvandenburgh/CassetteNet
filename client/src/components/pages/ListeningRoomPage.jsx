@@ -43,7 +43,7 @@ class ListeningRoomPage extends Component {
     static contextType = CurrentSongContext;
 
     state = {
-        currentTab: 1
+        currentTab: 0,
     };
 
     handleChange(event, newValue) {

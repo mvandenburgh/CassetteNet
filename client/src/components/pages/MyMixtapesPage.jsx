@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, IconButton, Typography } from '@material-ui/core';
+import { Box, Grid, IconButton, Typography } from '@material-ui/core';
+import { blueGrey } from '@material-ui/core/colors';
 import MixtapeList from '../MixtapeList';
 import UserContext from '../../contexts/UserContext';
 import { getMyMixtapes } from '../../utils/api';
@@ -28,11 +29,23 @@ function MyMixtapesPage(props) {
             <br/>
             <Grid container justify="center">
                 <Typography variant="h2">My Mixtapes</Typography>
-            </Grid>
-            <Grid container justify="center">
-                <Grid style={{backgroundColor: '#236067', overflow: 'auto', width: '70%', maxHeight: '80vh',}} container justify="center">
-                    <MixtapeList mixtapes={mixtapes} />
-                </Grid>
+                <Box style={{
+                            maxHeight: '60vh',
+                            overflow: 'auto',
+                            display: 'inline-flex', 
+                            flexDirection: 'row', 
+                            backgroundColor: blueGrey[900], 
+                            marginRight: '10px',
+                            marginBottom: '30px',
+                            paddingLeft: '20px',
+                            paddingTop: '20px',  
+                            paddingBottom: '20px',
+                            width: '85%', 
+                            height: '30%'}} boxShadow={3} borderRadius={12}>
+                    <Grid container justify="center">
+                        <MixtapeList mixtapes={mixtapes} />
+                    </Grid>
+                </Box>
             </Grid>
         </div>
     )
