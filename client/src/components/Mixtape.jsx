@@ -1,18 +1,29 @@
 import React, { useContext, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { AppBar, Box, Button, Grid, Toolbar, Checkbox, List, ListItem, ListItemText } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Toolbar,
+} from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
-import { Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon } from '@material-ui/icons';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon } from '@material-ui/icons';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
-import { getMixtape } from '../utils/api';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import { getMixtape, getUsername } from '../utils/api';
 import { Autocomplete } from '@material-ui/lab';
+import SettingsModal from './permissions/SettingsModal';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     userSelect: 'none',
@@ -20,7 +31,9 @@ const getItemStyle = (isDragging, draggableStyle) => ({
     marginBottom: '1em',
     background: isDragging ? 'steelblue' : 'grey',
     ...draggableStyle,
-  });
+});
+
+
 
 function Mixtape(props) {
     const [mixtape, setMixtape] = useState(getMixtape(props.id));
@@ -33,14 +46,16 @@ function Mixtape(props) {
 
     const { playing, setPlaying } = useContext(PlayingSongContext);
 
-    const [open, setOpen] = React.useState(false);
+    const [addSongPopupIsOpen, setAddSongPopupIsOpen] = useState(false);
 
-    const handleClickOpen = () => {
-      setOpen(true);
+    const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
+
+    const handleAddSongPopup = () => {
+      setAddSongPopupIsOpen(!addSongPopupIsOpen);
     };
 
-    const handleClose = () => {
-      setOpen(false);
+    const handleSettingsPopup = () => {
+      setSettingsPopupIsOpen(!settingsPopupIsOpen);
     };
 
     const suggestionsSongs = [
@@ -56,8 +71,6 @@ function Mixtape(props) {
       if (!result.destination) {
         return;
       }
-
-      
 
       // set new list order
       const newSongOrder = [...mixtape.songs];
@@ -90,6 +103,8 @@ function Mixtape(props) {
       setSongsToDelete([]);
     }
 
+    const settingsPopup = () => null;
+
     return (
       <Box style={{ display: 'inline-flex', 
                     overflow: 'auto',
@@ -102,37 +117,41 @@ function Mixtape(props) {
                     width: '90%', 
                     height: '100%' }} boxShadow={3} borderRadius={12}>
 
-<Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Add a Song!</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Type the song you want to add:
-          </DialogContentText>
-          <Autocomplete 
-            size="small"
-            style={{height:35,width:300}}
-            freeSolo 
-            disableClearable
-            options={suggestionsSongs.map((option)=>option.title)}
-            renderInput={(params)=>(
-              <TextField
-              
-              {...params}
-              label="Search..."
-              
-              variant="outlined"
-              InputProps={{ ...params.InputProps, type: 'search' }}
+        <Dialog open={addSongPopupIsOpen} onClose={handleAddSongPopup} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Add a Song!</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Type the song you want to add:
+            </DialogContentText>
+            <Autocomplete 
+              size="small"
+              style={{height:35,width:300}}
+              freeSolo 
+              disableClearable
+              options={suggestionsSongs.map((option)=>option.title)}
+              renderInput={(params)=>(
+                <TextField
+                
+                {...params}
+                label="Search..."
+                
+                variant="outlined"
+                InputProps={{ ...params.InputProps, type: 'search' }}
+                />
+              )}
               />
-            )}
-            />
-        </DialogContent>
-        <DialogActions>
-          <Button align="center" onClick={handleClose} color="primary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </DialogContent>
+          <DialogActions>
+            <Button align="center" onClick={handleAddSongPopup} color="primary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
 
+
+        <SettingsModal mixtape={mixtape} setMixtape={setMixtape} settingsPopupIsOpen={settingsPopupIsOpen} handleSettingsPopup={handleSettingsPopup} />
+
+        
         <Grid container justify="center">
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId='droppable'>
@@ -148,27 +167,38 @@ function Mixtape(props) {
                             <Grid item xs={1}>
                                 <Button startIcon={<SaveIcon />} style={{marginRight: '5%', float: 'right'}} onClick={() => setIsEditing(false)} variant="contained">DONE</Button> 
                             </Grid>
-                            <Grid item xs={7} />
+                            <Grid item xs={5} />
                             <Grid item xs={2}>
                               <Button
-                                style={{marginRight: '5%', float: 'right'}}
+                                style={{marginRight: '5%', float: 'right', backgroundColor: 'green'}}
                                 variant="contained"
                                 color="secondary"
-                                startIcon={<DeleteIcon />}
-                                onClick={() => deleteSongs()}
+                                startIcon={<SettingsIcon />}
+                                onClick={handleSettingsPopup}
                               >
-                                Delete
+                                Settings
                               </Button>
                             </Grid>
                             <Grid item xs={2}>
                               <Button
-                                onClick={handleClickOpen}
+                                onClick={handleAddSongPopup}
                                 style={{marginRight: '5%', float: 'right'}}
                                 variant="contained"
                                 color="primary"
                                 startIcon={<AddIcon />}
                               >
                                 Add a Song
+                              </Button>
+                            </Grid>
+                            <Grid item xs={2}>
+                              <Button
+                                style={{display: songsToDelete.length > 0 ? '' : 'none', marginRight: '5%', float: 'right'}}
+                                variant="contained"
+                                color="secondary"
+                                startIcon={<DeleteIcon />}
+                                onClick={() => deleteSongs()}
+                              >
+                                Delete
                               </Button>
                             </Grid>
                           </Grid>
@@ -185,7 +215,7 @@ function Mixtape(props) {
                     >
                       {(provided, snapshot) => (
                         // TODO: This list item should be a seperate component
-                        <Grid container>
+                        <Grid container onClick={() => isEditing ? clickCheckbox(mixtape.songs[index].id) : undefined}>
                           <ListItem
                             ref={provided.innerRef}
                             {...provided.draggableProps}
@@ -198,7 +228,6 @@ function Mixtape(props) {
                             {isEditing ? 
                               <Grid item xs={1}>
                                 <Checkbox
-                                  onClick={() => clickCheckbox(mixtape.songs[index].id)}
                                   checked={songsToDelete.includes(mixtape.songs[index].id)}
                                 />
                               </Grid>
