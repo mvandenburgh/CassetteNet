@@ -6,7 +6,13 @@ import { Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIc
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import { getMixtape } from '../utils/api';
-
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { Autocomplete } from '@material-ui/lab';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     userSelect: 'none',
@@ -27,10 +33,31 @@ function Mixtape(props) {
 
     const { playing, setPlaying } = useContext(PlayingSongContext);
 
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+
+    const handleClose = () => {
+      setOpen(false);
+    };
+
+    const suggestionsSongs = [
+      {title: 'Watermelon Sugar', artist: 'Harry Styles' },
+      {title: 'Circles', artist: 'Post Malone'},
+      {title: 'Better Now', artist: 'Post Malone'},
+      {title: 'Stand by Me', artist: 'Ben. E King'},
+      {title: 'Sucker', artist: 'Jonas Brothers'},
+      {title: 'Slow Dancing in the Dark', artist:'Joji'},
+    ];
+
     const onDragEnd = (result) => {
       if (!result.destination) {
         return;
       }
+
+      
 
       // set new list order
       const newSongOrder = [...mixtape.songs];
@@ -74,6 +101,38 @@ function Mixtape(props) {
                     paddingBottom: '20px',
                     width: '90%', 
                     height: '100%' }} boxShadow={3} borderRadius={12}>
+
+<Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Add a Song!</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Type the song you want to add:
+          </DialogContentText>
+          <Autocomplete 
+            size="small"
+            style={{height:35,width:300}}
+            freeSolo 
+            disableClearable
+            options={suggestionsSongs.map((option)=>option.title)}
+            renderInput={(params)=>(
+              <TextField
+              
+              {...params}
+              label="Search..."
+              
+              variant="outlined"
+              InputProps={{ ...params.InputProps, type: 'search' }}
+              />
+            )}
+            />
+        </DialogContent>
+        <DialogActions>
+          <Button align="center" onClick={handleClose} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+
         <Grid container justify="center">
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId='droppable'>
@@ -103,6 +162,7 @@ function Mixtape(props) {
                             </Grid>
                             <Grid item xs={2}>
                               <Button
+                                onClick={handleClickOpen}
                                 style={{marginRight: '5%', float: 'right'}}
                                 variant="contained"
                                 color="primary"
