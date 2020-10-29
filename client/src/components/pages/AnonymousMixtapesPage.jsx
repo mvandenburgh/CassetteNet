@@ -1,5 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { AppBar, Box, Button, Grid, Tab, Tabs, Typography, makeStyles, IconButton } from '@material-ui/core';
+import CommentIcon from '@material-ui/icons/Comment';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ShareIcon from '@material-ui/icons/Share';
 import indigo from '@material-ui/core/colors/indigo';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import lightBlue from '@material-ui/core/colors/lightBlue';
@@ -22,7 +25,11 @@ const MixtapeRows = ({mixtapes}) => (
         }}>
             <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.name} </Box>
             <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.collaborators} </Box>
-            <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> Some buttons </Box>
+            <Box style={{ width: "33%", display: 'flex', flexDirection: "row", justifyContent: "center"}}> 
+                <FavoriteIcon/> 
+                <CommentIcon/> 
+                <ShareIcon/> 
+            </Box>
 
         </Box>
       ))}
@@ -42,7 +49,19 @@ function AnonymousMixtapesPage(props) {
     {
         name: 'Rock Classics',
         collaborators: 'silverbutterfly863, brownmeercat530',
-    },       
+    },
+    {
+        name: 'Gold School',
+        collaborators: 'yellowleopard776',
+    },
+    {
+        name: 'Calm Down',
+        collaborators: 'goldengoose181, brownmeercat530',
+    },
+    {
+        name: 'Chill + Atmospheric',
+        collaborators: 'beautifulpanda667',
+    },  
     ];
 
 
@@ -58,18 +77,9 @@ function AnonymousMixtapesPage(props) {
         <br/>
         <Typography variant="h3" style={{textAlign: "center"}}>Mixtapes Anonymous</Typography>
         <br/>
-        {/* <Box style={{ 
-                backgroundColor: blueGrey[900],
-                margin: 'auto',
-                padding: 'auto',
-                height: '80%',
-                width: '80%'
-            }}>
-                inside
-        </Box> */}
 
-        <Box style={{backgroundColor: blueGrey[900], width: "99%", display: "flex", flexDirection: "row"}} >
-            <Box style={{ backgroundColor: blueGrey[800],
+        <Box style={{backgroundColor: blueGrey[900], width: "80%", display: "flex", flexDirection: "row", borderRadius: 3, padding: '5px' }} >
+            <Box style={{ backgroundColor: blueGrey[900],
                             width: "33%",
                             textAlign: "center",
                             boxShadow: "3",
@@ -77,7 +87,7 @@ function AnonymousMixtapesPage(props) {
                         }}>
                 Name
             </Box>
-            <Box style={{ backgroundColor: blueGrey[800],
+            <Box style={{ backgroundColor: blueGrey[900],
                             width: "33%",
                             textAlign: "center",
                             boxShadow: 3,
@@ -85,21 +95,25 @@ function AnonymousMixtapesPage(props) {
                         }}>
                 Collaborators
             </Box>
-            <Box style={{ backgroundColor: blueGrey[800],
+            <Box style={{ backgroundColor: blueGrey[900],
                             width: "34%",
                             textAlign: "center",
                             boxShadow: "3",
                             borderRadius: 6
                         }}>
-                Favorites
+                Favorite-Comment-Share
             </Box>
-            <Box style={{
-                            marginTop: "5px",
-                            backgroundColor: blueGrey[900]
-                        }}> 
-                            <MixtapeRows mixtapes={anonMixtapes} />
-                        </Box>
         </Box>
+        <Box style={{
+                        marginTop: '5px',
+                        marginRight: '10px',
+                        padding: '5px',
+                        borderRadius: 6,
+                        backgroundColor: blueGrey[900],
+                        width: '80%'
+                    }}> 
+                <MixtapeRows mixtapes={anonMixtapes} />
+            </Box>
       </div>
 );
 }
