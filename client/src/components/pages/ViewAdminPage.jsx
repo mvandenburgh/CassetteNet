@@ -148,6 +148,7 @@ function ViewAccountPage(props) {
                             backgroundColor: colors.namePfpContainer, 
                             marginRight: '10px',
                             marginBottom: '30px',
+                            marginLeft:'100px',
                             paddingLeft: '20px',
                             paddingTop: '20px',  
                             paddingBottom: '30px',
@@ -177,12 +178,13 @@ function ViewAccountPage(props) {
                     <Button variant="outlined" style={{ marginLeft:'50px',marginTop: '10px', height: '40px', width: '200px', backgroundColor: blueGrey[600], color: 'white'}}>Change Picture</Button>
                     </Grid>
                 </Box>
-                <Typography style={{ fontSize: '40px'}} variant="h2">Add Social Media Authentication</Typography>
+                <Typography style={{ marginLeft:'100px',fontSize: '40px'}} variant="h2">Add Social Media Authentication</Typography>
                 <Box style={{display: 'inline-flex', 
                             flexDirection: 'row', 
                             backgroundColor: colors.namePfpContainer, 
                             marginRight: '10px',
                             marginBottom: '20px',
+                            marginLeft:'100px',
                             paddingLeft: '20px',
                             paddingTop: '20px',  
                             paddingBottom: '30px',
@@ -207,6 +209,7 @@ function ViewAccountPage(props) {
                             marginRight: '10px',
                             marginBottom: '20px',
                             paddingLeft: '20px',
+                            marginLeft:'100px',
                             paddingTop: '20px',  
                             paddingBottom: '30px',
                             width: '85%', 
@@ -226,10 +229,10 @@ function ViewAccountPage(props) {
                 </Box>
                 <Grid container>
                     <Grid item xs={2}>
-                        <Button variant="outlined" style={{ marginLeft:'0px',marginTop: '10px', height: '70px', width: '300px', backgroundColor: blueGrey[600], color: 'white'}}>Change Password</Button>
+                        <Button variant="outlined" style={{ marginLeft:'100px',marginTop: '10px', height: '70px', width: '300px', backgroundColor: blueGrey[600], color: 'white'}}>Change Password</Button>
                     </Grid>
                     <Grid item xs={1}>
-                        <Button variant="outlined" style={{ marginLeft:'0px',marginTop: '10px', height: '70px', width: '300px', backgroundColor: blueGrey[600], color: 'white'}}>Admin Screen</Button>
+                        <Button variant="outlined" style={{ marginLeft:'200px',marginTop: '10px', height: '70px', width: '300px', backgroundColor: blueGrey[600], color: 'white'}}>Admin Screen</Button>
                     </Grid>
                 </Grid>
                 

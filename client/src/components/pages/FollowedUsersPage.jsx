@@ -157,7 +157,7 @@ const suggestedUsers = [
             <ArrowBackIcon/>
           </IconButton>
           <br/>
-          <Typography variant="h3" style={{textAlign: "center"}}> Followed Users </Typography>
+          <Typography variant="h2" style={{textAlign: "center"}}> Followed Users </Typography>
           <br/>
           <Box style={{ width: "25%", display: 'flex', paddingLeft: '120px'}}>
                 <br/>
