@@ -102,7 +102,7 @@ function PageFrame(props) {
 
   const logout = () => {setUser({ isLoggedIn: false }); history.push('/');}
 
-  const { currentSong } = useContext(CurrentSongContext);
+  const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
   const { playing, setPlaying } = useContext(PlayingSongContext);
 
@@ -212,7 +212,7 @@ function PageFrame(props) {
         <AppBar style={{ backgroundColor: '#fff', display: currentSong ? '' : 'none', top: 'auto', bottom: 0,}}>
           {/* <Toolbar> */}
             {/* <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong ? currentSong.song : ''}`} /> */}
-            <Grid className={classes.player} container justify="center" >
+            <Grid className={classes.player} container justify="center" onClick={() => setCurrentSong(null)}>
               {/* <div onClick={handlePlayPause}>
                 {playing ? <PauseIcon /> : <PlayIcon />}
               </div> */}
