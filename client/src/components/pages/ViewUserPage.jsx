@@ -128,6 +128,7 @@ function ViewUserPage(props) {
                             flexDirection: 'row', 
                             backgroundColor: colors.namePfpContainer, 
                             marginRight: '10px',
+                            marginLeft:'100px',
                             marginBottom: '30px',
                             paddingLeft: '20px',
                             paddingTop: '20px',  
@@ -146,7 +147,7 @@ function ViewUserPage(props) {
                         <Button variant="outlined" style={{padding: '10px', marginTop: '10px', height: '40px', width: '20px', backgroundColor: blueGrey[600], color: 'white'}}>Follow</Button>
                     </div>
                 </Box>
-                <Box style={{width: '86%', backgroundColor: colors.tabsContainer}} boxShadow={3} borderRadius={12}>
+                <Box style={{marginLeft:'100px',width: '86%', backgroundColor: colors.tabsContainer}} boxShadow={3} borderRadius={12}>
                     <AppBar position="static">
                         <Tabs style={{backgroundColor: blueGrey[900]}} variant="fullWidth" value={value} onChange={handleChange} aria-label="simple tabs example">
                             <Tab label="Created Mixtapes" />

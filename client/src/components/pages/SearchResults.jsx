@@ -76,7 +76,7 @@ function SearchResultsPage(props) {
                 
             <br/>
             <br/>
-            <Typography style={{textAlign: "center"}} variant="h2">Search results for "Justin Bieber"</Typography>
+            <Typography style={{marginLeft:'100px',textAlign: "left"}} variant="h4">Search results for "Justin Bieber":</Typography>
             <Grid container >
                 <Box style={{
                             maxHeight: '60vh',
