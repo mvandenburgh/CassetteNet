@@ -1,11 +1,5 @@
 import React, { useContext, useState } from 'react';
 import { AppBar, Box, Button, Grid, Tab, Tabs, Typography, makeStyles, IconButton } from '@material-ui/core';
-import {
-    alpha,
-    ThemeProvider,
-    withStyles,
-    createMuiTheme,
-  } from '@material-ui/core/styles';
 import indigo from '@material-ui/core/colors/indigo';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import { getUsername } from '../../utils/api';
@@ -33,14 +27,6 @@ function TabPanel(props) {
         )}
       </div>
     );
-  }
-  
-  
-  function a11yProps(index) {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    };
   }
   
   const useStyles = makeStyles((theme) => ({
