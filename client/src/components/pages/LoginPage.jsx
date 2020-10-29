@@ -74,7 +74,7 @@ function LoginPage(props) {
     const handlePassword = (e) => setPassword(e.target.value);
 
     return (
-        <div  style={{ color: 'white', left:0 }}>
+        <div style={{ color: 'white', left:0 }}>
       
       <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
         <ArrowBackIcon/>
@@ -91,14 +91,18 @@ function LoginPage(props) {
           <Grid item>
           <CssTextField
             className={classes.margin}
+            onChange={(e) => handleUsername(e)}
+            value={username}
             variant="outlined" label="Username" />
           </Grid>
           <Grid item>
           <CssTextField
             className={classes.margin}
+            onChange={(e) => handlePassword(e)}
+            value={password}
             variant="outlined" type="Password" label="Password" />
           </Grid>
-          <Button variant="filled" color="inherit">
+          <Button variant="filled" color="inherit" onClick={loginAsUser}>
             Log In
         </Button>
         </Grid>
