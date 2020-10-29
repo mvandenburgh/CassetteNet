@@ -21,6 +21,7 @@ function StartPage(props) {
     const goBack = () => { history.push('/') }
 
     const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
+    const loginAsUser = () => setUser({ username: 'User0', isGuest: false, isLoggedIn: true });
 
     return (
         <div style={{color: 'white', left: 0}}>
