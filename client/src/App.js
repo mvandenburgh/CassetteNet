@@ -33,6 +33,7 @@ function App() {
       isLoggedIn: false,
     };
   }
+  userDefault = JSON.parse('{"isLoggedIn":true,"isGuest":false,"_id":"5f862052790b506769c6a0dc","username":"demoUser","email":"catarina.pierre@example.com","verified":true,"favoritedMixtapes":["5f862052066d9931b3d49190","5f8620518e2aeed07faec255","5f86205097700519e84592ee","5f8620516371adde64b81f42"],"followedUsers":["5f86205255a51d454ea53a92","5f8620525ccdd0304e44d7c4","5f862052d32eca593941adb1","5f86205215fdecbb8ee063d5","5f8620525c406518ab703521","5f862052bee854d19fe6189d"],"admin":false,"unique_id":"0001"}');
   const [user, setUser] = useState(userDefault);
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user));
