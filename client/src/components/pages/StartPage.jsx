@@ -29,8 +29,6 @@ function StartPage(props) {
             </IconButton>
             <br/>
                 
-            <br/>
-            <br/>
             <div style={{margin: 'auto', width: '50%'}}>
                 <img style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src={logo} alt='logo' />
                 <Typography align="center" variant="h4">Mix freely.</Typography>
