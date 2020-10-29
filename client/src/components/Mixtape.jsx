@@ -67,24 +67,29 @@ function Mixtape(props) {
                   >
                     {(provided, snapshot) => (
                       // TODO: This list item should be a seperate component
-                      <ListItem
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={getItemStyle(
-                          snapshot.isDragging,
-                          provided.draggableProps.style
-                        )}
-                      >
-                        <Checkbox style={{ display: isEditing ? '' : 'none' }} />
-                        <div style={{left: '0', marginRight: '10%' }}>
-                          <img style={{width: '70px', height: '70px'}} src={`https://img.youtube.com/vi/${song.id}/1.jpg`} alt='mixtape_cover'></img>
-                          {/* TODO: fetch actual song names from API */}
-                          <ListItemText>{song.name || `song_${mixtape.songs[index]}`}</ListItemText>
-                          
-                        </div>
-                        <PlayIcon onClick={() => playSong(index)} style={{display: isEditing ? 'none' : '', position: 'absolute', right: '10%'}} />
-                      </ListItem>
+                      <Grid container>
+                        <ListItem
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={getItemStyle(
+                            snapshot.isDragging,
+                            provided.draggableProps.style
+                          )}
+                        >
+                          <Grid item xs={10}>
+                            <Checkbox style={{ display: isEditing ? '' : 'none' }} />
+                            <div style={{left: '0', marginRight: '10%' }}>
+                              <img style={{width: '70px', height: '70px'}} src={`https://img.youtube.com/vi/${song.id}/1.jpg`} alt='mixtape_cover'></img>
+                              {/* TODO: fetch actual song names from API */}
+                              <ListItemText>{song.name || `song_${mixtape.songs[index]}`}</ListItemText>
+                            </div>
+                          </Grid>
+                          <Grid item xs={2}>
+                            <PlayIcon fontSize="large" onClick={() => playSong(index)} style={{display: isEditing ? 'none' : '' }} />
+                          </Grid>
+                        </ListItem>
+                      </Grid>
                     )}
                   </Draggable>
                 ))}

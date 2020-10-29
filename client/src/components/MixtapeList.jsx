@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Fab, List, ListItem, ListItemText } from '@material-ui/core';
+import { Fab, Grid, List, ListItem, ListItemText } from '@material-ui/core';
 import { Delete as DeleteIcon } from '@material-ui/icons';
-import { getUser } from '../utils/api';
+import { getUsername } from '../utils/api';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
@@ -53,51 +53,67 @@ function MixtapeList(props) {
             style={{width: '70%'}}
           >
             <ListItem>
-              <div style={{ marginRight: '10%' }}>
-                <ListItemText>Name</ListItemText>
-              </div>
-              <ListItemText style={{ left:'20%', marginRight: '10%' }}>
-                Collaborators
-              </ListItemText>
-              <ListItemText style={{ marginRight: '10%' }}>
-                Favorites
-              </ListItemText>
+              <Grid container>
+                <Grid item xs={4}>
+                  <ListItemText>Name</ListItemText>
+                </Grid>
+                <Grid item xs={4}>
+                  <ListItemText>
+                    Collaborators
+                  </ListItemText>
+                </Grid>
+                <Grid item xs={4}>
+                  <ListItemText>
+                    Favorites
+                  </ListItemText>
+                </Grid>
+              </Grid>
             </ListItem>
             {mixtapes.map((mixtape, index) => (
               <div onClick={() => openMixtape(index)}>
-                <Draggable
-                  key={`item${index}`}
-                  draggableId={`item${index}`}
-                  index={index}
-                >
-                  {(provided, snapshot) => (
-                    // TODO: This list item should be a seperate component
-                    <ListItem
+                <Grid container>
+                  <Draggable
+                    key={`item${index}`}
+                    draggableId={`item${index}`}
+                    index={index}
+                  >
+                    
+                    {(provided, snapshot) => (
+                      // TODO: This list item should be a seperate component
                       
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(
-                        snapshot.isDragging,
-                        provided.draggableProps.style
-                      )}
-                    >
-                      <div style={{left: '0', marginRight: '10%' }}>
-                        <img style={{width: '30%', height: '30%'}} src={mixtape.coverImage} alt='mixtape_cover'></img>
-                        <ListItemText>{mixtape.name}</ListItemText>
-                      </div>
-                      <ListItemText style={{ left:'20%', marginRight: '10%' }}>
-                        {mixtape.collaborators.map(collaborator => getUser(collaborator.user))}
-                      </ListItemText>
-                      <ListItemText style={{ marginRight: '10%' }}>
-                        {mixtape.favorites}
-                      </ListItemText>
-                      <Fab onClick={(e) => deleteMixtape(mixtape._id, e)} color="primary" aria-label="delete">
-                        <DeleteIcon />
-                      </Fab>
-                    </ListItem>
-                  )}
-                </Draggable>
+                      <ListItem
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={getItemStyle(
+                          snapshot.isDragging,
+                          provided.draggableProps.style
+                        )}
+                      >
+                        <Grid item xs={4}>
+                          <div style={{left: '0', marginRight: '10%' }}>
+                            <img style={{width: '30%', height: '30%'}} src={mixtape.coverImage} alt='mixtape_cover'></img>
+                            <ListItemText>{mixtape.name}</ListItemText>
+                          </div>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <ListItemText style={{ left:'20%', marginRight: '10%' }}>
+                            {mixtape.collaborators.map((collaborator, i) => i === (mixtape.collaborators.length - 1) ? getUsername(collaborator.user) : i < 5 ? `${getUsername(collaborator.user)}, ` : '')}
+                            {mixtape.collaborators.length >= 5 ? '...' : ''}
+                          </ListItemText>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <ListItemText style={{ marginRight: '10%' }}>
+                            {mixtape.favorites}
+                          </ListItemText>
+                        </Grid>
+                        <Fab onClick={(e) => deleteMixtape(mixtape._id, e)} color="primary" aria-label="delete">
+                          <DeleteIcon />
+                        </Fab>
+                      </ListItem>
+                    )}
+                  </Draggable>
+                </Grid>
               </div>
             ))}
             {provided.placeholder}
