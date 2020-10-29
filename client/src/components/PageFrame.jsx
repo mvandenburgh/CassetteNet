@@ -167,19 +167,19 @@ function PageFrame(props) {
                         </ListItemIcon>
                         <ListItemText primary="Atmosphere Sounds" />
                     </ListItem>
-                    <ListItem onClick={() => history.push('/NotFound')} button>
+                    {/* <ListItem onClick={() => history.push('/NotFound')} button>
                         <ListItemIcon>
                             <NotFoundIcon />    
                         </ListItemIcon>
                         <ListItemText primary="Page Not Found" />
-                    </ListItem>
-                    <ListItem onClick={() => history.push('/SignUp')} button>
+                    </ListItem> */}
+                    {/* <ListItem onClick={() => history.push('/SignUp')} button>
                         <ListItemIcon>
                             <SignUpIcon />    
                         </ListItemIcon>
                         <ListItemText primary="Sign Up" />
-                    </ListItem>
-                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                    </ListItem> */}
+                  <ListItem onClick={() => history.push('/followedusers')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
                           <FollowedUsersIcon />    
                       </ListItemIcon>
@@ -200,7 +200,7 @@ function PageFrame(props) {
                       </ListItemIcon>
                       <ListItemText primary="Inbox" />
                   </ListItem>
-                  <ListItem button style={user.isGuest ? {display: 'none'} : {}}>
+                  <ListItem onClick={() => history.push('/anonymousmixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
                           <AnonymousMixtapesIcon />    
                       </ListItemIcon>
