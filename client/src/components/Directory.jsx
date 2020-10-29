@@ -22,6 +22,8 @@ function Directory() {
             <br/>
             <Button onClick={ () => history.push('/login') } variant="outlined" style={{margin: '1em'}}>Login Page</Button>
             <br/>
+            <Button onClick={ () => history.push('/SignUp') } variant="outlined" style={{margin: '1em'}}>Sign Up Page</Button>
+            <br/>
             <Button onClick={ () => history.push('/dashboard') } variant="outlined" style={{margin: '1em'}}>Dashboard Page</Button>
             <br/>
             <Button onClick={ () => history.push('/atmosphere') } variant="outlined" style={{margin: '1em'}}>Atmosphere Page</Button>
@@ -34,8 +36,10 @@ function Directory() {
             <br/>
             <Button onClick={ () => history.push('/NotFound') } variant="outlined" style={{margin: '1em'}}>Not Found Page</Button>
             <br/>
+            <Button onClick={ () => history.push('/viewuser') } variant="outlined" style={{margin: '1em'}}>View User Page</Button>
+            <br/>
             <Button onClick={ () => history.push('/SignUp') } variant="outlined" style={{margin: '1em'}}>Sign Up Page</Button>
-            <br />
+            <br/>
             <Button onClick={ () => history.push('/listeningroom') } variant="outlined" style={{margin: '1em'}}>Listening Room Page</Button>
             <br/>
             <Button onClick={ () => history.push('/ChangePassword') } variant="outlined" style={{margin: '1em'}}>Change Password Page</Button>
