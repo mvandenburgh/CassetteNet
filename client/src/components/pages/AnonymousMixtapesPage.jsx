@@ -77,8 +77,10 @@ function AnonymousMixtapesPage(props) {
         <br/>
         <Typography variant="h3" style={{textAlign: "center"}}>Mixtapes Anonymous</Typography>
         <br/>
-
-        <Box style={{backgroundColor: blueGrey[900], width: "80%", display: "flex", flexDirection: "row", borderRadius: 3, padding: '5px' }} >
+        <Grid container direction="row">
+        <Grid sz={1}>
+        </Grid>
+        <Box style={{backgroundColor: blueGrey[900], marginLeft:"170px",width: "80%", display: "flex", flexDirection: "row", borderRadius: 3, padding: '5px' }} >
             <Box style={{ backgroundColor: blueGrey[900],
                             width: "33%",
                             textAlign: "center",
@@ -105,6 +107,7 @@ function AnonymousMixtapesPage(props) {
             </Box>
         </Box>
         <Box style={{
+                        marginLeft:"170px",
                         marginTop: '5px',
                         marginRight: '10px',
                         padding: '5px',
@@ -114,6 +117,9 @@ function AnonymousMixtapesPage(props) {
                     }}> 
                 <MixtapeRows mixtapes={anonMixtapes} />
             </Box>
+        </Grid>
+        
+        
       </div>
 );
 }
