@@ -7,3 +7,6 @@
 
 ### Server
 TBD
+
+## Running locally
+Install Docker and Docker-Compose and run `docker-compose up` from the root of the repository. This will spin up 3 containers for the client, server, and database and automatically connect them to each other.
