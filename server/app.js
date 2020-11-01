@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const passport = require('./auth/passport');
 
 const userRoute = require('./routes/user');
 
@@ -12,8 +13,11 @@ const app =  express();
 
 app.use(cors()); // TODO: figure out where/if this is actually needed. for now, apply to all routes.
 app.use(session({ secret: 'passport-tutorial', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(passport.initialize()); 
+app.use(passport.session()); 
+
 
 app.use('/user', userRoute);
 
