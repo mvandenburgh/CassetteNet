@@ -44,7 +44,7 @@ services:
             ME_CONFIG_MONGODB_PORT: 27017
             ME_CONFIG_MONGODB_SERVER: mongo
         ports: 
-            - 8081:8081
+            - 3001:8081
 
 volumes:
     mongo:
