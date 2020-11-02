@@ -14,7 +14,8 @@ router.post('/signup', async (req, res) => {
 });
 
 router.post('/login', passport.authenticate('local'), (req, res) => {
-    
+    res.status(200).send();
 });
+
 
 module.exports = router;
