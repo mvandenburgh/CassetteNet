@@ -77,6 +77,11 @@ async function deleteMixtape(mixtape) {
     await axios.delete(new URL(`/mixtape/${mixtape._id}`, SERVER_ROOT_URL), { mixtape });
 }
 
+async function createMixtape() {
+    const mixtape = await axios.post(new URL(`/mixtape`, SERVER_ROOT_URL));
+    return mixtape;
+}
+
 /**
  * 
  * @param {*} _id id of the user who's favorited mixtapes we want
@@ -136,6 +141,7 @@ async function userLogout() {
 }
 
 export {
+    createMixtape,
     deleteMixtape,
     favoriteMixtape,
     unfavoriteMixtape,
