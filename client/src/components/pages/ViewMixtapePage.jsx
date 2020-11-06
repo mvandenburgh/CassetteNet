@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Checkbox, Fab, Grid, IconButton, Paper, TextField, Typography } from '@material-ui/core';
+import {Button, Box, Checkbox, Fab, Grid, IconButton, Paper, TextField, Typography } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
 import { getMixtape, getUsername } from '../../utils/api';
@@ -39,7 +39,19 @@ function ViewMixtapePage(props) {
             
             <Paper style={{height: '7em', padding: '1%', marginLeft: '5%', marginBottom: '2%', width: '70%'}}>
                 {/* {isEditing ? <TextField value={mixtape.name} /> : <h1>{mixtape.name || 'Mixtape Title'}</h1>} */}
+                <Grid container>
+                    <Grid sz={4}>
+                        
                 <Typography variant="h4">{mixtape.name}</Typography>
+                    </Grid>
+                    <Grid sz={1}>
+                    <Button startIcon={<EditIcon />}  style={{position: 'absolute'}} variant="contained">Change Mixtape Name</Button>
+                    </Grid>
+                
+
+                </Grid>
+                
+                
                 <div>
                     <h4 style={{display: 'inline-block'}}>{`Created by ${owner} ${mixtape.songs.length} songs, XX mins`}</h4>
                     <div style={{display: 'inline-block', float: 'right'}}>
