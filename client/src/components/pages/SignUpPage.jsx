@@ -35,6 +35,7 @@ function SignUpPage(props) {
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () =>  {
+    console.log("handleClose being called")
     setOpen(false);
     setPassword(".");
     setOauth(true);
@@ -55,7 +56,7 @@ function SignUpPage(props) {
   const handleEmail = (e) => setEmail(e.target.value);
 
   const submit = () => {
-    console.log(oauthAccount);
+    console.log("oauthAccount: " + oauthAccount);
     if(oauthAccount == false && password.length<8){
       alert('Password length cannot be less than 8 characters');
     }
