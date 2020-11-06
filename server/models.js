@@ -8,7 +8,7 @@ const userSchema = new Schema({
   username: String,
   hash: String,
   salt: String,
-  email: String,
+  email: {type: String, unique: true},
   verified: Boolean,
   favoritedMixtapes: Array, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
   followedUsers: Array, // array of other user object ids
@@ -18,6 +18,13 @@ const userSchema = new Schema({
     get: id => id.toString(36).padStart(4, '0'), // convert to alphanumeric string
   },
   profilePicture: { data: Buffer, contentType: String }, // raw image data for user's profile picture
+});
+
+const tokenSchema = new Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+    email: String,
+    token: { type: String, required: true },
+    createdAt: { type: Date, required: true, default: Date.now, expires: 43200 }
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -54,4 +61,5 @@ module.exports = {
   ListeningRoom: model('ListeningRoom', listeningRoomSchema),
   Mixtape: model('Mixtape', mixtapeSchema),
   User: model('User', userSchema),
+  token: model('Token',tokenSchema),
 };
