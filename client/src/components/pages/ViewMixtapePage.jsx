@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Checkbox, Fab, Grid, IconButton, Paper, TextField, Typography } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import { getMixtape, getUsername } from '../../utils/api';
@@ -10,7 +10,19 @@ function ViewMixtapePage(props) {
     const history = useHistory();
     const goBack = () => { history.push('/') }
 
-    const mixtape = getMixtape(props.match.params.id);
+    const [mixtape, setMixtape] = useState({
+        name: '',
+        collaborators: [],
+        songs: [],
+    });
+    console.log(props.match.params.id)
+    useEffect(() => {
+        async function updateMixtape() {
+            const updatedMixtape = await getMixtape(props.match.params.id);
+            setMixtape(updatedMixtape);
+        }
+        updateMixtape();
+     }, [])
     const owner = mixtape.collaborators.filter(c => c.permissions === 'owner').map(c => c.user)[0];
 
     const [isEditing, setIsEditing] = useState(false);
@@ -37,7 +49,7 @@ function ViewMixtapePage(props) {
                 </div>
             </Paper>
             <Grid container justify="center">
-                    <Mixtape enableEditing={true} isEditing={isEditing} setIsEditing={setIsEditing} id={props.match.params.id} />
+                    <Mixtape enableEditing={true} isEditing={isEditing} setIsEditing={setIsEditing} mixtape={mixtape} setMixtape={setMixtape} />
             </Grid>
         </div>
     )

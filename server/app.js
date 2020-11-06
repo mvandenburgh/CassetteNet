@@ -13,11 +13,11 @@ const userRoute = require('./routes/user');
 const mixtapeRoute = require('./routes/mixtape');
 const adminRoute = require('./routes/admin');
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://root:password@localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app =  express();
 
-app.use(cors()); // TODO: figure out where/if this is actually needed. for now, apply to all routes.
+app.use(cors({ credentials: true, origin: process.env.ALLOWED_ORIGIN || 'http://localhost:3000' })); // TODO: figure out where/if this is actually needed. for now, apply to all routes.
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -26,8 +26,6 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-app.use(passport.initialize()); 
-app.use(passport.session()); 
 
 // use static authenticate method of model in LocalStrategy
 passport.use(new LocalStrategy(User.authenticate()));
@@ -36,10 +34,13 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/admin', adminRoute);
 app.use('/mixtape', mixtapeRoute);
 app.use('/user', userRoute);
-
 app.get('/', async (req, res) => {
     const users = await User.find();
     return res.json(users);

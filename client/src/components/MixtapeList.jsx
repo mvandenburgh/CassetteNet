@@ -15,8 +15,8 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 
 
 function MixtapeList(props) {
-  const [mixtapes, setMixtapes] = useState(props.mixtapes);
-
+  const { mixtapes, setMixtapes } = props;
+  console.log(mixtapes);
   const history = useHistory();
 
   const onDragEnd = (result) => {

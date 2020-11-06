@@ -8,7 +8,7 @@ const { getPlaylistVideos } = require('../youtube_api/youtube');
 const NUM_OF_USERS = 300;
 const NUM_OF_MIXTAPES = 9;
 
-const MIN_COLLABORATORS_PER_MIXTAPE = 1;
+const MIN_COLLABORATORS_PER_MIXTAPE = 10;
 const MAX_COLLABORATORS_PER_MIXTAPE = 20;
 
 const MIN_FAVORITED_MIXTAPES_PER_USER = 0;
@@ -47,8 +47,6 @@ const randInt = (min, max) => Math.floor(Math.random() * (Math.floor(max) - Math
 // returns true or false randomly
 const coinFlip = () => Boolean(randInt(0,2));
 
-let current_unique_id = 0;
-
 
 async function generateMixtapes(count) {
     const mixtapes = [];
@@ -83,6 +81,7 @@ async function generateMixtapes(count) {
 
 async function generateUsers(count) {
     const users = [];
+    let current_unique_id = 0;
     const res = await axios.get(`https://randomuser.me/api/?results=${count}`);
     for (const user of res.data.results) {
         const { username } = user.login;
@@ -92,7 +91,6 @@ async function generateUsers(count) {
         const favoritedMixtapes = [];
         const followedUsers = [];
         const admin = false;
-        const unique_id = `${'0'.repeat(4 - uintToBase36(current_unique_id).length)}${uintToBase36(current_unique_id)}`;
         current_unique_id++;
         users.push({
             _id: ObjectId(),
@@ -103,7 +101,7 @@ async function generateUsers(count) {
             favoritedMixtapes,
             followedUsers,
             admin,
-            unique_id,
+            uniqueId: current_unique_id,
         });
     }
     return users;

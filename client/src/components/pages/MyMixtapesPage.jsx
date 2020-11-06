@@ -12,8 +12,15 @@ function MyMixtapesPage(props) {
     if (!user.isLoggedIn) {
         user = JSON.parse(localStorage.getItem('user'));
     }
+    const [mixtapes, setMixtapes] = useState([]);
     const { _id } = user;
-    const mixtapes = getMyMixtapes(_id);
+    useEffect(() => {
+        async function getMixtapes() {
+            const updatedMixtapes = await getMyMixtapes(_id);
+            setMixtapes(updatedMixtapes.data);
+        }
+        getMixtapes();
+     }, [])
 
     const history = useHistory();
     const goBack = () => { history.push('/') }
@@ -43,7 +50,7 @@ function MyMixtapesPage(props) {
                             width: '85%', 
                             height: '30%'}} boxShadow={3} borderRadius={12}>
                     <Grid container justify="center">
-                        <MixtapeList mixtapes={mixtapes} />
+                        <MixtapeList mixtapes={mixtapes} setMixtapes={setMixtapes} />
                     </Grid>
                 </Box>
             </Grid>

@@ -21,7 +21,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon } from '@material-ui/icons';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
-import { getMixtape, getUsername } from '../utils/api';
+import { getMixtape, getUsername, updateMixtape } from '../utils/api';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import SettingsModal from './permissions/SettingsModal';
@@ -39,11 +39,11 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 function Mixtape(props) {
     const history = useHistory();
 
-    const [mixtape, setMixtape] = useState(getMixtape(props.id));
+    // const [mixtape, setMixtape] = useState(getMixtape(props.id));
 
     const [songsToDelete, setSongsToDelete] = useState([]);
 
-    const { enableEditing, isEditing, setIsEditing } = props;
+    const { enableEditing, isEditing, setIsEditing, mixtape, setMixtape } = props;
 
     const { setCurrentSong } = useContext(CurrentSongContext);
 
@@ -104,6 +104,11 @@ function Mixtape(props) {
       mixtape.songs = newSongs;
       setMixtape(mixtape);
       setSongsToDelete([]);
+    }
+
+    const saveMixtape = async () => {
+      setIsEditing(false);
+      updateMixtape(mixtape);
     }
 
     const settingsPopup = () => null;
@@ -168,7 +173,7 @@ function Mixtape(props) {
                       {isEditing ?
                           <Grid container>
                             <Grid item xs={1}>
-                                <Button startIcon={<SaveIcon />} style={{marginRight: '5%', float: 'right'}} onClick={() => setIsEditing(false)} variant="contained">DONE</Button> 
+                                <Button startIcon={<SaveIcon />} style={{marginRight: '5%', float: 'right'}} onClick={() => saveMixtape(mixtape)} variant="contained">DONE</Button> 
                             </Grid>
                             <Grid item xs={5} />
                             <Grid item xs={2}>
