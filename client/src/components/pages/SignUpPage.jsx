@@ -30,12 +30,14 @@ function SignUpPage(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-
+  const [oauthAccount, setOauth] = useState(false);
   
+
   const handleClickOpen = () => setOpen(true);
   const handleClose = () =>  {
     setOpen(false);
     setPassword(".");
+    setOauth(true);
     submit();
   };
   const handleResponseFacebook = (e) => {
@@ -52,7 +54,16 @@ function SignUpPage(props) {
   const handlePassword = (e) => setPassword(e.target.value);
   const handleEmail = (e) => setEmail(e.target.value);
 
-  const submit = () => userSignup(email, username, password).then(() => alert('Sign up successful!')); // TODO: better dialog box
+  const submit = () => {
+    console.log(oauthAccount);
+    if(oauthAccount == false && password.length<8){
+      alert('Password length cannot be less than 8 characters');
+    }
+    else{
+      userSignup(email, username, password).then(() => alert('Sign up successful!'));
+    }
+  }; 
+  // TODO: better dialog box
 
 
 
@@ -188,16 +199,7 @@ function SignUpPage(props) {
           Or sign up the regular way below:
         <br />
           </Typography>
-          <Grid item>
-            <TextField
-              className={classes.margin}
-              variant="outlined" label="First Name" />
-          </Grid>
-          <Grid item>
-            <TextField
-              className={classes.margin}
-              variant="outlined" label="Last Name" />
-          </Grid>
+          
           <Grid item>
             <TextField
               className={classes.margin}

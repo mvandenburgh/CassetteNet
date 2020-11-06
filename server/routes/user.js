@@ -20,6 +20,7 @@ router.post('/signup', async (req, res) => {
         }
         
     });
+    res.redirect('/');
 });
 
 
@@ -36,6 +37,7 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 router.post('/logout', (req, res) => {
     req.logout(); // passport method to clear jwt from user's cookie
     res.redirect('/');
+    
 });
 
 // TODO: secure/authentication
