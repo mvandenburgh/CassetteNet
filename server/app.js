@@ -5,8 +5,12 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const passport = require('passport');
+const LocalStrategy = require('passport-local');
+
+const { User } = require('./models');
 
 const userRoute = require('./routes/user');
+const mixtapeRoute = require('./routes/mixtape');
 const adminRoute = require('./routes/admin');
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -25,10 +29,6 @@ app.use(session({
 app.use(passport.initialize()); 
 app.use(passport.session()); 
 
-const LocalStrategy = require('passport-local');
-
-const { User } = require('./models');
-
 // use static authenticate method of model in LocalStrategy
 passport.use(new LocalStrategy(User.authenticate()));
  
@@ -37,6 +37,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use('/admin', adminRoute);
+app.use('/mixtape', mixtapeRoute);
 app.use('/user', userRoute);
 
 app.get('/', async (req, res) => {
