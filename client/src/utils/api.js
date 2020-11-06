@@ -82,6 +82,12 @@ async function createMixtape() {
     return mixtape;
 }
 
+async function songSearch(query) {
+    // const results = await axios.get(new URL('/youtube/search', SERVER_ROOT_URL), { params: { q: query }});
+    const results = await axios.get('http://localhost:5000/youtube/search', { params: { q: query }});
+    return results.data;
+}
+
 /**
  * 
  * @param {*} _id id of the user who's favorited mixtapes we want
@@ -150,6 +156,7 @@ export {
     getMyMixtapes,
     getFavoritedMixtapes,
     getInboxMessages,
+    songSearch,
     updateMixtape,
     userLogin,
     userLogout,

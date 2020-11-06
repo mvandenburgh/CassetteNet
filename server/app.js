@@ -12,6 +12,7 @@ const { User } = require('./models');
 const userRoute = require('./routes/user');
 const mixtapeRoute = require('./routes/mixtape');
 const adminRoute = require('./routes/admin');
+const youtubeRoute = require('./routes/youtube');
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -38,6 +39,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/youtube', youtubeRoute);
 app.use('/admin', adminRoute);
 app.use('/mixtape', mixtapeRoute);
 app.use('/user', userRoute);

@@ -1,9 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -21,7 +22,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon } from '@material-ui/icons';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
-import { getMixtape, getUsername, updateMixtape } from '../utils/api';
+import { songSearch, updateMixtape } from '../utils/api';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import SettingsModal from './permissions/SettingsModal';
@@ -49,7 +50,12 @@ function Mixtape(props) {
 
     const { playing, setPlaying } = useContext(PlayingSongContext);
 
-    const [addSongPopupIsOpen, setAddSongPopupIsOpen] = useState(false);
+    const [addSongPopupIsOpen, setAddSongPopupIsOpen] = useState(false); // whether add song popup is open
+    const [addSongSearchResults, setAddSongSearchResults] = useState([]); // search results in song search
+    const [addSongAutocompleteOpen, setAddSongAutocompleteOpen] = useState(false); // whether autocomplete inside song popup is open
+    const [songToAdd, setSongToAdd] = useState({});
+    const [searchQuery, setSearchQuery] = useState('');
+    const loading = addSongAutocompleteOpen && addSongSearchResults.length === 0;
 
     const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
 
@@ -61,14 +67,25 @@ function Mixtape(props) {
       setSettingsPopupIsOpen(!settingsPopupIsOpen);
     };
 
-    const suggestionsSongs = [
-      {title: 'Watermelon Sugar', artist: 'Harry Styles' },
-      {title: 'Circles', artist: 'Post Malone'},
-      {title: 'Better Now', artist: 'Post Malone'},
-      {title: 'Stand by Me', artist: 'Ben. E King'},
-      {title: 'Sucker', artist: 'Jonas Brothers'},
-      {title: 'Slow Dancing in the Dark', artist:'Joji'},
-    ];
+    useEffect(() => {
+      let active = true;
+  
+      if (!loading) {
+        return undefined;
+      }
+  
+      (async () => {
+        const response = await songSearch(searchQuery);
+        console.log(response);
+        if (active) {
+          setAddSongSearchResults(response);
+        }
+      })();
+  
+      return () => {
+        active = false;
+      };
+    }, [loading]);
 
     const onDragEnd = (result) => {
       if (!result.destination) {
@@ -99,7 +116,6 @@ function Mixtape(props) {
     };
 
     const deleteSongs = () => {
-      // TODO: actually update database
       const newSongs = mixtape.songs.filter(song => !songsToDelete.includes(song.id));
       mixtape.songs = newSongs;
       setMixtape(mixtape);
@@ -111,7 +127,17 @@ function Mixtape(props) {
       updateMixtape(mixtape);
     }
 
-    const settingsPopup = () => null;
+    const songToBeAdded = (song) => {
+      setSongToAdd(song);
+    }
+
+    const addSong = () => {
+      const newSongs = [...mixtape.songs];
+      newSongs.push(songToAdd);
+      mixtape.songs = newSongs;
+      setMixtape(mixtape);
+      setSongToAdd({});
+    }
 
     return (
       <Box style={{ display: 'inline-flex', 
@@ -132,25 +158,44 @@ function Mixtape(props) {
               Type the song you want to add:
             </DialogContentText>
             <Autocomplete 
+              onChange={(e, val) => {
+                songToBeAdded(val)
+              }}
               size="small"
               style={{height:35,width:300}}
               freeSolo 
               disableClearable
-              options={suggestionsSongs.map((option)=>option.title)}
+              onOpen={() => {
+                setAddSongAutocompleteOpen(true);
+              }}
+              onClose={() => {
+                setAddSongAutocompleteOpen(false);
+              }}
+              getOptionLabel={option => option.name || option}
+              options={addSongSearchResults}
               renderInput={(params)=>(
                 <TextField
-                
-                {...params}
-                label="Search..."
-                
-                variant="outlined"
-                InputProps={{ ...params.InputProps, type: 'search' }}
+                  {...params}
+                  label="Asynchronous"
+                  value={songToAdd}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  loading={loading}
+                  variant="outlined"
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <React.Fragment>
+                        {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                        {params.InputProps.endAdornment}
+                      </React.Fragment>
+                    ),
+                  }}
                 />
               )}
               />
           </DialogContent>
           <DialogActions>
-            <Button align="center" onClick={handleAddSongPopup} color="primary">
+            <Button align="center" onClick={() => addSong()} color="primary">
               Add
             </Button>
           </DialogActions>
