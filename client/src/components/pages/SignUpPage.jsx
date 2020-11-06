@@ -149,31 +149,31 @@ function SignUpPage(props) {
         <br />
           </Typography>
           <Grid item>
-            <CssTextField
+            <TextField
               className={classes.margin}
               variant="outlined" label="First Name" />
           </Grid>
           <Grid item>
-            <CssTextField
+            <TextField
               className={classes.margin}
               variant="outlined" label="Last Name" />
           </Grid>
           <Grid item>
-            <CssTextField
+            <TextField
               className={classes.margin}
               onChange={handleUsername}
               value={username}
               variant="outlined" label="Username" />
           </Grid>
           <Grid item>
-            <CssTextField
+            <TextField
               className={classes.margin}
               onChange={handlePassword}
               value={password}
               variant="outlined" type="Password" label="Password" />
           </Grid>
           <Grid item>
-            <CssTextField
+            <TextField
               className={classes.margin}
               onChange={handleEmail}
               value={email}

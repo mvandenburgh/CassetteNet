@@ -16,14 +16,12 @@ try {
 // for now. In the future they should make requests to an 
 // API on the backend server.
 
-function getUser(username, password) {
-    for (const user of users) {
-        if (user.username === username && user.password === password) {
-            const { password, ...userWithoutPassword } = user;
-            return userWithoutPassword;
-        }
+async function getUser(username, password) {
+    try {
+        return await axios.post(new URL('/user/login', SERVER_ROOT_URL), { username, password });
+    } catch(err) {
+        console.log(err);
     }
-    return null;
 }
 
 /**
@@ -106,7 +104,7 @@ function getInboxMessages(_id) {
 async function userSignup(email, username, password) {
     try {
         await axios.post(new URL('/user/signup', SERVER_ROOT_URL), { email, username, password });
-    } catch(err) {
+    } catch(err) { // TODO: error handling
         console.log(err);
     }
 }

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 const passportLocalMongoose = require('passport-local-mongoose');
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 
 const userSchema = new Schema({
@@ -12,11 +13,12 @@ const userSchema = new Schema({
   favoritedMixtapes: Array, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
   followedUsers: Array, // array of other user object ids
   admin: Boolean, // true if user is an admin
-  uniqueId: String, // unique alphanumeric id (length 4)
+  uniqueId: Number,
   profilePicture: { data: Buffer, contentType: String }, // raw image data for user's profile picture
 });
 
 userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(AutoIncrement, { inc_field: 'uniqueId' });
 
 const mixtapeSchema = new Schema({
   name: String,
