@@ -29,8 +29,16 @@ router.put('/:id', async (req, res) => {
 
 // DELETE MIXTAPE
 router.delete('/:id', async (req, res) => {
-    const { mixtape } = req.body;
-    await Mixtape.findOneAndDelete({  _id: mixtape._id }, mixtape);
+    // const { mixtape } = req.body;
+    const mixtape = await Mixtape.findById(req.params.id);
+    console.log(mixtape)
+    await Mixtape.deleteOne({  _id: mixtape._id });
+    const users = await User.find({ favoritedMixtapes: { $in: mixtape._id } });
+    for (const user of users) {
+        const newarr = user.favoritedMixtapes.filter(favoritedMixtape => favoritedMixtape._id != req.params.id);
+        user.favoritedMixtapes = newarr;
+        user.save();
+    }
     return res.send(mixtape);
 });
 
