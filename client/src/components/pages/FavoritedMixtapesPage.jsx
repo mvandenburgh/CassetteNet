@@ -13,7 +13,14 @@ function FavoritedMixtapesPage(props) {
         user = JSON.parse(localStorage.getItem('user'));
     }
     const { _id } = user;
-    const mixtapes = getFavoritedMixtapes(_id);
+
+    useEffect(() => {
+        async function getFavorites() {
+            const favoritedMixtapes = await getFavoritedMixtapes(_id);
+            setUser({ favoritedMixtapes, ...user });
+        }
+        getFavorites();
+     }, [])
 
     const history = useHistory();
     const goBack = () => { history.push('/') }
@@ -43,7 +50,7 @@ function FavoritedMixtapesPage(props) {
                             width: '85%', 
                             height: '30%'}} boxShadow={3} borderRadius={12}>
                     <Grid container justify="center">
-                        <MixtapeList mixtapes={mixtapes} />
+                        <MixtapeList mixtapes={user.favoritedMixtapes} />
                     </Grid>
                 </Box>
             </Grid>

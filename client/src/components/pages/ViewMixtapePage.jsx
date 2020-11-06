@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Checkbox, Fab, Grid, IconButton, Paper, TextField, Typography } from '@material-ui/core';
 import Mixtape from '../Mixtape';
+import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
 import { getMixtape, getUsername } from '../../utils/api';
-import { Comment as CommentIcon, Favorite as FavoriteIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon } from '@material-ui/icons';
+import { Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 
@@ -22,8 +23,7 @@ function ViewMixtapePage(props) {
             setMixtape(updatedMixtape);
         }
         updateMixtape();
-     }, [])
-    const owner = mixtape.collaborators.filter(c => c.permissions === 'owner').map(c => c.user)[0];
+    const owner = mixtape.collaborators.filter(c => c.permissions === 'owner').map(c => c.username)[0];
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -36,13 +36,13 @@ function ViewMixtapePage(props) {
                 
             <br/>
             
-            <Paper style={{height: '7em', padding: '1%', marginLeft: '5%', marginBottom: '2%', width: '50%'}}>
+            <Paper style={{height: '7em', padding: '1%', marginLeft: '5%', marginBottom: '2%', width: '70%'}}>
                 {/* {isEditing ? <TextField value={mixtape.name} /> : <h1>{mixtape.name || 'Mixtape Title'}</h1>} */}
-                <Typography variant="h2">{mixtape.name}</Typography>
+                <Typography variant="h4">{mixtape.name}</Typography>
                 <div>
-                    <h4 style={{display: 'inline-block'}}>{`Created by ${getUsername(owner)} ${mixtape.songs.length} songs, XX mins`}</h4>
+                    <h4 style={{display: 'inline-block'}}>{`Created by ${owner} ${mixtape.songs.length} songs, XX mins`}</h4>
                     <div style={{display: 'inline-block', float: 'right'}}>
-                        <FavoriteIcon style={{margin: '10px'}}/> 
+                        <FavoriteMixtapeButton id={props.match.params.id} style={{margin: '10px'}}/> 
                         <CommentIcon style={{margin: '10px'}}/> 
                         <ShareIcon style={{margin: '10px'}}/>
                     </div>

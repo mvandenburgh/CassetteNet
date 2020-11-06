@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Box, Grid, IconButton, Typography } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
+import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import MixtapeList from '../MixtapeList';
 import UserContext from '../../contexts/UserContext';
 import { getMyMixtapes } from '../../utils/api';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
 
 function MyMixtapesPage(props) {

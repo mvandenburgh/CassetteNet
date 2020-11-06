@@ -24,10 +24,12 @@ router.post('/signup', async (req, res) => {
 
 
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
-    const { username, uniqueId, _id } = req.user
+router.post('/login', passport.authenticate('local'), (req, res) => 
+    const { username, uniqueId, _id, favoritedMixtapes, followedUsers } = req.user
     res.json({
         _id,
+        favoritedMixtapes,
+        followedUsers,
         username,
         uniqueId, // convert number to base36 to get alphanumeric id
     });
@@ -38,10 +40,40 @@ router.post('/logout', (req, res) => {
     res.redirect('/');
 });
 
+// get a user's mixtapes
 // TODO: secure/authentication
 router.get('/mixtapes', async (req, res) => {
+    if (!req.user) return res.status(401).send([]);
     const mixtapes = await Mixtape.find({ 'collaborators.user': req.user.id });
     res.send(mixtapes);
+});
+
+router.get('/favoritedMixtapes', async (req, res) => {
+    if (!req.user) return res.status(401).send([]);
+    const { favoritedMixtapes } = await User.findById(req.user.id);
+    res.send(favoritedMixtapes);
+});
+
+router.put('/favoriteMixtape', async (req, res) => {
+    if (!req.user) return res.status(401).send(null);
+    const { id } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user.favoritedMixtapes.includes(id)) {
+        user.favoritedMixtapes.push(id);
+        await user.save();
+    }
+    return res.send(user.favoritedMixtapes);
+});
+
+router.put('/unfavoriteMixtape', async (req, res) => {
+    if (!req.user) return res.status(401).send(null);
+    const { id } = req.body;
+    const user = await User.findById(req.user._id);
+    if (user.favoritedMixtapes.includes(id)) {
+        user.favoritedMixtapes.splice(user.favoritedMixtapes.indexOf(id), 1);
+        await user.save();
+    }
+    return res.send(user.favoritedMixtapes);
 });
 
 module.exports = router;
