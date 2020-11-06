@@ -16,13 +16,6 @@ try {
 // for now. In the future they should make requests to an 
 // API on the backend server.
 
-async function getUser(username, password) {
-    try {
-        return await axios.post(new URL('/user/login', SERVER_ROOT_URL), { username, password });
-    } catch(err) {
-        console.log(err);
-    }
-}
 
 /**
  * 
@@ -109,12 +102,25 @@ async function userSignup(email, username, password) {
     }
 }
 
+async function userLogin(username, password) {
+    try {
+        return await axios.post(new URL('/user/login', SERVER_ROOT_URL), { username, password });
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+async function userLogout() {
+    await axios.post(new URL('/user/logout', SERVER_ROOT_URL));
+}
+
 export {
-    getUser,
     getUsername,
     getMixtape,
     getMyMixtapes,
     getFavoritedMixtapes,
     getInboxMessages,
+    userLogin,
+    userLogout,
     userSignup
 };

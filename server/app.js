@@ -16,7 +16,11 @@ app.use(cors()); // TODO: figure out where/if this is actually needed. for now, 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(session({ secret: 'secret', resave: false, saveUninitialized: false  }));
+app.use(session({
+    secret: process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'secret',
+    resave: false,
+    saveUninitialized: false
+}));
 app.use(passport.initialize()); 
 app.use(passport.session()); 
 
