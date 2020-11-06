@@ -1,5 +1,5 @@
 const express = require('express');
-const { Mixtape } = require('../models');
+const { Mixtape, User } = require('../models');
 
 const router = express.Router();
 
@@ -13,6 +13,10 @@ router.post('/', async (req, res) => {
 // RETRIEVE MIXTAPE
 router.get('/:id', async (req, res) => {
     const mixtape = await Mixtape.findById(req.params.id);
+    for (const collaborator of mixtape.collaborators) {
+        const user = await User.findById(collaborator.user);
+        collaborator.username = user.username;
+    }
     return res.send(mixtape);
 });
 

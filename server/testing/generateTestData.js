@@ -59,6 +59,7 @@ async function generateMixtapes(count) {
             songs = playlist.items
                     .filter(entry => entry.snippet.resourceId.kind === 'youtube#video')
                     .map(entry => ({
+                        name: entry.snippet.title,
                         id: entry.snippet.resourceId.videoId,
                         coverImage: entry.snippet.thumbnails.default.url,
                     })

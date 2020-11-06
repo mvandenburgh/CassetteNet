@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Box, Grid, IconButton, Typography } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
+import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import MixtapeList from '../MixtapeList';
 import UserContext from '../../contexts/UserContext';
 import { getFavoritedMixtapes } from '../../utils/api';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
 
 function FavoritedMixtapesPage(props) {
@@ -12,8 +12,15 @@ function FavoritedMixtapesPage(props) {
     if (!user.isLoggedIn) {
         user = JSON.parse(localStorage.getItem('user'));
     }
+    const [mixtapes, setMixtapes] = useState([]);
     const { _id } = user;
-    const mixtapes = getFavoritedMixtapes(_id);
+    useEffect(() => {
+        async function getMixtapes() {
+            const updatedMixtapes = await getFavoritedMixtapes(_id);
+            setMixtapes(updatedMixtapes);
+        }
+        getMixtapes();
+     }, [])
 
     const history = useHistory();
     const goBack = () => { history.push('/') }
@@ -43,7 +50,7 @@ function FavoritedMixtapesPage(props) {
                             width: '85%', 
                             height: '30%'}} boxShadow={3} borderRadius={12}>
                     <Grid container justify="center">
-                        <MixtapeList mixtapes={mixtapes} />
+                        <MixtapeList mixtapes={mixtapes} setMixtapes={setMixtapes} />
                     </Grid>
                 </Box>
             </Grid>

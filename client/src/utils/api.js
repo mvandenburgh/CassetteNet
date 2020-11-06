@@ -45,7 +45,7 @@ async function getMyMixtapes(_id) {
     // }
     // if (!user) return [];
     const mixtapes = await axios.get(new URL('/user/mixtapes', SERVER_ROOT_URL), { withCredentials: true });
-    return mixtapes;
+    return mixtapes.data;
 
     // const userMixtapes = [];
     // for (const mixtape of mixtapes) {
@@ -76,17 +76,29 @@ async function updateMixtape(mixtape) {
  * 
  * @param {*} _id id of the user who's favorited mixtapes we want
  */
-function getFavoritedMixtapes(_id) {
-    let user;
-    for (const usr of users) {
-        if (usr._id === _id) {
-            user = usr;
-            break;
-        }
-    }
-    if (!user) return [];
+async function getFavoritedMixtapes(_id) {
+    const favoritedMixtapes = await axios.get(new URL('/user/favoritedMixtapes', SERVER_ROOT_URL), { withCredentials: true });
+    return favoritedMixtapes.data;
+    // let user;
+    // for (const usr of users) {
+    //     if (usr._id === _id) {
+    //         user = usr;
+    //         break;
+    //     }
+    // }
+    // if (!user) return [];
     
-    return user.favoritedMixtapes.map(mixtapeId => getMixtape(mixtapeId));
+    // return user.favoritedMixtapes.map(mixtapeId => getMixtape(mixtapeId));
+}
+
+async function favoriteMixtape(mixtapeId) {
+    const favoritedMixtapes = await axios.put(new URL(`/user/favoriteMixtape`, SERVER_ROOT_URL), { id: mixtapeId, withCredentials: true });
+    return favoritedMixtapes.data;
+}
+
+async function unfavoriteMixtape(mixtapeId) {
+    const favoritedMixtapes = await axios.put(new URL(`/user/unfavoriteMixtape`, SERVER_ROOT_URL), { id: mixtapeId, withCredentials: true });
+    return favoritedMixtapes.data;
 }
 
 /**
@@ -119,6 +131,8 @@ async function userLogout() {
 }
 
 export {
+    favoriteMixtape,
+    unfavoriteMixtape,
     getUsername,
     getMixtape,
     getMyMixtapes,
