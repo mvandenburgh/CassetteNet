@@ -17,7 +17,7 @@ function MyMixtapesPage(props) {
     useEffect(() => {
         async function getMixtapes() {
             const updatedMixtapes = await getMyMixtapes(_id);
-            setMixtapes(updatedMixtapes.data);
+            setMixtapes(updatedMixtapes);
         }
         getMixtapes();
      }, [])

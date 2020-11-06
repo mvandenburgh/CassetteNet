@@ -51,7 +51,13 @@ router.get('/mixtapes', async (req, res) => {
 router.get('/favoritedMixtapes', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
     const { favoritedMixtapes } = await User.findById(req.user.id);
-    res.send(favoritedMixtapes);
+    const mixtapes = [];
+    for (const mixtapeId of favoritedMixtapes) {
+        const mixtape = await Mixtape.findById(mixtapeId);
+        mixtapes.push(mixtape);
+    }
+    console.log(mixtapes)
+    res.send(mixtapes);
 });
 
 router.put('/favoriteMixtape', async (req, res) => {

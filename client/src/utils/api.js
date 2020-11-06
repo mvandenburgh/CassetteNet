@@ -45,7 +45,7 @@ async function getMyMixtapes(_id) {
     // }
     // if (!user) return [];
     const mixtapes = await axios.get(new URL('/user/mixtapes', SERVER_ROOT_URL), { withCredentials: true });
-    return mixtapes;
+    return mixtapes.data;
 
     // const userMixtapes = [];
     // for (const mixtape of mixtapes) {
