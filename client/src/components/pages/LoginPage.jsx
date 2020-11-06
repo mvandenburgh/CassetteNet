@@ -63,29 +63,26 @@ function LoginPage(props) {
     if (loggedInUser) {
       setUser({ isLoggedIn: true, isGuest: false, ...loggedInUser });
       history.push('/');
-    } 
+    }
   }
 
   const history = useHistory();
-  const goBack = () => { history.push('/') }
+  const goBack = () => history.push('/');
 
   const handleUsername = (e) => setUsername(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
 
   return (
     <div style={{ color: 'white', left: 0 }}>
-
-      <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
+      <IconButton color="secondary" aria-label="back" onClick={goBack}>
         <ArrowBackIcon />
       </IconButton>
       <br />
-
       <br />
       <br />
       <Typography align="center" variant="h3">Log In
       </Typography>
       <div className={classes.margin}>
-
         <Grid container spacing={1} alignItems="center" direction="column">
           <Grid item>
             <TextField

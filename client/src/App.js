@@ -63,10 +63,9 @@ function App() {
                 <PageFrame invisible={!user.isLoggedIn} />
                   <div style={{ position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: 'calc(100vw - 73px)'}}>
                     <Switch>
-                      <Route exact path="/" component={StartPage} />
-                      <Route exact path="/directory" component={Directory} /> {/* TODO: should redirect to dashboard when logged in */}
+                      <Route exact path="/" component={user.isLoggedIn ? DashboardPage : StartPage} />
+                      <Route exact path="/directory" component={Directory} /> {/* TODO: remove? */}
                       <Route exact path="/login" component={LoginPage} />
-                      <Route exact path="/dashboard" component={DashboardPage} />
                       <Route exact path="/atmosphere" component={AtmospherePage} />
                       <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                       <Route exact path="/mymixtapes" component={MyMixtapesPage} />
