@@ -27,6 +27,7 @@ function ViewMixtapePage(props) {
     const owner = mixtape.collaborators.filter(c => c.permissions === 'owner').map(c => c.username)[0];
 
     const [isEditing, setIsEditing] = useState(false);
+    const [editTitle, setEditTitle] = useState(false);
 
     return (
         <div>
@@ -55,7 +56,7 @@ function ViewMixtapePage(props) {
                 <div>
                     <h4 style={{display: 'inline-block'}}>{`Created by ${owner} ${mixtape.songs.length} songs, XX mins`}</h4>
                     <div style={{display: 'inline-block', float: 'right'}}>
-                        <FavoriteMixtapeButton id={props.match.params.id} style={{margin: '10px'}}/> 
+                        <FavoriteMixtapeButton id={props.match.params.id} style={{margin: '7px'}}/> 
                         <CommentIcon style={{margin: '10px'}}/> 
                         <ShareIcon style={{margin: '10px'}}/>
                     </div>
