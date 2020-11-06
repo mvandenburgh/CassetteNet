@@ -10,6 +10,7 @@ import SearchBar from './SearchBar';
 import UserContext from '../contexts/UserContext';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
+import { userLogout } from '../utils/api';
 import H5AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 
@@ -100,7 +101,11 @@ function PageFrame(props) {
     // Removed for now to avoid build warnings
   const { user, setUser } = useContext(UserContext);
 
-  const logout = () => {setUser({ isLoggedIn: false }); history.push('/');}
+  const logout = async () => {
+    await userLogout();
+    setUser({ isLoggedIn: false });
+    history.push('/');
+  }
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 

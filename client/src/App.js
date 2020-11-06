@@ -24,6 +24,7 @@ import AnonymousMixtapesPage from './components/pages/AnonymousMixtapesPage';
 import ViewAdminPage from './components/pages/ViewAdminPage';
 import SearchResultsPage from './components/pages/SearchResults';
 import AdminPage from './components/pages/AdminPage';
+
 function App() {
   // check if user is logged in
   let userDefault = JSON.parse(localStorage.getItem('user'));
@@ -33,7 +34,7 @@ function App() {
       isLoggedIn: false,
     };
   }
-  userDefault = JSON.parse('{"isLoggedIn":true,"isGuest":false,"_id":"5f862052790b506769c6a0dc","username":"demoUser","email":"catarina.pierre@example.com","verified":true,"favoritedMixtapes":["5f862052066d9931b3d49190","5f8620518e2aeed07faec255","5f86205097700519e84592ee","5f8620516371adde64b81f42"],"followedUsers":["5f86205255a51d454ea53a92","5f8620525ccdd0304e44d7c4","5f862052d32eca593941adb1","5f86205215fdecbb8ee063d5","5f8620525c406518ab703521","5f862052bee854d19fe6189d"],"admin":false,"unique_id":"0001"}');
+  // userDefault = JSON.parse('{"isLoggedIn":true,"isGuest":false,"_id":"5f862052790b506769c6a0dc","username":"demoUser","email":"catarina.pierre@example.com","verified":true,"favoritedMixtapes":["5f862052066d9931b3d49190","5f8620518e2aeed07faec255","5f86205097700519e84592ee","5f8620516371adde64b81f42"],"followedUsers":["5f86205255a51d454ea53a92","5f8620525ccdd0304e44d7c4","5f862052d32eca593941adb1","5f86205215fdecbb8ee063d5","5f8620525c406518ab703521","5f862052bee854d19fe6189d"],"admin":false,"unique_id":"0001"}');
   const [user, setUser] = useState(userDefault);
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user));
@@ -62,10 +63,9 @@ function App() {
                 <PageFrame invisible={!user.isLoggedIn} />
                   <div style={{ position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: 'calc(100vw - 73px)'}}>
                     <Switch>
-                      <Route exact path="/" component={Directory} />
-                      <Route exact path="/start" component={StartPage} /> {/* TODO: should redirect to dashboard when logged in */}
+                      <Route exact path="/" component={user.isLoggedIn ? DashboardPage : StartPage} />
+                      <Route exact path="/directory" component={Directory} /> {/* TODO: remove? */}
                       <Route exact path="/login" component={LoginPage} />
-                      <Route exact path="/dashboard" component={DashboardPage} />
                       <Route exact path="/atmosphere" component={AtmospherePage} />
                       <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                       <Route exact path="/mymixtapes" component={MyMixtapesPage} />

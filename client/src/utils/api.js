@@ -1,20 +1,21 @@
+import axios from 'axios';
 import { users } from '../testData/users.json';
 import { mixtapes } from '../testData/mixtapes.json';
 import { inboxMessages } from '../testData/inboxMessages.json';
+
+
+let SERVER_ROOT_URL;
+try {
+    SERVER_ROOT_URL = new URL(process.env.REACT_APP_SERVER_ROOT_URL);
+} catch (err) {
+    SERVER_ROOT_URL = new URL('http://localhost:5000/');
+}
+
 
 // These functions return test data from local JSON files
 // for now. In the future they should make requests to an 
 // API on the backend server.
 
-function getUser(username, password) {
-    for (const user of users) {
-        if (user.username === username && user.password === password) {
-            const { password, ...userWithoutPassword } = user;
-            return userWithoutPassword;
-        }
-    }
-    return null;
-}
 
 /**
  * 
@@ -93,11 +94,33 @@ function getInboxMessages(_id) {
     return inboxMessages.filter(message => message.recipient === _id);
 }
 
+async function userSignup(email, username, password) {
+    try {
+        await axios.post(new URL('/user/signup', SERVER_ROOT_URL), { email, username, password });
+    } catch(err) { // TODO: error handling
+        console.log(err);
+    }
+}
+
+async function userLogin(username, password) {
+    try {
+        return await axios.post(new URL('/user/login', SERVER_ROOT_URL), { username, password });
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+async function userLogout() {
+    await axios.post(new URL('/user/logout', SERVER_ROOT_URL));
+}
+
 export {
-    getUser,
     getUsername,
     getMixtape,
     getMyMixtapes,
     getFavoritedMixtapes,
     getInboxMessages,
+    userLogin,
+    userLogout,
+    userSignup
 };
