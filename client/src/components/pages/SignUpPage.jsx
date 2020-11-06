@@ -5,7 +5,7 @@ import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
 import Google from '../../images/Google.png';
 import FB from '../../images/facebook.png';
-
+import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
 import { CardMedia } from '@material-ui/core';
 import {
@@ -31,12 +31,22 @@ function SignUpPage(props) {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    userSignup(email, username, password).then(() => alert('Sign up successful!'));
   
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () =>  {
+    setOpen(false);
+    setPassword(".");
+    submit();
   };
+  const handleResponseFacebook = (e) => {
+    setEmail(e.email);
+    handleClickOpen();
+  }
+
+  const handleGoogleSignUp = (e) => {
+    setEmail(e.profileObj.email);
+    handleClickOpen();
+  }
 
   const handleUsername = (e) => setUsername(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
@@ -96,11 +106,7 @@ function SignUpPage(props) {
 
   const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
 
-const responseGoogle=(response)=>{
-  console.log(response);
-  console.log(response.profileObj);
 
-}
 
   const history = useHistory();
   const goBack = () => { history.push('/') }
@@ -154,13 +160,28 @@ const responseGoogle=(response)=>{
         </Typography>
         <Grid container spacing={1} alignItems="center" direction="column">
           <Grid item sz={1}>
+          <img src={Google}  className={classes.photo} alt="Google" />
+            <img src={FB} className={classes.photo} alt="Google" />
+            <br/>
+            </Grid>
+            <Grid item sz= {12}>
             <GoogleLogin 
+            theme="dark"
             clientId="981574880383-1i69fqkdqevp29mavc6oi3hlq878trpl.apps.googleusercontent.com"
             buttonText="Login With google"
-            onSuccess={handleClickOpen}
+            onSuccess={handleGoogleSignUp}
             cookiePolicy={'single_host_origin'}
           />
-            <img src={FB} onClick={handleClickOpen} className={classes.photo} alt="Google" />
+          </Grid>
+          <Grid item sz= {1}>
+          <FacebookLogin 
+            size = "small"
+            appId="667674014139311"
+            buttonText="Login With facebook"
+            fields="name,email,picture"
+            callback={handleResponseFacebook}
+          />
+          
           </Grid>
           <Typography align="center" variant="h5">
             <br />
