@@ -12,6 +12,14 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
 import { userLogin } from '../../utils/api';
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import FacebookLogin from 'react-facebook-login';
+import GoogleLogin from 'react-google-login';
+
 function LoginPage(props) {
   const colors = {
     buttonContainer: '#0A1941',
@@ -52,11 +60,28 @@ function LoginPage(props) {
   }));
 
   const classes = useStyles();
-
+  const [open, setOpen] = useState(false);
   const { user, setUser } = useContext(UserContext);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () =>  {
+    setOpen(false);
+    setPassword(".");
+    loginAsUser();
+  };
+  const handleResponseFacebook = (e) => {
+    setPassword(".");
+    handleClickOpen();
+  }
+
+  const handleGoogleSignUp = (e) => {
+    setPassword(".");
+    handleClickOpen();
+  }
+
+
 
   const loginAsUser = async () => {
     const loggedInUser = await userLogin(username, password);
@@ -84,10 +109,53 @@ function LoginPage(props) {
       <br />
       <br />
       <br />
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Enter your username:</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Enter the username associated with your account:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Username"
+            type="email"
+            fullWidth
+            onChange={handleUsername}
+            value={username}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button align="center" onClick={handleClose} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
       <Typography align="center" variant="h3">Log In
       </Typography>
       <div className={classes.margin}>
         <Grid container spacing={1} alignItems="center" direction="column">
+      <Grid item sz= {1}>
+            <GoogleLogin 
+            theme="dark"
+            clientId="981574880383-1i69fqkdqevp29mavc6oi3hlq878trpl.apps.googleusercontent.com"
+            buttonText="Login With google"
+            onSuccess={handleGoogleSignUp}
+            cookiePolicy={'single_host_origin'}
+          />
+          </Grid>
+          <Grid item sz= {1}>
+          <FacebookLogin 
+            size = "small"
+            appId="667674014139311"
+            buttonText="Login With facebook"
+            fields="name,email,picture"
+            callback={handleResponseFacebook}
+          />
+          
+          </Grid>
           <Grid item>
             <TextField
               className={classes.margin}
