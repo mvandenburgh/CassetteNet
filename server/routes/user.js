@@ -24,7 +24,7 @@ router.post('/signup', async (req, res) => {
 
 
 
-router.post('/login', passport.authenticate('local'), (req, res) => 
+router.post('/login', passport.authenticate('local'), (req, res) => {
     const { username, uniqueId, _id, favoritedMixtapes, followedUsers } = req.user
     res.json({
         _id,
@@ -54,9 +54,10 @@ router.get('/favoritedMixtapes', async (req, res) => {
     const mixtapes = [];
     for (const mixtapeId of favoritedMixtapes) {
         const mixtape = await Mixtape.findById(mixtapeId);
-        mixtapes.push(mixtape);
+        if (mixtape) {
+            mixtapes.push(mixtape);
+        }
     }
-    console.log(mixtapes)
     res.send(mixtapes);
 });
 
