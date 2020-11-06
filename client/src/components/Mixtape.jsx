@@ -218,7 +218,7 @@ function Mixtape(props) {
                               variant="contained"
                               color="secondary"
                               startIcon={<MusicNoteIcon />}
-                              onClick={() => history.push('/listeningroom')}
+                              // onClick={() => history.push('/listeningroom')}
                             >
                               Create Listening Room
                             </Button>

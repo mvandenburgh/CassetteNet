@@ -1,18 +1,30 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Box, Grid, IconButton, Typography } from '@material-ui/core';
+import { TextField, Button, Box, Fab, Grid, IconButton, Typography } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
-import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
+import { Add as AddIcon, ArrowBack as ArrowBackIcon } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/core/styles';
 import MixtapeList from '../MixtapeList';
 import UserContext from '../../contexts/UserContext';
-import { getMyMixtapes } from '../../utils/api';
+import { createMixtape, getMyMixtapes } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
 
+const useStyles = makeStyles(theme => ({
+    fab: {
+      position: 'fixed',
+      bottom: '5%',
+      right: '5%',
+    },
+}));
+
 function MyMixtapesPage(props) {
+    const classes = useStyles();
+
     let { user, setUser } = useContext(UserContext);
     if (!user.isLoggedIn) {
         user = JSON.parse(localStorage.getItem('user'));
     }
     const [mixtapes, setMixtapes] = useState([]);
+
     const { _id } = user;
     useEffect(() => {
         async function getMixtapes() {
@@ -23,7 +35,11 @@ function MyMixtapesPage(props) {
      }, [])
 
     const history = useHistory();
-    const goBack = () => { history.push('/') }
+    const goBack = () => history.push('/');
+
+    const createNewMixtape = () => {
+        createMixtape().then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
+    }
 
     return (
         <div style={{ color: 'white', left: 0 }}>
@@ -54,6 +70,9 @@ function MyMixtapesPage(props) {
                     </Grid>
                 </Box>
             </Grid>
+            <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => createNewMixtape()}>
+                <AddIcon />
+            </Fab>
         </div>
     )
 }

@@ -5,9 +5,15 @@ const router = express.Router();
 
 // CREATE MIXTAPE
 router.post('/', async (req, res) => {
-    const { mixtape } = req.body;
-    await Mixtape.create(mixtape);
-    return res.send(mixtape);
+    if (!req.user) return res.status(401).send([]);
+    const mixtape = {
+        name: 'New Mixtape',
+        collaborators: [{ user: req.user.id, permissions: 'owner', username: req.user.username }],
+        songs: [],
+        isPublic: false
+    };
+    const mixtapeObject = await Mixtape.create(mixtape);
+    return res.send(mixtapeObject);
 });
 
 // RETRIEVE MIXTAPE
