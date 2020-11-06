@@ -11,7 +11,6 @@ router.post('/signup', async (req, res) => {
 
     // this new user should be an admin if there are 0 users currently
     const userCount = await User.estimatedDocumentCount();
-    
 
     User.register(new User({ username, email, verified: false, admin: userCount === 0 }), password, (err, user) => {
         if (err) res.send(err); // TODO: error handling

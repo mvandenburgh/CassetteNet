@@ -7,6 +7,7 @@ const cors = require('cors');
 const passport = require('passport');
 
 const userRoute = require('./routes/user');
+const adminRoute = require('./routes/admin');
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -35,7 +36,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
+app.use('/admin', adminRoute);
 app.use('/user', userRoute);
 
 app.get('/', async (req, res) => {
