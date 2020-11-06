@@ -59,12 +59,13 @@ function SignUpPage(props) {
   const submit = () => {
 
     console.log("oauthAccount: " + oauthAccount);
-    if(oauthAccount == false && password.length<8){
-      alert('Password length cannot be less than 8 characters');
-    }
-    else{
+
+    //if(oauthAccount == false && password.length<8){
+      //alert('Password length cannot be less than 8 characters');
+    //}
+    //else{
       userSignup(email, username, password).then(() => alert('Sign up successful!'));
-    }
+    //}
   }; 
   // TODO: better dialog box
 
