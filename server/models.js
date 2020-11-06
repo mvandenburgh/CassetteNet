@@ -13,7 +13,10 @@ const userSchema = new Schema({
   favoritedMixtapes: Array, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
   followedUsers: Array, // array of other user object ids
   admin: Boolean, // true if user is an admin
-  uniqueId: Number,
+  uniqueId: {
+    type: Number,
+    get: id => id.toString(36).padStart(4, '0'), // convert to alphanumeric string
+  },
   profilePicture: { data: Buffer, contentType: String }, // raw image data for user's profile picture
 });
 

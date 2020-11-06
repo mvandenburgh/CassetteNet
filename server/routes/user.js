@@ -21,7 +21,7 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
     const { username, uniqueId } = req.user
     res.json({
         username,
-        uniqueId: uniqueId.toString(36).padStart(4, '0'), // convert number to base36 to get alphanumeric id
+        uniqueId, // convert number to base36 to get alphanumeric id
     });
 });
 
