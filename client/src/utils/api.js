@@ -16,7 +16,6 @@ try {
 // for now. In the future they should make requests to an 
 // API on the backend server.
 
-
 /**
  * 
  * @param {*} _id id of user we want to get username of
