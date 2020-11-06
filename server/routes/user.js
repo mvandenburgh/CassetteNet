@@ -18,7 +18,7 @@ router.post('/signup', async (req, res) => {
         else{
             var token =  crypto.randomBytes(16).toString('hex');
         //TODO: add token to database
-            var transporter = nodemailer.createTransport({ service: 'Gmail', auth: { user: "hiimprat@gmail.com", pass: "Guruguru1212"} });
+            var transporter = nodemailer.createTransport({ service: 'Gmail', auth: { user: "test", pass: "test"} });
             var mailOptions = { from: 'no-reply@cassettenet.com', to: 'hiimprat@gmail.com', subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + token + '.\n' };
         transporter.sendMail(mailOptions, function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
