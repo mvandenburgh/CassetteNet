@@ -35,10 +35,11 @@ function SignUpPage(props) {
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () =>  {
-    console.log("handleClose being called")
+    
     setOpen(false);
     setPassword(".");
     setOauth(true);
+    
     submit();
   };
   const handleResponseFacebook = (e) => {
@@ -56,13 +57,15 @@ function SignUpPage(props) {
   const handleEmail = (e) => setEmail(e.target.value);
 
   const submit = () => {
+
     console.log("oauthAccount: " + oauthAccount);
-    if(oauthAccount == false && password.length<8){
-      alert('Password length cannot be less than 8 characters');
-    }
-    else{
+
+    //if(oauthAccount == false && password.length<8){
+      //alert('Password length cannot be less than 8 characters');
+    //}
+    //else{
       userSignup(email, username, password).then(() => alert('Sign up successful!'));
-    }
+    //}
   }; 
   // TODO: better dialog box
 
@@ -116,7 +119,6 @@ function SignUpPage(props) {
   // Removed for now to avoid build warnings
   const { setUser } = useContext(UserContext);
 
-  const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
 
 
 
