@@ -64,6 +64,10 @@ function LoginPage(props) {
       setUser({ isLoggedIn: true, isGuest: false, ...loggedInUser });
       history.push('/');
     }
+    else{
+      //TODO: turn this into a dialog box
+      alert("Incorrect Username or password!");
+    }
   }
 
   const history = useHistory();
