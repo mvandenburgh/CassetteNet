@@ -5,6 +5,8 @@ import logo from '../../images/logo.png';
 import UserContext from '../../contexts/UserContext';
 import Google from '../../images/Google.png';
 import FB from '../../images/facebook.png';
+
+import GoogleLogin from 'react-google-login';
 import { CardMedia } from '@material-ui/core';
 import {
   alpha,
@@ -30,13 +32,19 @@ function SignUpPage(props) {
   const [email, setEmail] = useState('');
 
   const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    userSignup(email, username, password).then(() => alert('Sign up successful!'));
+  
+  };
 
   const handleUsername = (e) => setUsername(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
   const handleEmail = (e) => setEmail(e.target.value);
 
   const submit = () => userSignup(email, username, password).then(() => alert('Sign up successful!')); // TODO: better dialog box
+
+
 
   const CssTextField = withStyles({
     root: {
@@ -87,6 +95,12 @@ function SignUpPage(props) {
   const { setUser } = useContext(UserContext);
 
   const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
+
+const responseGoogle=(response)=>{
+  console.log(response);
+  console.log(response.profileObj);
+
+}
 
   const history = useHistory();
   const goBack = () => { history.push('/') }
@@ -140,7 +154,12 @@ function SignUpPage(props) {
         </Typography>
         <Grid container spacing={1} alignItems="center" direction="column">
           <Grid item sz={1}>
-            <img src={Google} onClick={handleClickOpen} className={classes.photo} alt="Google" />
+            <GoogleLogin 
+            clientId="981574880383-1i69fqkdqevp29mavc6oi3hlq878trpl.apps.googleusercontent.com"
+            buttonText="Login With google"
+            onSuccess={handleClickOpen}
+            cookiePolicy={'single_host_origin'}
+          />
             <img src={FB} onClick={handleClickOpen} className={classes.photo} alt="Google" />
           </Grid>
           <Typography align="center" variant="h5">
