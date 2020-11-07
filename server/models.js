@@ -10,6 +10,7 @@ const userSchema = new Schema({
   salt: String,
   email: {type: String, unique: true},
   verified: Boolean,
+  token: String, // email verification token
   favoritedMixtapes: Array, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
   followedUsers: Array, // array of other user object ids
   admin: Boolean, // true if user is an admin
@@ -20,12 +21,6 @@ const userSchema = new Schema({
   profilePicture: { data: Buffer, contentType: String }, // raw image data for user's profile picture
 });
 
-const tokenSchema = new Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
-    email: String,
-    token: { type: String, required: true },
-    createdAt: { type: Date, required: true, default: Date.now, expires: 43200 }
-});
 
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(AutoIncrement, { inc_field: 'uniqueId' });
@@ -61,5 +56,4 @@ module.exports = {
   ListeningRoom: model('ListeningRoom', listeningRoomSchema),
   Mixtape: model('Mixtape', mixtapeSchema),
   User: model('User', userSchema),
-  token: model('Token',tokenSchema),
 };

@@ -146,6 +146,10 @@ async function userLogout() {
     await axios.post(new URL('/user/logout', SERVER_ROOT_URL));
 }
 
+async function userVerifyAccount(token) {
+    await axios.put(new URL('/user/verify', SERVER_ROOT_URL), { token });
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -160,5 +164,6 @@ export {
     updateMixtape,
     userLogin,
     userLogout,
-    userSignup
+    userSignup,
+    userVerifyAccount,
 };
