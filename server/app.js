@@ -25,7 +25,10 @@ app.use(bodyParser.json());
 app.use(session({
     secret: process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'secret',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        sameSite: 'none',
+    },
 }));
 
 // use static authenticate method of model in LocalStrategy
