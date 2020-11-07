@@ -17,7 +17,7 @@ const youtubeRoute = require('./routes/youtube');
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://root:password@localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const app =  express();
-
+app.set('trust proxy', 1) // trust first proxy
 app.use(cors({ credentials: true, origin: process.env.ALLOWED_ORIGIN || 'http://localhost:3000' })); // TODO: figure out where/if this is actually needed. for now, apply to all routes.
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
