@@ -19,6 +19,7 @@
     "react-google-login": "^5.1.22",
     "react-h5-audio-player": "^3.4.1",
     "react-player": "^2.6.2",
+    "react-player-controls": "^2.0.0-beta.1",
     "react-rounded-image": "^2.0.11",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.4"

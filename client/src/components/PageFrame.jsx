@@ -4,15 +4,12 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import { AppBar, Badge, Button, Typography, InputBase, Divider, Drawer, Grid, List, IconButton, ListItem, ListItemIcon, ListItemText, TextField, Toolbar } from '@material-ui/core';
 import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
-import ReactPlayer from 'react-player';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import SearchBar from './SearchBar';
+import Player from './Player';
 import UserContext from '../contexts/UserContext';
 import CurrentSongContext from '../contexts/CurrentSongContext';
-import PlayingSongContext from '../contexts/PlayingSongContext';
 import { userLogout } from '../utils/api';
-import H5AudioPlayer from 'react-h5-audio-player';
-import 'react-h5-audio-player/lib/styles.css';
 
 
 const drawerWidth = 240;
@@ -90,12 +87,7 @@ function PageFrame(props) {
   const [open, setOpen] = useState(false);
   const history = useHistory();
 
-  const playerRef = useRef(null);
-
-  setInterval(() => {
-    if (playerRef.current && playing) 
-      localStorage.setItem('timestamp', playerRef.current.getCurrentTime());
-  }, 1000);
+  const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
   // TODO: add setUser to destructuring when needed
     // Removed for now to avoid build warnings
@@ -107,14 +99,6 @@ function PageFrame(props) {
     history.push('/');
   }
 
-  const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
-
-  const { playing, setPlaying } = useContext(PlayingSongContext);
-
-  const handlePlayPause = () => {
-    setPlaying(!playing);
-    playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
-  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -215,17 +199,8 @@ function PageFrame(props) {
             <Divider />
         </Drawer>
         <AppBar style={{ backgroundColor: '#fff', display: currentSong ? '' : 'none', top: 'auto', bottom: 0,}}>
-          {/* <Toolbar> */}
-            {/* <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong ? currentSong.song : ''}`} /> */}
-            <Grid className={classes.player} container justify="center" onClick={() => setCurrentSong(null)}>
-              {/* <div onClick={handlePlayPause}>
-                {playing ? <PauseIcon /> : <PlayIcon />}
-              </div> */}
-              <H5AudioPlayer style={{width: '95%'}} />
-            </Grid>
-          {/* </Toolbar> */}
+            <Player />
         </AppBar>
-        
     </div>
   );
 }
