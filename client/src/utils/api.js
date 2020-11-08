@@ -84,7 +84,7 @@ async function createMixtape() {
 
 async function songSearch(query) {
     // const results = await axios.get(new URL('/youtube/search', SERVER_ROOT_URL), { params: { q: query }});
-    const results = await axios.get('http://localhost:5000/youtube/search', { params: { q: query }});
+    const results = await axios.get(new URL('/youtube/search', SERVER_ROOT_URL), { params: { q: query } });
     return results.data;
 }
 
