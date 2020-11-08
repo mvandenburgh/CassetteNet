@@ -127,7 +127,7 @@ function Player(props) {
                 <ProgressBar
                 isEnabled
                 direction={Direction.HORIZONTAL}
-                value={currentSong.duration ? (currentTime / currentSong.duration) : 0}
+                value={currentSong?.duration ? (currentTime / currentSong.duration) : 0}
                 onChange={value => seek(value)}
                 />
             </Grid>
