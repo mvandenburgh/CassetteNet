@@ -16,10 +16,12 @@ function YoutubeSongSearchBar(props) {
     useEffect(() => {
         if (!searchQuery) return; // don't bother calling youtube api if search is empty
         setLoading(true); // make loading circle appear
-        songSearch(searchQuery).then(res => {
-            setOptions(res);
-            setLoading(false);
-        });
+        songSearch(searchQuery)
+            .then(res => {
+                setOptions(res);
+                setLoading(false);
+            })
+            .catch(err => alert(err));
     }, [searchQuery]);
 
     const search = (e) => {
@@ -41,6 +43,8 @@ function YoutubeSongSearchBar(props) {
       renderInput={(params) => (
         <TextField
           {...params}
+          onKeyPress={() => setLoading(true)}
+          onBlur={() => setLoading(false)}
           onChange={debounce((e) => search(e), 3000)} // debounce every 3 seconds to prevent calling api more than needed
           label="Search"
           variant="outlined"
