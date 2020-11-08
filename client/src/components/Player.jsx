@@ -102,8 +102,6 @@ function Player(props) {
       setPlaying(true);
       if (!currentTime) {
         playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
-      } else {
-        playerRef.current.seekTo(parseFloat(currentTime));
       }
     };
 
