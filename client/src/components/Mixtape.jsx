@@ -135,6 +135,11 @@ function Mixtape(props) {
       setSongToAdd({});
     }
 
+    const enableEditingHandler = () => {
+      setIsEditing(true);
+      setPlaying(false);
+    }
+
     return (
       <Box style={{ display: 'inline-flex', 
                     overflow: 'auto',
@@ -218,7 +223,7 @@ function Mixtape(props) {
                           </Grid>
                         :
                           <Grid container>
-                            <Button startIcon={<EditIcon />} onClick={() => setIsEditing(true)} style={{position: 'absolute', right: '5%'}} variant="contained">EDIT</Button>
+                            <Button startIcon={<EditIcon />} onClick={enableEditingHandler} style={{position: 'absolute', right: '5%'}} variant="contained">EDIT</Button>
                             <Button
                               style={{marginRight: '5%', float: 'right', backgroundColor: 'steelblue'}}
                               variant="contained"
