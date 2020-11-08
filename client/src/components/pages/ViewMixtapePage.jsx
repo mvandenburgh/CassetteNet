@@ -56,7 +56,9 @@ function ViewMixtapePage(props) {
         // mixtape.songs = newSongs;
         // setMixtape(mixtape);
         // setSongToAdd({});
-        alert("Save alert!")
+        console.log("Save name");
+        //event.stopPropagation();
+        alert("Save alert!");
     }
 
     return (
@@ -96,7 +98,7 @@ function ViewMixtapePage(props) {
                     </Grid>
                     <Grid sz={1}>
 
-                        <Button startIcon={<EditIcon />}  style={{position: 'absolute'}} variant="contained">Change Mixtape Name</Button>
+                        <Button onClick={handleChangeMixtapeNamePopup} startIcon={<EditIcon />}  style={{position: 'absolute'}} variant="contained">Change Mixtape Name</Button>
                     </Grid>
                 
 
