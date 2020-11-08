@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Fab, Grid, List, ListItem, ListItemText } from '@material-ui/core';
-import { Delete as DeleteIcon } from '@material-ui/icons';
+// import { Delete as DeleteIcon } from '@material-ui/icons';
 import { getUsername } from '../utils/api';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
@@ -32,12 +32,12 @@ function MixtapeList(props) {
     setMixtapes(newArray);
   };
 
-  // TODO: popup window confirmation
-  const deleteMixtape = (id, event) => {
-    event.stopPropagation();
+  // // TODO: popup window confirmation
+  // const deleteMixtape = (id, event) => {
+  //   event.stopPropagation();
     
-    setMixtapes(mixtapes.filter(mixtape => mixtape._id !== id));
-  };
+  //   setMixtapes(mixtapes.filter(mixtape => mixtape._id !== id));
+  // };
 
   const openMixtape = (index) => {
     history.push(`/mixtape/${mixtapes[index]._id}`);
@@ -107,9 +107,9 @@ function MixtapeList(props) {
                             {mixtape.favorites}
                           </ListItemText>
                         </Grid>
-                        <Fab onClick={(e) => deleteMixtape(mixtape._id, e)} color="primary" aria-label="delete">
+                        {/* <Fab onClick={(e) => deleteMixtape(mixtape._id, e)} color="primary" aria-label="delete">
                           <DeleteIcon />
-                        </Fab>
+                        </Fab> */}
                       </ListItem>
                     )}
                   </Draggable>
