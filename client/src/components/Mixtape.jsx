@@ -26,6 +26,7 @@ import { songSearch, updateMixtape } from '../utils/api';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import SettingsModal from './permissions/SettingsModal';
+import YoutubeSongSearchBar from './YoutubeSongSearchBar';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     userSelect: 'none',
@@ -56,7 +57,6 @@ function Mixtape(props) {
     const [songToAdd, setSongToAdd] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
     const loading = addSongAutocompleteOpen && addSongSearchResults.length === 0;
-
     const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
 
     const handleAddSongPopup = () => {
@@ -127,10 +127,6 @@ function Mixtape(props) {
       updateMixtape(mixtape);
     }
 
-    const songToBeAdded = (song) => {
-      setSongToAdd(song);
-    }
-
     const addSong = () => {
       const newSongs = [...mixtape.songs];
       newSongs.push(songToAdd);
@@ -157,42 +153,7 @@ function Mixtape(props) {
             <DialogContentText>
               Type the song you want to add:
             </DialogContentText>
-            <Autocomplete 
-              onChange={(e, val) => {
-                songToBeAdded(val)
-              }}
-              size="small"
-              style={{height:35,width:300}}
-              freeSolo 
-              disableClearable
-              onOpen={() => {
-                setAddSongAutocompleteOpen(true);
-              }}
-              onClose={() => {
-                setAddSongAutocompleteOpen(false);
-              }}
-              getOptionLabel={option => option.name || option}
-              options={addSongSearchResults}
-              renderInput={(params)=>(
-                <TextField
-                  {...params}
-                  label="Asynchronous"
-                  value={songToAdd}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  loading={loading}
-                  variant="outlined"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <React.Fragment>
-                        {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                        {params.InputProps.endAdornment}
-                      </React.Fragment>
-                    ),
-                  }}
-                />
-              )}
-              />
+              <YoutubeSongSearchBar setSelected={setSongToAdd} />
           </DialogContent>
           <DialogActions>
             <Button align="center" onClick={() => addSong()} color="primary">
