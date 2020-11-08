@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 const useStyles = makeStyles(theme => ({
     fab: {
       position: 'fixed',
-      bottom: '5%',
+      bottom: '15%',
       right: '5%',
     },
 }));
