@@ -150,6 +150,17 @@ async function userVerifyAccount(token) {
     await axios.put(new URL('/user/verify', SERVER_ROOT_URL), { token });
 }
 
+async function uploadFile(file, endpoint) {
+    const formData = new FormData();
+    formData.append('coverImage', file);
+    await axios.put(new URL(endpoint, SERVER_ROOT_URL), formData);
+}
+
+function getMixtapeCoverImageUrl(mixtapeId) {
+    console.log(new URL(`/mixtape/${mixtapeId}/coverImage`, SERVER_ROOT_URL).href)
+    return new URL(`/mixtape/${mixtapeId}/coverImage`, SERVER_ROOT_URL).href;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -157,6 +168,7 @@ export {
     unfavoriteMixtape,
     getUsername,
     getMixtape,
+    getMixtapeCoverImageUrl,
     getMyMixtapes,
     getFavoritedMixtapes,
     getInboxMessages,
@@ -166,4 +178,5 @@ export {
     userLogout,
     userSignup,
     userVerifyAccount,
+    uploadFile,
 };

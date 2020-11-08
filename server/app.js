@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const passport = require('passport');
@@ -19,6 +20,9 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://root:password@localhost:2
 const app =  express();
 app.set('trust proxy', 1) // trust first proxy
 app.use(cors({ credentials: true, origin: process.env.ALLOWED_ORIGIN || 'http://localhost:3000' })); // TODO: figure out where/if this is actually needed. for now, apply to all routes.
+app.use(fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 },
+}));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

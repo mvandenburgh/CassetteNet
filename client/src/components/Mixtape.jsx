@@ -25,7 +25,7 @@ import PlayingSongContext from '../contexts/PlayingSongContext';
 import { songSearch, updateMixtape } from '../utils/api';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
-import SettingsModal from './permissions/SettingsModal';
+import SettingsModal from './modals/SettingsModal';
 import YoutubeSongSearchBar from './YoutubeSongSearchBar';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
