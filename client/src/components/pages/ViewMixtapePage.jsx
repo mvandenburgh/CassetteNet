@@ -6,7 +6,7 @@ import { getMixtape, getMixtapeCoverImageUrl } from '../../utils/api';
 import { Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import MixtapeCoverImageUploadModal from '../modals/MixtapeCoverImageUploadModal';
-
+import humanizeDuration from 'humanize-duration';
 
 function ViewMixtapePage(props) {
     const history = useHistory();
@@ -16,6 +16,7 @@ function ViewMixtapePage(props) {
         name: '',
         collaborators: [],
         songs: [],
+        duration: 0,
     });
 
     const owner = mixtape.collaborators.filter(c => c.permissions === 'owner').map(c => c.username)[0];
@@ -29,11 +30,19 @@ function ViewMixtapePage(props) {
     useEffect(() => {
         async function updateMixtape() {
             const updatedMixtape = await getMixtape(props.match.params.id);
+            if (updatedMixtape.songs.length > 0) {
+                updatedMixtape.duration = updatedMixtape.songs.map(song => song.duration).reduce((mixtapeDuration, songDuration) => mixtapeDuration + songDuration);
+            } else {
+                updatedMixtape.duration = 0;
+            }
+            
             setMixtape(updatedMixtape);
             setCoverImageUrl(getMixtapeCoverImageUrl(updatedMixtape._id));
         }
         updateMixtape();
     }, []);
+
+    
 
     return (
         <div>
@@ -54,7 +63,7 @@ function ViewMixtapePage(props) {
                     <Grid xs={10} item>
                         <Typography variant="h4">{mixtape.name}</Typography>
                         <br />
-                        <Typography variant="h7" style={{ display: 'inline-block' }}>{`Created by ${owner} ${mixtape.songs.length} songs, XX mins`}</Typography>
+                        <Typography variant="h7" style={{ display: 'inline-block' }}>{`Created by ${owner} ${mixtape.songs.length} songs, ${humanizeDuration(mixtape.duration * 1000).replaceAll(',', '')}`}</Typography>
                     </Grid>
                     <Grid xs={1} item>
                         <Button startIcon={<EditIcon />} style={{ position: 'absolute' }} variant="contained">Change Mixtape Name</Button>

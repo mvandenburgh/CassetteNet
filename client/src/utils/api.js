@@ -156,8 +156,12 @@ async function uploadFile(file, endpoint) {
 }
 
 function getMixtapeCoverImageUrl(mixtapeId) {
-    console.log(new URL(`/mixtape/${mixtapeId}/coverImage`, SERVER_ROOT_URL).href)
     return new URL(`/mixtape/${mixtapeId}/coverImage`, SERVER_ROOT_URL).href;
+}
+
+async function getSongDuration(youtubeId) {
+    const songDuration = await axios.get(new URL('/youtube/videoDuration', SERVER_ROOT_URL).href, { params: { videoId: youtubeId } });
+    return songDuration.data;
 }
 
 export {
@@ -172,6 +176,7 @@ export {
     getFavoritedMixtapes,
     getInboxMessages,
     songSearch,
+    getSongDuration,
     updateMixtape,
     userLogin,
     userLogout,

@@ -51,12 +51,25 @@ async function searchVideo(searchQuery, maxResults) {
         });
         return result.data.items;
     } catch (err) {
-        console.log(err);
+        throw err;
+    }
+}
+
+async function getVideoInfo(videoId) {
+    try {
+        const result = await youtube.videos.list({
+            part: 'snippet,contentDetails',
+            id: videoId
+        });
+        return result.data.items;
+    } catch (err) {
+        throw err;
     }
 }
 
 module.exports = {
     getPlaylistVideos,
+    getVideoInfo,
     searchPlaylist,
     searchVideo,
 }

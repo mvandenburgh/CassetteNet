@@ -21,6 +21,7 @@
     "express-jwt": "^6.0.0",
     "express-session": "^1.17.1",
     "googleapis": "^64.0.0",
+    "iso8601-duration": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
     "mailgun-js": "^0.22.0",
     "mongoose": "^5.10.9",

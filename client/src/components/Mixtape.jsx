@@ -22,7 +22,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon } from '@material-ui/icons';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
-import { songSearch, updateMixtape } from '../utils/api';
+import { getSongDuration, songSearch, updateMixtape } from '../utils/api';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import SettingsModal from './modals/SettingsModal';
@@ -127,8 +127,10 @@ function Mixtape(props) {
       updateMixtape(mixtape);
     }
 
-    const addSong = () => {
+    const addSong = async () => {
       const newSongs = [...mixtape.songs];
+      const duration = await getSongDuration(songToAdd.id);
+      songToAdd.duration = duration;
       newSongs.push(songToAdd);
       mixtape.songs = newSongs;
       setMixtape(mixtape);

@@ -14,9 +14,14 @@ router.put('/:id/coverImage', async (req, res) => {
 
 
 router.get('/:id/coverImage', async (req, res) => {
-    const mixtape = await Mixtape.findById(req.params.id);
-    res.set('Content-Type', mixtape.coverImage.contentType);
-    res.send(mixtape.coverImage.data);
+    const mixtape = await Mixtape.findById(req.params.id).select('+coverImage');
+    if (mixtape) {
+        res.set('Content-Type', mixtape.coverImage.contentType);
+        res.send(mixtape.coverImage.data.buffer);
+    } else {
+        res.status(404).send('mixtape not found');
+    }
+    
 });
 
 
@@ -40,6 +45,7 @@ router.get('/:id', async (req, res) => {
         const user = await User.findById(collaborator.user);
         collaborator.username = user.username;
     }
+    delete mixtape.coverImage;
     return res.send(mixtape);
 });
 
