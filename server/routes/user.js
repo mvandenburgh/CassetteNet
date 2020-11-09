@@ -58,6 +58,8 @@ router.post('/login', passport.authenticate('local'), async (req, res) => {
         username,
         uniqueId, // convert number to base36 to get alphanumeric id
         admin,
+        createdAt,
+        updatedAt,
     });
 });
 
