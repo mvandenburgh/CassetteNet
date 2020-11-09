@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom';
 import PageFrame from './components/PageFrame';
 import StartPage from './components/pages/StartPage';
 import DashboardPage from './components/pages/DashboardPage';
@@ -21,7 +21,6 @@ import ViewAccountPage from './components/pages/ViewAccountPage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
 import FollowedUsersPage from './components/pages/FollowedUsersPage';
 import AnonymousMixtapesPage from './components/pages/AnonymousMixtapesPage';
-import ViewAdminPage from './components/pages/ViewAdminPage';
 import SearchResultsPage from './components/pages/SearchResults';
 import AdminPage from './components/pages/AdminPage';
 import VerifyAccountPage from './components/pages/VerifyAccountPage';
@@ -79,11 +78,15 @@ function App() {
                       <Route exact path="/SignUp" component={SignUpPage}/>
                       <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
                       <Route exact path="/verify/:token" component={VerifyAccountPage} />
-                      <Route exact path="/Admin" component={AdminPage}/>
+                      <Route exact path="/Admin">
+                        {user.admin ? <AdminPage /> : <Redirect to="/" />}
+                      </Route>
                       <Route exact path="/ViewAccount" component={ViewAccountPage}/>
-                      <Route exact path="/ViewAdminPage" component={ViewAdminPage}/>
                       <Route exact path="/SearchResultsPage" component={SearchResultsPage}/>
                       <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
+                      <Route path="/*">
+                        <Redirect to="/" />
+                      </Route>
                     </Switch>
                   </div>
             </BrowserRouter>

@@ -1,9 +1,9 @@
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-const qs = require('querystring');
-const { uintToBase36 } = require('base36id');
-const { getPlaylistVideos } = require('../youtube_api/youtube');
+const { Types } = require('mongoose');
+const { parse, toSeconds } = require('iso8601-duration');
+const { getPlaylistVideos, getVideoInfo } = require('../youtube_api/youtube');
 
 const NUM_OF_USERS = 300;
 const NUM_OF_MIXTAPES = 9;
@@ -38,7 +38,7 @@ const ObjectId = (
     d = Date,
     h = 16,
     s = (s) => m.floor(s).toString(h)
-) => s(d.now() / 1000) + ' '.repeat(h).replace(/./g, () => s(m.random() * h));
+) => Types.ObjectId(s(d.now() / 1000) + ' '.repeat(h).replace(/./g, () => s(m.random() * h)));
 
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
@@ -64,6 +64,10 @@ async function generateMixtapes(count) {
                         coverImage: entry.snippet.thumbnails.default.url,
                     })
             );
+            const videosInfo = await getVideoInfo(songs.map(song => song.id).toString());
+            videosInfo.forEach((info, i) => {
+                songs[i].duration = toSeconds(parse(info.contentDetails.duration));
+            });
             const isPublic = coinFlip();
             mixtapes.push({
                 _id: ObjectId(),
@@ -118,18 +122,21 @@ async function generateTestData() {
         if (coinFlip()) {
             const collaborators = new Set();
             for (let i = 0, end = randInt(MIN_COLLABORATORS_PER_MIXTAPE, MAX_COLLABORATORS_PER_MIXTAPE); i < end; i++) {
-                collaborators.add(users[randInt(0, users.length)]._id);
+                const randomUser = randInt(0, users.length);
+                collaborators.add({ user: users[randomUser]._id, username: users[randomUser].username });
             }
             mixtape.collaborators = Array.from(collaborators);
             if (mixtape.collaborators.length === 0) {
-                mixtape.collaborators.push(users[randInt(0, users.length)]._id);
+                const randomUser = randInt(0, users.length);
+                mixtape.collaborators.push({ user: users[randomUser]._id, username: users[randomUser].username });
             }
-            mixtape.collaborators[0] = { user: mixtape.collaborators[0], permissions: 'owner' };
+            mixtape.collaborators[0] = { user: mixtape.collaborators[0].user, username: mixtape.collaborators[0].username, permissions: 'owner' };
             for (let i = 1; i < mixtape.collaborators.length; i++) {
-                mixtape.collaborators[i] = { user: mixtape.collaborators[i], permissions: coinFlip() ? 'editor' : 'viewer' };
+                mixtape.collaborators[i] = { user: mixtape.collaborators[i].user, username: mixtape.collaborators[i].username, permissions: coinFlip() ? 'editor' : 'viewer' };
             }
         } else {
-            mixtape.collaborators = [ { user: users[randInt(0, users.length)]._id, permissions: 'owner'} ];
+            const userIndex = randInt(0, users.length);
+            mixtape.collaborators = [ { user: Types.ObjectId(users[userIndex]._id), username: users[userIndex].username, permissions: 'owner'} ];
         }
     }
 

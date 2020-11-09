@@ -135,6 +135,14 @@ async function getSongDuration(youtubeId) {
     return songDuration.data;
 }
 
+async function adminFillDatabase() {
+    await axios.post(new URL('/admin/populateDatabase', SERVER_ROOT_URL).href);
+}
+
+async function adminDropDatabase() {
+    await axios.post(new URL('/admin/dropDatabase', SERVER_ROOT_URL).href);    
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -154,4 +162,6 @@ export {
     userSignup,
     userVerifyAccount,
     uploadFile,
+    adminFillDatabase,
+    adminDropDatabase,
 };
