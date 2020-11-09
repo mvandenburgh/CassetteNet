@@ -26,9 +26,10 @@ import donna_pfp from '../../images/donna.jpg';
 import pepe_pfp from '../../images/pepe_pfp.png';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
+import { getUserProfilePictureUrl } from '../../utils/api';
 
 function FollowedUsersPage(props) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -84,31 +85,35 @@ function FollowedUsersPage(props) {
     { name: 'CoolName' },
   ];
 
-  const FollowedUserRows = ({ followedUsers }) => (
+  const FollowedUserRows = ({ followedUsers, history }) => (
     <>
       {followedUsers.map((user, index) => (
         <div onMouseEnter={() => setHighlightedRow(index)} onMouseLeave={() => setHighlightedRow(null)}>
-          <Box style={{
-            margin: "5px",
-            padding: "10px",
-            backgroundColor: index === highlightedRow ? colors.followedUserRowMouseOverColor : colors.followedUserRowColor,
-            cursor: 'pointer',
-            display: "flex",
-            flexDirection: "row",
-            borderRadius: 6,
-            fontSize: 12,
-          }} boxShadow={3}>
+          <Box
+            style={{
+              margin: "5px",
+              padding: "10px",
+              backgroundColor: index === highlightedRow ? colors.followedUserRowMouseOverColor : colors.followedUserRowColor,
+              cursor: 'pointer',
+              display: "flex",
+              flexDirection: "row",
+              borderRadius: 6,
+              fontSize: 12,
+            }}
+            boxShadow={3}
+            onClick={() => history.push(`/user/${user._id}`)}
+            >
             <Box style={{ width: "33%", display: 'flex', flexDirection: 'row', marginLeft: '15px' }}>
-              <ReactRoundedImage image={user.pfp} roundedSize="1" imageWidth="100" imageHeight="100" />
+              <ReactRoundedImage image={getUserProfilePictureUrl(user._id)} roundedSize="1" imageWidth="100" imageHeight="100" />
               <br />
-              <Box style={{ fontSize: '15pt', width: "50%", display: 'flex', justifyContent: "left", marginLeft: '15px' }}> {user.name}#{user.id} </Box>
+              <Box style={{ fontSize: '15pt', width: "50%", display: 'flex', justifyContent: "left", marginLeft: '15px' }}> {user.username}#{user.uniqueId} </Box>
             </Box>
 
             <Box style={{ fontSize: '12pt', marginLeft: '50px', width: "33%", display: 'flex', flexDirection: 'column' }}>
-              Last seen: {user.last_seen}
+              Last activity: {user.updatedAt}
               <br />
               <br />
-                  User since: {user.user_since}
+                  User since: {user.createdAt}
               <br />
               <br />
                   Followers: {user.followers}
@@ -172,7 +177,7 @@ function FollowedUsersPage(props) {
         <Button onClick={handleClickOpen} variant="contained" boxShadow={3} style={{ margin: 'auto', backgroundColor: colors.searchButtonColor }}> Search for User</Button>
       </Box>
       <div style={{ width: "70%", margin: 'auto' }}>
-        <FollowedUserRows followedUsers={theirFollowedUsers} />
+        <FollowedUserRows followedUsers={user.followedUsers} history={history} />
       </div>
     </div>
   );
