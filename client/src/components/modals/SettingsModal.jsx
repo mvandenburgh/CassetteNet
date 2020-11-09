@@ -25,6 +25,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { deleteMixtape, getUsername } from '../../utils/api';
 import { users } from '../../testData/users.json';
 import { Autocomplete } from '@material-ui/lab';
+import { useHistory } from 'react-router-dom';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -63,13 +64,20 @@ function SettingsModal(props) {
     const classes = useStyles();
     const { mixtape, setMixtape, settingsPopupIsOpen, handleSettingsPopup } = props;
 
+    const history = useHistory();
+
     const [roleSelectOpen, setRoleSelectOpen] = useState(null);
 
     const handleRoleChange = (event, index) => {
         const newMixtape = { ...mixtape };
         newMixtape.collaborators[index].permissions = event.target.value;
         setMixtape(newMixtape);
-    }
+    };
+
+    const handleDeleteMixtape = async (mixtape) => {
+        await deleteMixtape(mixtape);
+        history.goBack();
+    };
 
     return (
         <Modal
@@ -168,7 +176,7 @@ function SettingsModal(props) {
                                 <Button
                                     variant="contained"
                                     color="secondary"
-                                    onClick={() => deleteMixtape(mixtape)}
+                                    onClick={() => handleDeleteMixtape(mixtape)}
                                     startIcon={<WarningIcon />}
                                 >
                                     Delete Mixtape

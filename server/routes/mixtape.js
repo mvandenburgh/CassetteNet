@@ -1,4 +1,5 @@
 const express = require('express');
+const { Types } = require('mongoose');
 const { Mixtape, User } = require('../models');
 
 const router = express.Router();
@@ -40,9 +41,9 @@ router.post('/', async (req, res) => {
 
 // RETRIEVE MIXTAPE
 router.get('/:id', async (req, res) => {
-    const mixtape = await Mixtape.findById(req.params.id);
+    const mixtape = await Mixtape.findOne({ _id: (req.params.id) });
     for (const collaborator of mixtape.collaborators) {
-        const user = await User.findById(collaborator.user);
+        const user = await User.findOne({ _id: (collaborator.user) });
         collaborator.username = user.username;
     }
     delete mixtape.coverImage;
@@ -52,6 +53,9 @@ router.get('/:id', async (req, res) => {
 // UPDATE MIXTAPE
 router.put('/:id', async (req, res) => {
     const { mixtape } = req.body;
+    for (const collaborator of mixtape.collaborators) {
+        collaborator.user = Types.ObjectId(collaborator.user);
+    }
     await Mixtape.findOneAndUpdate({  _id: mixtape._id }, mixtape);
     return res.send(mixtape);
 });
@@ -59,8 +63,7 @@ router.put('/:id', async (req, res) => {
 // DELETE MIXTAPE
 router.delete('/:id', async (req, res) => {
     // const { mixtape } = req.body;
-    const mixtape = await Mixtape.findById(req.params.id);
-    console.log(mixtape)
+    const mixtape = await Mixtape.findOne({ _id: req.params.id });
     await Mixtape.deleteOne({  _id: mixtape._id });
     const users = await User.find({ favoritedMixtapes: { $in: mixtape._id } });
     for (const user of users) {
