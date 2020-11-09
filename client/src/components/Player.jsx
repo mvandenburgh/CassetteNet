@@ -179,7 +179,7 @@ function Player(props) {
                 onChange={value => seek(value)}
                 />
               <div style={{color: 'black', marginRight: '20px'}}>
-                <FormattedTime numSeconds={((currentSong.duration - currentTime) * -1) || 0} />
+                <FormattedTime numSeconds={currentSong?.duration ? ((currentSong.duration - currentTime) * -1) : 0} />
               </div>
             </Grid>
             <Grid style={{margin: '10px 0'}} container justify="center">
