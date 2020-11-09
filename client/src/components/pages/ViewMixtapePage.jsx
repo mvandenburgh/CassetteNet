@@ -18,7 +18,7 @@ import {
  } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import { getMixtape, getMixtapeCoverImageUrl } from '../../utils/api';
+import { getMixtape, getMixtapeCoverImageUrl, updateMixtape } from '../../utils/api';
 import { Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import MixtapeCoverImageUploadModal from '../modals/MixtapeCoverImageUploadModal';
@@ -38,7 +38,6 @@ function ViewMixtapePage(props) {
     const owner = mixtape.collaborators.filter(c => c.permissions === 'owner').map(c => c.username)[0];
 
     const [isEditing, setIsEditing] = useState(false);
-    const [editTitle, setEditTitle] = useState(false);
 
     const [uploadCoverImagePopup, setUploadCoverImagePopup] = useState(false);
     const [coverImageUrl, setCoverImageUrl] = useState(null);
@@ -64,17 +63,15 @@ function ViewMixtapePage(props) {
 
     const handleChangeMixtapeNamePopup = () => {
         setchangeMixtapeNamePopupIsOpen(!changeMixtapeNamePopupIsOpen);
-      };
+    };
 
-    const saveName = () => {
-        // const newSongs = [...mixtape.songs];
-        // newSongs.push(songToAdd);
-        // mixtape.songs = newSongs;
-        // setMixtape(mixtape);
-        // setSongToAdd({});
-        console.log("Save name");
-        //event.stopPropagation();
-        alert("Save alert!");
+    const handleChangeName = (e) => {
+        console.log("Text field value:" + e.target.value);
+        mixtape.name = e.target.value
+    }
+
+    const saveName = async () => {
+        updateMixtape(mixtape);
     }
 
     return (
@@ -93,8 +90,8 @@ function ViewMixtapePage(props) {
                             Enter the new name:
                         </DialogContentText>
                         <TextField
-                            
-                            // label="Search..."
+                            onChange={handleChangeName}
+                            defaultValue={mixtape.name}
                             variant="filled"
                             InputProps={{ style: { fontSize: '1.5em' }, disableUnderline: false, type: 'search' }}
                         />
@@ -117,7 +114,7 @@ function ViewMixtapePage(props) {
                     </Grid>
                 <Grid sz={1}>
 
-                    <Button onClick={handleChangeMixtapeNamePopup} startIcon={<EditIcon />}  style={{position: 'absolute'}} variant="contained">Change Mixtape Name</Button>
+                    <Button onClick={handleChangeMixtapeNamePopup} startIcon={<EditIcon />}  style={{float: 'right'}} variant="contained">Change Mixtape Name</Button>
                     <Grid xs={10} item>
                         <Typography variant="h4">{mixtape.name}</Typography>
                         <br />
