@@ -113,7 +113,7 @@ router.put('/profilePicture', async (req, res) => {
 
 router.get('/:id/profilePicture', async (req, res) => {
     const user = await User.findById(req.params.id).select('+profilePicture');
-    if (user && user.profilePicture.data && user.profilePicture.contentType) {
+    if (user && user.profilePicture && user.profilePicture.data && user.profilePicture.contentType) {
         res.set('Content-Type', user.profilePicture.contentType);
         res.send(user.profilePicture.data.buffer);
     } else if (user) {
