@@ -53,6 +53,9 @@ router.get('/:id', async (req, res) => {
 // UPDATE MIXTAPE
 router.put('/:id', async (req, res) => {
     const { mixtape } = req.body;
+    for (const collaborator of mixtape.collaborators) {
+        collaborator.user = ObjectId(collaborator.user);
+    }
     await Mixtape.findOneAndUpdate({  _id: mixtape._id }, mixtape);
     return res.send(mixtape);
 });
