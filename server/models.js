@@ -16,7 +16,7 @@ const userSchema = new Schema({
   admin: Boolean, // true if user is an admin
   uniqueId: {
     type: Number,
-    get: id => id.toString(36).padStart(4, '0'), // convert to alphanumeric string
+    get: id => id.toString(36).padStart(4, '0').toUpperCase(), // convert to alphanumeric string
   },
   profilePicture: { // raw image data for user's profile picture
     type: {
@@ -25,7 +25,7 @@ const userSchema = new Schema({
     },
     select: false
   },
-}, { toJSON: { getters: true } });
+}, { timestamps: true, toJSON: { getters: true } });
 
 
 userSchema.plugin(passportLocalMongoose);

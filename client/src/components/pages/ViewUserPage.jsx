@@ -119,6 +119,9 @@ function ViewUserPage(props) {
     getUserInfo();
   }, []);
 
+  const userSince = new Date(user.createdAt);
+  const lastActivity = new Date(user.updatedAt);
+
   const history = useHistory();
   const goBack = () => history.goBack();
 
@@ -152,11 +155,11 @@ function ViewUserPage(props) {
           <div style={{ display: 'inline-flex', flexDirection: 'column', paddingLeft: '30px', }}>
             <span style={{ display: 'inline-flex', flexDirection: 'row', paddingTop: '30px', paddingBottom: '30px', height: '25%', }}>
               <Typography style={{ fontSize: '40px' }} variant="h3">{user.username}</Typography>
-              <Typography style={{ fontSize: '20px' }} variant="h3">{`#${user.uniqueId}`}</Typography>
+              <Typography style={{ fontSize: '20px' }} variant="h3">#{user.uniqueId}</Typography>
             </span>
-            <Typography style={{ fontSize: '20px' }} variant="h3">User since: 9/22/20</Typography>
-            <Typography style={{ fontSize: '20px' }} variant="h3">Last seen: 10/29/20</Typography>
-            <Typography style={{ fontSize: '20px' }} variant="h3">Followers: 203</Typography>
+            <Typography style={{ fontSize: '20px' }} variant="h3">User since: {userSince.getMonth()+1}/{userSince.getDate()}/{userSince.getFullYear()}</Typography>
+            <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth()+1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>
+            <Typography style={{ fontSize: '20px' }} variant="h3">Followers: {user.followers}</Typography>
             <Button variant="outlined" style={{ padding: '10px', marginTop: '10px', height: '40px', width: '20px', backgroundColor: blueGrey[600], color: 'white' }}>Follow</Button>
           </div>
         </Box>

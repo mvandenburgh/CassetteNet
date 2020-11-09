@@ -32,15 +32,25 @@ router.post('/signup', async (req, res) => {
 
 
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
-    const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin } = req.user
+router.post('/login', passport.authenticate('local'), async (req, res) => {
+    const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt } = req.user;
+    const followedUsersDenormalized = [];
+    for (const userId of followedUsers) {
+        const user = await User.findById(userId);
+        const followerCount = (await User.find({ followedUsers: user._id })).length;
+        followedUsersDenormalized.push({ _id: userId, uniqueId: user.uniqueId, username: user.username, followers: followerCount });
+    }
+    const followers = (await User.find({ followedUsers: _id })).length;
     res.json({
         _id,
         favoritedMixtapes,
-        followedUsers,
+        followedUsers: followedUsersDenormalized,
+        followers,
         username,
         uniqueId, // convert number to base36 to get alphanumeric id
         admin,
+        createdAt,
+        updatedAt,
     });
 });
 
@@ -133,8 +143,10 @@ router.get('/:id/profilePicture', async (req, res) => {
 
 // Get info about any user. Exclude sensitive fields since this is public.
 router.get('/:id', async (req, res) => {
-    const user = await User.findById(req.params.id).select('-email -admin');
-    res.send(user);
+    console.log(req.params.id)
+    const user = await User.findById(req.params.id).select('-email -admin').lean();
+    const followers = (await User.find({ followedUsers: Types.ObjectId(req.params.id) })).length;
+    res.send({ followers, ...user });
 });
 
 
