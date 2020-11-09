@@ -1,5 +1,5 @@
 const express = require('express');
-const ObjectId = require('mongoose').Types;
+const { Types } = require('mongoose');
 const { Mixtape, User } = require('../models');
 
 const router = express.Router();
@@ -54,7 +54,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     const { mixtape } = req.body;
     for (const collaborator of mixtape.collaborators) {
-        collaborator.user = ObjectId(collaborator.user);
+        collaborator.user = Types.ObjectId(collaborator.user);
     }
     await Mixtape.findOneAndUpdate({  _id: mixtape._id }, mixtape);
     return res.send(mixtape);
