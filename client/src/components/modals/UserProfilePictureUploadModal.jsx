@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Backdrop, Modal, Fade, Grid, Typography, Button } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,15 +13,15 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function MixtapeCoverImageUploadModal(props) {
+function UserProfilePictureUploadModal(props) {
     const classes = useStyles();
-    const { mixtape, coverImageUrl, setCoverImageUrl, open, setOpen } = props;
+    const { open, setOpen } = props;
     const [file, setFile] = useState(null);
 
     const uploadImage = async () => {
-        await uploadFile(file, 'coverImage', `/mixtape/${mixtape._id}/coverImage`);
-        setCoverImageUrl(null);
-        setCoverImageUrl(coverImageUrl);
+        await uploadFile(file, 'profilePicture', '/user/profilePicture');
+        setOpen(false);
+        window.location.reload();
     }
 
     return (
@@ -38,7 +38,7 @@ function MixtapeCoverImageUploadModal(props) {
             <Fade in={open}>
                 <Grid container justify="center" alignContent="center" style={{ backgroundColor: blueGrey[400], height: '70%', width: '60%' }}>
                     <div style={{margin: '1px'}}>
-                        <Typography variant="h3">Upload Mixtape Cover Image</Typography>
+                        <Typography variant="h3">Upload Profile Picture</Typography>
                         <br />
                         <DropzoneArea onChange={(file) => setFile(file[0])} filesLimit={1} />
                         <br />
@@ -50,4 +50,4 @@ function MixtapeCoverImageUploadModal(props) {
     )
 }
 
-export default MixtapeCoverImageUploadModal;
+export default UserProfilePictureUploadModal;

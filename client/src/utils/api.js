@@ -120,14 +120,18 @@ async function userVerifyAccount(token) {
     await axios.put(new URL('/user/verify', SERVER_ROOT_URL), { token });
 }
 
-async function uploadFile(file, endpoint) {
+async function uploadFile(file, filename, endpoint) {
     const formData = new FormData();
-    formData.append('coverImage', file);
+    formData.append(filename, file);
     await axios.put(new URL(endpoint, SERVER_ROOT_URL), formData);
 }
 
 function getMixtapeCoverImageUrl(mixtapeId) {
     return new URL(`/mixtape/${mixtapeId}/coverImage`, SERVER_ROOT_URL).href;
+}
+
+function getUserProfilePictureUrl(userId) {
+    return new URL(`/user/${userId}/profilePicture`, SERVER_ROOT_URL).href;
 }
 
 async function getSongDuration(youtubeId) {
@@ -151,6 +155,7 @@ export {
     getUsername,
     getMixtape,
     getMixtapeCoverImageUrl,
+    getUserProfilePictureUrl,
     getMyMixtapes,
     getFavoritedMixtapes,
     getInboxMessages,

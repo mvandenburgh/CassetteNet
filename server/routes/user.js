@@ -101,4 +101,22 @@ router.put('/unfavoriteMixtape', async (req, res) => {
     return res.send(user.favoritedMixtapes);
 });
 
+router.put('/profilePicture', async (req, res) => {
+    if (!req.user) return res.status(401).send(null);
+    if (!req.files || !req.files.profilePicture) return res.status(400).send(null);
+    const { profilePicture } = req.files;
+    await User.findByIdAndUpdate(req.user._id, { profilePicture: { data: profilePicture.data, contentType: profilePicture.mimetype } });
+    res.send('success');
+});
+
+router.get('/:id/profilePicture', async (req, res) => {
+    const user = await User.findById(req.params.id).select('+profilePicture');
+    if (user && user.profilePicture) {
+        res.set('Content-Type', user.profilePicture.contentType);
+        res.send(user.profilePicture.data);
+    } else {
+        res.status(404).send('user not found');
+    }
+});
+
 module.exports = router;

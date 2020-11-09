@@ -22,7 +22,6 @@ router.get('/:id/coverImage', async (req, res) => {
     } else {
         res.status(404).send('mixtape not found');
     }
-    
 });
 
 
