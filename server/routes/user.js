@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const crypto = require('crypto');
+const { Types } = require('mongoose');
 const { Mixtape, User } = require('../models');
 const { sendVerificationEmail } = require('../email/email');
 
@@ -61,7 +62,7 @@ router.put('/verify', async (req, res) => {
 // TODO: secure/authentication
 router.get('/mixtapes', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
-    const mixtapes = await Mixtape.find({ 'collaborators.user': req.user.id });
+    const mixtapes = await Mixtape.find({ 'collaborators.user': Types.ObjectId(req.user.id) });
     res.send(mixtapes);
 });
 
