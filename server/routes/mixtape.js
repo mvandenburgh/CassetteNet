@@ -60,7 +60,6 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     // const { mixtape } = req.body;
     const mixtape = await Mixtape.findById(req.params.id);
-    console.log(mixtape)
     await Mixtape.deleteOne({  _id: mixtape._id });
     const users = await User.find({ favoritedMixtapes: { $in: mixtape._id } });
     for (const user of users) {

@@ -36,27 +36,8 @@ function getUsername(_id) {
  * @param {*} id id of the user we want to get my mixtapes of
  */
 async function getMyMixtapes(_id) {
-    // let user;
-    // for (const usr of users) {
-    //     if (usr._id === _id) {
-    //         user = usr;
-    //         break;
-    //     }
-    // }
-    // if (!user) return [];
     const mixtapes = await axios.get(new URL('/user/mixtapes', SERVER_ROOT_URL), { withCredentials: true });
     return mixtapes.data;
-
-    // const userMixtapes = [];
-    // for (const mixtape of mixtapes) {
-    //     for (const collaborator of mixtape.collaborators) {
-    //         if (collaborator.user === user._id) {
-    //             userMixtapes.push(mixtape);
-    //             break;
-    //         }
-    //     }
-    // }
-    // return userMixtapes;
 }
 
 /**
@@ -94,16 +75,6 @@ async function songSearch(query) {
 async function getFavoritedMixtapes(_id) {
     const favoritedMixtapes = await axios.get(new URL('/user/favoritedMixtapes', SERVER_ROOT_URL), { withCredentials: true });
     return favoritedMixtapes.data;
-    // let user;
-    // for (const usr of users) {
-    //     if (usr._id === _id) {
-    //         user = usr;
-    //         break;
-    //     }
-    // }
-    // if (!user) return [];
-    
-    // return user.favoritedMixtapes.map(mixtapeId => getMixtape(mixtapeId));
 }
 
 async function favoriteMixtape(mixtapeId) {

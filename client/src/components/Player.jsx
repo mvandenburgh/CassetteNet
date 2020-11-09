@@ -3,7 +3,7 @@ import { Card, Grid } from '@material-ui/core';
 import ReactPlayer from 'react-player';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
-import { Direction, PlayerIcon, Slider } from 'react-player-controls';
+import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
 import { debounce } from 'lodash';
  
 const WHITE_SMOKE = '#eee'
@@ -108,13 +108,37 @@ function Player(props) {
     const handlePause = () => {
         setPlaying(false);
         setCurrentTime(playerRef.current.getCurrentTime());
-    }
+    };
+
+    const handleNextSong = () => {
+      setPlaying(false);
+      const newCurrentSong = { ...currentSong };
+      if (currentSong.index === currentSong.mixtape.songs.length - 1) {
+        newCurrentSong.index = 0;
+      } else {
+        newCurrentSong.index = currentSong.index + 1;
+      }
+      setCurrentSong(newCurrentSong);
+      setPlaying(true);
+    };
+
+    const handlePrevSong = () => {
+      setPlaying(false);
+      const newCurrentSong = { ...currentSong };
+      if (currentSong.index === 0) {
+        newCurrentSong.index = currentSong.mixtape.songs.length - 1;
+      } else {
+        newCurrentSong.index = currentSong.index - 1;
+      }
+      setCurrentSong(newCurrentSong);
+      setPlaying(true);
+    };
 
     if (playerRef.current) {
         currentSong.duration = playerRef.current.getDuration();
         setCurrentSong(currentSong);
     }
-    
+
     const seek = (time) => {
         playerRef.current.seekTo(time * playerRef.current.getDuration());
     }
@@ -122,23 +146,29 @@ function Player(props) {
     return (
         <div style={{height: '100px'}}>
             <Grid style={{margin: '10px 0'}} container justify="center">
+              <div style={{color: 'black', marginRight: '20px'}}>
+                <FormattedTime numSeconds={currentTime} />
+              </div>
                 <ProgressBar
                 isEnabled
                 direction={Direction.HORIZONTAL}
                 value={currentSong?.duration ? (currentTime / currentSong.duration) : 0}
                 onChange={value => seek(value)}
                 />
+              <div style={{color: 'black', marginRight: '20px'}}>
+                <FormattedTime numSeconds={(currentSong.duration - currentTime) * -1} />
+              </div>
             </Grid>
             <Grid style={{margin: '10px 0'}} container justify="center">
-                <PlayerIcon.Previous width={32} height={32} style={{ marginRight: 32 }} />
+                <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
                 {playing ?
                 <PlayerIcon.Pause onClick={handlePause} width={32} height={32} style={{ marginRight: 32 }} /> :
                 <PlayerIcon.Play onClick={handlePlay} width={32} height={32} style={{ marginRight: 32 }} />
                 }
-                <PlayerIcon.Next width={32} height={32} style={{ marginRight: 32 }} />
+                <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
             </Grid>
             
-            <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong ? currentSong.song : ''}`} />
+            <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong?.mixtape?.songs ? currentSong.mixtape.songs[currentSong.index].id : ''}`} />
         </div>
     )
 }

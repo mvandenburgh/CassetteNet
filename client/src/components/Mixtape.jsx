@@ -102,7 +102,10 @@ function Mixtape(props) {
 
     const playSong = (index) => {
       setPlaying(true);
-      setCurrentSong({ mixtape: props.id, song: mixtape.songs[index].id })
+      setCurrentSong({
+        mixtape,
+        index,
+      })
     };
 
     const clickCheckbox = (songId) => {
