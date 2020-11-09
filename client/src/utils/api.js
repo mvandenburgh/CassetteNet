@@ -83,8 +83,7 @@ async function createMixtape() {
 }
 
 async function songSearch(query) {
-    // const results = await axios.get(new URL('/youtube/search', SERVER_ROOT_URL), { params: { q: query }});
-    const results = await axios.get('http://localhost:5000/youtube/search', { params: { q: query }});
+    const results = await axios.get(new URL('/youtube/search', SERVER_ROOT_URL).href, { params: { q: query } });
     return results.data;
 }
 
@@ -150,6 +149,21 @@ async function userVerifyAccount(token) {
     await axios.put(new URL('/user/verify', SERVER_ROOT_URL), { token });
 }
 
+async function uploadFile(file, endpoint) {
+    const formData = new FormData();
+    formData.append('coverImage', file);
+    await axios.put(new URL(endpoint, SERVER_ROOT_URL), formData);
+}
+
+function getMixtapeCoverImageUrl(mixtapeId) {
+    return new URL(`/mixtape/${mixtapeId}/coverImage`, SERVER_ROOT_URL).href;
+}
+
+async function getSongDuration(youtubeId) {
+    const songDuration = await axios.get(new URL('/youtube/videoDuration', SERVER_ROOT_URL).href, { params: { videoId: youtubeId } });
+    return songDuration.data;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -157,13 +171,16 @@ export {
     unfavoriteMixtape,
     getUsername,
     getMixtape,
+    getMixtapeCoverImageUrl,
     getMyMixtapes,
     getFavoritedMixtapes,
     getInboxMessages,
     songSearch,
+    getSongDuration,
     updateMixtape,
     userLogin,
     userLogout,
     userSignup,
     userVerifyAccount,
+    uploadFile,
 };

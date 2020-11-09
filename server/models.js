@@ -29,7 +29,13 @@ const mixtapeSchema = new Schema({
   name: String,
   collaborators: Array, // [{ user: mongoose.Types.ObjectId, permissions: { type: String, enum: ['owner', 'viewer', 'editor'] } }]
   songs: Array, // list of youtube/spotify/whatever song ids
-  coverImage: { data: Buffer, contentType: String }, // raw image data for mixtape cover image
+  coverImage: { 
+    type: {
+      data: Buffer,
+      contentType: String, // raw image data for mixtape cover image
+    },
+    select: false,
+  },
   isPublic: Boolean,
 });
 

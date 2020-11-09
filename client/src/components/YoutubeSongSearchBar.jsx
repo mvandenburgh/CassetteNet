@@ -45,7 +45,7 @@ function YoutubeSongSearchBar(props) {
           {...params}
           onKeyPress={() => setLoading(true)}
           onBlur={() => setLoading(false)}
-          onChange={debounce((e) => search(e), 3000)} // debounce every 3 seconds to prevent calling api more than needed
+          onChange={debounce((e) => search(e), 1500)} // debounce every 1.5 seconds to prevent calling api more than needed
           label="Search"
           variant="outlined"
           InputProps={{

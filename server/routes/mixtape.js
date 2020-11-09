@@ -3,6 +3,28 @@ const { Mixtape, User } = require('../models');
 
 const router = express.Router();
 
+
+router.put('/:id/coverImage', async (req, res) => {
+    if (!req.files || !req.files.coverImage) return res.status(400).send('no file uploaded.');
+    const { coverImage } = req.files;
+    await Mixtape.findByIdAndUpdate(req.params.id, { coverImage: { data: coverImage.data, contentType: coverImage.mimetype } });
+    const mixtape = await Mixtape.findById(req.params.id);
+    res.send(mixtape);
+});
+
+
+router.get('/:id/coverImage', async (req, res) => {
+    const mixtape = await Mixtape.findById(req.params.id).select('+coverImage');
+    if (mixtape && mixtape.coverImage) {
+        res.set('Content-Type', mixtape.coverImage.contentType);
+        res.send(mixtape.coverImage.data.buffer);
+    } else {
+        res.status(404).send('mixtape not found');
+    }
+    
+});
+
+
 // CREATE MIXTAPE
 router.post('/', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
@@ -23,6 +45,7 @@ router.get('/:id', async (req, res) => {
         const user = await User.findById(collaborator.user);
         collaborator.username = user.username;
     }
+    delete mixtape.coverImage;
     return res.send(mixtape);
 });
 

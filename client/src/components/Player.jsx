@@ -102,8 +102,6 @@ function Player(props) {
       setPlaying(true);
       if (!currentTime) {
         playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
-      } else {
-        playerRef.current.seekTo(parseFloat(currentTime));
       }
     };
 
@@ -127,7 +125,7 @@ function Player(props) {
                 <ProgressBar
                 isEnabled
                 direction={Direction.HORIZONTAL}
-                value={currentSong.duration ? (currentTime / currentSong.duration) : 0}
+                value={currentSong?.duration ? (currentTime / currentSong.duration) : 0}
                 onChange={value => seek(value)}
                 />
             </Grid>

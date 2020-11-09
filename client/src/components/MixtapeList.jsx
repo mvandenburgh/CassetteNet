@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Fab, Grid, List, ListItem, ListItemText } from '@material-ui/core';
-// import { Delete as DeleteIcon } from '@material-ui/icons';
-import { getUsername } from '../utils/api';
+import { getUsername, getMixtapeCoverImageUrl } from '../utils/api';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
@@ -92,7 +91,7 @@ function MixtapeList(props) {
                       >
                         <Grid item xs={4}>
                           <div style={{left: '0', marginRight: '10%' }}>
-                            <img style={{width: '30%', height: '30%'}} src={mixtape.coverImage} alt='mixtape_cover'></img>
+                            <img style={{width: '30%', height: '30%'}} src={getMixtapeCoverImageUrl(mixtape._id)} alt='mixtape_cover'></img>
                             <ListItemText>{mixtape.name}</ListItemText>
                           </div>
                         </Grid>
