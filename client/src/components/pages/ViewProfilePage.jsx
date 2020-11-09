@@ -10,7 +10,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 import UserProfilePictureUploadModal from '../modals/UserProfilePictureUploadModal';
-import { getUserProfilePictureUrl } from '../../utils/api';
+import { getUser, getUserProfilePictureUrl } from '../../utils/api';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -112,6 +112,8 @@ function ViewAccountPage(props) {
     tabsContainer: blueGrey[900],
     mixtapeRowColor: blueGrey[800]
   }
+
+  const { id } = props.match.params;
 
   const { user } = useContext(UserContext);
 

@@ -17,7 +17,7 @@ import CurrentSongContext from './contexts/CurrentSongContext';
 import PlayingSongContext from './contexts/PlayingSongContext';
 import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
-import ViewAccountPage from './components/pages/ViewAccountPage';
+import ViewProfilePage from './components/pages/ViewProfilePage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
 import FollowedUsersPage from './components/pages/FollowedUsersPage';
 import AnonymousMixtapesPage from './components/pages/AnonymousMixtapesPage';
@@ -81,7 +81,8 @@ function App() {
                       <Route exact path="/Admin">
                         {user.admin ? <AdminPage /> : <Redirect to="/" />}
                       </Route>
-                      <Route exact path="/ViewAccount" component={ViewAccountPage}/>
+                      <Route exact path="/me" component={ViewProfilePage}/>
+                      <Route exact path="/user/:id" component={ViewUserPage}/>
                       <Route exact path="/SearchResultsPage" component={SearchResultsPage}/>
                       <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
                       <Route path="/*">

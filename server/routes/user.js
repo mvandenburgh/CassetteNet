@@ -115,7 +115,7 @@ router.get('/:id/profilePicture', async (req, res) => {
     const user = await User.findById(req.params.id).select('+profilePicture');
     if (user && user.profilePicture.data && user.profilePicture.contentType) {
         res.set('Content-Type', user.profilePicture.contentType);
-        res.send(user.profilePicture.data);
+        res.send(user.profilePicture.data.buffer);
     } else if (user) {
         const avatar = await avatars({ seed: user._id });
         const j = await new jimp({
@@ -130,5 +130,12 @@ router.get('/:id/profilePicture', async (req, res) => {
         res.status(404).send('user not found');
     }
 });
+
+// Get info about any user. Exclude sensitive fields since this is public.
+router.get('/:id', async (req, res) => {
+    const user = await User.findById(req.params.id).select('-email -admin');
+    res.send(user);
+});
+
 
 module.exports = router;

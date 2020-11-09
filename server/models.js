@@ -18,7 +18,13 @@ const userSchema = new Schema({
     type: Number,
     get: id => id.toString(36).padStart(4, '0'), // convert to alphanumeric string
   },
-  profilePicture: { data: Buffer, contentType: String }, // raw image data for user's profile picture
+  profilePicture: { // raw image data for user's profile picture
+    type: {
+      data: Buffer,
+      contentType: String
+    },
+    select: false
+  },
 });
 
 

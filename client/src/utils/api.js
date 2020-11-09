@@ -147,11 +147,17 @@ async function adminDropDatabase() {
     await axios.post(new URL('/admin/dropDatabase', SERVER_ROOT_URL).href);    
 }
 
+async function getUser(userId) {
+    const user = await axios.get(new URL(`/user/${userId}`, SERVER_ROOT_URL).href);
+    return user.data;
+}
+
 export {
     createMixtape,
     deleteMixtape,
     favoriteMixtape,
     unfavoriteMixtape,
+    getUser,
     getUsername,
     getMixtape,
     getMixtapeCoverImageUrl,
