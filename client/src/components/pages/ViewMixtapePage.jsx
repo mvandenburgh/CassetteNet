@@ -40,7 +40,7 @@ function ViewMixtapePage(props) {
             setCoverImageUrl(getMixtapeCoverImageUrl(updatedMixtape._id));
         }
         updateMixtape();
-    }, []);
+    }, [mixtape.songs.length]);
 
     
 
