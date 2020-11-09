@@ -157,7 +157,7 @@ function Player(props) {
       setShuffle(!shuffleState);
     }
 
-    if (playerRef?.current && currentSong?.duration) {
+    if (playerRef?.current) {
         currentSong.duration = playerRef.current.getDuration();
         setCurrentSong(currentSong);
     }
