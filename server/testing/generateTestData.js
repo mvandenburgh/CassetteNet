@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { Types } = require('mongoose');
 const { parse, toSeconds } = require('iso8601-duration');
+const Avatar = require('avatar-builder');
 const { getPlaylistVideos, getVideoInfo } = require('../youtube_api/youtube');
 
 const NUM_OF_USERS = 300;
@@ -31,6 +32,16 @@ const SAMPLE_PLAYLISTS = [
     'PLRZlMhcYkA2G3kufxNpDwFN64jmNUmjt6',
     'PLDIoUOhQQPlXr63I_vwF9GD8sAKh77dWU',
     'PLZyqOyXxaVETqpHhT_c5GPmAPzhJpJ5K7',
+];
+
+const AVATAR_TYPES = [
+    Avatar.Image.identicon,
+    Avatar.Image.square,
+    Avatar.Image.triangle,
+    Avatar.Image.github,
+    Avatar.Image.cat,
+    Avatar.Image.male8bit,
+    Avatar.Image.female8bit
 ];
 
 /**
@@ -101,6 +112,14 @@ async function generateUsers(count) {
         const followedUsers = [];
         const admin = false;
         current_unique_id++;
+        const avatar = Avatar.builder(
+            Avatar.Image.margin(Avatar.Image.roundedRectMask(Avatar.Image.compose(
+              Avatar.Image.randomFillStyle(),
+              Avatar.Image.shadow(Avatar.Image.margin(AVATAR_TYPES[randInt(0, AVATAR_TYPES.length)](), 8),
+              {blur: 5, offsetX: 2.5, offsetY: -2.5,color:'rgba(0,0,0,0.75)'})
+            ), 32), 8),
+        128, 128);
+        const profilePictureData = await avatar.create(username);
         users.push({
             _id: ObjectId(),
             username,
@@ -111,6 +130,10 @@ async function generateUsers(count) {
             followedUsers,
             admin,
             uniqueId: current_unique_id,
+            profilePicture: {
+                data: profilePictureData,
+                contentType: 'image/png'
+            }
         });
     }
     return users;

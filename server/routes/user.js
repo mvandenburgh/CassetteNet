@@ -1,6 +1,8 @@
 const express = require('express');
 const passport = require('passport');
 const crypto = require('crypto');
+const avatars = require('avatars');
+const jimp = require('jimp');
 const { Types } = require('mongoose');
 const { Mixtape, User } = require('../models');
 const { sendVerificationEmail } = require('../email/email');
@@ -111,9 +113,19 @@ router.put('/profilePicture', async (req, res) => {
 
 router.get('/:id/profilePicture', async (req, res) => {
     const user = await User.findById(req.params.id).select('+profilePicture');
-    if (user && user.profilePicture) {
+    if (user && user.profilePicture.data && user.profilePicture.contentType) {
         res.set('Content-Type', user.profilePicture.contentType);
         res.send(user.profilePicture.data);
+    } else if (user) {
+        const avatar = await avatars({ seed: user._id });
+        const j = await new jimp({
+            data: avatar.bitmap.data,
+            width: avatar.bitmap.width,
+            height: avatar.bitmap.height,
+        });
+        const pngConversion = await j.getBufferAsync(jimp.MIME_PNG);
+        res.set('Content-Type', 'image/png');
+        res.send(pngConversion);
     } else {
         res.status(404).send('user not found');
     }
