@@ -5,8 +5,8 @@ const router = express.Router();
 
 
 router.put('/:id/coverImage', async (req, res) => {
+    if (!req.files || !req.files.coverImage) return res.status(400).send('no file uploaded.');
     const { coverImage } = req.files;
-    if (!coverImage) return res.status(400).send('no file uploaded.');
     await Mixtape.findByIdAndUpdate(req.params.id, { coverImage: { data: coverImage.data, contentType: coverImage.mimetype } });
     const mixtape = await Mixtape.findById(req.params.id);
     res.send(mixtape);
@@ -15,7 +15,7 @@ router.put('/:id/coverImage', async (req, res) => {
 
 router.get('/:id/coverImage', async (req, res) => {
     const mixtape = await Mixtape.findById(req.params.id).select('+coverImage');
-    if (mixtape) {
+    if (mixtape && mixtape.coverImage) {
         res.set('Content-Type', mixtape.coverImage.contentType);
         res.send(mixtape.coverImage.data.buffer);
     } else {
