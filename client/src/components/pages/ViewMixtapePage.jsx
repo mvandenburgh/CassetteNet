@@ -109,7 +109,7 @@ function ViewMixtapePage(props) {
             <br />
             <br />
 
-            <Paper style={{ height: '7em', padding: '1%', marginLeft: '5%', marginBottom: '2%', width: '70%' }}>
+            <Paper style={{ height: '10em', padding: '1%', marginLeft: '5%', marginBottom: '2%', width: '70%' }}>
                 {/* {isEditing ? <TextField value={mixtape.name} /> : <h1>{mixtape.name || 'Mixtape Title'}</h1>} */}
                 <Grid style={{height: '100%', width: '100%'}} container>
                     <Grid style={{height: '100%', width: '100%'}} xs={1} item>
@@ -117,22 +117,17 @@ function ViewMixtapePage(props) {
                     </Grid>
                 <Grid sz={1}>
 
-                        <Button onClick={handleChangeMixtapeNamePopup} startIcon={<EditIcon />}  style={{position: 'absolute'}} variant="contained">Change Mixtape Name</Button>
+                    <Button onClick={handleChangeMixtapeNamePopup} startIcon={<EditIcon />}  style={{position: 'absolute'}} variant="contained">Change Mixtape Name</Button>
                     <Grid xs={10} item>
                         <Typography variant="h4">{mixtape.name}</Typography>
                         <br />
                         <Typography variant="h7" style={{ display: 'inline-block' }}>{`Created by ${owner} ${mixtape.songs.length} songs, ${humanizeDuration(mixtape.duration * 1000).replaceAll(',', '')}`}</Typography>
                     </Grid>
-                    <Grid xs={1} item>
-                        <Button startIcon={<EditIcon />} style={{ position: 'absolute' }} variant="contained">Change Mixtape Name</Button>
-                    </Grid>
-
-
+                    <Grid xs={1} item></Grid>
                 </Grid>
                 </Grid>
 
                 <div>
-                    
                     <div style={{ display: 'inline-block', float: 'right' }}>
                         <FavoriteMixtapeButton id={props.match.params.id} style={{ margin: '7px' }} />
                         <CommentIcon style={{ margin: '10px' }} />
