@@ -27,6 +27,10 @@ const SAMPLE_PLAYLISTS = [
     'PLx0sYbCqOb8TBPRdmBHs5Iftvv9TPboYG',
     'PLNSvUjadUIVCNXxRsoSXrlsJQSWLzBwYA',
     'PLQHnNscWoAtw-wxC3kQhYVHe4j7LGlNFD',
+    'PLXdko0_SM_Fzb7dY9WPE53gJNVK7EGldD',
+    'PLRZlMhcYkA2G3kufxNpDwFN64jmNUmjt6',
+    'PLDIoUOhQQPlXr63I_vwF9GD8sAKh77dWU',
+    'PLZyqOyXxaVETqpHhT_c5GPmAPzhJpJ5K7',
 ];
 
 /**
@@ -48,9 +52,9 @@ const randInt = (min, max) => Math.floor(Math.random() * (Math.floor(max) - Math
 const coinFlip = () => Boolean(randInt(0,2));
 
 
-async function generateMixtapes(count) {
+async function generateMixtapes() {
     const mixtapes = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < SAMPLE_PLAYLISTS.length; i++) {
         if (i >= SAMPLE_PLAYLISTS.length) break;
         let songs = [];
         let playlistId = SAMPLE_PLAYLISTS[i];
