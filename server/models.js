@@ -25,7 +25,7 @@ const userSchema = new Schema({
     },
     select: false
   },
-});
+}, { toJSON: { getters: true } });
 
 
 userSchema.plugin(passportLocalMongoose);
