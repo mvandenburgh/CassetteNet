@@ -1,10 +1,10 @@
 import React, { useContext, useRef, useState } from 'react';
-import { Card, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
+import { Loop as LoopIcon, Shuffle as ShuffleIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
-import { debounce } from 'lodash';
  
 const WHITE_SMOKE = '#eee'
 const GRAY = '#878c88'
@@ -97,6 +97,9 @@ function Player(props) {
     const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
     const { playing, setPlaying } = useContext(PlayingSongContext);
+
+    const [shuffle, setShuffle] = useState(false);
+    const [loop, setLoop] = useState(false);
   
     const handlePlay = () => {
       setPlaying(true);
@@ -113,7 +116,9 @@ function Player(props) {
     const handleNextSong = () => {
       setPlaying(false);
       const newCurrentSong = { ...currentSong };
-      if (currentSong.index === currentSong.mixtape.songs.length - 1) {
+      if (shuffle) {
+        newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
+      } else if (currentSong.index === currentSong.mixtape.songs.length - 1) {
         newCurrentSong.index = 0;
       } else {
         newCurrentSong.index = currentSong.index + 1;
@@ -125,7 +130,9 @@ function Player(props) {
     const handlePrevSong = () => {
       setPlaying(false);
       const newCurrentSong = { ...currentSong };
-      if (currentSong.index === 0) {
+      if (shuffle) {
+        newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
+      } else if (currentSong.index === 0) {
         newCurrentSong.index = currentSong.mixtape.songs.length - 1;
       } else {
         newCurrentSong.index = currentSong.index - 1;
@@ -133,6 +140,22 @@ function Player(props) {
       setCurrentSong(newCurrentSong);
       setPlaying(true);
     };
+
+    const handleSetLoop = () => {
+      const loopState = loop;
+      setLoop(!loopState);
+      if (!loopState) {
+        setShuffle(false);
+      }
+    }
+
+    const handleSetShuffle = () => {
+      const shuffleState = shuffle;
+      if (!shuffleState) {
+        setLoop(false);
+      }
+      setShuffle(!shuffleState);
+    }
 
     if (playerRef.current) {
         currentSong.duration = playerRef.current.getDuration();
@@ -156,7 +179,7 @@ function Player(props) {
                 onChange={value => seek(value)}
                 />
               <div style={{color: 'black', marginRight: '20px'}}>
-                <FormattedTime numSeconds={(currentSong.duration - currentTime) * -1} />
+                <FormattedTime numSeconds={((currentSong.duration - currentTime) * -1) || 0} />
               </div>
             </Grid>
             <Grid style={{margin: '10px 0'}} container justify="center">
@@ -166,9 +189,15 @@ function Player(props) {
                 <PlayerIcon.Play onClick={handlePlay} width={32} height={32} style={{ marginRight: 32 }} />
                 }
                 <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
+                <div style={{color: shuffle ? 'red' : 'black', marginRight: '20px'}}>
+                  <ShuffleIcon onClick={handleSetShuffle} />
+                </div>
+                <div style={{color: loop ? 'red' : 'black', marginRight: '20px'}}>
+                  <LoopIcon onClick={handleSetLoop} />
+                </div>
             </Grid>
             
-            <ReactPlayer ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong?.mixtape?.songs ? currentSong.mixtape.songs[currentSong.index].id : ''}`} />
+            <ReactPlayer onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()} ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong?.mixtape?.songs ? currentSong.mixtape.songs[currentSong.index].id : ''}`} />
         </div>
     )
 }

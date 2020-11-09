@@ -78,6 +78,9 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     left: drawerWidth + 20,
   },
+  icon: {
+    color: 'black',
+  },
 }));
 
 
@@ -146,13 +149,13 @@ function PageFrame(props) {
                 <List>
                     <ListItem onClick={() => history.push('/mymixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
-                          <CassetteTapeIcon />    
+                          <CassetteTapeIcon className={classes.icon} />    
                       </ListItemIcon>
                       <ListItemText primary="My Mixtapes" />
                     </ListItem>
                     <ListItem onClick={() => history.push('/atmosphere')} button>
                         <ListItemIcon>
-                            <AtmosphereSoundsIcon />    
+                            <AtmosphereSoundsIcon className={classes.icon} />    
                         </ListItemIcon>
                         <ListItemText primary="Atmosphere Sounds" />
                     </ListItem>
@@ -170,13 +173,13 @@ function PageFrame(props) {
                     </ListItem> */}
                   <ListItem onClick={() => history.push('/followedusers')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
-                          <FollowedUsersIcon />    
+                          <FollowedUsersIcon className={classes.icon} />    
                       </ListItemIcon>
                       <ListItemText primary="Followed Users" />
                   </ListItem>
                   <ListItem onClick={() => history.push('/favoritedmixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
-                          <FavoritedMixtapesIcon />    
+                          <FavoritedMixtapesIcon className={classes.icon} />    
                       </ListItemIcon>
                       <ListItemText primary="Favorited Mixtapes" />
                   </ListItem>
@@ -184,14 +187,14 @@ function PageFrame(props) {
                       <ListItemIcon>
                           {/* TODO: get actual number of messages in inbox */}
                           <Badge badgeContent={4} color="error">
-                            <InboxIcon />
+                            <InboxIcon className={classes.icon} />
                           </Badge>
                       </ListItemIcon>
                       <ListItemText primary="Inbox" />
                   </ListItem>
                   <ListItem onClick={() => history.push('/anonymousmixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
-                          <AnonymousMixtapesIcon />    
+                          <AnonymousMixtapesIcon className={classes.icon} />    
                       </ListItemIcon>
                       <ListItemText primary="Anonymous Mixtapes" />
                   </ListItem>
