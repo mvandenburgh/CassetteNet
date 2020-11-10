@@ -26,14 +26,26 @@ router.post('/signup', async (req, res) => {
                 console.log(err); // TODO: error handling    
             }
         }
-        passport.authenticate('local')(req, res, () => res.send(user));
+        let responsePayload;
+        
+        // send back full user object if running in development.
+        // otherwise don't, due to security
+        if (process.env.NODE_ENV === 'production') {
+            responsePayload = 'signup successful';
+        } else {
+            responsePayload = user;
+        }
+        passport.authenticate('local')(req, res, () => res.send(responsePayload));
     });
 });
 
 
 
 router.post('/login', passport.authenticate('local'), async (req, res) => {
-    const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt } = req.user;
+    const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt, verified } = req.user;
+    if (!verified) {
+        return res.status(400).send('user not verified.');
+    }
     const followedUsersDenormalized = [];
     for (const userId of followedUsers) {
         const user = await User.findById(userId);

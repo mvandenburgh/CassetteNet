@@ -84,14 +84,18 @@ function LoginPage(props) {
 
 
   const loginAsUser = async () => {
-    const loggedInUser = await userLogin(username, password);
-    if (loggedInUser) {
+    try {
+      const loggedInUser = await userLogin(username, password);
       setUser({ isLoggedIn: true, isGuest: false, ...loggedInUser });
       history.push('/');
-    }
-    else{
-      //TODO: turn this into a dialog box
-      alert("Incorrect Username or password!");
+    } catch (err) {
+      if (err.response.status === 401) {
+        alert('Incorrect username or password');
+      } else if (err.response.status === 400) {
+        alert('Please verify your account.')
+      } else {
+        alert('Error logging in. Please try again later.')  
+      }
     }
   }
 
