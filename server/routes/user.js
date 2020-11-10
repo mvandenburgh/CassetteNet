@@ -91,6 +91,17 @@ router.put('/verify', async (req, res) => {
     }
 });
 
+router.get('/search', async (req, res) => {
+    const { query } = req.query;
+    if (!query) return res.send([]);
+    const users = await User.find(User.searchBuilder(query)).lean();
+    return res.send(users.map(user => ({
+        _id: user._id,
+        username: user.username,
+        uniqueId: user.uniqueId,
+    })));
+});
+
 // get a user's mixtapes
 // TODO: secure/authentication
 router.get('/mixtapes', async (req, res) => {
@@ -116,7 +127,6 @@ router.get('/:id/favoritedMixtapes', async (req, res) => {
                 continue;
             }
         }
-        console.log(mixtape);
         if (mixtape) {
             const favoriteCount = (await User.find({ favoritedMixtapes: mixtapeId }).lean()).length;
             mixtape.favorites = favoriteCount;
@@ -178,9 +188,15 @@ router.get('/:id/profilePicture', async (req, res) => {
 
 // Get info about any user. Exclude sensitive fields since this is public.
 router.get('/:id', async (req, res) => {
-    const user = await User.findById(req.params.id).select('-email -admin').lean();
-    const followers = (await User.find({ followedUsers: Types.ObjectId(req.params.id) })).length;
-    res.send({ followers, ...user });
+    if (req.params.id.length === 5 && req.params.id.charAt(0) === '!') { // search by uniqueId
+        const user = await User.findOne({ uniqueId: parseInt(req.params.id.substring(1), 36) }).select('-email -admin -verified -token').lean();
+        const followers = (await User.find({ followedUsers: Types.ObjectId(user._id) })).length;
+        res.send({ followers, ...user });
+    } else { // search by _id
+        const user = await User.findById(req.params.id).select('-email -admin -verified -token').lean();
+        const followers = (await User.find({ followedUsers: Types.ObjectId(req.params.id) })).length;
+        res.send({ followers, ...user });
+    }
 });
 
 

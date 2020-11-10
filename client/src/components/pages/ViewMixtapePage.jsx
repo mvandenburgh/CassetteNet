@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import _ from 'lodash';
 import {
     Button, 
     Box, 
@@ -24,18 +25,25 @@ import { useHistory } from 'react-router-dom';
 import MixtapeCoverImageUploadModal from '../modals/MixtapeCoverImageUploadModal';
 import humanizeDuration from 'humanize-duration';
 
+const usePrevious = (value) => {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+}
+
+
 function ViewMixtapePage(props) {
     const history = useHistory();
     const goBack = () => { history.push('/') }
 
-    const [mixtape, setMixtape] = useState({
-        name: '',
-        collaborators: [],
-        songs: [],
-        duration: 0,
-    });
+    const [mixtape, setMixtape] = useState(null);
 
-    const [open, setOpen] = React.useState(false);
+    const [permissions, setPermissions] = useState([]);
+    const [permissionUserList, setPermissionUserList] = useState([]);
+
+    const [open, setOpen] = useState(false);
     
     const handleClickOpen = () => {
         setOpen(true);
@@ -45,8 +53,7 @@ function ViewMixtapePage(props) {
         saveName();
         setOpen(false);
     };
-
-    const owner = mixtape.collaborators.filter(c => c.permissions === 'owner').map(c => c.username)[0];
+    const owner = mixtape?.collaborators.filter(c => c?.permissions === 'owner').map(c => c?.username)[0];
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -55,22 +62,51 @@ function ViewMixtapePage(props) {
 
     const [changeMixtapeNamePopupIsOpen, setchangeMixtapeNamePopupIsOpen] = useState(false); // whether add song popup is open
 
-    useEffect(() => {
-        async function updateMixtape() {
-            const updatedMixtape = await getMixtape(props.match.params.id);
-            if (updatedMixtape.songs.length > 0) {
-                updatedMixtape.duration = updatedMixtape.songs.map(song => song.duration).reduce((mixtapeDuration, songDuration) => mixtapeDuration + songDuration);
-            } else {
-                updatedMixtape.duration = 0;
-            }
-            
-            setMixtape(updatedMixtape);
-            setCoverImageUrl(getMixtapeCoverImageUrl(updatedMixtape._id));
+    const prevMixtape = usePrevious(mixtape);
+    useEffect(()=>{
+        if (
+            !_.isEqual(
+                prevMixtape,
+                mixtape,
+            )
+        ) {
+            getMixtape(props.match.params.id).then((updatedMixtape) => {
+                if (updatedMixtape.songs.length > 0) {
+                    updatedMixtape.duration = updatedMixtape.songs.map(song => song.duration).reduce((mixtapeDuration, songDuration) => mixtapeDuration + songDuration);
+                } else {
+                    updatedMixtape.duration = 0;
+                }
+                permissions.forEach((permission, i) => {
+                    updatedMixtape.collaborators[i].permissions = permission;
+                });
+                if (!mixtape) {
+                    setPermissions(updatedMixtape.collaborators.map(c => c.permissions));
+                    setPermissionUserList(updatedMixtape.collaborators.map(c => (
+                        { username: c.username, user: c.user }
+                    )));
+                }
+                console.log(updatedMixtape);
+                setMixtape(updatedMixtape);
+                setCoverImageUrl(getMixtapeCoverImageUrl(updatedMixtape._id));
+            });
         }
-        updateMixtape();
-    }, [mixtape.songs.length]);
+    }, [mixtape, prevMixtape]);
 
-    
+    useEffect(async () => {
+        if (permissions && mixtape) {
+            const newMixtape = { ...mixtape };
+            permissions.forEach((permission, i) => {
+                if (newMixtape.collaborators.length < (i+1)) {
+                    newMixtape.collaborators.push(permissionUserList[i]);
+                }
+                if (newMixtape.collaborators[i])
+                    newMixtape.collaborators[i].permissions = permission;
+            });
+            setMixtape(newMixtape);
+            await updateMixtape(newMixtape);
+            console.log(newMixtape);
+        }
+    }, [permissions]);
 
     const handleChangeMixtapeNamePopup = () => {
         setchangeMixtapeNamePopupIsOpen(!changeMixtapeNamePopupIsOpen);
@@ -79,7 +115,9 @@ function ViewMixtapePage(props) {
 
     const handleChangeName = (e) => {
         console.log("Text field value:" + e.target.value);
-        mixtape.name = e.target.value
+        if (mixtape) {
+            mixtape.name = e.target.value
+        }
     }
 
     const saveName = async () => {
@@ -103,7 +141,7 @@ function ViewMixtapePage(props) {
                         </DialogContentText>
                         <TextField
                             onChange={handleChangeName}
-                            defaultValue={mixtape.name}
+                            defaultValue={mixtape?.name}
                             variant="filled"
                             InputProps={{ style: { fontSize: '1.5em' }, disableUnderline: false, type: 'search' }}
                         />
@@ -128,9 +166,9 @@ function ViewMixtapePage(props) {
 
                     <Button onClick={handleChangeMixtapeNamePopup} startIcon={<EditIcon />}  style={{float: 'right'}} variant="contained">Change Mixtape Name</Button>
                     <Grid xs={10} item>
-                        <Typography variant="h4">{mixtape.name}</Typography>
+                        <Typography variant="h4">{mixtape?.name}</Typography>
                         <br />
-                        <Typography variant="h7" style={{ display: 'inline-block' }}>{`Created by ${owner} ${mixtape.songs.length} songs, ${humanizeDuration(mixtape.duration * 1000).replaceAll(',', '')}`}</Typography>
+                        <Typography variant="h6" style={{ display: 'inline-block' }}>{`Created by ${owner} ${mixtape?.songs.length} songs, ${humanizeDuration(mixtape?.duration * 1000).replaceAll(',', '')}`}</Typography>
                     </Grid>
                     <Grid xs={1} item></Grid>
                 </Grid>
@@ -145,7 +183,7 @@ function ViewMixtapePage(props) {
                 </div>
             </Paper>
             <Grid container justify="center">
-                <Mixtape enableEditing={true} isEditing={isEditing} setIsEditing={setIsEditing} mixtape={mixtape} setMixtape={setMixtape} />
+                <Mixtape permissionUserList={permissionUserList} setPermissionUserList={setPermissionUserList} permissions={permissions} setPermissions={setPermissions} enableEditing={true} isEditing={isEditing} setIsEditing={setIsEditing} mixtape={mixtape} setMixtape={setMixtape} />
             </Grid>
         </div>
     )

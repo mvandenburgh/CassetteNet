@@ -5,18 +5,30 @@ const generateTestData = require('../testing/generateTestData');
 
 const router = express.Router();
 
-// TODO: secure this route
 router.post('/populateDatabase', async (req, res) => {
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
     const { inboxMessages, mixtapes, users } = await generateTestData();
-    await Promise.all([...users.map(user => User.register({ _id: mongoose.Types.ObjectId(user._id), username: user.username, email: user.email, favoritedMixtapes: user.favoritedMixtapes, followedUsers: user.followedUsers, admin: user.admin, profilePicture: user.profilePicture }, user.password)), InboxMessage.insertMany(inboxMessages), Mixtape.insertMany(mixtapes)]);
-    return res.json({
-        inboxMessages,
-        mixtapes,
-        users,
-    });
+    try {
+        await Promise.all([
+            ...users.map(user => User.register({
+                _id: mongoose.Types.ObjectId(user._id),
+                username: user.username,
+                email: user.email,
+                favoritedMixtapes: user.favoritedMixtapes,
+                followedUsers: user.followedUsers,
+                admin: user.admin,
+                verified: true, // verify all test users
+                profilePicture: user.profilePicture
+            }, user.password)),
+            InboxMessage.insertMany(inboxMessages),
+            Mixtape.insertMany(mixtapes)
+        ]);
+        res.send('success');
+    } catch (err) {
+        res.status(500).send(err);
+    }
 });
 
 router.post('/dropDatabase', async (req, res) => {

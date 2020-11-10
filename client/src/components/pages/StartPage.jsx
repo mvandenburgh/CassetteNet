@@ -15,23 +15,14 @@ function StartPage(props) {
 
     // TODO: add user to destructuring when needed
     // Removed for now to avoid build warnings
-    const { user, setUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
 
     const history = useHistory();
-    const goBack = () => history.push('/');
-
 
     const loginAsGuest = () => setUser({ username: 'Guest', isGuest: true, isLoggedIn: true });
-    const loginAsUser = () => setUser({ username: 'User0', isGuest: false, isLoggedIn: true });
 
     return (
-        <div style={{color: 'white', left: 0}}>
-            <IconButton color="secondary" aria-label="back"  onClick={goBack}>
-                <ArrowBackIcon/>
-            </IconButton>
-            <br/>
-            <br/>
-            <br/>
+        <div style={{color: 'white', left: 0, height: '100vh'}}>
             <div style={{margin: 'auto', width: '50%'}}>
                 <img style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}} src={logo} alt='logo' />
                 <Typography align="center" variant="h4">Mix freely.</Typography>
