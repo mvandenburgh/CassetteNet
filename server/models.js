@@ -2,10 +2,14 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 const passportLocalMongoose = require('passport-local-mongoose');
 const AutoIncrement = require('mongoose-sequence')(mongoose);
+const mongoosePartialTextSearch = require('mongoose-partial-search');
 
 
 const userSchema = new Schema({
-  username: String,
+  username: {
+    type: String,
+    searchable: true,
+  },
   hash: String,
   salt: String,
   email: {type: String, unique: true},
@@ -17,6 +21,7 @@ const userSchema = new Schema({
   uniqueId: {
     type: Number,
     get: id => id.toString(36).padStart(4, '0').toUpperCase(), // convert to alphanumeric string
+    searchable: true,
   },
   profilePicture: { // raw image data for user's profile picture
     type: {
@@ -30,6 +35,8 @@ const userSchema = new Schema({
 
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(AutoIncrement, { inc_field: 'uniqueId' });
+userSchema.index({ username: 'text' });
+userSchema.plugin(mongoosePartialTextSearch);
 
 const mixtapeSchema = new Schema({
   name: String,

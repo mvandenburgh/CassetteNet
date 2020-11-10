@@ -144,6 +144,13 @@ async function adminDropDatabase() {
 }
 
 async function getUser(userId) {
+    if (userId.charAt(0) === '#') {
+        if (userId.length === 5) {
+            userId = `!${userId.substring(1)}`;
+        } else {
+            return null;
+        }
+    }
     const user = await axios.get(new URL(`/user/${userId}`, SERVER_ROOT_URL).href);
     return user.data;
 }
@@ -151,6 +158,12 @@ async function getUser(userId) {
 async function queryForMixtapes(query) {
     const mixtapes = await axios.get(new URL(`/mixtape/searchMixtapes`, SERVER_ROOT_URL).href, { params: query });
     return mixtapes.data;
+}
+
+// search for a user
+async function userSearch(searchQuery) {
+    const users = await axios.get(new URL('/user/search', SERVER_ROOT_URL).href, { params: { query: searchQuery } });
+    return users.data;
 }
 
 export {
@@ -177,4 +190,5 @@ export {
     uploadFile,
     adminFillDatabase,
     adminDropDatabase,
+    userSearch,
 };

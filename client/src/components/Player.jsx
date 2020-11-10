@@ -102,6 +102,9 @@ function Player(props) {
     const [loop, setLoop] = useState(false);
   
     const handlePlay = () => {
+      if (currentSong.disabled === currentSong.mixtape._id) {
+        return;
+      }
       setPlaying(true);
       if (!currentTime) {
         playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
@@ -196,7 +199,7 @@ function Player(props) {
                   <LoopIcon onClick={handleSetLoop} />
                 </div>
             </Grid>
-            
+
             <ReactPlayer onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()} ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong?.mixtape?.songs ? currentSong.mixtape.songs[currentSong.index].id : ''}`} />
         </div>
     )
