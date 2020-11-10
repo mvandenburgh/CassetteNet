@@ -27,6 +27,7 @@ import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import SettingsModal from './modals/SettingsModal';
 import YoutubeSongSearchBar from './YoutubeSongSearchBar';
+import SongPosition_Transaction from './transactions/SongPosition_Transaction';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     userSelect: 'none',
