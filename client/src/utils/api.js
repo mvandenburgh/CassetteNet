@@ -104,12 +104,8 @@ async function userSignup(email, username, password) {
 }
 
 async function userLogin(username, password) {
-    try {
-        const user = await axios.post(new URL('/user/login', SERVER_ROOT_URL), { username, password });
-        return user.data;
-    } catch(err) {
-        console.log(err);
-    }
+    const user = await axios.post(new URL('/user/login', SERVER_ROOT_URL), { username, password });
+    return user.data;
 }
 
 async function userLogout() {
