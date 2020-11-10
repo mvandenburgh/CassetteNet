@@ -6,20 +6,19 @@ const { parse, toSeconds } = require('iso8601-duration');
 const Avatar = require('avatar-builder');
 const { getPlaylistVideos, getVideoInfo } = require('../youtube_api/youtube');
 
-const NUM_OF_USERS = 300;
-const NUM_OF_MIXTAPES = 9;
+const NUM_OF_USERS = 50;
 
-const MIN_COLLABORATORS_PER_MIXTAPE = 10;
-const MAX_COLLABORATORS_PER_MIXTAPE = 20;
+const MIN_COLLABORATORS_PER_MIXTAPE = 15;
+const MAX_COLLABORATORS_PER_MIXTAPE = 35;
 
-const MIN_FAVORITED_MIXTAPES_PER_USER = 0;
-const MAX_FAVORITED_MIXTAPES_PER_USER = 5;
+const MIN_FAVORITED_MIXTAPES_PER_USER = 5;
+const MAX_FAVORITED_MIXTAPES_PER_USER = 25;
 
-const MIN_FOLLOWED_USERS_PER_USER = 0;
-const MAX_FOLLOWED_USERS_PER_USER = 7;
+const MIN_FOLLOWED_USERS_PER_USER = 6;
+const MAX_FOLLOWED_USERS_PER_USER = 40;
 
-const MIN_ANONYMOUS_INBOX_MESSAGES_PER_USER = 0;
-const MAX_ANONYMOUS_INBOX_MESSAGES_PER_USER = 5;
+const MIN_ANONYMOUS_INBOX_MESSAGES_PER_USER = 5;
+const MAX_ANONYMOUS_INBOX_MESSAGES_PER_USER = 30;
 
 if (MAX_COLLABORATORS_PER_MIXTAPE > NUM_OF_USERS) throw new Error('Max collaborators must be less than number of existing users');
 
@@ -32,6 +31,21 @@ const SAMPLE_PLAYLISTS = [
     'PLRZlMhcYkA2G3kufxNpDwFN64jmNUmjt6',
     'PLDIoUOhQQPlXr63I_vwF9GD8sAKh77dWU',
     'PLZyqOyXxaVETqpHhT_c5GPmAPzhJpJ5K7',
+    'PL55713C70BA91BD6E',
+    'PLv4rTrzgrF2Bh0KJJiMdQ1ActBQcAPzNs',
+    'PLZkYUCUfToCe8gqj3AlTZoUosT60THZpM',
+    'PLZT-Z4PSNV5fUlyLXiHatp1SJJaCfF3JM',
+    'PLkqz3S84Tw-SesEEVw6x9UgeROTG0dFqJ',
+    'PL_34_m4eTlaPc_CPB-hrNUzBQF4bFOHWd',
+    'PLu1S36l0eVs3uxzUk38MiXL9PMRhlB2-w',
+    'PLEPQby6_o7m34KVQslk3BJV-nWgBhD-mk',
+    'PLHB7pQtzGtiWCUCOfh1rFyRHk-EkxvZXa',
+    'PL11CC59281C5FDFB3',
+    'PL9d4T43DjoG00204Ib__YC0KM6M5Cow8R',
+    'PLQoq3MJd_TfeD4m5buLPXA6nhXPntyJ_9',
+    'PLs_BtJUr-PzQQLWIg82WdIOyYs0An9jzi',
+    'PLR7sPawuzFmKc1Q0dFwbawJASpUo8Kggp',
+    'PLDIoUOhQQPlXr63I_vwF9GD8sAKh77dWU',
 ];
 
 const AVATAR_TYPES = [
@@ -140,7 +154,7 @@ async function generateUsers(count) {
 }
 
 async function generateTestData() {
-    const mixtapes = await generateMixtapes(NUM_OF_MIXTAPES);
+    const mixtapes = await generateMixtapes();
     const users = await generateUsers(NUM_OF_USERS);
     const inboxMessages = []; // to be filled in later
 

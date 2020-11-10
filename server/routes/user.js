@@ -92,7 +92,7 @@ router.get('/:id/favoritedMixtapes', async (req, res) => {
     const mixtapes = [];
     for (const mixtapeId of favoritedMixtapes) {
         const mixtape = await Mixtape.findOne({ _id: mixtapeId }).lean();
-        console.log(mixtape);
+
         // if the mixtape is private, only allow access if the logged in user is a collaborator.
         if (mixtape && !mixtape.isPublic) {
             if (req.user) {
