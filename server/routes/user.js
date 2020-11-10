@@ -87,13 +87,27 @@ router.get('/mixtapes', async (req, res) => {
     res.send(mixtapes);
 });
 
-router.get('/favoritedMixtapes', async (req, res) => {
-    if (!req.user) return res.status(401).send([]);
-    const { favoritedMixtapes } = await User.findOne({ _id: req.user.id });
+router.get('/:id/favoritedMixtapes', async (req, res) => {
+    const { favoritedMixtapes } = await User.findOne({ _id: req.params.id }).lean();
     const mixtapes = [];
     for (const mixtapeId of favoritedMixtapes) {
-        const mixtape = await Mixtape.findOne({ _id: mixtapeId });
+        const mixtape = await Mixtape.findOne({ _id: mixtapeId }).lean();
+        console.log(mixtape);
+        // if the mixtape is private, only allow access if the logged in user is a collaborator.
+        if (mixtape && !mixtape.isPublic) {
+            if (req.user) {
+                const collaborators = mixtape.collaborators.map(collaborator => collaborator.user);
+                if (!collaborators.includes(req.user.id)) {
+                    continue;
+                }
+            } else {
+                continue;
+            }
+        }
+        console.log(mixtape);
         if (mixtape) {
+            const favoriteCount = (await User.find({ favoritedMixtapes: mixtapeId }).lean()).length;
+            mixtape.favorites = favoriteCount;
             mixtapes.push(mixtape);
         }
     }

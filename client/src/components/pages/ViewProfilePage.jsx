@@ -95,7 +95,7 @@ const MixtapeRows = ({ mixtapes }) => (
 );
 
 
-function ViewAccountPage(props) {
+function ViewProfilePage(props) {
   const useStyles = makeStyles((theme) => ({
     margin: {
       margin: theme.spacing(1),
@@ -288,4 +288,4 @@ function ViewAccountPage(props) {
   );
 }
 
-export default ViewAccountPage;
+export default ViewProfilePage;
