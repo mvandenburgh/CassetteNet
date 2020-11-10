@@ -17,7 +17,7 @@ import CurrentSongContext from './contexts/CurrentSongContext';
 import PlayingSongContext from './contexts/PlayingSongContext';
 import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
-import ViewAccountPage from './components/pages/ViewAccountPage';
+import ViewProfilePage from './components/pages/ViewProfilePage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
 import FollowedUsersPage from './components/pages/FollowedUsersPage';
 import AnonymousMixtapesPage from './components/pages/AnonymousMixtapesPage';
@@ -61,7 +61,7 @@ function App() {
           <PlayingSongContext.Provider value={{playing, setPlaying}}>
             <BrowserRouter>
                 <PageFrame invisible={!user.isLoggedIn} />
-                  <div style={{ position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: 'calc(100vw - 73px)'}}>
+                  <div style={{ marginBottom: '105px', position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: 'calc(100vw - 73px)'}}>
                     <Switch>
                       <Route exact path="/" component={user.isLoggedIn ? DashboardPage : StartPage} />
                       <Route exact path="/directory" component={Directory} /> {/* TODO: remove? */}
@@ -81,7 +81,8 @@ function App() {
                       <Route exact path="/Admin">
                         {user.admin ? <AdminPage /> : <Redirect to="/" />}
                       </Route>
-                      <Route exact path="/ViewAccount" component={ViewAccountPage}/>
+                      <Route exact path="/me" component={ViewProfilePage}/>
+                      <Route exact path="/user/:id" component={ViewUserPage}/>
                       <Route exact path="/SearchResultsPage" component={SearchResultsPage}/>
                       <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
                       <Route path="/*">

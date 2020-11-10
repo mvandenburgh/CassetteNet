@@ -73,7 +73,7 @@ async function songSearch(query) {
  * @param {*} _id id of the user who's favorited mixtapes we want
  */
 async function getFavoritedMixtapes(_id) {
-    const favoritedMixtapes = await axios.get(new URL('/user/favoritedMixtapes', SERVER_ROOT_URL), { withCredentials: true });
+    const favoritedMixtapes = await axios.get(new URL(`/user/${_id}/favoritedMixtapes`, SERVER_ROOT_URL), { withCredentials: true });
     return favoritedMixtapes.data;
 }
 
@@ -104,12 +104,8 @@ async function userSignup(email, username, password) {
 }
 
 async function userLogin(username, password) {
-    try {
-        const user = await axios.post(new URL('/user/login', SERVER_ROOT_URL), { username, password });
-        return user.data;
-    } catch(err) {
-        console.log(err);
-    }
+    const user = await axios.post(new URL('/user/login', SERVER_ROOT_URL), { username, password });
+    return user.data;
 }
 
 async function userLogout() {
@@ -120,14 +116,18 @@ async function userVerifyAccount(token) {
     await axios.put(new URL('/user/verify', SERVER_ROOT_URL), { token });
 }
 
-async function uploadFile(file, endpoint) {
+async function uploadFile(file, filename, endpoint) {
     const formData = new FormData();
-    formData.append('coverImage', file);
+    formData.append(filename, file);
     await axios.put(new URL(endpoint, SERVER_ROOT_URL), formData);
 }
 
 function getMixtapeCoverImageUrl(mixtapeId) {
     return new URL(`/mixtape/${mixtapeId}/coverImage`, SERVER_ROOT_URL).href;
+}
+
+function getUserProfilePictureUrl(userId) {
+    return new URL(`/user/${userId}/profilePicture`, SERVER_ROOT_URL).href;
 }
 
 async function getSongDuration(youtubeId) {
@@ -143,17 +143,30 @@ async function adminDropDatabase() {
     await axios.post(new URL('/admin/dropDatabase', SERVER_ROOT_URL).href);    
 }
 
+async function getUser(userId) {
+    const user = await axios.get(new URL(`/user/${userId}`, SERVER_ROOT_URL).href);
+    return user.data;
+}
+
+async function queryForMixtapes(query) {
+    const mixtapes = await axios.get(new URL(`/mixtape/searchMixtapes`, SERVER_ROOT_URL).href, { params: query });
+    return mixtapes.data;
+}
+
 export {
     createMixtape,
     deleteMixtape,
     favoriteMixtape,
     unfavoriteMixtape,
+    getUser,
     getUsername,
     getMixtape,
     getMixtapeCoverImageUrl,
+    getUserProfilePictureUrl,
     getMyMixtapes,
     getFavoritedMixtapes,
     getInboxMessages,
+    queryForMixtapes,
     songSearch,
     getSongDuration,
     updateMixtape,
