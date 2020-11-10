@@ -35,6 +35,17 @@ function ViewMixtapePage(props) {
         duration: 0,
     });
 
+    const [open, setOpen] = React.useState(false);
+    
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        saveName();
+        setOpen(false);
+    };
+
     const owner = mixtape.collaborators.filter(c => c.permissions === 'owner').map(c => c.username)[0];
 
     const [isEditing, setIsEditing] = useState(false);
@@ -83,7 +94,7 @@ function ViewMixtapePage(props) {
             <br/>
                 
             <br/>
-            <Dialog open={changeMixtapeNamePopupIsOpen} onClose={handleChangeMixtapeNamePopup} aria-labelledby="form-dialog-title">
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Change Mixtape Name</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -97,7 +108,7 @@ function ViewMixtapePage(props) {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button align="center" onClick={() => saveName()} color="primary">
+                        <Button align="center" onClick={handleClose} color="primary">
                             Save
                         </Button>
                     </DialogActions>
