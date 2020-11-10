@@ -74,6 +74,7 @@ function ViewMixtapePage(props) {
 
     const handleChangeMixtapeNamePopup = () => {
         setchangeMixtapeNamePopupIsOpen(!changeMixtapeNamePopupIsOpen);
+        saveName();
     };
 
     const handleChangeName = (e) => {
@@ -94,7 +95,7 @@ function ViewMixtapePage(props) {
             <br/>
                 
             <br/>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog open={changeMixtapeNamePopupIsOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Change Mixtape Name</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -108,7 +109,7 @@ function ViewMixtapePage(props) {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button align="center" onClick={handleClose} color="primary">
+                        <Button align="center" onClick={handleChangeMixtapeNamePopup} color="primary">
                             Save
                         </Button>
                     </DialogActions>
