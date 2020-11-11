@@ -48,7 +48,7 @@ function App() {
   // check if song is playing
   let currentSongDefault = JSON.parse(localStorage.getItem('currentSong'));
   if (!currentSongDefault) {
-    currentSongDefault = null;
+    currentSongDefault = {};
   }
   const [currentSong, setCurrentSong] = useState(currentSongDefault);
   useEffect(() => {
