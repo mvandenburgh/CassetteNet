@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Fab,
   Grid,
   List,
   ListItem,
@@ -19,14 +20,17 @@ import {
 } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon } from '@material-ui/icons';
+import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon, Undo as UndoIcon, Cake as CakeIcon } from '@material-ui/icons';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
+import JSTPSContext from '../contexts/JSTPSContext';
 import { getSongDuration, songSearch, updateMixtape } from '../utils/api';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import SettingsModal from './modals/SettingsModal';
 import YoutubeSongSearchBar from './YoutubeSongSearchBar';
+import { SongPosition_Transaction } from './transactions/SongPosition_Transaction';
+import tps from '../App';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
@@ -36,11 +40,19 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   ...draggableStyle,
 });
 
+const useStyles = makeStyles(theme => ({
+  fab: {
+    position: 'fixed',
+    bottom: '15%',
+    right: '5%',
+  },
+}));
 
 
 function Mixtape(props) {
   const history = useHistory();
 
+  const classes = useStyles();
   // const [mixtape, setMixtape] = useState(getMixtape(props.id));
 
   const [songsToDelete, setSongsToDelete] = useState([]);
@@ -50,6 +62,8 @@ function Mixtape(props) {
   //const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
   const { setPlaying } = useContext(PlayingSongContext);
+
+  const { tps, setTps } = useContext(JSTPSContext);
 
   const [addSongPopupIsOpen, setAddSongPopupIsOpen] = useState(false); // whether add song popup is open
   const [addSongSearchResults, setAddSongSearchResults] = useState([]); // search results in song search
@@ -96,6 +110,8 @@ function Mixtape(props) {
     // set new list order
     const newSongOrder = [...mixtape.songs];
     const [removed] = newSongOrder.splice(result.source.index, 1);
+    const moveSongTransaction = new SongPosition_Transaction(result.source.index, result.destination.index, removed, newSongOrder, mixtape);
+    tps.addTransaction(moveSongTransaction);
     newSongOrder.splice(result.destination.index, 0, removed);
     mixtape.songs = newSongOrder;
     setMixtape(mixtape);
@@ -155,6 +171,23 @@ function Mixtape(props) {
       disabled: mixtape._id,
     });
     setPlaying(false);
+  }
+
+  const undoAction = () => {
+    console.log("Undo the action");
+    tps.undoTransaction();
+    setMixtape(mixtape);
+    console.log(tps.toString());
+  }
+
+  var fruits = ['apple', 'banana', 'orange', 'mango', 'grapes', 'coconut'];
+
+  const simulateTransaction = () => {
+    console.log("Simulate transaction");
+    // const someFruit = 'kiwi';
+    // const moveSongTransaction = new SongPosition_Transaction(1, 3, someFruit, fruits, fruitsList);
+    // tps.addTransaction(moveSongTransaction);
+    // console.log(tps.toString());
   }
 
   return (
@@ -311,6 +344,12 @@ function Mixtape(props) {
           </Droppable>
         </DragDropContext>
       </Grid>
+      <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => undoAction()}>
+                <UndoIcon />
+      </Fab>
+      <Fab color="secondary" style={{    position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => simulateTransaction()}> 
+          <CakeIcon />
+      </Fab>
     </Box>
   );
 }
