@@ -59,7 +59,7 @@ function Mixtape(props) {
 
   const { enableEditing, isEditing, setIsEditing, mixtape, setMixtape, permissions, setPermissions, permissionUserList, setPermissionUserList } = props;
 
-  //const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
+  const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
   const { setPlaying } = useContext(PlayingSongContext);
 
@@ -69,9 +69,6 @@ function Mixtape(props) {
   const [addSongSearchResults, setAddSongSearchResults] = useState([]); // search results in song search
   const [addSongAutocompleteOpen, setAddSongAutocompleteOpen] = useState(false); // whether autocomplete inside song popup is open
   const [songToAdd, setSongToAdd] = useState({});
-  const [currentSong, setCurrentSong] = useState({});
-  const [searchQuery, setSearchQuery] = useState('');
-  const loading = addSongAutocompleteOpen && addSongSearchResults.length === 0;
   const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
 
   const handleAddSongPopup = () => {
@@ -81,26 +78,6 @@ function Mixtape(props) {
   const handleSettingsPopup = () => {
     setSettingsPopupIsOpen(!settingsPopupIsOpen);
   };
-
-  useEffect(() => {
-    let active = true;
-
-    if (!loading) {
-      return undefined;
-    }
-
-    (async () => {
-      const response = await songSearch(searchQuery);
-      console.log(response);
-      if (active) {
-        setAddSongSearchResults(response);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loading]);
 
   const onDragEnd = (result) => {
     if (!result.destination) {
@@ -166,8 +143,8 @@ function Mixtape(props) {
   const enableEditingHandler = () => {
     setIsEditing(true);
     setCurrentSong({
-      mixtape: currentSong.mixtape,
-      index: currentSong.index,
+      mixtape: currentSong?.mixtape,
+      index: currentSong?.index,
       disabled: mixtape._id,
     });
     setPlaying(false);
