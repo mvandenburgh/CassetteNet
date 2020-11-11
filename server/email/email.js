@@ -9,16 +9,18 @@ const verificationEmailTemplate = fs.readFileSync(path.join(__dirname, 'verifica
 const MAILGUN_API_KEY =  process.env.MAILGUN_API_KEY;
 const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
 
+const CLIENT_ROOT_URL = process.env.CLIENT_ROOT_URL || 'http://localhost:3000';
+
 let mg;
 if (process.env.NODE_ENV === 'production') {
     mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: MAILGUN_DOMAIN });
 }
 
 const sendVerificationEmail = async (recipient, verificationToken) => {
-    const verficationUrl = `https://cassettenet.netlify.app/verify/${verificationToken}`;
-    const emailBody = ejs.render(verificationEmailTemplate, { verficationUrl });
+    const verificationUrl = new URL(`/verify/${verificationToken}`, CLIENT_ROOT_URL).href;
+    const emailBody = ejs.render(verificationEmailTemplate, { verificationUrl });
     const data = {
-        from: `verify@${MAILGUN_DOMAIN}`,
+        from: `resetpassword@${MAILGUN_DOMAIN}`,
         to: recipient,
         subject: 'Verify your CassetteNet account',
         html: emailBody,
@@ -31,7 +33,7 @@ const sendVerificationEmail = async (recipient, verificationToken) => {
 }
 
 const sendPasswordResetEmail = async (recipient, resetPasswordToken) => {
-    const resetPasswordUrl = `https://cassettenet.netlify.app/resetPassword/${resetPasswordToken}`;
+    const resetPasswordUrl = new URL(`/resetPassword/${resetPasswordToken}`, CLIENT_ROOT_URL).href;
     const emailBody = ejs.render(resetPasswordEmailTemplate, { resetPasswordUrl });
     const data = {
         from: `verify@${MAILGUN_DOMAIN}`,
