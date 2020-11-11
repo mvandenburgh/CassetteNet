@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { createRef, useContext, useEffect, useState } from 'react';
 import { Grid } from '@material-ui/core';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
@@ -78,7 +78,7 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
  
 
 function Player(props) {
-    const playerRef = useRef(null);
+    const playerRef = createRef(null);
 
     const [currentTime, setCurrentTime] = useState(null);
 
@@ -160,10 +160,12 @@ function Player(props) {
       setShuffle(!shuffleState);
     }
 
-    if (playerRef?.current && currentSong) {
+    useEffect(() => {
+      if (playerRef && currentSong) {
         currentSong.duration = playerRef.current.getDuration();
         setCurrentSong(currentSong);
-    }
+      }
+    })
 
     const seek = (time) => {
         playerRef.current.seekTo(time * playerRef.current.getDuration());
