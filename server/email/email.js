@@ -20,7 +20,7 @@ const sendVerificationEmail = async (recipient, verificationToken) => {
     const verificationUrl = new URL(`/verify/${verificationToken}`, CLIENT_ROOT_URL).href;
     const emailBody = ejs.render(verificationEmailTemplate, { verificationUrl });
     const data = {
-        from: `resetpassword@${MAILGUN_DOMAIN}`,
+        from: `verify@${MAILGUN_DOMAIN}`,
         to: recipient,
         subject: 'Verify your CassetteNet account',
         html: emailBody,
@@ -36,7 +36,7 @@ const sendPasswordResetEmail = async (recipient, resetPasswordToken) => {
     const resetPasswordUrl = new URL(`/resetPassword/${resetPasswordToken}`, CLIENT_ROOT_URL).href;
     const emailBody = ejs.render(resetPasswordEmailTemplate, { resetPasswordUrl });
     const data = {
-        from: `verify@${MAILGUN_DOMAIN}`,
+        from: `resetpassword@${MAILGUN_DOMAIN}`,
         to: recipient,
         subject: 'Reset Password',
         html: emailBody,
