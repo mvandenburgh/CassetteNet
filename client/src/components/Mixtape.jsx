@@ -152,9 +152,17 @@ function Mixtape(props) {
 
   const undoAction = () => {
     console.log("Undo the action");
+    console.log("Mixtape before undo:\n\t" + toString());
     tps.undoTransaction();
     setMixtape(mixtape);
+    console.log("Mixtape after undo:\n\t" + toString());
     console.log(tps.toString());
+    updateMixtape(mixtape);
+    setCurrentSong({
+      mixtape: currentSong.mixtape,
+      index: currentSong.index,
+      disabled: null,
+    });
   }
 
   var fruits = ['apple', 'banana', 'orange', 'mango', 'grapes', 'coconut'];
@@ -165,6 +173,12 @@ function Mixtape(props) {
     // const moveSongTransaction = new SongPosition_Transaction(1, 3, someFruit, fruits, fruitsList);
     // tps.addTransaction(moveSongTransaction);
     // console.log(tps.toString());
+  }
+
+  function toString() {
+    for (var i = 0; i < mixtape.songs.length; i++) {
+      console.log("Song: " + i + ", " + mixtape.songs[i].id);
+    }
   }
 
   return (
