@@ -17,6 +17,7 @@ const { User } = require('./models');
 const adminRoute = require('./routes/admin');
 const authRoute = require('./routes/auth');
 const mixtapeRoute = require('./routes/mixtape');
+const soundcloudRoute = require('./routes/soundcloud');
 const userRoute = require('./routes/user');
 const youtubeRoute = require('./routes/youtube');
 
@@ -82,6 +83,7 @@ app.use(passport.session());
 app.use('/admin', adminRoute);
 app.use('/auth', authRoute);
 app.use('/mixtape', mixtapeRoute);
+app.use('/soundcloud', soundcloudRoute);
 app.use('/user', userRoute);
 app.use('/youtube', youtubeRoute);
 

@@ -4,7 +4,7 @@ const path = require('path');
 const { Types } = require('mongoose');
 const { parse, toSeconds } = require('iso8601-duration');
 const Avatar = require('avatar-builder');
-const { getPlaylistVideos, getVideoInfo } = require('../youtube_api/youtube');
+const { getPlaylistVideos, getVideoInfo } = require('../external_apis/youtube');
 
 const NUM_OF_USERS = 50;
 

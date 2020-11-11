@@ -15,6 +15,8 @@ import {
   List,
   ListItem,
   ListItemText,
+  MenuItem,
+  Select,
   TextField,
   Toolbar,
 } from '@material-ui/core';
@@ -28,7 +30,7 @@ import { getSongDuration, songSearch, updateMixtape } from '../utils/api';
 import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import SettingsModal from './modals/SettingsModal';
-import YoutubeSongSearchBar from './YoutubeSongSearchBar';
+import SongSearchBar from './SongSearchBar';
 import { SongPosition_Transaction } from './transactions/SongPosition_Transaction';
 import tps from '../App';
 
@@ -40,7 +42,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   ...draggableStyle,
 });
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   fab: {
     position: 'fixed',
     bottom: '15%',
@@ -53,8 +55,6 @@ function Mixtape(props) {
   const history = useHistory();
 
   const classes = useStyles();
-  // const [mixtape, setMixtape] = useState(getMixtape(props.id));
-
   const [songsToDelete, setSongsToDelete] = useState([]);
 
   const { enableEditing, isEditing, setIsEditing, mixtape, setMixtape, permissions, setPermissions, permissionUserList, setPermissionUserList } = props;
@@ -70,6 +70,8 @@ function Mixtape(props) {
   const [addSongAutocompleteOpen, setAddSongAutocompleteOpen] = useState(false); // whether autocomplete inside song popup is open
   const [songToAdd, setSongToAdd] = useState({});
   const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
+
+  const [apiToUse, setApiToUse] = useState('soundcloud');
 
   const handleAddSongPopup = () => {
     setAddSongPopupIsOpen(!addSongPopupIsOpen);
@@ -132,7 +134,7 @@ function Mixtape(props) {
 
   const addSong = async () => {
     const newSongs = [...mixtape.songs];
-    const duration = await getSongDuration(songToAdd.id);
+    const duration = await getSongDuration(apiToUse, songToAdd.id);
     songToAdd.duration = duration;
     newSongs.push(songToAdd);
     mixtape.songs = newSongs;
@@ -195,13 +197,25 @@ function Mixtape(props) {
       height: '100%'
     }} boxShadow={3} borderRadius={12}>
 
-      <Dialog open={addSongPopupIsOpen} onClose={handleAddSongPopup} aria-labelledby="form-dialog-title">
+      <Dialog open={addSongPopupIsOpen} onClose={handleAddSongPopup}>
         <DialogTitle id="form-dialog-title">Add a Song!</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Type the song you want to add:
             </DialogContentText>
-          <YoutubeSongSearchBar setSelected={setSongToAdd} />
+          <Grid container>
+            <Grid item xs={8}>
+              <SongSearchBar apiToUse={apiToUse} setSelected={setSongToAdd} /> 
+            </Grid>
+            <Grid item xs={2} />
+            <Grid item xs={2}>
+              <Select value={apiToUse} onChange={(e) => setApiToUse(e.target.value)}>
+                <MenuItem value={'soundcloud'}>SoundCloud</MenuItem>
+                <MenuItem value={'youtube'}>YouTube</MenuItem>
+              </Select>
+            </Grid>
+          </Grid>
+          
         </DialogContent>
         <DialogActions>
           <Button align="center" onClick={() => addSong()} color="primary">
@@ -316,7 +330,7 @@ function Mixtape(props) {
                             : <div />}
                           <Grid item xs={isEditing ? 9 : 10}>
                             <div style={{ left: '0', marginRight: '10%' }}>
-                              <img style={{ width: '70px', height: '70px' }} src={`https://img.youtube.com/vi/${song.id}/1.jpg`} alt='mixtape_cover'></img>
+                              <img style={{ width: '70px', height: '70px' }} src={song.coverImage} alt='mixtape_cover'></img>
                               {/* TODO: fetch actual song names from API */}
                               <ListItemText>{song.name || `song_${mixtape.songs[index]}`}</ListItemText>
                             </div>

@@ -1,7 +1,7 @@
 const express = require('express');
 const { parse, toSeconds } = require('iso8601-duration');
 
-const { getVideoInfo, searchVideo } = require('../youtube_api/youtube');
+const { getVideoInfo, searchVideo } = require('../external_apis/youtube');
 
 const router = express.Router();
 
@@ -14,6 +14,7 @@ router.get('/search', async (req, res) => {
             name: result.snippet.title,
             description: result.snippet.description,
             coverImage: result.snippet.thumbnails.default.url,
+            type: 'youtube',
         }));
         res.send(response);
     } catch (err) {
@@ -21,10 +22,10 @@ router.get('/search', async (req, res) => {
     }
 });
 
-router.get('/videoDuration', async (req, res) => {
-    const { videoId } = req.query;
+router.get('/itemDuration', async (req, res) => {
+    const { itemId } = req.query;
     try {
-        const results = await getVideoInfo(videoId);
+        const results = await getVideoInfo(itemId);
         const duration = toSeconds(parse(results[0].contentDetails.duration));
         res.json(duration);
     } catch(err) {

@@ -5,7 +5,8 @@ import ReactPlayer from 'react-player';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
- 
+import { getSoundCloudSongUrl } from '../utils/api';
+
 const WHITE_SMOKE = '#eee'
 const GRAY = '#878c88'
 const GREEN = '#72d687'
@@ -100,6 +101,23 @@ function Player(props) {
 
     const [shuffle, setShuffle] = useState(false);
     const [loop, setLoop] = useState(false);
+
+    const songURL = () => {
+      if (currentSong?.mixtape?.songs) {
+        const song = currentSong.mixtape.songs[currentSong.index];
+        switch (song.type) {
+          case 'youtube':
+            return `https://www.youtube.com/watch?v=${song.id}`;
+          case 'soundcloud':
+            return getSoundCloudSongUrl(song.id);
+          default:
+            return '';
+        }
+      }
+      return '';
+    }
+
+    const playerUrl = songURL();
   
     const handlePlay = () => {
       if (currentSong.disabled === currentSong.mixtape._id) {
@@ -168,7 +186,7 @@ function Player(props) {
     })
 
     const seek = (time) => {
-        playerRef.current.seekTo(time * playerRef.current.getDuration());
+      playerRef.current.seekTo(time * playerRef.current.getDuration());
     }
 
     return (
@@ -201,8 +219,11 @@ function Player(props) {
                   <LoopIcon onClick={handleSetLoop} />
                 </div>
             </Grid>
-
-            <ReactPlayer onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()} ref={playerRef} playing={playing} style={{display: 'none'}} url={`https://www.youtube.com/watch?v=${currentSong?.mixtape?.songs ? currentSong.mixtape.songs[currentSong.index].id : ''}`} />
+            <ReactPlayer 
+              onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
+              ref={playerRef} playing={playing} style={{display: 'none'}}
+              url={playerUrl}
+            />
         </div>
     )
 }

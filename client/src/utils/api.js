@@ -62,8 +62,8 @@ async function createMixtape() {
     return mixtape;
 }
 
-async function songSearch(query) {
-    const results = await axios.get(new URL('/youtube/search', SERVER_ROOT_URL).href, { params: { q: query } });
+async function songSearch(api, query) {
+    const results = await axios.get(new URL(`/${api}/search`, SERVER_ROOT_URL).href, { params: { q: query } });
     return results.data;
 }
 
@@ -137,9 +137,13 @@ function getUserProfilePictureUrl(userId) {
     return new URL(`/user/${userId}/profilePicture`, SERVER_ROOT_URL).href;
 }
 
-async function getSongDuration(youtubeId) {
-    const songDuration = await axios.get(new URL('/youtube/videoDuration', SERVER_ROOT_URL).href, { params: { videoId: youtubeId } });
+async function getSongDuration(api, itemId) {
+    const songDuration = await axios.get(new URL(`/${api}/itemDuration`, SERVER_ROOT_URL).href, { params: { itemId } });
     return songDuration.data;
+}
+
+function getSoundCloudSongUrl(itemId) {
+    return new URL(`/soundcloud/streamAudio/${itemId}`, SERVER_ROOT_URL).href;
 }
 
 async function adminFillDatabase() {
@@ -193,6 +197,7 @@ export {
     queryForMixtapes,
     songSearch,
     getSongDuration,
+    getSoundCloudSongUrl,
     setUsernameOfOAuthAccount,
     verifyUserLoggedIn,
     updateMixtape,
