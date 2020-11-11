@@ -10,7 +10,7 @@ import {jsTPS_Transaction} from "../../utils/jsTPS.js"
  * @author THE McKilla Gorilla (accept no imposters)
  * @version 1.0
  */
-export class SongPosiiton_Transaction extends jsTPS_Transaction {
+export class SongPosition_Transaction extends jsTPS_Transaction {
     /**
      * Constructor for this transaction, it initializes this
      * object with all the data needed to both do and undo
@@ -19,7 +19,7 @@ export class SongPosiiton_Transaction extends jsTPS_Transaction {
      * @param initPosition
      * @param initNewPosition
      */
-    constructor(initPosition, initNewPosition) {
+    constructor(initPosition, initNewPosition, song, songOrder, mixtape) {
         super();
 
         // OLD POSITION
@@ -27,7 +27,11 @@ export class SongPosiiton_Transaction extends jsTPS_Transaction {
         this.oldPosition = initPosition;
 
         // THE SONG'S NEW POSITION
-        this.newPosition = initNewPosition
+        this.newPosition = initNewPosition;
+
+        this.song = song;
+        this.songOrder = songOrder;
+        this.mixtape = mixtape;
     }
 
     /**
@@ -38,15 +42,19 @@ export class SongPosiiton_Transaction extends jsTPS_Transaction {
         //let newPosition = oldPosition + this.amountToAdd;
         this.oldPosition = this.position;
         this.position = this.newPosition;
+        console.log(this.oldPosition + "->" + this.position);
     }
 
     /**
-     * As the reverse of do, this method substracts from num.
+     * As the reverse of do, this method substracts from num. This is necessary unlike doTransaction.
      */
     undoTransaction() {
-        // let oldNum = this.num.getNum();
-        // let newNum = oldNum - this.amountToAdd;
+        const [removed] = this.songOrder.splice(this.newPosition, 1);
+        this.songOrder.splice(this.oldPosition, 0, removed);
+        this.mixtape.songs = this.songOrder;
         this.position = this.oldPosition;
+        console.log(this.newPosition + "->" + this.position);
+        //this.position = this.oldPosition;
     }
 
     /**
@@ -55,6 +63,6 @@ export class SongPosiiton_Transaction extends jsTPS_Transaction {
      * @return A string storing a textual summary of this object.
      */
     toString() {
-        return "Old Position: " + this.position + ", New Position: " + this.newPosition;
+        return "Old Position: " + this.oldPosition + ", New Position: " + this.position;
     }
 }
