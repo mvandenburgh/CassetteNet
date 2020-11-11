@@ -47,7 +47,7 @@ function Mixtape(props) {
 
   const { enableEditing, isEditing, setIsEditing, mixtape, setMixtape, permissions, setPermissions, permissionUserList, setPermissionUserList } = props;
 
-  const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
+  //const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
   const { setPlaying } = useContext(PlayingSongContext);
 
@@ -55,6 +55,7 @@ function Mixtape(props) {
   const [addSongSearchResults, setAddSongSearchResults] = useState([]); // search results in song search
   const [addSongAutocompleteOpen, setAddSongAutocompleteOpen] = useState(false); // whether autocomplete inside song popup is open
   const [songToAdd, setSongToAdd] = useState({});
+  const [currentSong, setCurrentSong] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
   const loading = addSongAutocompleteOpen && addSongSearchResults.length === 0;
   const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
