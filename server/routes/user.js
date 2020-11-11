@@ -77,8 +77,7 @@ router.post('/login', passport.authenticate('local'), async (req, res) => {
 
 router.post('/logout', (req, res) => {
     req.logout(); // passport method to clear jwt from user's cookie
-    res.redirect('/');
-    
+    res.send('logged out.');
 });
 
 router.put('/verify', async (req, res) => {
