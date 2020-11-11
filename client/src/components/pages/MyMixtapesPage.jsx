@@ -26,16 +26,13 @@ function MyMixtapesPage(props) {
     const [mixtapes, setMixtapes] = useState([]);
 
     const { _id } = user;
-    useEffect(() => {
-        async function getMixtapes() {
-            const updatedMixtapes = await getMyMixtapes(_id);
-            setMixtapes(updatedMixtapes);
-        }
-        getMixtapes();
-     }, [])
+    useEffect(async () => {
+        const updatedMixtapes = await getMyMixtapes(_id);
+        setMixtapes(updatedMixtapes);
+     }, []);
 
     const history = useHistory();
-    const goBack = () => history.push('/');
+    const goBack = () => history.goBack();
 
     const createNewMixtape = () => {
         createMixtape().then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));

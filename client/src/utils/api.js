@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { users } from '../testData/users.json';
-import { mixtapes } from '../testData/mixtapes.json';
 import { inboxMessages } from '../testData/inboxMessages.json';
 
 axios.defaults.withCredentials = true;
@@ -97,23 +96,23 @@ function getInboxMessages(_id) {
 
 async function userSignup(email, username, password) {
     try {
-        await axios.post(new URL('/user/signup', SERVER_ROOT_URL), { email, username, password });
+        await axios.post(new URL('/auth/signup', SERVER_ROOT_URL), { email, username, password });
     } catch(err) { // TODO: error handling
         console.log(err);
     }
 }
 
 async function userLogin(username, password) {
-    const user = await axios.post(new URL('/user/login', SERVER_ROOT_URL), { username, password });
+    const user = await axios.post(new URL('/auth/login', SERVER_ROOT_URL), { username, password });
     return user.data;
 }
 
 async function userLogout() {
-    await axios.post(new URL('/user/logout', SERVER_ROOT_URL));
+    await axios.post(new URL('/auth/logout', SERVER_ROOT_URL));
 }
 
 async function userVerifyAccount(token) {
-    await axios.put(new URL('/user/verify', SERVER_ROOT_URL), { token });
+    await axios.put(new URL('/auth/verify', SERVER_ROOT_URL), { token });
 }
 
 async function uploadFile(file, filename, endpoint) {

@@ -161,7 +161,7 @@ function Player(props) {
     }
 
     useEffect(() => {
-      if (playerRef && currentSong) {
+      if (playerRef && !currentSong?.duration) {
         currentSong.duration = playerRef.current.getDuration();
         setCurrentSong(currentSong);
       }
