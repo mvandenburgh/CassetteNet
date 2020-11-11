@@ -1,4 +1,4 @@
-import React, { createRef, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Grid } from '@material-ui/core';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
@@ -78,7 +78,7 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
  
 
 function Player(props) {
-    const playerRef = createRef(null);
+    const playerRef = useRef();
 
     const [currentTime, setCurrentTime] = useState(null);
 

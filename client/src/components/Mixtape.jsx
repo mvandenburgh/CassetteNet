@@ -69,8 +69,6 @@ function Mixtape(props) {
   const [addSongSearchResults, setAddSongSearchResults] = useState([]); // search results in song search
   const [addSongAutocompleteOpen, setAddSongAutocompleteOpen] = useState(false); // whether autocomplete inside song popup is open
   const [songToAdd, setSongToAdd] = useState({});
-  const [searchQuery, setSearchQuery] = useState('');
-  const loading = addSongAutocompleteOpen && addSongSearchResults.length === 0;
   const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
 
   const handleAddSongPopup = () => {
@@ -80,26 +78,6 @@ function Mixtape(props) {
   const handleSettingsPopup = () => {
     setSettingsPopupIsOpen(!settingsPopupIsOpen);
   };
-
-  useEffect(() => {
-    let active = true;
-
-    if (!loading) {
-      return undefined;
-    }
-
-    (async () => {
-      const response = await songSearch(searchQuery);
-      console.log(response);
-      if (active) {
-        setAddSongSearchResults(response);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [loading]);
 
   const onDragEnd = (result) => {
     if (!result.destination) {
