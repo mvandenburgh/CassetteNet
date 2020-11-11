@@ -104,8 +104,8 @@ function Player(props) {
 
     const songURL = () => {
       if (currentSong?.mixtape?.songs) {
-        const song = currentSong.mixtape.songs[currentSong.index];
-        switch (song.type) {
+        const song = currentSong?.mixtape?.songs[currentSong?.index];
+        switch (song?.type) {
           case 'youtube':
             return `https://www.youtube.com/watch?v=${song.id}`;
           case 'soundcloud':

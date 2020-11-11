@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
-import { userLogin, googleLogin } from '../../utils/api';
+import { userLogin, googleLogin, requestPasswordReset } from '../../utils/api';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -29,12 +29,12 @@ function LoginPage(props) {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  
   const handleClickOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-    setPassword(".");
-    loginAsUser();
-  };
+
+  const handleClose = () => setOpen(false);
+
   const handleResponseFacebook = (e) => {
     setPassword(".");
     handleClickOpen();
@@ -57,11 +57,19 @@ function LoginPage(props) {
     }
   }
 
+  const forgotPassword = async (email) => {
+    requestPasswordReset(email)
+      .then(res => alert('Password reset email sent.'))
+      .catch(err => alert(err));
+  }
+
   const history = useHistory();
   const goBack = () => history.goBack();
 
   const handleUsername = (e) => setUsername(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
+  const handleEmail = (e) => setEmail(e.target.value);
+
 
   return (
     <div style={{ color: 'white', left: 0 }}>
@@ -75,21 +83,21 @@ function LoginPage(props) {
         <DialogTitle id="form-dialog-title">Enter your username:</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Enter the username associated with your account:
+            Enter the email associated with your account:
           </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
             id="name"
-            label="Username"
+            label="Email"
             type="email"
             fullWidth
-            onChange={handleUsername}
-            value={username}
+            onChange={handleEmail}
+            value={email}
           />
         </DialogContent>
         <DialogActions>
-          <Button align="center" onClick={handleClose} color="primary">
+          <Button align="center" onClick={() => forgotPassword(email)} color="primary">
             OK
           </Button>
         </DialogActions>
@@ -114,19 +122,22 @@ function LoginPage(props) {
           <Grid item>
             <TextField
               className={classes.margin}
-              onChange={(e) => handleUsername(e)}
+              onChange={handleUsername}
               value={username}
               variant="outlined" label="Username" />
           </Grid>
           <Grid item>
             <TextField
               className={classes.margin}
-              onChange={(e) => handlePassword(e)}
+              onChange={handlePassword}
               value={password}
               variant="outlined" type="Password" label="Password" />
           </Grid>
           <Button variant="filled" color="inherit" onClick={loginAsUser}>
             Log In
+        </Button>
+        <Button variant="filled" color="inherit" onClick={() => setOpen(true)}>
+            Forgot Password
         </Button>
         </Grid>
       </div>

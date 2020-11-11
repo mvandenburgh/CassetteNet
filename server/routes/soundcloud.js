@@ -10,7 +10,7 @@ router.get('/search', async (req, res) => {
         const results = await searchSong(q);
         const response = results.map(song => ({
             id: song.id,
-            name: song.title,
+            name: `${song.title} (${song.user.username})`,
             description: song.description,
             coverImage: song.artwork_url,
             type: 'soundcloud',
@@ -25,7 +25,6 @@ router.get('/itemDuration', async (req, res) => {
     const { itemId } = req.query;
     try {
         const results = await getSongInfo(itemId);
-        console.log(results);
         const duration = results.duration;
         res.json(duration);
     } catch(err) {

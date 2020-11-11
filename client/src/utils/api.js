@@ -119,6 +119,14 @@ async function verifyUserLoggedIn() {
     return user.data;
 }
 
+async function requestPasswordReset(email) {
+    await axios.put(new URL('/auth/resetPassword', SERVER_ROOT_URL).href, { email });
+}
+
+async function resetPassword(token, password) {
+    await axios.put(new URL('/auth/resetPassword', SERVER_ROOT_URL).href, { password, token });
+}
+
 async function setUsernameOfOAuthAccount(username) {
     await axios.put(new URL('/auth/setOAuthUsername', SERVER_ROOT_URL).href, { username });
 }
@@ -206,6 +214,8 @@ export {
     userLogout,
     userSignup,
     userVerifyAccount,
+    requestPasswordReset,
+    resetPassword,
     uploadFile,
     adminFillDatabase,
     adminDropDatabase,

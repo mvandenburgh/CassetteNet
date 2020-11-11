@@ -28,6 +28,7 @@ import AdminPage from './components/pages/AdminPage';
 import VerifyAccountPage from './components/pages/VerifyAccountPage';
 import VerifyLoginPage from './components/pages/VerifyLoginPage';
 import OAuthUsernamePage from './components/pages/OAuthUsernamePage';
+import ResetPasswordPage from './components/pages/ResetPasswordPage';
 
 function App() {
   // check if user is logged in
@@ -76,6 +77,7 @@ function App() {
                         <Route exact path="/login" component={LoginPage} />
                         <Route exact path="/login/oauth" component={OAuthUsernamePage} />
                         <Route exact path="/login/success" component={VerifyLoginPage} />
+                        <Route exact path="/resetPassword/:token" component={ResetPasswordPage} />
                         <Route exact path="/atmosphere" component={AtmospherePage} />
                         <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                         <Route exact path="/mymixtapes" component={MyMixtapesPage} />

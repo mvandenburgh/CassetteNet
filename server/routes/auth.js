@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const crypto = require('crypto');
 const { User } = require('../models');
-const { sendVerificationEmail } = require('../email/email');
+const { sendPasswordResetEmail, sendVerificationEmail } = require('../email/email');
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ router.post('/signup', async (req, res) => {
     // generate email verification token
     const token = crypto.randomBytes(64).toString('hex');
 
-    User.register(new User({ username, email, token, verified: false, admin: userCount === 0 }), password, async (err, user) => {
+    User.register(new User({ username, email, token, verified: false, admin: userCount === 0, local: true }), password, async (err, user) => {
         if (err) return res.status(500).send(err); // TODO: error handling
         if (process.env.NODE_ENV === 'production') { // only send email in production deployment (i.e. heroku)
             try {
@@ -56,11 +56,49 @@ router.post('/logout', (req, res) => {
 router.put('/verify', async (req, res) => {
     const { token } = req.body;
     try {
-        await User.updateOne({ token }, { verified: true });
+        await User.updateOne({ token }, { verified: true, token: null });
         res.send('user verified');
     } catch (err) {
         res.status(500).send(err)
     }
+});
+
+router.put('/resetPassword', async (req, res) => {
+    const { password, token, email } = req.body;
+    if (token && password) {
+        try {
+            const user = await User.findOne({ token });
+            if (!user) return res.status(404).send('not found');
+            await user.setPassword(password);
+            user.token = null;
+            await user.save();
+            return res.send('password reset successfully.');
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+    }
+    if (!email) return res.status(400).send('invalid request.');
+
+    // generate password reset token
+    const pwResetToken = crypto.randomBytes(64).toString('hex');
+
+    const user = await User.findOne({ email });
+
+    if (user) {
+        user.token = pwResetToken;
+        user.save();
+        if (process.env.NODE_ENV === 'production') { // only send email in production deployment (i.e. heroku)
+            try {
+                await sendPasswordResetEmail(email, pwResetToken);
+                return res.send('sent password reset email.')
+            } catch(err) {
+                console.log(err);
+                return res.status(500).send(err);  
+            }
+        }
+        return res.send(token); // send reset token back in development mode
+    }
+    return res.status(404).send('user not found.');
 });
 
 router.put('/setOAuthUsername', async (req, res) => {
