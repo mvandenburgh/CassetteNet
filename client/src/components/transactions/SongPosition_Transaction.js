@@ -42,7 +42,7 @@ export class SongPosition_Transaction extends jsTPS_Transaction {
         //let newPosition = oldPosition + this.amountToAdd;
         this.oldPosition = this.position;
         this.position = this.newPosition;
-        console.log(this.oldPosition + "->" + this.position);
+        console.log(this.oldPosition + " -> " + this.position);
     }
 
     /**
@@ -53,7 +53,7 @@ export class SongPosition_Transaction extends jsTPS_Transaction {
         this.songOrder.splice(this.oldPosition, 0, removed);
         this.mixtape.songs = this.songOrder;
         this.position = this.oldPosition;
-        console.log(this.newPosition + "->" + this.position);
+        console.log(this.newPosition + " -> " + this.position);
         //this.position = this.oldPosition;
     }
 
