@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Fab, Grid, List, ListItem, ListItemText } from '@material-ui/core';
-import { getUsername, getMixtapeCoverImageUrl } from '../utils/api';
+import { Grid, List, ListItem, ListItemText } from '@material-ui/core';
+import { getMixtapeCoverImageUrl } from '../utils/api';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
@@ -97,7 +97,7 @@ function MixtapeList(props) {
                         </Grid>
                         <Grid item xs={4}>
                           <ListItemText style={{ left:'20%', marginRight: '10%' }}>
-                            {mixtape.collaborators.map((collaborator, i) => i === (mixtape.collaborators.length - 1) ? getUsername(collaborator.user) : i < 5 ? `${getUsername(collaborator.user)}, ` : '')}
+                            {mixtape.collaborators.map((collaborator, i) => i === (mixtape.collaborators.length - 1) ? collaborator.username : i < 5 ? `${collaborator.username}, ` : '')}
                             {mixtape.collaborators.length >= 5 ? '...' : ''}
                           </ListItemText>
                         </Grid>

@@ -119,7 +119,7 @@ function Mixtape(props) {
     setCurrentSong({
       mixtape,
       index,
-      disabled: currentSong.disabled,
+      disabled: currentSong?.disabled,
     });
   };
 
