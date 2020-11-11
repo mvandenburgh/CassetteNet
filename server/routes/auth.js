@@ -41,37 +41,11 @@ router.post('/signup', async (req, res) => {
 
 
 router.post('/login', passport.authenticate('local'), async (req, res) => {
-    const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt, verified } = req.user;
+    const { verified } = req.user;
     if (!verified) {
         return res.status(400).send('user not verified.');
     }
-    const followedUsersDenormalized = [];
-    for (const userId of followedUsers) {
-        const user = await User.findById(userId);
-        const followerCount = (await User.find({ followedUsers: user._id })).length;
-        const createdAt = new Date(user.createdAt);
-        const updatedAt = new Date(user.updatedAt);
-        followedUsersDenormalized.push({
-            _id: userId,
-            uniqueId: user.uniqueId,
-            username: user.username,
-            createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
-            updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
-            followers: followerCount 
-        });
-    }
-    const followers = (await User.find({ followedUsers: _id })).length;
-    res.json({
-        _id,
-        favoritedMixtapes,
-        followedUsers: followedUsersDenormalized,
-        followers,
-        username,
-        uniqueId, // convert number to base36 to get alphanumeric id
-        admin,
-        createdAt,
-        updatedAt,
-    });
+    res.send('logged in');
 });
 
 router.post('/logout', (req, res) => {
@@ -116,8 +90,38 @@ router.get('/google/redirect', passport.authenticate('google', { failureRedirect
     return res.redirect(new URL('/login/success', CLIENT_ROOT_URL).href);
 });
 
-router.get('/login/success', (req, res) => {
-    res.send(req.user);
+router.get('/login/success', async (req, res) => {
+    const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt, verified } = req.user;
+    if (!verified) {
+        return res.status(400).send('user not verified.');
+    }
+    const followedUsersDenormalized = [];
+    for (const userId of followedUsers) {
+        const user = await User.findById(userId);
+        const followerCount = (await User.find({ followedUsers: user._id })).length;
+        const createdAt = new Date(user.createdAt);
+        const updatedAt = new Date(user.updatedAt);
+        followedUsersDenormalized.push({
+            _id: userId,
+            uniqueId: user.uniqueId,
+            username: user.username,
+            createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
+            updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
+            followers: followerCount 
+        });
+    }
+    const followers = (await User.find({ followedUsers: _id })).length;
+    res.json({
+        _id,
+        favoritedMixtapes,
+        followedUsers: followedUsersDenormalized,
+        followers,
+        username,
+        uniqueId, // convert number to base36 to get alphanumeric id
+        admin,
+        createdAt,
+        updatedAt,
+    });
 });
 
 module.exports = router;
