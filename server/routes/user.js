@@ -17,7 +17,7 @@ router.post('/signup', async (req, res) => {
     // generate email verification token
     const token = crypto.randomBytes(64).toString('hex');
 
-    User.register(new User({ username, email, token, verified: false, admin: userCount === 0 }), password, async (err, user) => {
+    User.register(new User({ username, email, token, verified: true, admin: userCount === 0 }), password, async (err, user) => {
         if (err) return res.status(500).send(err); // TODO: error handling
         if (process.env.NODE_ENV === 'production') { // only send email in production deployment (i.e. heroku)
             try {
