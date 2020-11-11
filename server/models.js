@@ -18,6 +18,7 @@ const userSchema = new Schema({
   favoritedMixtapes: Array, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
   followedUsers: Array, // array of other user object ids
   admin: Boolean, // true if user is an admin
+  googleId: String,
   uniqueId: {
     type: Number,
     get: id => id.toString(36).padStart(4, '0').toUpperCase(), // convert to alphanumeric string

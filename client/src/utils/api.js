@@ -103,8 +103,7 @@ async function userSignup(email, username, password) {
 }
 
 async function userLogin(username, password) {
-    const user = await axios.post(new URL('/auth/login', SERVER_ROOT_URL), { username, password });
-    return user.data;
+    await axios.post(new URL('/auth/login', SERVER_ROOT_URL), { username, password });
 }
 
 async function userLogout() {
@@ -113,6 +112,15 @@ async function userLogout() {
 
 async function userVerifyAccount(token) {
     await axios.put(new URL('/auth/verify', SERVER_ROOT_URL), { token });
+}
+
+async function verifyUserLoggedIn() {
+    const user = await axios.get(new URL('/auth/login/success', SERVER_ROOT_URL).href);
+    return user.data;
+}
+
+async function setUsernameOfOAuthAccount(username) {
+    await axios.put(new URL('/auth/setOAuthUsername', SERVER_ROOT_URL).href, { username });
 }
 
 async function uploadFile(file, filename, endpoint) {
@@ -165,6 +173,10 @@ async function userSearch(searchQuery) {
     return users.data;
 }
 
+function googleLogin() {
+    window.location.href = new URL('/auth/google', SERVER_ROOT_URL).href;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -181,7 +193,10 @@ export {
     queryForMixtapes,
     songSearch,
     getSongDuration,
+    setUsernameOfOAuthAccount,
+    verifyUserLoggedIn,
     updateMixtape,
+    googleLogin,
     userLogin,
     userLogout,
     userSignup,

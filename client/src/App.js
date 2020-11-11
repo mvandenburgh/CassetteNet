@@ -26,6 +26,8 @@ import AnonymousMixtapesPage from './components/pages/AnonymousMixtapesPage';
 import SearchResultsPage from './components/pages/SearchResults';
 import AdminPage from './components/pages/AdminPage';
 import VerifyAccountPage from './components/pages/VerifyAccountPage';
+import VerifyLoginPage from './components/pages/VerifyLoginPage';
+import OAuthUsernamePage from './components/pages/OAuthUsernamePage';
 
 function App() {
   // check if user is logged in
@@ -72,6 +74,8 @@ function App() {
                         <Route exact path="/" component={user.isLoggedIn ? DashboardPage : StartPage} />
                         <Route exact path="/directory" component={Directory} /> {/* TODO: remove? */}
                         <Route exact path="/login" component={LoginPage} />
+                        <Route exact path="/login/oauth" component={OAuthUsernamePage} />
+                        <Route exact path="/login/success" component={VerifyLoginPage} />
                         <Route exact path="/atmosphere" component={AtmospherePage} />
                         <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
                         <Route exact path="/mymixtapes" component={MyMixtapesPage} />

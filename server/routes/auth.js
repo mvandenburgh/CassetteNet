@@ -6,6 +6,8 @@ const { sendVerificationEmail } = require('../email/email');
 
 const router = express.Router();
 
+const CLIENT_ROOT_URL = process.env.CLIENT_ROOT_URL || 'http://localhost:3000';
+
 router.post('/signup', async (req, res) => {
     const { username, password, email } = req.body;
     // this new user should be an admin if there are 0 users currently
@@ -85,6 +87,37 @@ router.put('/verify', async (req, res) => {
     } catch (err) {
         res.status(500).send(err)
     }
+});
+
+router.put('/setOAuthUsername', async (req, res) => {
+    if (!req.user) return res.status(401).send('Unauthorized');
+    if (!req.body.username) return res.status(400).send('missing username');
+    const { username } = req.body;
+    try {
+        const user = await User.findById(req.user.id);
+        if (user.username) {
+            return res.status(400).send('username already set.');
+        } else {
+            user.username = username;
+            await user.save();
+            return res.send('successfully set username');
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send(err);
+    }
+})
+
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/redirect', passport.authenticate('google', { failureRedirect: new URL('/login', CLIENT_ROOT_URL).href}),
+(req, res) => {
+    if (!req.user.username) return res.redirect(new URL('/login/oauth', CLIENT_ROOT_URL).href);
+    return res.redirect(new URL('/login/success', CLIENT_ROOT_URL).href);
+});
+
+router.get('/login/success', (req, res) => {
+    res.send(req.user);
 });
 
 module.exports = router;
