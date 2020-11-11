@@ -13,9 +13,10 @@ const LocalStrategy = require('passport-local');
 const { User } = require('./models');
 
 // import routes
-const userRoute = require('./routes/user');
-const mixtapeRoute = require('./routes/mixtape');
 const adminRoute = require('./routes/admin');
+const authRoute = require('./routes/auth');
+const mixtapeRoute = require('./routes/mixtape');
+const userRoute = require('./routes/user');
 const youtubeRoute = require('./routes/youtube');
 
 // connect server to the database
@@ -59,10 +60,11 @@ passport.deserializeUser(User.deserializeUser());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/youtube', youtubeRoute);
 app.use('/admin', adminRoute);
+app.use('/auth', authRoute);
 app.use('/mixtape', mixtapeRoute);
 app.use('/user', userRoute);
+app.use('/youtube', youtubeRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}...`));
