@@ -117,6 +117,12 @@ function AdminPage(props) {
         setAdmins(admins);
         console.log(admins);
      }, []);
+     useEffect(async () => {
+        const admins = await getAdmins();
+        setAdmins(admins);
+        console.log(admins);
+     }, [admins]);
+
 
     const suggestedUsers = [
         { name: 'DDrizzy123' },
@@ -146,7 +152,7 @@ function AdminPage(props) {
         
     }
     const deleteAdminHandler = async(admin)=>{
-        console.log(admin);
+        console.log(admin._id);
         await deleteAdmin(admin._id);
     }
 
@@ -216,11 +222,11 @@ function AdminPage(props) {
                             <Typography variant="headline" component="h1">Current Admins</Typography>
                             <List>
                             {admins.map(admin => (
-                                <div onClick={()=>deleteAdmin(admin)}>
+                                <div onClick={()=>deleteAdminHandler(admin)}>
 
                                     <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
                                         <p>{admin.username}</p>  
-                                    <Box> <DeleteIcon onClick={deleteAdminHandler}/> </Box>
+                                     <DeleteIcon/>
                                 </Box>
                                 </div>
                                 

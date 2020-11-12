@@ -57,14 +57,18 @@ router.get('/getAdmins', async (req, res) => {
     })));
 });
 
-router.get('/deleteAdmin',async(req,res)=>{
+router.put('/deleteAdmin', async(req,res)=>{
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
-    const { id } = req.body;
-    const user = await User.findOne({ _id: id });
+    const { userId } = req.body;
+    console.log(req.body);
+    const user = await User.findOne({ _id: userId });
+
+    console.log("hi");
+    console.log(userId);
     if (user.admin == true ){
-        user.admin == false;
+        user.admin = false;
         await user.save();
     }
     return res.send(user._id);
