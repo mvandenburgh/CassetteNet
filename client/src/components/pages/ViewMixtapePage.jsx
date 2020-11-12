@@ -89,7 +89,12 @@ function ViewMixtapePage(props) {
             history.push('/');
             return;
         }
-        initialMixtape.duration = initialMixtape.songs.map(song => song.duration).reduce((total, current) => total + current);
+        const durations = initialMixtape.songs.map(song => song.duration);
+        if (durations.length > 0) {
+            initialMixtape.duration = durations.reduce((total, current) => total + current);
+        } else {
+            initialMixtape.duration = 0;
+        }
         setMixtape(initialMixtape);
         setCoverImageUrl(getMixtapeCoverImageUrl(initialMixtape._id));
     }, []);
