@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Button, Box, Grid, IconButton, Typography, makeStyles, Icon } from '@material-ui/core';
+import React, { useState,useEffect,useContext } from 'react';
+import { Button, List, Box, Grid, IconButton, Typography, makeStyles, Icon } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import { useHistory } from 'react-router-dom';
 import blueGrey from '@material-ui/core/colors/blueGrey';
@@ -10,8 +10,10 @@ import pfp from '../../images/bottle_pfp.jpg';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { AccountCircle as UserProfile } from '@material-ui/icons';
-import { adminFillDatabase, adminDropDatabase } from '../../utils/api';
+import {AccountCircle as UserProfile } from '@material-ui/icons';
+import DeleteIcon from '@material-ui/icons/Delete';
+import UserSearchBar from '../UserSearchBar';
+import { adminFillDatabase, adminDropDatabase, getAdmins, deleteAdmin, addAdmin} from '../../utils/api';
 
 function AdminPage(props) {
     const CssTextField = withStyles({
@@ -108,14 +110,19 @@ function AdminPage(props) {
         },
     }));
 
-    const suggestedUsers = [
-        { name: 'DDrizzy123' },
-        { name: 'TempAdmin' },
-        { name: 'TempAdmin12' },
-        { name: 'PartyPooper123' },
-        { name: 'BobMarley' },
-        { name: 'CoolName' },
-    ];
+    const [admins, setAdmins] = useState([]);
+
+    useEffect(async () => {
+        const admins = await getAdmins();
+        setAdmins(admins);
+        console.log(admins);
+     }, []);
+     useEffect(async () => {
+        const admins = await getAdmins();
+        setAdmins(admins);
+        console.log(admins);
+     }, [admins]);
+
     const classes = useStyles();
     // TODO: add user to destructuring when needed
     // Removed for now to avoid build warnings
@@ -130,6 +137,17 @@ function AdminPage(props) {
 
     const dropDatabaseHandler = async () => {
         await adminDropDatabase();
+    }
+
+    const addAdminHandler = async(admin) => {
+        if(admin){
+            console.log(admin._id);
+            await addAdmin(admin._id);
+        }
+    }
+    const deleteAdminHandler = async(admin)=>{
+        console.log(admin._id);
+        await deleteAdmin(admin._id);
     }
 
     //TODO: Possibly re-align fields
@@ -194,65 +212,30 @@ function AdminPage(props) {
                 <Grid container style={{ marginLeft: '100px' }}>
 
                     <Grid item xs={6}>
-                        <Box id='popular' style={{ width: '100%' }} className={classes.box_container} borderRadius={10} {...containerBorderProps}>
+                        <Box id='popular' style={{ width: '100%' }} className={classes.box_container} borderRadius={12} {...containerBorderProps}>
                             <Typography variant="headline" component="h1">Current Admins</Typography>
+                            <List>
+                            {admins.map(admin => (
+                                <div onClick={()=>deleteAdminHandler(admin)}>
 
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                DDrizzy123
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                TempAdmin
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                TempAdmin12
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                PartyPooper123
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                BobMarley
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                CoolName
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                NoobMaster
-                        </Box>
+                                    <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
+                                        <p>{admin.username}</p>  
+                                     <DeleteIcon/>
+                                </Box>
+                                </div>
+                                
+                            ))}
+                            </List>
+                            
                         </Box>
                     </Grid>
                     <Grid item xs={1} />
                     <Grid item xs={3}>
                         <Typography style={{ fontSize: '40px' }} variant="h3">Add An Admin</Typography>
-
-                        <Autocomplete
-                            size="small"
-                            style={{ width: 300 }}
-                            className={classes.inputInput}
-                            freeSolo
-                            disableClearable
-                            options={suggestedUsers.map((option) => option.name)}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    backgroundColor='white'
-                                    label="Search..."
-                                    margin="normal"
-                                    variant="filled"
-                                    InputProps={{ ...params.InputProps, type: 'search' }}
-                                />
-                            )}
-                        />
-                        <Button
-                            variant="outlined"
-                            style={{
-                                padding: '10px',
-                                marginTop: '10px',
-                                height: '40px',
-                                width: '200px',
-                                backgroundColor: blueGrey[600],
-                                color: 'white'
-                            }}
-                        >Add Admin</Button>
+                        <br/>
+                        <Grid item xs={10}>
+                                    <UserSearchBar userSelectHandler={addAdminHandler} adminSearchBool={true} />
+                        </Grid>
                     </Grid>
                 </Grid>
 
