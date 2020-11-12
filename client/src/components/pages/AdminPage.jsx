@@ -114,6 +114,7 @@ function AdminPage(props) {
     useEffect(async () => {
         const admins = await getAdmins();
         setAdmins(admins);
+        console.log(admins);
      }, []);
 
     const suggestedUsers = [
@@ -208,17 +209,17 @@ function AdminPage(props) {
                     <Grid item xs={6}>
                         <Box id='popular' style={{ width: '100%' }} className={classes.box_container} borderRadius={12} {...containerBorderProps}>
                             <Typography variant="headline" component="h1">Current Admins</Typography>
-                            
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                DDrizzy123
-                        </Box>
-                            
+                            {admins.map(admin => (
+                                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
+                                    <p>{admin.username}</p>
+                                </Box>
+                            ))}
                         </Box>
                     </Grid>
                     <Grid item xs={1} />
                     <Grid item xs={3}>
                         <Typography style={{ fontSize: '40px' }} variant="h3">Add An Admin</Typography>
-
+                        <br/>
                         <Grid item xs={10}>
                                     <UserSearchBar userSelectHandler={addAdmin} adminSearchBool={true} />
                         </Grid>
