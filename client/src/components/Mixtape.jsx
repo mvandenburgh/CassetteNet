@@ -114,10 +114,8 @@ function Mixtape(props) {
   };
 
   const deleteSongs = () => {
-    const newSongs = mixtape.songs.filter(song => !songsToDelete.includes(song.id));
-    const deleteSongTransaction = new DeleteSong_Transaction(mixtape.songs, newSongs, mixtape);
+    const deleteSongTransaction = new DeleteSong_Transaction(mixtape.songs, songsToDelete, mixtape);
     tps.addTransaction(deleteSongTransaction);
-    mixtape.songs = newSongs;
     setMixtape(mixtape);
     setSongsToDelete([]);
   }
@@ -235,7 +233,15 @@ function Mixtape(props) {
   }
 
   const redoDeleteSong = () => {
-
+    console.log("Redo Delete Song");
+    tps.doTransaction();
+    setMixtape(mixtape);
+    updateMixtape(mixtape);
+    setCurrentSong({
+      mixtape: currentSong.mixtape,
+      index: currentSong.index,
+      disabled: null,
+    });
   }
 
   const redoAddSong = () => {

@@ -20,11 +20,11 @@ export class DeleteSong_Transaction extends jsTPS_Transaction {
      * @param newSongs
      * @param mixtape
      */
-    constructor(oldSongs, newSongs, mixtape) {
+    constructor(oldSongs, songsToDelete, mixtape) {
         super();
 
         this.oldSongs = oldSongs;
-        this.newSongs = newSongs;
+        this.songsToDelete = songsToDelete;
         this.mixtape = mixtape;
     }
 
@@ -32,8 +32,9 @@ export class DeleteSong_Transaction extends jsTPS_Transaction {
      * 
      */
     doTransaction() {
-        //console.log(this.oldPosition + " -> " + this.position);
-        this.mixtape.songs = this.newSongs;
+        const newSongs = this.mixtape.songs.filter(song => !this.songsToDelete.includes(song.id));
+        this.oldSongs = this.mixtape.songs
+        this.mixtape.songs = newSongs;
     }
 
     /**
