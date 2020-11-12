@@ -136,6 +136,10 @@ function ViewUserPage(props) {
     setValue(newValue);
   };
 
+  if (!user.username) {
+    return null;
+  }
+
   return (
     <div style={{ color: 'white', left: 0 }}>
       <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>

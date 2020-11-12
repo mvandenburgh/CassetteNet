@@ -12,7 +12,7 @@ function FavoritedMixtapesPage(props) {
     if (!user.isLoggedIn) {
         user = JSON.parse(localStorage.getItem('user'));
     }
-    const [mixtapes, setMixtapes] = useState([]);
+    const [mixtapes, setMixtapes] = useState(null);
     const { _id } = user;
     useEffect(() => {
         async function getMixtapes() {
@@ -23,7 +23,11 @@ function FavoritedMixtapesPage(props) {
      }, [])
 
     const history = useHistory();
-    const goBack = () => { history.push('/') }
+    const goBack = () => history.goBack();
+
+    if (!mixtapes) {
+        return null;
+    }
 
     return (
         <div style={{ color: 'white', left: 0 }}>

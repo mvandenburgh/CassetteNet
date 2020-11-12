@@ -23,7 +23,7 @@ function MyMixtapesPage(props) {
     if (!user.isLoggedIn) {
         user = JSON.parse(localStorage.getItem('user'));
     }
-    const [mixtapes, setMixtapes] = useState([]);
+    const [mixtapes, setMixtapes] = useState(null);
 
     const { _id } = user;
     useEffect(async () => {
@@ -36,6 +36,10 @@ function MyMixtapesPage(props) {
 
     const createNewMixtape = () => {
         createMixtape().then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
+    }
+
+    if (!mixtapes) {
+        return null;
     }
 
     return (
