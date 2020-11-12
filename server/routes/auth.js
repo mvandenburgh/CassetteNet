@@ -101,33 +101,6 @@ router.put('/resetPassword', async (req, res) => {
     return res.status(404).send('user not found.');
 });
 
-router.put('/setOAuthUsername', async (req, res) => {
-    if (!req.user) return res.status(401).send('Unauthorized');
-    if (!req.body.username) return res.status(400).send('missing username');
-    const { username } = req.body;
-    try {
-        const user = await User.findById(req.user.id);
-        if (user.username) {
-            return res.status(400).send('username already set.');
-        } else {
-            user.username = username;
-            await user.save();
-            return res.send('successfully set username');
-        }
-    } catch (err) {
-        console.log(err);
-        return res.status(500).send(err);
-    }
-})
-
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-router.get('/google/redirect', passport.authenticate('google', { failureRedirect: new URL('/login', CLIENT_ROOT_URL).href}),
-(req, res) => {
-    if (!req.user.username) return res.redirect(new URL('/login/oauth', CLIENT_ROOT_URL).href);
-    return res.redirect(new URL('/login/success', CLIENT_ROOT_URL).href);
-});
-
 router.get('/login/success', async (req, res) => {
     const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt, verified } = req.user;
     if (!verified) {
@@ -160,6 +133,42 @@ router.get('/login/success', async (req, res) => {
         createdAt,
         updatedAt,
     });
+});
+
+router.put('/setOAuthUsername', async (req, res) => {
+    if (!req.user) return res.status(401).send('Unauthorized');
+    if (!req.body.username) return res.status(400).send('missing username');
+    const { username } = req.body;
+    try {
+        const user = await User.findById(req.user.id);
+        if (user.username || user.local) {
+            return res.status(400).send('username already set.');
+        } else {
+            user.username = username;
+            user.verified = true;
+            await user.save();
+            return res.send('successfully set username');
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send(err);
+    }
+});
+
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/redirect', passport.authenticate('google', { failureRedirect: new URL('/login', CLIENT_ROOT_URL).href}),
+(req, res) => {
+    if (!req.user.username) return res.redirect(new URL('/login/oauth', CLIENT_ROOT_URL).href);
+    return res.redirect(new URL('/login/success', CLIENT_ROOT_URL).href);
+});
+
+router.get('/facebook', passport.authenticate('facebook', { scope : ['email'] }));
+
+router.get('/facebook/redirect', passport.authenticate('facebook', { failureRedirect: new URL('/login', CLIENT_ROOT_URL).href}),
+(req, res) => {
+    if (!req.user.username) return res.redirect(new URL('/login/oauth', CLIENT_ROOT_URL).href);
+    return res.redirect(new URL('/login/success', CLIENT_ROOT_URL).href);
 });
 
 module.exports = router;

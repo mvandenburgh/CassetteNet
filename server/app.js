@@ -8,7 +8,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 
 // import user model (needed for passport config)
 const { User } = require('./models');
@@ -57,13 +58,29 @@ passport.use(
     new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "/auth/google/redirect",
+        callbackURL: '/auth/google/redirect',
     }, async (accessToken, refreshToken, profile, done) => {
-        const user = await User.findOne({ googleId: profile.id });
+        const user = await User.findOne({ email: profile.emails[0].value });
         if (user) {
             done(null, user);
         } else {
-            const newUser = await new User({ googleId: profile.id }).save();
+            const newUser = await new User({ email: profile.emails[0].value }).save();
+            done(null, newUser);
+        }
+    })
+);
+passport.use(
+    new FacebookStrategy({
+        clientID: process.env.FACEBOOK_CLIENT_ID,
+        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+        callbackURL: '/auth/facebook/redirect',
+        profileFields: ['id', 'emails', 'name']
+    }, async (accessToken, refreshToken, profile, done) => {
+        const user = await User.findOne({ email: profile.emails[0].value });
+        if (user) {
+            done(null, user);
+        } else {
+            const newUser = await new User({ email: profile.emails[0].value }).save();
             done(null, newUser);
         }
     })
