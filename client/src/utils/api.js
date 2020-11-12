@@ -12,6 +12,12 @@ try {
     SERVER_ROOT_URL = new URL('http://localhost:5000/');
 }
 
+let CLIENT_ROOT_URL;
+try {
+    CLIENT_ROOT_URL = new URL(process.env.REACT_APP_CLIENT_ROOT_URL);
+} catch (err) {
+    CLIENT_ROOT_URL = new URL('http://localhost:3000/');
+}
 
 // These functions return test data from local JSON files
 // for now. In the future they should make requests to an 
@@ -215,6 +221,10 @@ function oauthLogin(provider) {
     window.location.href = new URL(`/auth/${provider}`, SERVER_ROOT_URL).href;
 }
 
+function getMixtapeUrl(mixtapeId) {
+    return new URL(`/mixtape/${mixtapeId}`, CLIENT_ROOT_URL).href;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -223,6 +233,7 @@ export {
     getUser,
     getUsername,
     getMixtape,
+    getMixtapeUrl,
     getMixtapeCoverImageUrl,
     getUserProfilePictureUrl,
     getMyMixtapes,

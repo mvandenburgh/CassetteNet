@@ -23,6 +23,7 @@ import { getMixtape, getMixtapeCoverImageUrl, updateMixtape } from '../../utils/
 import { Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import MixtapeCoverImageUploadModal from '../modals/MixtapeCoverImageUploadModal';
+import ShareMixtapeModal from '../modals/ShareMixtapeModal';
 import UserContext from '../../contexts/UserContext';
 import humanizeDuration from 'humanize-duration';
 
@@ -61,6 +62,9 @@ function ViewMixtapePage(props) {
     const [coverImageUrl, setCoverImageUrl] = useState(null);
 
     const [changeMixtapeNamePopupIsOpen, setchangeMixtapeNamePopupIsOpen] = useState(false); // whether add song popup is open
+
+    const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
+    const [shareMixtapePopupIsOpen, setShareMixtapePopupIsOpen] = useState(false);
 
     // watch for changes to mixtape and update server accordingly
     const prevMixtape = usePrevious(mixtape);
@@ -113,6 +117,11 @@ function ViewMixtapePage(props) {
 
     return (
         <div>
+            <ShareMixtapeModal
+                mixtape={mixtape}
+                open={shareMixtapePopupIsOpen}
+                setOpen={setShareMixtapePopupIsOpen}
+            />
             <MixtapeCoverImageUploadModal coverImageUrl={coverImageUrl} setCoverImageUrl={setCoverImageUrl} mixtape={mixtape} setMixtape={setMixtape} open={uploadCoverImagePopup} setOpen={setUploadCoverImagePopup} />
             <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
                 <ArrowBackIcon />
@@ -163,9 +172,9 @@ function ViewMixtapePage(props) {
 
                 <div>
                     <div style={{ display: 'inline-block', float: 'right' }}>
-                        <FavoriteMixtapeButton id={props.match.params.id} style={{ margin: '7px' }} />
+                        <FavoriteMixtapeButton id={props.match.params.id} style={{ margin: '7px', cursor: 'pointer' }} />
                         <CommentIcon style={{ margin: '10px' }} />
-                        <ShareIcon style={{ margin: '10px' }} />
+                        <ShareIcon onClick={() => setShareMixtapePopupIsOpen(true)} style={{ margin: '10px', cursor: 'pointer' }} />
                     </div>
                 </div>
             </Paper>
