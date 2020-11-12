@@ -22,7 +22,7 @@ import {
 } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon, Undo as UndoIcon, Cake as CakeIcon } from '@material-ui/icons';
+import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon, Undo as UndoIcon, Redo as RedoIcon } from '@material-ui/icons';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import UserContext from '../contexts/UserContext';
@@ -109,11 +109,8 @@ function Mixtape(props) {
 
     // set new list order
     const newSongOrder = [...mixtape.songs];
-    const [removed] = newSongOrder.splice(result.source.index, 1);
-    const moveSongTransaction = new SongPosition_Transaction(result.source.index, result.destination.index, removed, newSongOrder, mixtape);
+    const moveSongTransaction = new SongPosition_Transaction(result.source.index, result.destination.index, newSongOrder, mixtape);
     tps.addTransaction(moveSongTransaction);
-    newSongOrder.splice(result.destination.index, 0, removed);
-    mixtape.songs = newSongOrder;
     setMixtape(mixtape);
   };
 
@@ -137,12 +134,11 @@ function Mixtape(props) {
   };
 
   const deleteSongs = () => {
-    const newSongs = mixtape.songs.filter(song => !songsToDelete.includes(song.id));
-    const deleteSongTransaction = new DeleteSong_Transaction(mixtape.songs, newSongs, mixtape);
+    const deleteSongTransaction = new DeleteSong_Transaction(mixtape.songs, songsToDelete, mixtape);
     tps.addTransaction(deleteSongTransaction);
-    mixtape.songs = newSongs;
     setMixtape(mixtape);
     setSongsToDelete([]);
+    updateMixtape(mixtape);
   }
 
   const saveMixtape = async () => {
@@ -215,6 +211,7 @@ function Mixtape(props) {
     tps.undoTransaction();
     setMixtape(mixtape);
     setSongsToDelete([]);
+    updateMixtape(mixtape);
   }
 
   const undoAddSong = () => {
@@ -222,16 +219,70 @@ function Mixtape(props) {
     tps.undoTransaction();
     setMixtape(mixtape);
     setSongToAdd({});
+    /////////////////
+    updateMixtape(mixtape);
+    setCurrentSong({
+      mixtape: currentSong.mixtape,
+      index: currentSong.index,
+      disabled: null,
+    });
   }
 
-  //var fruits = ['apple', 'banana', 'orange', 'mango', 'grapes', 'coconut'];
+  const redoHandler = () => {
+    var theName = tps.transactions[tps.getSize()-1].constructor.name
+    console.log("Top of transaction stack: " + theName);
 
-  const simulateTransaction = () => {
-    console.log("Simulate transaction");
-    // const someFruit = 'kiwi';
-    // const moveSongTransaction = new SongPosition_Transaction(1, 3, someFruit, fruits, fruitsList);
-    // tps.addTransaction(moveSongTransaction);
-    // console.log(tps.toString());
+    if(tps.getSize() > 0) {
+      switch (theName) {
+        case "SongPosition_Transaction":
+          redoChangeSongPosition();
+          break;
+        case "DeleteSong_Transaction":
+          redoDeleteSong();
+          break;
+        case "AddSong_Transaction":
+           redoAddSong();
+          break;
+        default:
+          console.log("Unknown transaction.");
+      }
+    }
+  }
+
+  const redoChangeSongPosition = () => {
+    console.log("Redo Change Song Position");
+    tps.doTransaction();
+    setMixtape(mixtape);
+    updateMixtape(mixtape);
+    setCurrentSong({
+      mixtape: currentSong.mixtape,
+      index: currentSong.index,
+      disabled: null,
+    });
+  }
+
+  const redoDeleteSong = () => {
+    console.log("Redo Delete Song");
+    tps.doTransaction();
+    setMixtape(mixtape);
+    updateMixtape(mixtape);
+    setCurrentSong({
+      mixtape: currentSong.mixtape,
+      index: currentSong.index,
+      disabled: null,
+    });
+  }
+
+  const redoAddSong = () => {
+    console.log("Redo Add Song");
+    tps.doTransaction();
+    setMixtape(mixtape);
+    updateMixtape(mixtape);
+    setCurrentSong({
+      mixtape: currentSong.mixtape,
+      index: currentSong.index,
+      disabled: null,
+    });
   }
 
   function toString() {
@@ -431,11 +482,11 @@ function Mixtape(props) {
           </Droppable>
         </DragDropContext>
       </Grid>
-      <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => undoHandler()}>
-        <UndoIcon />
+      <Fab color="secondary" style={{position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => redoHandler()}> 
+          <RedoIcon />
       </Fab>
-      <Fab color="secondary" style={{ position: 'fixed', bottom: '15%', right: '10%', }} onClick={() => simulateTransaction()}>
-        <CakeIcon />
+      <Fab color="primary" aria-label="add" style={{position: 'fixed', bottom: '15%', right: '20%',}} onClick={() => undoHandler()}>
+                <UndoIcon />
       </Fab>
     </Box>
   );

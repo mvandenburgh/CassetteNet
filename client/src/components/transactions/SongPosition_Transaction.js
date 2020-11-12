@@ -7,8 +7,7 @@ import {jsTPS_Transaction} from "../../utils/jsTPS.js"
  * can be stored in the jsTPS transaction stack and must be constructed
  * with all the data necessary to perform both do and undo.
  * 
- * @author THE McKilla Gorilla (accept no imposters)
- * @version 1.0
+ * 
  */
 export class SongPosition_Transaction extends jsTPS_Transaction {
     /**
@@ -19,7 +18,7 @@ export class SongPosition_Transaction extends jsTPS_Transaction {
      * @param initPosition
      * @param initNewPosition
      */
-    constructor(initPosition, initNewPosition, song, songOrder, mixtape) {
+    constructor(initPosition, initNewPosition, songOrder, mixtape) {
         super();
 
         // OLD POSITION
@@ -29,7 +28,6 @@ export class SongPosition_Transaction extends jsTPS_Transaction {
         // THE SONG'S NEW POSITION
         this.newPosition = initNewPosition;
 
-        this.song = song;
         this.songOrder = songOrder;
         this.mixtape = mixtape;
     }
@@ -38,10 +36,12 @@ export class SongPosition_Transaction extends jsTPS_Transaction {
      * This transaction simply changes the song's position.
      */
     doTransaction() {
-        //let oldPosition = this.position;
-        //let newPosition = oldPosition + this.amountToAdd;
+
         this.oldPosition = this.position;
         this.position = this.newPosition;
+        const [removed] = this.songOrder.splice(this.oldPosition, 1);
+        this.songOrder.splice(this.position, 0, removed);
+        this.mixtape.songs = this.songOrder;
         console.log(this.oldPosition + " -> " + this.position);
     }
 
