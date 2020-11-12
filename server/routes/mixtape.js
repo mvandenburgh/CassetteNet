@@ -1,5 +1,6 @@
 const express = require('express');
 const { Types } = require('mongoose');
+const textToPicture = require('text-to-picture-kazari');
 const { Mixtape, User } = require('../models');
 
 const router = express.Router();
@@ -19,6 +20,14 @@ router.get('/:id/coverImage', async (req, res) => {
     if (mixtape && mixtape.coverImage) {
         res.set('Content-Type', mixtape.coverImage.contentType);
         res.send(mixtape.coverImage.data.buffer);
+    } else if (mixtape) {
+        const image = await textToPicture.convert({
+            text: mixtape.name,
+            size: 32,
+            quality: 100,
+        });
+        const buf = await image.getBuffer()
+        res.send(buf);
     } else {
         res.status(404).send('mixtape not found');
     }
