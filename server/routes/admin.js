@@ -72,7 +72,24 @@ router.put('/deleteAdmin', async(req,res)=>{
         await user.save();
     }
     return res.send(user._id);
-})
+});
+
+router.put('/addAdmin', async(req,res)=>{
+    if (!req.user || !req.user.admin) {
+        return res.status(401).send('unauthorized');
+    }
+    const { userId } = req.body;
+    console.log(req.body);
+    const user = await User.findOne({ _id: userId });
+
+    console.log("hi");
+    console.log(userId);
+    if (user.admin == false ){
+        user.admin = true;
+        await user.save();
+    }
+    return res.send(user._id);
+});
 
 
 module.exports = router;

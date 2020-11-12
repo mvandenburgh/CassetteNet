@@ -167,11 +167,14 @@ async function getAdmins(){
 }
 
 async function deleteAdmin(userId) {
-    console.log(userId);
     const users = await axios.put(new URL('/admin/deleteAdmin', SERVER_ROOT_URL), { userId });
     return users.data;
 }
 
+async function addAdmin(userId) {
+    const users = await axios.put(new URL('/admin/addAdmin', SERVER_ROOT_URL), { userId });
+    return users.data;
+}
 async function getUser(userId) {
     if (userId.charAt(0) === '#') {
         if (userId.length === 5) {
@@ -232,4 +235,5 @@ export {
     userSearch,
     getAdmins,
     deleteAdmin,
+    addAdmin,
 };

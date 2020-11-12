@@ -13,7 +13,7 @@ import TextField from '@material-ui/core/TextField';
 import {AccountCircle as UserProfile } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UserSearchBar from '../UserSearchBar';
-import { adminFillDatabase, adminDropDatabase, getAdmins, deleteAdmin } from '../../utils/api';
+import { adminFillDatabase, adminDropDatabase, getAdmins, deleteAdmin, addAdmin} from '../../utils/api';
 
 function AdminPage(props) {
     const CssTextField = withStyles({
@@ -123,15 +123,6 @@ function AdminPage(props) {
         console.log(admins);
      }, [admins]);
 
-
-    const suggestedUsers = [
-        { name: 'DDrizzy123' },
-        { name: 'TempAdmin' },
-        { name: 'TempAdmin12' },
-        { name: 'PartyPooper123' },
-        { name: 'BobMarley' },
-        { name: 'CoolName' },
-    ];
     const classes = useStyles();
     // TODO: add user to destructuring when needed
     // Removed for now to avoid build warnings
@@ -148,8 +139,11 @@ function AdminPage(props) {
         await adminDropDatabase();
     }
 
-    const addAdminHandler = (user) => {
-        
+    const addAdminHandler = async(admin) => {
+        if(admin){
+            console.log(admin._id);
+            await addAdmin(admin._id);
+        }
     }
     const deleteAdminHandler = async(admin)=>{
         console.log(admin._id);
@@ -242,17 +236,6 @@ function AdminPage(props) {
                         <Grid item xs={10}>
                                     <UserSearchBar userSelectHandler={addAdminHandler} adminSearchBool={true} />
                         </Grid>
-                        <Button
-                            variant="outlined"
-                            style={{
-                                padding: '10px',
-                                marginTop: '10px',
-                                height: '40px',
-                                width: '200px',
-                                backgroundColor: blueGrey[600],
-                                color: 'white'
-                            }}
-                        >Add Admin</Button>
                     </Grid>
                 </Grid>
 
