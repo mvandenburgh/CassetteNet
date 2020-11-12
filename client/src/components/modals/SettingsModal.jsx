@@ -84,14 +84,17 @@ function SettingsModal(props) {
     useEffect(() => {
         if (mixtape?.collaborators)
             setUnsavedCollaborators(mixtape.collaborators);
-        setIsPublic(mixtape.isPublic)
+        setIsPublic(mixtape?.isPublic)
     }, [mixtape]);
 
     const canEdit = () => {
-        for (const collaborator of mixtape.collaborators) {
-            if (collaborator.user === user._id) {
-                if (collaborator.permissions === 'viewer')  {
-                    return false;
+        if (mixtape?.collaborators) {
+            for (const collaborator of mixtape?.collaborators) {
+                if (collaborator.user === user._id) {
+                    if (collaborator.permissions === 'viewer')  {
+                        return false;
+                    }
+                    return true;
                 }
                 return true;
             }
