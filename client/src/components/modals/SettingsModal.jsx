@@ -260,18 +260,21 @@ function SettingsModal(props) {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container justify="center" alignItems="center">
-                            <Grid item xs={12}>
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={() => handleDeleteMixtape(mixtape)}
-                                    startIcon={<WarningIcon />}
-                                >
-                                    Delete Mixtape
-                              </Button>
+                        {canEdit() ?
+                            <Grid container justify="center" alignItems="center">
+                                <Grid item xs={12}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() => handleDeleteMixtape(mixtape)}
+                                        startIcon={<WarningIcon />}
+                                    >
+                                        Delete Mixtape
+                                </Button>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                            : undefined
+                        }
                     </Grid>
                     <Grid item xs={1} />
                 </Grid>
