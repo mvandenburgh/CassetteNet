@@ -18,7 +18,7 @@ export class MixtapePosition_Transaction extends jsTPS_Transaction {
      * @param initPosition
      * @param initNewPosition
      */
-    constructor(initPosition, initNewPosition, mixtape, mixtapeList) {
+    constructor(initPosition, initNewPosition, mixtapeList) {
         super();
 
         // OLD POSITION
@@ -28,18 +28,16 @@ export class MixtapePosition_Transaction extends jsTPS_Transaction {
         // THE SONG'S NEW POSITION
         this.newPosition = initNewPosition;
         this.mixtapeList = mixtapeList;
-
-        this.mixtape = mixtape;
     }
 
     /**
      * This transaction simply changes the song's position.
      */
     doTransaction() {
-        //let oldPosition = this.position;
-        //let newPosition = oldPosition + this.amountToAdd;
         this.oldPosition = this.position;
         this.position = this.newPosition;
+        const [removed] = this.mixtapeList.splice(this.oldPosition, 1);
+        this.mixtapeList.splice(this.newPosition, 0, removed);
         console.log(this.oldPosition + " -> " + this.position);
     }
 
