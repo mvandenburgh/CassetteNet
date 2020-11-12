@@ -118,6 +118,7 @@ function Mixtape(props) {
     tps.addTransaction(deleteSongTransaction);
     setMixtape(mixtape);
     setSongsToDelete([]);
+    updateMixtape(mixtape);
   }
 
   const saveMixtape = async () => {
@@ -190,6 +191,7 @@ function Mixtape(props) {
     tps.undoTransaction();
     setMixtape(mixtape);
     setSongsToDelete([]);
+    updateMixtape(mixtape);
   }
 
   const undoAddSong = () => {
@@ -197,6 +199,13 @@ function Mixtape(props) {
     tps.undoTransaction();
     setMixtape(mixtape);
     setSongToAdd({});
+    /////////////////
+    updateMixtape(mixtape);
+    setCurrentSong({
+      mixtape: currentSong.mixtape,
+      index: currentSong.index,
+      disabled: null,
+    });
   }
 
   const redoHandler = () => {
@@ -245,7 +254,15 @@ function Mixtape(props) {
   }
 
   const redoAddSong = () => {
-
+    console.log("Redo Add Song");
+    tps.doTransaction();
+    setMixtape(mixtape);
+    updateMixtape(mixtape);
+    setCurrentSong({
+      mixtape: currentSong.mixtape,
+      index: currentSong.index,
+      disabled: null,
+    });
   }
 
   function toString() {
