@@ -22,7 +22,8 @@
     "react-player-controls": "^2.0.0-beta.1",
     "react-rounded-image": "^2.0.11",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.4"
+    "react-scripts": "3.4.4",
+    "react-social-login-buttons": "^3.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

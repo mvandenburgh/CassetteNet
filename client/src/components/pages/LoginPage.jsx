@@ -4,15 +4,15 @@ import TextField from '@material-ui/core/TextField';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
-import { userLogin, googleLogin, requestPasswordReset } from '../../utils/api';
+import { userLogin, oauthLogin, requestPasswordReset } from '../../utils/api';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import FacebookLogin from 'react-facebook-login';
 import GoogleButton from 'react-google-button';
+import { FacebookLoginButton } from "react-social-login-buttons";
 
 function LoginPage(props) {
   const useStyles = makeStyles((theme) => ({
@@ -35,21 +35,18 @@ function LoginPage(props) {
 
   const handleClose = () => setOpen(false);
 
-  const handleResponseFacebook = (e) => {
-    setPassword(".");
-    handleClickOpen();
-  }
+  const handleGoogleSignUp = () => oauthLogin('google');
 
-  const handleGoogleSignUp = () => googleLogin();
+  const handleFacebookSignUp = () => oauthLogin('facebook');
 
   const loginAsUser = async () => {
     try {
       await userLogin(username, password);
       history.push('/login/success');
     } catch (err) {
-      if (err.response.status === 401) {
+      if (err?.response?.status === 401) {
         alert('Incorrect username or password');
-      } else if (err.response.status === 400) {
+      } else if (err?.response?.status === 400) {
         alert('Please verify your account.')
       } else {
         alert('Error logging in. Please try again later.')
@@ -111,13 +108,9 @@ function LoginPage(props) {
             <GoogleButton onClick={handleGoogleSignUp} />
           </Grid>
           <Grid item sz={1}>
-            <FacebookLogin
-              size="small"
-              appId="667674014139311"
-              buttonText="Login With facebook"
-              fields="name,email,picture"
-              callback={handleResponseFacebook}
-            />
+            <FacebookLoginButton onClick={handleFacebookSignUp}>
+              <span>Sign in with Facebook</span>
+            </FacebookLoginButton>
           </Grid>
           <Grid item>
             <TextField

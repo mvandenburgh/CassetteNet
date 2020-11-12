@@ -185,8 +185,8 @@ async function userSearch(searchQuery) {
     return users.data;
 }
 
-function googleLogin() {
-    window.location.href = new URL('/auth/google', SERVER_ROOT_URL).href;
+function oauthLogin(provider) {
+    window.location.href = new URL(`/auth/${provider}`, SERVER_ROOT_URL).href;
 }
 
 export {
@@ -209,7 +209,7 @@ export {
     setUsernameOfOAuthAccount,
     verifyUserLoggedIn,
     updateMixtape,
-    googleLogin,
+    oauthLogin,
     userLogin,
     userLogout,
     userSignup,

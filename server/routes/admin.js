@@ -20,6 +20,7 @@ router.post('/populateDatabase', async (req, res) => {
                 followedUsers: user.followedUsers,
                 admin: user.admin,
                 verified: true, // verify all test users
+                local: true,
                 profilePicture: user.profilePicture
             }, user.password)),
             InboxMessage.insertMany(inboxMessages),
