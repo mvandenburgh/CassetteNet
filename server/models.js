@@ -18,9 +18,9 @@ const userSchema = new Schema({
   favoritedMixtapes: Array, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
   followedUsers: Array, // array of other user object ids
   admin: Boolean, // true if user is an admin
-  local: { // whether or not this user signed up w/ local strategy (true) or oauth (false)
-    type: Boolean,
-    default: false
+  strategy: { // whether or not this user signed up w/ local strategy (true) or oauth (false)
+    type: String,
+    default: 'local'
   },
   uniqueId: {
     type: Number,
