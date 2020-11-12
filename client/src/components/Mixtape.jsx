@@ -74,7 +74,7 @@ function Mixtape(props) {
   const [songToAdd, setSongToAdd] = useState({});
   const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
 
-  const [apiToUse, setApiToUse] = useState('soundcloud');
+  const [apiToUse, setApiToUse] = useState('youtube');
 
   const handleAddSongPopup = () => {
     setAddSongPopupIsOpen(!addSongPopupIsOpen);
