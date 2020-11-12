@@ -43,7 +43,10 @@ userSchema.index({ username: 'text' });
 userSchema.plugin(mongoosePartialTextSearch);
 
 const mixtapeSchema = new Schema({
-  name: String,
+  name: {
+    type: String,
+    searchable: true,
+  },
   collaborators: Array, // [{ user: mongoose.Types.ObjectId, permissions: { type: String, enum: ['owner', 'viewer', 'editor'] } }]
   songs: Array, // list of youtube/spotify/whatever song ids
   coverImage: { 
@@ -55,6 +58,9 @@ const mixtapeSchema = new Schema({
   },
   isPublic: Boolean,
 });
+
+mixtapeSchema.index({ name: 'text' });
+mixtapeSchema.plugin(mongoosePartialTextSearch);
 
 const inboxMessageSchema = new Schema({
   mixtape: mongoose.Types.ObjectId, // id of the mixtape this message corresponds to

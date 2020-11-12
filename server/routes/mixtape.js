@@ -5,6 +5,21 @@ const { Mixtape, User } = require('../models');
 
 const router = express.Router();
 
+/**
+ * Determines whether a given user has permission to view a given mixtape
+ * @param {*} user 
+ * @param {*} mixtape 
+ */
+function isAuthorized(user, mixtape) {
+    if (mixtape.isPublic) return true;
+    if (!user) return false;
+    for (const collaborator of mixtape.collaborators) {
+        if (collaborator.user.equals(user._id)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 router.put('/:id/coverImage', async (req, res) => {
     if (!req.files || !req.files.coverImage) return res.status(400).send('no file uploaded.');
@@ -35,7 +50,7 @@ router.get('/:id/coverImage', async (req, res) => {
 
 
 // executes mongoose query based on query string values
-router.get('/searchMixtapes', async (req, res) => {
+router.get('/queryMixtapes', async (req, res) => {
     let mixtapes = await Mixtape.find(req.query).lean();
     // only return mixtapes the user has permission to view
     if (req.user) {
@@ -54,6 +69,15 @@ router.get('/searchMixtapes', async (req, res) => {
         mixtape.favorites = favoriteCount;
     }
     res.send(mixtapes);
+});
+
+
+
+router.get('/search', async (req, res) => {
+    const { query } = req.query;
+    if (!query) return res.status(400).send('missing search query');
+    const results = await Mixtape.find(Mixtape.searchBuilder(query)).lean();
+    res.send(results.filter(mixtape => isAuthorized(req.user, mixtape)));
 });
 
 

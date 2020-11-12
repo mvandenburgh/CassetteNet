@@ -95,7 +95,7 @@ function App() {
                         </Route>
                         <Route exact path="/me" component={ViewProfilePage}/>
                         <Route exact path="/user/:id" component={ViewUserPage}/>
-                        <Route exact path="/SearchResultsPage" component={SearchResultsPage}/>
+                        <Route exact path="/search/:type" component={SearchResultsPage}/>
                         <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
                         <Route path="/*">
                           <Redirect to="/" />

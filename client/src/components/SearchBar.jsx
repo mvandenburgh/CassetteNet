@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, ClickAwayListener, Grid, Grow, MenuItem, MenuList, Paper, Popper, TextField } from '@material-ui/core';
+import { Button, ClickAwayListener, Grid, Grow, InputAdornment, MenuItem, MenuList, Paper, Popper, TextField } from '@material-ui/core';
 import { ArrowDropDown as ArrowDropDownIcon, Search as SearchIcon } from '@material-ui/icons';
-import { Autocomplete } from '@material-ui/lab';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
     search: {
@@ -12,29 +12,6 @@ const useStyles = makeStyles((theme) => ({
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(1),
         width: 'auto',
-      },
-    },
-    searchIcon: {
-      marginRight: '10px',
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      right: 0,
-    },
-    inputRoot: {
-      color: 'inherit',
-    },
-    inputInput: {
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
-        '&:focus': {
-          width: '20ch',
-        },
       },
     },
   }));
@@ -50,7 +27,7 @@ const suggestionsSongs = [
 
 function DropDown(props) {
     const [open, setOpen] = useState(false);
-    const [type, setType] = useState('mixtapes');
+    const { type, setType } = props;
     const anchorRef = useRef(null);
 
     const handleToggle = () => {
@@ -123,29 +100,40 @@ function DropDown(props) {
 
 function SearchBar(props) {
     const classes = useStyles();
+
+    const history = useHistory();
+
     const { showDropdown } = props;
+
+    const [type, setType] = useState('mixtapes');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleSearch = () => {
+      history.push({
+        pathname: `/search/${type}`,
+        search: `?query=${searchQuery}`
+      });
+    }
+
     return (
         <div className={classes.search}>
             <Grid container style={{border: '2px solid black'}}>
-                {showDropdown ? <DropDown /> : undefined}
-                <Autocomplete 
-                size="small"
-                freeSolo 
-                disableClearable
-                options={suggestionsSongs.map((option)=>option.title)}
-                renderInput={(params)=>(
                 <TextField
-                {...params}
-                // label="Search..."
-                variant="filled"
-                InputProps={{ style: { fontSize: '1.5em' }, disableUnderline: true, type: 'search' }}
+                  variant="filled"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment>
+                        {showDropdown ? <DropDown type={type} setType={setType} /> : undefined}
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <SearchIcon onClick={handleSearch} style={{ cursor: 'pointer' }} />
+                    )
+                  }
+                  }
                 />
-                )}
-                />
-                
-                <div className={classes.searchIcon}>
-                    <SearchIcon />
-                </div>
             </Grid>
         </div>
     )

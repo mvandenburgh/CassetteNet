@@ -196,7 +196,7 @@ async function getUser(userId) {
 }
 
 async function queryForMixtapes(query) {
-    const mixtapes = await axios.get(new URL(`/mixtape/searchMixtapes`, SERVER_ROOT_URL).href, { params: query });
+    const mixtapes = await axios.get(new URL(`/mixtape/queryMixtapes`, SERVER_ROOT_URL).href, { params: query });
     return mixtapes.data;
 }
 
@@ -204,6 +204,11 @@ async function queryForMixtapes(query) {
 async function userSearch(searchQuery) {
     const users = await axios.get(new URL('/user/search', SERVER_ROOT_URL).href, { params: { query: searchQuery } });
     return users.data;
+}
+
+async function mixtapeSearch(searchQuery) {
+    const mixtapes = await axios.get(new URL('/mixtape/search', SERVER_ROOT_URL).href, { params: { query: searchQuery } });
+    return mixtapes.data;
 }
 
 function oauthLogin(provider) {
@@ -242,6 +247,7 @@ export {
     adminFillDatabase,
     adminDropDatabase,
     userSearch,
+    mixtapeSearch,
     getAdmins,
     deleteAdmin,
     addAdmin,
