@@ -188,7 +188,7 @@ function SettingsModal(props) {
 
                             <Grid container style={{ marginTop: '1em' }}>
                                 <Grid item xs={10}>
-                                    <UserSearchBar userSelectHandler={selectUser} />
+                                    <UserSearchBar userSelectHandler={selectUser} adminSearchBool={false} />
                                 </Grid>
                                 <Grid item xs={1}>
                                     <Button style={{ marginTop: '1em' }} variant="contained"><AddIcon /></Button>

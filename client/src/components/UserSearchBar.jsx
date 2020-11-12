@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getUser, getUserProfilePictureUrl, userSearch } from '../utils/api';
+import { getAdmins, getUser, getUserProfilePictureUrl, userSearch } from '../utils/api';
 import { debounce } from 'lodash';
 import { CircularProgress, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
@@ -10,7 +10,7 @@ function UserSearchBar(props) {
     const [options, setOptions] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
-
+    const {adminSearchBool} = props;
     const { userSelectHandler } = props;
 
     useEffect(() => {
@@ -19,7 +19,8 @@ function UserSearchBar(props) {
             return; // don't bother calling server if search is empty
         }
         setLoading(true); // make loading circle appear
-        if (searchQuery.charAt(0) === '#') {
+        if(adminSearchBool){
+          if (searchQuery.charAt(0) === '#') {
             getUser(searchQuery)
             .then(res => {
                 if (res) {
@@ -38,6 +39,30 @@ function UserSearchBar(props) {
             })
             .catch(err => alert(err));
         }
+        }
+
+        else{
+
+         if (searchQuery.charAt(0) === '#') {
+            getUser(searchQuery)
+            .then(res => {
+                if (res) {
+                    setOptions([res]);
+                } else {
+                    setOptions([]);
+                }
+                setLoading(false);
+            })
+            .catch(err => alert(err));
+        } else {
+            userSearch(searchQuery)
+            .then(res => {
+                setOptions(res);
+                setLoading(false);
+            })
+            .catch(err => alert(err));
+        }
+      }
     }, [searchQuery]);
 
     const search = (e) => {

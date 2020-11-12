@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useState,useEffect,useContext } from 'react';
 import { Button, Box, Grid, IconButton, Typography, makeStyles, Icon } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import { useHistory } from 'react-router-dom';
@@ -11,7 +11,8 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { AccountCircle as UserProfile } from '@material-ui/icons';
-import { adminFillDatabase, adminDropDatabase } from '../../utils/api';
+import UserSearchBar from '../UserSearchBar';
+import { adminFillDatabase, adminDropDatabase, getAdmins } from '../../utils/api';
 
 function AdminPage(props) {
     const CssTextField = withStyles({
@@ -108,6 +109,13 @@ function AdminPage(props) {
         },
     }));
 
+    const [admins, setAdmins] = useState([]);
+
+    useEffect(async () => {
+        const admins = await getAdmins();
+        setAdmins(admins);
+     }, []);
+
     const suggestedUsers = [
         { name: 'DDrizzy123' },
         { name: 'TempAdmin' },
@@ -130,6 +138,10 @@ function AdminPage(props) {
 
     const dropDatabaseHandler = async () => {
         await adminDropDatabase();
+    }
+
+    const addAdmin = (user) => {
+        
     }
 
     //TODO: Possibly re-align fields
@@ -194,54 +206,22 @@ function AdminPage(props) {
                 <Grid container style={{ marginLeft: '100px' }}>
 
                     <Grid item xs={6}>
-                        <Box id='popular' style={{ width: '100%' }} className={classes.box_container} borderRadius={10} {...containerBorderProps}>
+                        <Box id='popular' style={{ width: '100%' }} className={classes.box_container} borderRadius={12} {...containerBorderProps}>
                             <Typography variant="headline" component="h1">Current Admins</Typography>
-
+                            
                             <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
                                 DDrizzy123
                         </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                TempAdmin
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                TempAdmin12
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                PartyPooper123
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                BobMarley
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                CoolName
-                        </Box>
-                            <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                NoobMaster
-                        </Box>
+                            
                         </Box>
                     </Grid>
                     <Grid item xs={1} />
                     <Grid item xs={3}>
                         <Typography style={{ fontSize: '40px' }} variant="h3">Add An Admin</Typography>
 
-                        <Autocomplete
-                            size="small"
-                            style={{ width: 300 }}
-                            className={classes.inputInput}
-                            freeSolo
-                            disableClearable
-                            options={suggestedUsers.map((option) => option.name)}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    backgroundColor='white'
-                                    label="Search..."
-                                    margin="normal"
-                                    variant="filled"
-                                    InputProps={{ ...params.InputProps, type: 'search' }}
-                                />
-                            )}
-                        />
+                        <Grid item xs={10}>
+                                    <UserSearchBar userSelectHandler={addAdmin} adminSearchBool={true} />
+                        </Grid>
                         <Button
                             variant="outlined"
                             style={{

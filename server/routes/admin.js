@@ -44,5 +44,17 @@ router.post('/dropDatabase', async (req, res) => {
     }
 });
 
+router.get('/getAdmins', async (req, res) => {
+    if (!req.user || !req.user.admin) {
+        return res.status(401).send('unauthorized');
+    }
+    const users = await User.find({ admin: true });
+    return res.send(users.map(user => ({
+        _id: user._id,
+        username: user.username,
+        uniqueId: user.uniqueId,
+    })));
+});
+
 
 module.exports = router;

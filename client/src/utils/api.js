@@ -161,6 +161,16 @@ async function adminFillDatabase() {
 async function adminDropDatabase() {
     await axios.post(new URL('/admin/dropDatabase', SERVER_ROOT_URL).href);    
 }
+async function getAdmins(){
+    const users = await axios.get(new URL('/admin/getAdmins',SERVER_ROOT_URL), { withCredentials: true });
+    return users.data;
+}
+
+async function adminSearch(searchQuery) {
+    const users = await axios.get(new URL('/admin/search', SERVER_ROOT_URL).href, { params: { query: searchQuery } });
+    return users.data;
+}
+
 
 async function getUser(userId) {
     if (userId.charAt(0) === '#') {
@@ -220,4 +230,5 @@ export {
     adminFillDatabase,
     adminDropDatabase,
     userSearch,
+    getAdmins,
 };
