@@ -56,6 +56,10 @@ async function updateMixtape(mixtape) {
     await axios.put(new URL(`/mixtape/${mixtape._id}`, SERVER_ROOT_URL), { mixtape });
 }
 
+async function updateMyMixtapes(mixtapes) {
+    await axios.put(new URL(`/mymixtapes`, SERVER_ROOT_URL), { mixtapes });
+}
+
 async function deleteMixtape(mixtape) {
     console.log(mixtape);
     await axios.delete(new URL(`/mixtape/${mixtape._id}`, SERVER_ROOT_URL), { mixtape });
@@ -226,6 +230,7 @@ export {
     setUsernameOfOAuthAccount,
     verifyUserLoggedIn,
     updateMixtape,
+    updateMyMixtapes,
     oauthLogin,
     userLogin,
     userLogout,
