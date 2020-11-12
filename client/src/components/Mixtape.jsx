@@ -22,7 +22,7 @@ import {
 } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon, Undo as UndoIcon, Cake as CakeIcon } from '@material-ui/icons';
+import { MusicNote as MusicNoteIcon, Settings as SettingsIcon, Edit as EditIcon, PlayCircleFilledWhite as PlayIcon, Delete as DeleteIcon, AddCircle as AddIcon, Save as SaveIcon, Undo as UndoIcon, Redo as RedoIcon } from '@material-ui/icons';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import JSTPSContext from '../contexts/JSTPSContext';
@@ -386,11 +386,11 @@ function Mixtape(props) {
           </Droppable>
         </DragDropContext>
       </Grid>
-      <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => undoHandler()}>
-                <UndoIcon />
+      <Fab color="secondary" style={{position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => simulateTransaction()}> 
+          <RedoIcon />
       </Fab>
-      <Fab color="secondary" style={{    position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => simulateTransaction()}> 
-          <CakeIcon />
+      <Fab color="primary" aria-label="add" style={{position: 'fixed', bottom: '15%', right: '20%',}} onClick={() => undoHandler()}>
+                <UndoIcon />
       </Fab>
     </Box>
   );
