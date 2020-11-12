@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Box, Fab, Grid, List, ListItem, ListItemText } from '@material-ui/core';
 import { Undo as UndoIcon, Cake as CakeIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
-import { getMixtapeCoverImageUrl } from '../utils/api';
+import { getMixtapeCoverImageUrl, updateMyMixtapes } from '../utils/api';
 import JSTPSContext from '../contexts/JSTPSContext';
 import { MixtapePosition_Transaction } from './transactions/MixtapePosition_Transaction';
 
@@ -76,19 +76,21 @@ function MixtapeList(props) {
 
   const undoChangeMixtapePosition = () => {
     console.log("Undo Change Mixtape Position");
+    printMixtapes(mixtapes);
     tps.undoTransaction();
     setMixtapes(mixtapes);
+    printMixtapes(mixtapes);
+    updateMyMixtapes(mixtapes);
   }
 
-    //var fruits = ['apple', 'banana', 'orange', 'mango', 'grapes', 'coconut'];
-
-    const simulateTransaction = () => {
-      console.log("Simulate transaction");
-      // const someFruit = 'kiwi';
-      // const moveSongTransaction = new SongPosition_Transaction(1, 3, someFruit, fruits, fruitsList);
-      // tps.addTransaction(moveSongTransaction);
-      // console.log(tps.toString());
+  const printMixtapes = (mixtapes) => {
+    console.log("PRINT");
+    var str = "";
+    for (var i=0; i < mixtapes.length; i++) {
+      str += i + ": " + mixtapes[i].name + "\n";
     }
+    console.log(str);
+  }
 
   return (
     <Box>
@@ -169,11 +171,8 @@ function MixtapeList(props) {
           )}
         </Droppable>
       </DragDropContext>
-      <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => undoHandler()}>
+      <Fab color="primary" aria-label="add" style={{ position: 'fixed', bottom: '15%', right: '15%',}} onClick={() => undoHandler()}>
                 <UndoIcon />
-      </Fab>
-      <Fab color="secondary" style={{    position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => simulateTransaction()}> 
-          <CakeIcon />
       </Fab>
     </Box>
   );

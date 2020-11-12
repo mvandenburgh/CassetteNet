@@ -52,14 +52,6 @@ export class MixtapePosition_Transaction extends jsTPS_Transaction {
         this.mixtapeList.splice(this.oldPosition, 0, removed);
         this.position = this.oldPosition;
         console.log(this.newPosition + " -> " + this.position);
-        
-        
-            // set new list order
-    // const newArray = [...mixtapes];
-    // const [removed] = newArray.splice(result.source.index, 1);
-    // newArray.splice(result.destination.index, 0, removed);
-
-    // setMixtapes(newArray);
     }
 
     /**
