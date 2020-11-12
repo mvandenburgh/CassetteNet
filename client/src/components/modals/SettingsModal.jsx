@@ -74,6 +74,8 @@ function SettingsModal(props) {
 
     const [unsavedCollaborators, setUnsavedCollaborators] = useState([]);
 
+    const [isPublic, setIsPublic] = useState();
+
     const [editing, setEditing] = useState(false);
 
     const [toDelete, setToDelete] = useState([]);
@@ -81,6 +83,7 @@ function SettingsModal(props) {
     useEffect(() => {
         if (mixtape?.collaborators)
             setUnsavedCollaborators(mixtape.collaborators);
+        setIsPublic(mixtape.isPublic)
     }, [mixtape]);
 
     const handleCheckbox = (collaborator) => {
@@ -124,6 +127,7 @@ function SettingsModal(props) {
     }
 
     const changePublicStatus = () => {
+        setIsPublic(!mixtape.isPublic)
         mixtape.isPublic = !mixtape.isPublic;
         setMixtape(mixtape);
     }
@@ -217,7 +221,7 @@ function SettingsModal(props) {
                         <Grid container justify="center" alignItems="center" style={{ height: '50%' }}>
                             <Grid item xs={12}>
                                 <FormControlLabel
-                                    control={<Switch value={mixtape.isPublic} onChange={changePublicStatus} />}
+                                    control={<Switch checked={isPublic} onChange={changePublicStatus} />}
                                     label="Mixtape Public?"
                                 />
                             </Grid>
