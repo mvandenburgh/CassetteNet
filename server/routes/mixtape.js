@@ -5,6 +5,21 @@ const { Mixtape, User } = require('../models');
 
 const router = express.Router();
 
+/**
+ * Determines whether a given user has permission to view a given mixtape
+ * @param {*} user 
+ * @param {*} mixtape 
+ */
+function isAuthorized(user, mixtape) {
+    if (mixtape.isPublic) return true;
+    if (!user) return false;
+    for (const collaborator of mixtape.collaborators) {
+        if (collaborator.user.equals(user._id)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 router.put('/:id/coverImage', async (req, res) => {
     if (!req.files || !req.files.coverImage) return res.status(400).send('no file uploaded.');
@@ -35,7 +50,7 @@ router.get('/:id/coverImage', async (req, res) => {
 
 
 // executes mongoose query based on query string values
-router.get('/searchMixtapes', async (req, res) => {
+router.get('/queryMixtapes', async (req, res) => {
     let mixtapes = await Mixtape.find(req.query).lean();
     // only return mixtapes the user has permission to view
     if (req.user) {
@@ -58,6 +73,15 @@ router.get('/searchMixtapes', async (req, res) => {
 
 
 
+router.get('/search', async (req, res) => {
+    const { query } = req.query;
+    if (!query) return res.status(400).send('missing search query');
+    const results = await Mixtape.find(Mixtape.searchBuilder(query)).lean();
+    res.send(results.filter(mixtape => isAuthorized(req.user, mixtape)));
+});
+
+
+
 // CREATE MIXTAPE
 router.post('/', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
@@ -73,13 +97,23 @@ router.post('/', async (req, res) => {
 
 // RETRIEVE MIXTAPE
 router.get('/:id', async (req, res) => {
-    const mixtape = await Mixtape.findOne({ _id: (req.params.id) });
-    for (const collaborator of mixtape.collaborators) {
-        const user = await User.findOne({ _id: (collaborator.user) });
-        collaborator.username = user.username;
+    try {
+        const mixtape = await Mixtape.findOne({ _id: (req.params.id) }).lean();
+        if (!mixtape) return res.status(404).send('not found'); // if mixtape doesn't exist
+        if (!mixtape.isPublic) { // if mixtape isn't public, make sure this user is authorized to view it
+            if (!req.user) return res.status(401).send('unauthorized');
+            for (const collaborator of mixtape.collaborators) {
+                if (collaborator.user.equals(req.user._id)) {
+                    return res.send(mixtape);
+                }
+            }
+            // if the user wasn't found in collaboraters, they aren't allowed to view the mixtape
+            return res.status(401).send('unauthorized');
+        }
+        return res.send(mixtape);
+    } catch(err) {
+        res.status(400).send(err);
     }
-    delete mixtape.coverImage;
-    return res.send(mixtape);
 });
 
 // UPDATE MIXTAPE

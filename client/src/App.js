@@ -23,7 +23,7 @@ import ViewProfilePage from './components/pages/ViewProfilePage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
 import FollowedUsersPage from './components/pages/FollowedUsersPage';
 import AnonymousMixtapesPage from './components/pages/AnonymousMixtapesPage';
-import SearchResultsPage from './components/pages/SearchResults';
+import MixtapeSearchResultsPage from './components/pages/MixtapeSearchResultsPage';
 import AdminPage from './components/pages/AdminPage';
 import VerifyAccountPage from './components/pages/VerifyAccountPage';
 import VerifyLoginPage from './components/pages/VerifyLoginPage';
@@ -95,7 +95,7 @@ function App() {
                         </Route>
                         <Route exact path="/me" component={ViewProfilePage}/>
                         <Route exact path="/user/:id" component={ViewUserPage}/>
-                        <Route exact path="/SearchResultsPage" component={SearchResultsPage}/>
+                        <Route exact path="/search/mixtapes" component={MixtapeSearchResultsPage}/>
                         <Route exact path="/listeningroom" component={ListeningRoomPage} /> {/* temporary route for listening room testing */}
                         <Route path="/*">
                           <Redirect to="/" />

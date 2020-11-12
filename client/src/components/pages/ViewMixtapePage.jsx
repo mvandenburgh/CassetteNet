@@ -25,6 +25,8 @@ import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName
 import { Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import MixtapeCoverImageUploadModal from '../modals/MixtapeCoverImageUploadModal';
+import ShareMixtapeModal from '../modals/ShareMixtapeModal';
+import UserContext from '../../contexts/UserContext';
 import humanizeDuration from 'humanize-duration';
 
 const usePrevious = (value) => {
@@ -38,7 +40,7 @@ const usePrevious = (value) => {
 
 function ViewMixtapePage(props) {
     const history = useHistory();
-    const goBack = () => { history.push('/') }
+    const goBack = () => history.goBack();
 
     const [mixtape, setMixtape] = useState(null);
     const [textFieldValue, setTextFieldValue] = useState('');
@@ -66,8 +68,12 @@ function ViewMixtapePage(props) {
 
     const [changeMixtapeNamePopupIsOpen, setChangeMixtapeNamePopupIsOpen] = useState(false); // whether add song popup is open
 
+    const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
+    const [shareMixtapePopupIsOpen, setShareMixtapePopupIsOpen] = useState(false);
+
+    // watch for changes to mixtape and update server accordingly
     const prevMixtape = usePrevious(mixtape);
-    useEffect(()=>{
+    useEffect(async ()=> {
         if (
             !_.isEqual(
                 prevMixtape,
@@ -96,21 +102,23 @@ function ViewMixtapePage(props) {
         }
     }, [mixtape, prevMixtape]);
 
+    // fetch mixtape from server
     useEffect(async () => {
-        if (permissions && mixtape) {
-            const newMixtape = { ...mixtape };
-            permissions.forEach((permission, i) => {
-                if (newMixtape.collaborators.length < (i+1)) {
-                    newMixtape.collaborators.push(permissionUserList[i]);
-                }
-                if (newMixtape.collaborators[i])
-                    newMixtape.collaborators[i].permissions = permission;
-            });
-            setMixtape(newMixtape);
-            await updateMixtape(newMixtape);
-            console.log(newMixtape);
+        const initialMixtape = await getMixtape(props.match.params.id);
+        if (!initialMixtape) {
+            history.push('/');
+            return;
         }
-    }, [permissions]);
+        const durations = initialMixtape.songs.map(song => song.duration);
+        if (durations.length > 0) {
+            initialMixtape.duration = durations.reduce((total, current) => total + current);
+        } else {
+            initialMixtape.duration = 0;
+        }
+        setMixtape(initialMixtape);
+        setCoverImageUrl(getMixtapeCoverImageUrl(initialMixtape._id));
+    }, []);
+
 
     const handleChangeMixtapeNamePopup = () => {
         const currentValue = changeMixtapeNamePopupIsOpen;
@@ -159,6 +167,11 @@ function ViewMixtapePage(props) {
 
     return (
         <div>
+            <ShareMixtapeModal
+                mixtape={mixtape}
+                open={shareMixtapePopupIsOpen}
+                setOpen={setShareMixtapePopupIsOpen}
+            />
             <MixtapeCoverImageUploadModal coverImageUrl={coverImageUrl} setCoverImageUrl={setCoverImageUrl} mixtape={mixtape} setMixtape={setMixtape} open={uploadCoverImagePopup} setOpen={setUploadCoverImagePopup} />
             <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
                 <ArrowBackIcon />
@@ -216,7 +229,7 @@ function ViewMixtapePage(props) {
                 </Box>
             </Paper>
             <Grid container justify="center">
-                <Mixtape permissionUserList={permissionUserList} setPermissionUserList={setPermissionUserList} permissions={permissions} setPermissions={setPermissions} enableEditing={true} isEditing={isEditing} setIsEditing={setIsEditing} mixtape={mixtape} setMixtape={setMixtape} />
+                <Mixtape enableEditing={true} isEditing={isEditing} setIsEditing={setIsEditing} mixtape={mixtape} setMixtape={setMixtape} />
             </Grid>
         </div>
     )

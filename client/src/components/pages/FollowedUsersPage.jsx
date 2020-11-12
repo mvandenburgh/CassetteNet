@@ -48,34 +48,6 @@ function FollowedUsersPage(props) {
     searchButtonColor: lightBlue[700],
   }
 
-
-
-  var theirFollowedUsers = [
-    {
-      name: 'purplefish313',
-      id: '5469',
-      last_seen: '10/1/2020',
-      user_since: '9/28/2020',
-      followers: '112',
-      pfp: dio_pfp
-    },
-    {
-      name: 'biglion179',
-      id: '9443',
-      last_seen: '10/25/2020',
-      user_since: '10/14/2020',
-      followers: '32',
-      pfp: donna_pfp
-    },
-    {
-      name: 'silverpanda429',
-      id: '2201',
-      last_seen: '10/27/2020',
-      user_since: '9/13/2020',
-      followers: '93',
-      pfp: pepe_pfp
-    },
-  ]
   const suggestedUsers = [
     { name: 'DDrizzy123' },
     { name: 'TempAdmin' },

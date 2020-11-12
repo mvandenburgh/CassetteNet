@@ -56,7 +56,7 @@ router.put('/favoriteMixtape', async (req, res) => {
     const { id } = req.body;
     const user = await User.findOne({ _id: req.user._id });
     if (!user.favoritedMixtapes.includes(id)) {
-        user.favoritedMixtapes.push(id);
+        user.favoritedMixtapes.push(Types.ObjectId(id));
         await user.save();
     }
     return res.send(user.favoritedMixtapes);

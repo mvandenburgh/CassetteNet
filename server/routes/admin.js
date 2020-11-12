@@ -45,5 +45,51 @@ router.post('/dropDatabase', async (req, res) => {
     }
 });
 
+router.get('/getAdmins', async (req, res) => {
+    if (!req.user || !req.user.admin) {
+        return res.status(401).send('unauthorized');
+    }
+    const users = await User.find({ admin: true });
+    return res.send(users.map(user => ({
+        _id: user._id,
+        username: user.username,
+        uniqueId: user.uniqueId,
+    })));
+});
+
+router.put('/deleteAdmin', async(req,res)=>{
+    if (!req.user || !req.user.admin) {
+        return res.status(401).send('unauthorized');
+    }
+    const { userId } = req.body;
+    console.log(req.body);
+    const user = await User.findOne({ _id: userId });
+
+    console.log("hi");
+    console.log(userId);
+    if (user.admin == true ){
+        user.admin = false;
+        await user.save();
+    }
+    return res.send(user._id);
+});
+
+router.put('/addAdmin', async(req,res)=>{
+    if (!req.user || !req.user.admin) {
+        return res.status(401).send('unauthorized');
+    }
+    const { userId } = req.body;
+    console.log(req.body);
+    const user = await User.findOne({ _id: userId });
+
+    console.log("hi");
+    console.log(userId);
+    if (user.admin == false ){
+        user.admin = true;
+        await user.save();
+    }
+    return res.send(user._id);
+});
+
 
 module.exports = router;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     Backdrop,
     Button,
+    Checkbox,
     Fade,
     FormControlLabel,
     Grid,
@@ -14,16 +15,14 @@ import {
     TableBody,
     TableContainer,
     TableCell,
-    TableHead,
     TableRow,
     Typography,
-    TextField,
 } from '@material-ui/core';
-import { AddCircle as AddIcon, Warning as WarningIcon, Save as SaveIcon } from '@material-ui/icons';
+import { AddCircle as AddIcon, Warning as WarningIcon, Check as DoneIcon, Edit as EditIcon, DeleteForever as DeleteIcon } from '@material-ui/icons';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import UserSearchBar from '../UserSearchBar';
-import { deleteMixtape } from '../../utils/api';
+import { deleteMixtape, updateMixtape } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
 
 
@@ -62,31 +61,70 @@ const StyledTableRow = withStyles((theme) => ({
 function SettingsModal(props) {
     const classes = useStyles();
 
-    const { 
+    const {
         mixtape,
         setMixtape,
         settingsPopupIsOpen,
         handleSettingsPopup,
-        permissions,
-        setPermissions,
-        permissionUserList,
-        setPermissionUserList,
+        user,
     } = props;
 
     const history = useHistory();
 
     const [roleSelectOpen, setRoleSelectOpen] = useState(null);
 
-    const [unsavedPermissions, setUnsavedPermissions] = useState([]);
+    const [unsavedCollaborators, setUnsavedCollaborators] = useState([]);
 
-    const [userToAdd, setUserToAdd] = useState(null);
+    const [isPublic, setIsPublic] = useState();
 
-    useEffect(() => setUnsavedPermissions(permissions), [permissions]);
+    const [editing, setEditing] = useState(false);
+
+    const [toDelete, setToDelete] = useState([]);
+
+    useEffect(() => {
+        if (mixtape?.collaborators)
+            setUnsavedCollaborators(mixtape.collaborators);
+        setIsPublic(mixtape.isPublic)
+    }, [mixtape]);
+
+    const canEdit = () => {
+        for (const collaborator of mixtape.collaborators) {
+            if (collaborator.user === user._id) {
+                if (collaborator.permissions === 'viewer')  {
+                    return false;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const isOnlyOwner = () => {
+        let ownerCount = 0;
+        for (const collaborator of mixtape.collaborators) {
+            if (collaborator.permissions === 'owner')  {
+                ownerCount++;
+                if (ownerCount > 1) return false;
+            }
+        }
+        return true;
+    }
+
+    const handleCheckbox = (collaborator) => {
+        const newToDelete = [...toDelete];
+        newToDelete.push(collaborator.user);
+        setToDelete(newToDelete);
+    }
+
+    const handleClickGarbage = () => {
+        const newCollaborators = [...unsavedCollaborators].filter(c => !toDelete.includes(c.user));
+        setUnsavedCollaborators(newCollaborators);
+    }
 
     const handleRoleChange = (event, index) => {
-        const newPermissions = [...unsavedPermissions];
-        newPermissions[index] = event.target.value;
-        setUnsavedPermissions(newPermissions);
+        const newCollaborators = [...unsavedCollaborators];
+        newCollaborators[index].permissions = event.target.value;
+        setUnsavedCollaborators(newCollaborators);
     };
 
     const handleDeleteMixtape = async (mixtape) => {
@@ -94,37 +132,41 @@ function SettingsModal(props) {
         history.goBack();
     };
 
-    const showSaveIcon = () => {
-        if (unsavedPermissions.length !== permissions.length) {
-            return true;
-        }
-        for (let i = 0; i < permissions.length; i++) {
-            if (unsavedPermissions[i] !== permissions[i]) {
-                return true;
-            }
-        }
-        return false;
+    const showDoneIcon = () => {
+        return mixtape?.collaborators.length !== unsavedCollaborators.length || editing;
     };
 
-    const savePermissions = () => setPermissions(unsavedPermissions);
+    const savePermissions = () => {
+        setEditing(false);
+        mixtape.collaborators = unsavedCollaborators;
+        setMixtape(mixtape);
+        updateMixtape(mixtape);
+    }
 
-    const selectUser = (user) => {
-        const newPermissions = [...permissions];
-        const newPermissionUsers = [...permissionUserList];
-        newPermissionUsers.push({
-            username: user.username,
-            user: user._id,
-        });
-        newPermissions.push('viewer');
-        setPermissions(newPermissions);
-        setPermissionUserList(newPermissionUsers);
+    const selectUser = (newUser) => {
+        if (!newUser) return;
+        const newCollaborators = [...unsavedCollaborators];
+        const { username, _id } = newUser;
+        newCollaborators.push({ username, user: _id, permissions: 'viewer' });
+        setUnsavedCollaborators(newCollaborators);
+    }
+
+    const changePublicStatus = () => {
+        setIsPublic(!mixtape.isPublic)
+        mixtape.isPublic = !mixtape.isPublic;
+        setMixtape(mixtape);
+    }
+
+    const handleModalClose = () => {
+        setRoleSelectOpen(false);
+        handleSettingsPopup();
     }
 
     return (
         <Modal
             className={classes.modal}
             open={settingsPopupIsOpen}
-            onClose={handleSettingsPopup}
+            onClose={handleModalClose}
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
@@ -143,35 +185,46 @@ function SettingsModal(props) {
                     <Grid item xs={1} />
                     <Grid item xs={4} style={{ height: '70%' }}>
                         <Grid container style={{ height: '80%' }} >
-                            <Typography align="center" variant="h5">Permissions</Typography>
-                            <Grid item xs={12} style={{ borderRadius: '2%', overflow: 'auto', maxHeight: '100%' }}>
+                            <Grid item xs={12}>
+                                <Typography align="center" variant="h5">Permissions</Typography>
+                            </Grid>
+                            <Grid container style={{ borderRadius: '2%', backgroundColor: 'black' }}>
+                                <Grid item xs={5}>
+                                    <Typography style={{ color: 'white' }} align="center" variant="h6">User</Typography>
+                                </Grid>
+                                <Grid item xs={1} />
+                                <Grid item xs={4}>
+                                    <Typography style={{ color: 'white' }} align="center" variant="h6">Role</Typography>
+                                </Grid>
+                                <Grid item xs={1}>
+                                    {editing ?
+                                        <DeleteIcon align="right" style={{ color: 'white' }} onClick={handleClickGarbage} />
+                                        :
+                                        canEdit() ?
+                                        <EditIcon align="right" style={{ color: 'white' }} onClick={() => setEditing(true)} />
+                                        :
+                                        undefined
+                                    }
+                                </Grid>
+                                <Grid item xs={1} style={{ display: showDoneIcon() ? '' : 'none' }}>
+                                    <DoneIcon align="right" style={{ color: 'white' }} onClick={savePermissions} />
+                                </Grid>
+                            </Grid>
+                            <Grid item xs={12} style={{ overflow: 'auto', maxHeight: '100%' }}>
                                 <TableContainer component={Paper}>
                                     <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <StyledTableCell>User</StyledTableCell>
-                                                <StyledTableCell>
-                                                    <Grid container>
-                                                        <Grid item xs={10}>
-                                                            <span>Role</span>
-                                                        </Grid>
-                                                        <Grid item xs={2} style={{ display: showSaveIcon() ? '' : 'none' }}>
-                                                            <SaveIcon onClick={savePermissions} />
-                                                        </Grid>
-                                                    </Grid>
-                                                </StyledTableCell>
-                                            </TableRow>
-                                        </TableHead>
                                         <TableBody>
-                                            {mixtape?.collaborators.map((collaborator, index) => (
+                                            {unsavedCollaborators.map((collaborator, index) => (
                                                 <StyledTableRow key={index}>
+                                                    {editing ? <StyledTableCell><Checkbox onChange={() => handleCheckbox(collaborator)} /></StyledTableCell> : undefined}
                                                     <StyledTableCell>{collaborator?.username}</StyledTableCell>
                                                     <StyledTableCell>
                                                         <Select
+                                                            disabled={!editing || !canEdit() || (unsavedCollaborators[index]?.permissions === 'owner' && isOnlyOwner())}
                                                             open={roleSelectOpen}
                                                             onClose={() => setRoleSelectOpen(false)}
                                                             onOpen={() => setRoleSelectOpen(true)}
-                                                            value={unsavedPermissions[index]}
+                                                            value={unsavedCollaborators[index]?.permissions}
                                                             onChange={(e) => handleRoleChange(e, index)}
                                                         >
                                                             <MenuItem value={'owner'}>Owner</MenuItem>
@@ -188,7 +241,7 @@ function SettingsModal(props) {
 
                             <Grid container style={{ marginTop: '1em' }}>
                                 <Grid item xs={10}>
-                                    <UserSearchBar userSelectHandler={selectUser} />
+                                    <UserSearchBar userSelectHandler={selectUser} adminSearchBool={false} />
                                 </Grid>
                                 <Grid item xs={1}>
                                     <Button style={{ marginTop: '1em' }} variant="contained"><AddIcon /></Button>
@@ -202,23 +255,26 @@ function SettingsModal(props) {
                         <Grid container justify="center" alignItems="center" style={{ height: '50%' }}>
                             <Grid item xs={12}>
                                 <FormControlLabel
-                                    control={<Switch checked={true} onChange={() => undefined} name="checkedA" />}
+                                    control={<Switch disabled={!canEdit()} checked={isPublic} onChange={changePublicStatus} />}
                                     label="Mixtape Public?"
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container justify="center" alignItems="center">
-                            <Grid item xs={12}>
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={() => handleDeleteMixtape(mixtape)}
-                                    startIcon={<WarningIcon />}
-                                >
-                                    Delete Mixtape
-                              </Button>
+                        {canEdit() ?
+                            <Grid container justify="center" alignItems="center">
+                                <Grid item xs={12}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={() => handleDeleteMixtape(mixtape)}
+                                        startIcon={<WarningIcon />}
+                                    >
+                                        Delete Mixtape
+                                </Button>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                            : undefined
+                        }
                     </Grid>
                     <Grid item xs={1} />
                 </Grid>

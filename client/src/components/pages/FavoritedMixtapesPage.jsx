@@ -12,18 +12,26 @@ function FavoritedMixtapesPage(props) {
     if (!user.isLoggedIn) {
         user = JSON.parse(localStorage.getItem('user'));
     }
-    const [mixtapes, setMixtapes] = useState([]);
+    const [mixtapes, setMixtapes] = useState(null);
     const { _id } = user;
     useEffect(() => {
         async function getMixtapes() {
-            const updatedMixtapes = await getFavoritedMixtapes(_id);
-            setMixtapes(updatedMixtapes);
+            const updatedMixtapes = await getFavoritedMixtapes(_id);           
+            if (!updatedMixtapes) {
+                setMixtapes([]);
+            } else {
+                setMixtapes(updatedMixtapes);
+            }
         }
         getMixtapes();
-     }, [])
+     }, []);
 
     const history = useHistory();
-    const goBack = () => { history.push('/') }
+    const goBack = () => history.goBack();
+
+    if (!mixtapes) {
+        return null;
+    }
 
     return (
         <div style={{ color: 'white', left: 0 }}>

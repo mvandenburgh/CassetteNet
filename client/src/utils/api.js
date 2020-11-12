@@ -12,6 +12,12 @@ try {
     SERVER_ROOT_URL = new URL('http://localhost:5000/');
 }
 
+let CLIENT_ROOT_URL;
+try {
+    CLIENT_ROOT_URL = new URL(process.env.REACT_APP_CLIENT_ROOT_URL);
+} catch (err) {
+    CLIENT_ROOT_URL = new URL('http://localhost:3000/');
+}
 
 // These functions return test data from local JSON files
 // for now. In the future they should make requests to an 
@@ -44,8 +50,12 @@ async function getMyMixtapes(_id) {
  * @param {*} _id mixtape _id
  */
 async function getMixtape(_id) {
-    const mixtape = await axios.get(new URL(`/mixtape/${_id}`, SERVER_ROOT_URL));
-    return mixtape.data;
+    try {
+        const mixtape = await axios.get(new URL(`/mixtape/${_id}`, SERVER_ROOT_URL));
+        return mixtape.data;
+    } catch (err) {
+        return null;
+    }
 }
 
 async function updateMixtape(mixtape) {
@@ -165,7 +175,20 @@ async function adminFillDatabase() {
 async function adminDropDatabase() {
     await axios.post(new URL('/admin/dropDatabase', SERVER_ROOT_URL).href);    
 }
+async function getAdmins(){
+    const users = await axios.get(new URL('/admin/getAdmins',SERVER_ROOT_URL), { withCredentials: true });
+    return users.data;
+}
 
+async function deleteAdmin(userId) {
+    const users = await axios.put(new URL('/admin/deleteAdmin', SERVER_ROOT_URL), { userId });
+    return users.data;
+}
+
+async function addAdmin(userId) {
+    const users = await axios.put(new URL('/admin/addAdmin', SERVER_ROOT_URL), { userId });
+    return users.data;
+}
 async function getUser(userId) {
     if (userId.charAt(0) === '#') {
         if (userId.length === 5) {
@@ -179,7 +202,7 @@ async function getUser(userId) {
 }
 
 async function queryForMixtapes(query) {
-    const mixtapes = await axios.get(new URL(`/mixtape/searchMixtapes`, SERVER_ROOT_URL).href, { params: query });
+    const mixtapes = await axios.get(new URL(`/mixtape/queryMixtapes`, SERVER_ROOT_URL).href, { params: query });
     return mixtapes.data;
 }
 
@@ -189,8 +212,17 @@ async function userSearch(searchQuery) {
     return users.data;
 }
 
+async function mixtapeSearch(searchQuery) {
+    const mixtapes = await axios.get(new URL('/mixtape/search', SERVER_ROOT_URL).href, { params: { query: searchQuery } });
+    return mixtapes.data;
+}
+
 function oauthLogin(provider) {
     window.location.href = new URL(`/auth/${provider}`, SERVER_ROOT_URL).href;
+}
+
+function getMixtapeUrl(mixtapeId) {
+    return new URL(`/mixtape/${mixtapeId}`, CLIENT_ROOT_URL).href;
 }
 
 export {
@@ -201,6 +233,7 @@ export {
     getUser,
     getUsername,
     getMixtape,
+    getMixtapeUrl,
     getMixtapeCoverImageUrl,
     getUserProfilePictureUrl,
     getMyMixtapes,
@@ -225,4 +258,8 @@ export {
     adminFillDatabase,
     adminDropDatabase,
     userSearch,
+    mixtapeSearch,
+    getAdmins,
+    deleteAdmin,
+    addAdmin,
 };
