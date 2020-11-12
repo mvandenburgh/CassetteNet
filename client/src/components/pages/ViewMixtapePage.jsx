@@ -64,7 +64,7 @@ function ViewMixtapePage(props) {
     const [uploadCoverImagePopup, setUploadCoverImagePopup] = useState(false);
     const [coverImageUrl, setCoverImageUrl] = useState(null);
 
-    const [changeMixtapeNamePopupIsOpen, setchangeMixtapeNamePopupIsOpen] = useState(false); // whether add song popup is open
+    const [changeMixtapeNamePopupIsOpen, setChangeMixtapeNamePopupIsOpen] = useState(false); // whether add song popup is open
 
     const prevMixtape = usePrevious(mixtape);
     useEffect(()=>{
@@ -89,9 +89,9 @@ function ViewMixtapePage(props) {
                         { username: c.username, user: c.user }
                     )));
                 }
-                console.log(updatedMixtape);
                 setMixtape(updatedMixtape);
                 setCoverImageUrl(getMixtapeCoverImageUrl(updatedMixtape._id));
+                setTextFieldValue(updatedMixtape.name)
             });
         }
     }, [mixtape, prevMixtape]);
@@ -113,8 +113,10 @@ function ViewMixtapePage(props) {
     }, [permissions]);
 
     const handleChangeMixtapeNamePopup = () => {
-        setchangeMixtapeNamePopupIsOpen(!changeMixtapeNamePopupIsOpen);
-        onSave();
+        const currentValue = changeMixtapeNamePopupIsOpen;
+        setChangeMixtapeNamePopupIsOpen(!changeMixtapeNamePopupIsOpen);
+        if (changeMixtapeNamePopupIsOpen)
+            onSave();
     };
 
     const handleChangeName = (e) => {
@@ -124,7 +126,7 @@ function ViewMixtapePage(props) {
         }
     }
 
-    const onSave = async () => {
+    const onSave = () => {
         const changeMixtapeNameTransaction = new ChangeMixtapeName_Transaction(mixtape.name, textFieldValue, mixtape);
         tps.addTransaction(changeMixtapeNameTransaction);
         updateMixtape(mixtape);
@@ -151,6 +153,7 @@ function ViewMixtapePage(props) {
         tps.undoTransaction();
         setMixtape(mixtape);
         updateMixtape(mixtape);
+        setChangeMixtapeNamePopupIsOpen(false)
       }
 
 
@@ -171,7 +174,7 @@ function ViewMixtapePage(props) {
                         </DialogContentText>
                         <TextField
                             onChange={handleChangeName}
-                            defaultValue={mixtape?.name}
+                            value={textFieldValue}
                             variant="filled"
                             InputProps={{ style: { fontSize: '1.5em' }, disableUnderline: false, type: 'search' }}
                         />

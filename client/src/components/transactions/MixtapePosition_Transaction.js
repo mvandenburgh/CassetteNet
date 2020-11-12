@@ -7,8 +7,7 @@ import {jsTPS_Transaction} from "../../utils/jsTPS.js"
  * can be stored in the jsTPS transaction stack and must be constructed
  * with all the data necessary to perform both do and undo.
  * 
- * @author THE McKilla Gorilla (accept no imposters)
- * @version 1.0
+ * 
  */
 export class MixtapePosition_Transaction extends jsTPS_Transaction {
     /**
