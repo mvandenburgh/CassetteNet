@@ -30,7 +30,7 @@ import { useHistory } from 'react-router-dom';
 import SettingsModal from './modals/SettingsModal';
 import YoutubeSongSearchBar from './YoutubeSongSearchBar';
 import { SongPosition_Transaction } from './transactions/SongPosition_Transaction';
-import tps from '../App';
+import { DeleteSong_Transaction } from './transactions/DeleteSong_Transaction';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
@@ -115,6 +115,8 @@ function Mixtape(props) {
 
   const deleteSongs = () => {
     const newSongs = mixtape.songs.filter(song => !songsToDelete.includes(song.id));
+    const deleteSongTransaction = new DeleteSong_Transaction(mixtape.songs, newSongs, mixtape);
+    tps.addTransaction(deleteSongTransaction);
     mixtape.songs = newSongs;
     setMixtape(mixtape);
     setSongsToDelete([]);
@@ -150,13 +152,42 @@ function Mixtape(props) {
     setPlaying(false);
   }
 
-  const undoAction = () => {
-    console.log("Undo the action");
-    console.log("Mixtape before undo:\n\t" + toString());
+  const undoHandler = () => {
+    var theName = tps.transactions[tps.getSize()-1].constructor.name
+    console.log("Top of transaction stack: " + theName);
+
+    if(tps.getSize() > 0) {
+      switch (theName) {
+        case "SongPosition_Transaction":
+          undoChangeSongPosition();
+          break;
+        case "DeleteSong_Transaction":
+          undoDeleteSong();
+          break;
+        case 2:
+           //day = "Tuesday";
+          break;
+        case 3:
+          //day = "Wednesday";
+          break;
+        case 4:
+          //day = "Thursday";
+          break;
+        case 5:
+          //day = "Friday";
+          break;
+        case 6:
+          //day = "Saturday";
+        default:
+          console.log("Unknown transaction.");
+      }
+    }
+  }
+
+  const undoChangeSongPosition = () => {
+    console.log("Undo Change Song Position");
     tps.undoTransaction();
     setMixtape(mixtape);
-    console.log("Mixtape after undo:\n\t" + toString());
-    console.log(tps.toString());
     updateMixtape(mixtape);
     setCurrentSong({
       mixtape: currentSong.mixtape,
@@ -165,7 +196,14 @@ function Mixtape(props) {
     });
   }
 
-  var fruits = ['apple', 'banana', 'orange', 'mango', 'grapes', 'coconut'];
+  const undoDeleteSong = () => {
+    console.log("Undo Delete Song");
+    tps.undoTransaction();
+    setMixtape(mixtape);
+    setSongsToDelete([]);
+  }
+
+  //var fruits = ['apple', 'banana', 'orange', 'mango', 'grapes', 'coconut'];
 
   const simulateTransaction = () => {
     console.log("Simulate transaction");
@@ -335,7 +373,7 @@ function Mixtape(props) {
           </Droppable>
         </DragDropContext>
       </Grid>
-      <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => undoAction()}>
+      <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => undoHandler()}>
                 <UndoIcon />
       </Fab>
       <Fab color="secondary" style={{    position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => simulateTransaction()}> 
