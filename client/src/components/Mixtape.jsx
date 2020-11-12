@@ -33,6 +33,7 @@ import SettingsModal from './modals/SettingsModal';
 import SongSearchBar from './SongSearchBar';
 import { SongPosition_Transaction } from './transactions/SongPosition_Transaction';
 import { DeleteSong_Transaction } from './transactions/DeleteSong_Transaction';
+import { AddSong_Transaction } from './transactions/AddSong_Transaction';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
@@ -139,6 +140,8 @@ function Mixtape(props) {
     const duration = await getSongDuration(apiToUse, songToAdd.id);
     songToAdd.duration = duration;
     newSongs.push(songToAdd);
+    const addSongTransaction = new AddSong_Transaction(mixtape.songs, newSongs, mixtape);
+    tps.addTransaction(addSongTransaction);
     mixtape.songs = newSongs;
     setMixtape(mixtape);
     setSongToAdd({});
@@ -166,8 +169,8 @@ function Mixtape(props) {
         case "DeleteSong_Transaction":
           undoDeleteSong();
           break;
-        case 2:
-           //day = "Tuesday";
+        case "AddSong_Transaction":
+           undoAddSong();
           break;
         case 3:
           //day = "Wednesday";
@@ -203,6 +206,13 @@ function Mixtape(props) {
     tps.undoTransaction();
     setMixtape(mixtape);
     setSongsToDelete([]);
+  }
+
+  const undoAddSong = () => {
+    console.log("Undo Add Song");
+    tps.undoTransaction();
+    setMixtape(mixtape);
+    setSongToAdd({});
   }
 
   //var fruits = ['apple', 'banana', 'orange', 'mango', 'grapes', 'coconut'];
