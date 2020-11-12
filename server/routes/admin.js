@@ -57,5 +57,18 @@ router.get('/getAdmins', async (req, res) => {
     })));
 });
 
+router.get('/deleteAdmin',async(req,res)=>{
+    if (!req.user || !req.user.admin) {
+        return res.status(401).send('unauthorized');
+    }
+    const { id } = req.body;
+    const user = await User.findOne({ _id: id });
+    if (user.admin == true ){
+        user.admin == false;
+        await user.save();
+    }
+    return res.send(user._id);
+})
+
 
 module.exports = router;

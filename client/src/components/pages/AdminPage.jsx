@@ -1,5 +1,5 @@
 import React, { useState,useEffect,useContext } from 'react';
-import { Button, Box, Grid, IconButton, Typography, makeStyles, Icon } from '@material-ui/core';
+import { Button, List, Box, Grid, IconButton, Typography, makeStyles, Icon } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import { useHistory } from 'react-router-dom';
 import blueGrey from '@material-ui/core/colors/blueGrey';
@@ -10,9 +10,10 @@ import pfp from '../../images/bottle_pfp.jpg';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { AccountCircle as UserProfile } from '@material-ui/icons';
+import {AccountCircle as UserProfile } from '@material-ui/icons';
+import DeleteIcon from '@material-ui/icons/Delete';
 import UserSearchBar from '../UserSearchBar';
-import { adminFillDatabase, adminDropDatabase, getAdmins } from '../../utils/api';
+import { adminFillDatabase, adminDropDatabase, getAdmins, deleteAdmin } from '../../utils/api';
 
 function AdminPage(props) {
     const CssTextField = withStyles({
@@ -141,8 +142,12 @@ function AdminPage(props) {
         await adminDropDatabase();
     }
 
-    const addAdmin = (user) => {
+    const addAdminHandler = (user) => {
         
+    }
+    const deleteAdminHandler = async(admin)=>{
+        console.log(admin);
+        await deleteAdmin(admin._id);
     }
 
     //TODO: Possibly re-align fields
@@ -209,11 +214,19 @@ function AdminPage(props) {
                     <Grid item xs={6}>
                         <Box id='popular' style={{ width: '100%' }} className={classes.box_container} borderRadius={12} {...containerBorderProps}>
                             <Typography variant="headline" component="h1">Current Admins</Typography>
+                            <List>
                             {admins.map(admin => (
-                                <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                    <p>{admin.username}</p>
+                                <div onClick={()=>deleteAdmin(admin)}>
+
+                                    <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
+                                        <p>{admin.username}</p>  
+                                    <Box> <DeleteIcon onClick={deleteAdminHandler}/> </Box>
                                 </Box>
+                                </div>
+                                
                             ))}
+                            </List>
+                            
                         </Box>
                     </Grid>
                     <Grid item xs={1} />
@@ -221,7 +234,7 @@ function AdminPage(props) {
                         <Typography style={{ fontSize: '40px' }} variant="h3">Add An Admin</Typography>
                         <br/>
                         <Grid item xs={10}>
-                                    <UserSearchBar userSelectHandler={addAdmin} adminSearchBool={true} />
+                                    <UserSearchBar userSelectHandler={addAdminHandler} adminSearchBool={true} />
                         </Grid>
                         <Button
                             variant="outlined"

@@ -170,7 +170,10 @@ async function adminSearch(searchQuery) {
     const users = await axios.get(new URL('/admin/search', SERVER_ROOT_URL).href, { params: { query: searchQuery } });
     return users.data;
 }
-
+async function deleteAdmin(userId) {
+    const users = await axios.get(new URL('/admin/deleteAdmin', SERVER_ROOT_URL).href, { id: userId, withCredentials: true });
+    return users.data;
+}
 
 async function getUser(userId) {
     if (userId.charAt(0) === '#') {
@@ -231,4 +234,5 @@ export {
     adminDropDatabase,
     userSearch,
     getAdmins,
+    deleteAdmin,
 };
