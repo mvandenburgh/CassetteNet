@@ -6,13 +6,7 @@ const MongoDBStore = require('connect-mongodb-session')(session); // stores sess
 const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
-
-// import user model (needed for passport config)
-const { User } = require('./models');
+const passport = require('./auth/passport');
 
 // import routes
 const adminRoute = require('./routes/admin');
@@ -51,48 +45,6 @@ app.use(session({ // initialize login sessions
     },
     store,
 }));
-
-// use static authenticate method of model in LocalStrategy
-passport.use(new LocalStrategy(User.authenticate()));
-passport.use(
-    new GoogleStrategy({
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: '/auth/google/redirect',
-    }, async (accessToken, refreshToken, profile, done) => {
-        const user = await User.findOne({ email: profile.emails[0].value });
-        if (user) {
-            done(null, user);
-        } else {
-            const newUser = await new User({ email: profile.emails[0].value }).save();
-            done(null, newUser);
-        }
-    })
-);
-passport.use(
-    new FacebookStrategy({
-        clientID: process.env.FACEBOOK_CLIENT_ID,
-        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-        callbackURL: '/auth/facebook/redirect',
-        profileFields: ['id', 'emails', 'name']
-    }, async (accessToken, refreshToken, profile, done) => {
-        const user = await User.findOne({ email: profile.emails[0].value });
-        if (user) {
-            done(null, user);
-        } else {
-            const newUser = await new User({ email: profile.emails[0].value }).save();
-            done(null, newUser);
-        }
-    })
-);
-
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-passport.deserializeUser((id, done) => {
-    User.findById(id).then(user => done(null, user));
-});
-
 
 app.use(passport.initialize());
 app.use(passport.session());
