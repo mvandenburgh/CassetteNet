@@ -17,7 +17,7 @@ function FavoriteMixtapeButton(props) {
         setUser(newUser);
     }
     return (
-        <FavoriteIcon onClick={() => favoriteButtonClickHandler()} style={{color: user?.favoritedMixtapes.includes(props.id) ? 'red' : 'black'}} /> 
+        <FavoriteIcon onClick={() => favoriteButtonClickHandler()} style={{color: user?.favoritedMixtapes?.includes(props.id) ? 'red' : 'black', cursor:'pointer'}} /> 
     )
 }
 

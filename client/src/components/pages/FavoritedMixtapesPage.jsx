@@ -16,11 +16,15 @@ function FavoritedMixtapesPage(props) {
     const { _id } = user;
     useEffect(() => {
         async function getMixtapes() {
-            const updatedMixtapes = await getFavoritedMixtapes(_id);
-            setMixtapes(updatedMixtapes);
+            const updatedMixtapes = await getFavoritedMixtapes(_id);           
+            if (!updatedMixtapes) {
+                setMixtapes([]);
+            } else {
+                setMixtapes(updatedMixtapes);
+            }
         }
         getMixtapes();
-     }, [])
+     }, []);
 
     const history = useHistory();
     const goBack = () => history.goBack();

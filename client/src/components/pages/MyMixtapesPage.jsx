@@ -28,7 +28,11 @@ function MyMixtapesPage(props) {
     const { _id } = user;
     useEffect(async () => {
         const updatedMixtapes = await getMyMixtapes(_id);
-        setMixtapes(updatedMixtapes);
+        if (!updatedMixtapes) {
+            setMixtapes([]);
+        } else {
+            setMixtapes(updatedMixtapes);
+        }
      }, []);
 
     const history = useHistory();

@@ -22,7 +22,7 @@ import { AddCircle as AddIcon, Warning as WarningIcon, Check as DoneIcon, Edit a
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import UserSearchBar from '../UserSearchBar';
-import { deleteMixtape } from '../../utils/api';
+import { deleteMixtape, updateMixtape } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
 
 
@@ -66,6 +66,7 @@ function SettingsModal(props) {
         setMixtape,
         settingsPopupIsOpen,
         handleSettingsPopup,
+        user,
     } = props;
 
     const history = useHistory();
@@ -85,6 +86,29 @@ function SettingsModal(props) {
             setUnsavedCollaborators(mixtape.collaborators);
         setIsPublic(mixtape.isPublic)
     }, [mixtape]);
+
+    const canEdit = () => {
+        for (const collaborator of mixtape.collaborators) {
+            if (collaborator.user === user._id) {
+                if (collaborator.permissions === 'viewer')  {
+                    return false;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const isOnlyOwner = () => {
+        let ownerCount = 0;
+        for (const collaborator of mixtape.collaborators) {
+            if (collaborator.permissions === 'owner')  {
+                ownerCount++;
+                if (ownerCount > 1) return false;
+            }
+        }
+        return true;
+    }
 
     const handleCheckbox = (collaborator) => {
         const newToDelete = [...toDelete];
@@ -116,6 +140,7 @@ function SettingsModal(props) {
         setEditing(false);
         mixtape.collaborators = unsavedCollaborators;
         setMixtape(mixtape);
+        updateMixtape(mixtape);
     }
 
     const selectUser = (newUser) => {
@@ -132,11 +157,16 @@ function SettingsModal(props) {
         setMixtape(mixtape);
     }
 
+    const handleModalClose = () => {
+        setRoleSelectOpen(false);
+        handleSettingsPopup();
+    }
+
     return (
         <Modal
             className={classes.modal}
             open={settingsPopupIsOpen}
-            onClose={handleSettingsPopup}
+            onClose={handleModalClose}
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
@@ -170,7 +200,10 @@ function SettingsModal(props) {
                                     {editing ?
                                         <DeleteIcon align="right" style={{ color: 'white' }} onClick={handleClickGarbage} />
                                         :
+                                        canEdit() ?
                                         <EditIcon align="right" style={{ color: 'white' }} onClick={() => setEditing(true)} />
+                                        :
+                                        undefined
                                     }
                                 </Grid>
                                 <Grid item xs={1} style={{ display: showDoneIcon() ? '' : 'none' }}>
@@ -187,6 +220,7 @@ function SettingsModal(props) {
                                                     <StyledTableCell>{collaborator?.username}</StyledTableCell>
                                                     <StyledTableCell>
                                                         <Select
+                                                            disabled={!editing || !canEdit() || (unsavedCollaborators[index]?.permissions === 'owner' && isOnlyOwner())}
                                                             open={roleSelectOpen}
                                                             onClose={() => setRoleSelectOpen(false)}
                                                             onOpen={() => setRoleSelectOpen(true)}
@@ -221,7 +255,7 @@ function SettingsModal(props) {
                         <Grid container justify="center" alignItems="center" style={{ height: '50%' }}>
                             <Grid item xs={12}>
                                 <FormControlLabel
-                                    control={<Switch checked={isPublic} onChange={changePublicStatus} />}
+                                    control={<Switch disabled={!canEdit()} checked={isPublic} onChange={changePublicStatus} />}
                                     label="Mixtape Public?"
                                 />
                             </Grid>

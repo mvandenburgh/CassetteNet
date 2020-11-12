@@ -50,7 +50,7 @@ function ShareMixtapeModal(props) {
                         <Grid container>
                             <Grid item xs={3}>
                                 <EmailShareButton
-                                url={getMixtapeUrl(mixtape._id)}
+                                url={getMixtapeUrl(mixtape?._id)}
                                 subject="Check out this mixtape!"
                                 body="Come listen to this awesome mixtape on CassetteNet!"
                                 >
@@ -59,7 +59,7 @@ function ShareMixtapeModal(props) {
                             </Grid>
                             <Grid item xs={5}>
                                 <FacebookShareButton
-                                    url={getMixtapeUrl(mixtape._id)}
+                                    url={getMixtapeUrl(mixtape?._id)}
                                     quote= "Checkout this mixtape!"
                                 >
                                     <Button variant="contained" startIcon={<FacebookIcon />}>Share on Facebook</Button>
@@ -69,7 +69,7 @@ function ShareMixtapeModal(props) {
                         
                             <Grid item xs={4}>
                                 <TwitterShareButton
-                                    url={getMixtapeUrl(mixtape._id)}
+                                    url={getMixtapeUrl(mixtape?._id)}
                                     title= "Checkout this mixtape!"
                                 >
                                     <Button variant="contained" startIcon={<TwitterIcon />}>Share on Twitter</Button>

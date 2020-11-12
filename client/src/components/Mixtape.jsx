@@ -28,7 +28,6 @@ import PlayingSongContext from '../contexts/PlayingSongContext';
 import UserContext from '../contexts/UserContext';
 import JSTPSContext from '../contexts/JSTPSContext';
 import { getSongDuration, songSearch, updateMixtape } from '../utils/api';
-import { Autocomplete } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import SettingsModal from './modals/SettingsModal';
 import SongSearchBar from './SongSearchBar';
@@ -62,7 +61,7 @@ function Mixtape(props) {
   const { enableEditing, isEditing, setIsEditing, mixtape, setMixtape } = props;
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
-  
+
   const { user, setUser } = useContext(UserContext);
 
   const { setPlaying } = useContext(PlayingSongContext);
@@ -179,10 +178,10 @@ function Mixtape(props) {
   }
 
   const undoHandler = () => {
-    var theName = tps.transactions[tps.getSize()-1].constructor.name
+    var theName = tps.transactions[tps.getSize() - 1].constructor.name
     console.log("Top of transaction stack: " + theName);
 
-    if(tps.getSize() > 0) {
+    if (tps.getSize() > 0) {
       switch (theName) {
         case "SongPosition_Transaction":
           undoChangeSongPosition();
@@ -191,7 +190,7 @@ function Mixtape(props) {
           undoDeleteSong();
           break;
         case "AddSong_Transaction":
-           undoAddSong();
+          undoAddSong();
           break;
         default:
           console.log("Unknown transaction.");
@@ -263,7 +262,7 @@ function Mixtape(props) {
             </DialogContentText>
           <Grid container>
             <Grid item xs={8}>
-              <SongSearchBar apiToUse={apiToUse} setSelected={setSongToAdd} /> 
+              <SongSearchBar apiToUse={apiToUse} setSelected={setSongToAdd} />
             </Grid>
             <Grid item xs={2} />
             <Grid item xs={2}>
@@ -273,7 +272,7 @@ function Mixtape(props) {
               </Select>
             </Grid>
           </Grid>
-          
+
         </DialogContent>
         <DialogActions>
           <Button align="center" onClick={() => addSong()} color="primary">
@@ -286,6 +285,7 @@ function Mixtape(props) {
       <SettingsModal
         mixtape={mixtape}
         setMixtape={setMixtape}
+        user={user}
         settingsPopupIsOpen={settingsPopupIsOpen}
         handleSettingsPopup={handleSettingsPopup}
       />
@@ -343,26 +343,44 @@ function Mixtape(props) {
                     </Grid>
                     :
                     <Grid container>
-                      {
-                        editButtonVisible ? 
-                          <Button
-                            startIcon={<EditIcon />}
-                            onClick={enableEditingHandler}
-                            style={{ position: 'absolute', right: '5%' }}
-                            variant="contained">
+                      <Grid item xs={4}>
+                        <Button
+                          style={{ marginRight: '5%', float: 'left', backgroundColor: 'steelblue' }}
+                          variant="contained"
+                          color="secondary"
+                          startIcon={<MusicNoteIcon />}
+                        // onClick={() => history.push('/listeningroom')}
+                        >
+                          Create Listening Room
+                        </Button>
+                      </Grid>
+                      <Grid item xs={2} />
+                      <Grid item xs={2}>
+                        <Button
+                          style={{ marginRight: '5%', float: 'right', backgroundColor: 'green' }}
+                          variant="contained"
+                          color="secondary"
+                          startIcon={<SettingsIcon />}
+                          onClick={handleSettingsPopup}
+                        >
+                          Settings
+                              </Button>
+                      </Grid>
+                      <Grid item xs={2} />
+                      <Grid item xs={2}>
+                        {
+                          editButtonVisible ?
+                            <Button
+                              startIcon={<EditIcon />}
+                              onClick={enableEditingHandler}
+                              style={{ position: 'absolute', right: '5%' }}
+                              variant="contained">
                               EDIT
                           </Button>
-                        : undefined
+                            : undefined
                         }
-                      <Button
-                        style={{ marginRight: '5%', float: 'right', backgroundColor: 'steelblue' }}
-                        variant="contained"
-                        color="secondary"
-                        startIcon={<MusicNoteIcon />}
-                      // onClick={() => history.push('/listeningroom')}
-                      >
-                        Create Listening Room
-                            </Button>
+                      </Grid>
+
                     </Grid>
                   }
                 </Toolbar>
@@ -414,10 +432,10 @@ function Mixtape(props) {
         </DragDropContext>
       </Grid>
       <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => undoHandler()}>
-                <UndoIcon />
+        <UndoIcon />
       </Fab>
-      <Fab color="secondary" style={{    position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => simulateTransaction()}> 
-          <CakeIcon />
+      <Fab color="secondary" style={{ position: 'fixed', bottom: '15%', right: '10%', }} onClick={() => simulateTransaction()}>
+        <CakeIcon />
       </Fab>
     </Box>
   );

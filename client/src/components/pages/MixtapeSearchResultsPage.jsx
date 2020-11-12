@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Box, Grid, IconButton, Typography } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
-import MixtapeList from '../MixtapeList';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import UserContext from '../../contexts/UserContext';
 import { mixtapeSearch, getMixtapeCoverImageUrl, getUserProfilePictureUrl } from '../../utils/api';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
-import mixtapes from '../../testData/mixtapes.json';
+import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
+import ShareMixtapeModal from '../modals/ShareMixtapeModal';
 
 function MixtapeSearchResultsPage(props) {
     let { user } = useContext(UserContext);
@@ -17,6 +16,10 @@ function MixtapeSearchResultsPage(props) {
     }
 
     const [mixtapes, setMixtapes] = useState([]);
+
+    const [mixtapeToShare, setMixtapeToShare] = useState(null);
+
+    const [shareModalOpen, setShareModalOpen] = useState(false);
 
     useEffect(async () => {
         const searchResults = await mixtapeSearch(new URLSearchParams(props.location.search).get('query'));
@@ -29,6 +32,12 @@ function MixtapeSearchResultsPage(props) {
     const clickUserHandler = (e, userId) => {
         e.stopPropagation();
         history.push(`/user/${userId}`);
+    }
+
+    const shareMixtapeHandler = (mixtape) => {
+        console.log(mixtape);
+        setMixtapeToShare(mixtape);
+        setShareModalOpen(true);
     }
 
     const MixtapeRows = ({ mixtapes }) => (
@@ -44,15 +53,13 @@ function MixtapeSearchResultsPage(props) {
                         flexDirection: "row",
                         borderRadius: 6,
                         fontSize: '1.5em',
-                        cursor: 'pointer',
                     }}
-                    onClick={() => history.push(`/mixtape/${mixtape._id}`)}
                 >
                     <Grid container style={{ height: '10vh' }}>
-                        <Grid item xs={1} align="left">
+                        <Grid item xs={1} align="left" onClick={() => history.push(`/mixtape/${mixtape._id}`)} style={{cursor: 'pointer'}}>
                             <img width={'50%'} style={{ objectFit: 'contain' }} src={getMixtapeCoverImageUrl(mixtape._id)} />
                         </Grid>
-                        <Grid item xs={2} align="center">
+                        <Grid item xs={2} align="center" onClick={() => history.push(`/mixtape/${mixtape._id}`)} style={{cursor: 'pointer'}}>
                             {mixtape.name}
                         </Grid>
                         <Grid item xs={1} />
@@ -71,8 +78,8 @@ function MixtapeSearchResultsPage(props) {
                             </div>
                         </Grid>
                         <Grid item xs={4} align="center">
-                            <FavoriteIcon />
-                            <ShareIcon />
+                            <FavoriteMixtapeButton id={mixtape._id} />
+                            <ShareIcon style={{cursor: 'pointer'}}  onClick={() => shareMixtapeHandler(mixtape)} />
                         </Grid>
                     </Grid>
                 </Box>
@@ -84,6 +91,7 @@ function MixtapeSearchResultsPage(props) {
             <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
                 <ArrowBackIcon />
             </IconButton>
+            <ShareMixtapeModal open={shareModalOpen} setOpen={setShareModalOpen} mixtape={mixtapeToShare} />
             <br />
             <br />
             <br />
