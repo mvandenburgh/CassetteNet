@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 // import user model (needed for passport config)
 const { User } = require('./models');
@@ -16,6 +17,7 @@ const { User } = require('./models');
 const adminRoute = require('./routes/admin');
 const authRoute = require('./routes/auth');
 const mixtapeRoute = require('./routes/mixtape');
+const soundcloudRoute = require('./routes/soundcloud');
 const userRoute = require('./routes/user');
 const youtubeRoute = require('./routes/youtube');
 
@@ -51,10 +53,28 @@ app.use(session({ // initialize login sessions
 
 // use static authenticate method of model in LocalStrategy
 passport.use(new LocalStrategy(User.authenticate()));
- 
-// use static serialize and deserialize of model for passport session support
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.use(
+    new GoogleStrategy({
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "/auth/google/redirect",
+    }, async (accessToken, refreshToken, profile, done) => {
+        const user = await User.findOne({ googleId: profile.id });
+        if (user) {
+            done(null, user);
+        } else {
+            const newUser = await new User({ googleId: profile.id }).save();
+            done(null, newUser);
+        }
+    })
+);
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+passport.deserializeUser((id, done) => {
+    User.findById(id).then(user => done(null, user));
+});
 
 
 app.use(passport.initialize());
@@ -63,6 +83,7 @@ app.use(passport.session());
 app.use('/admin', adminRoute);
 app.use('/auth', authRoute);
 app.use('/mixtape', mixtapeRoute);
+app.use('/soundcloud', soundcloudRoute);
 app.use('/user', userRoute);
 app.use('/youtube', youtubeRoute);
 

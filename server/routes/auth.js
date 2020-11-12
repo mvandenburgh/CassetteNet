@@ -2,9 +2,11 @@ const express = require('express');
 const passport = require('passport');
 const crypto = require('crypto');
 const { User } = require('../models');
-const { sendVerificationEmail } = require('../email/email');
+const { sendPasswordResetEmail, sendVerificationEmail } = require('../email/email');
 
 const router = express.Router();
+
+const CLIENT_ROOT_URL = process.env.CLIENT_ROOT_URL || 'http://localhost:3000';
 
 router.post('/signup', async (req, res) => {
     const { username, password, email } = req.body;
@@ -14,7 +16,7 @@ router.post('/signup', async (req, res) => {
     // generate email verification token
     const token = crypto.randomBytes(64).toString('hex');
 
-    User.register(new User({ username, email, token, verified: false, admin: userCount === 0 }), password, async (err, user) => {
+    User.register(new User({ username, email, token, verified: false, admin: userCount === 0, local: true }), password, async (err, user) => {
         if (err) return res.status(500).send(err); // TODO: error handling
         if (process.env.NODE_ENV === 'production') { // only send email in production deployment (i.e. heroku)
             try {
@@ -39,6 +41,94 @@ router.post('/signup', async (req, res) => {
 
 
 router.post('/login', passport.authenticate('local'), async (req, res) => {
+    const { verified } = req.user;
+    if (!verified) {
+        return res.status(400).send('user not verified.');
+    }
+    res.send('logged in');
+});
+
+router.post('/logout', (req, res) => {
+    req.logout(); // passport method to clear jwt from user's cookie
+    res.send('logged out.');
+});
+
+router.put('/verify', async (req, res) => {
+    const { token } = req.body;
+    try {
+        await User.updateOne({ token }, { verified: true, token: null });
+        res.send('user verified');
+    } catch (err) {
+        res.status(500).send(err)
+    }
+});
+
+router.put('/resetPassword', async (req, res) => {
+    const { password, token, email } = req.body;
+    if (token && password) {
+        try {
+            const user = await User.findOne({ token });
+            if (!user) return res.status(404).send('not found');
+            await user.setPassword(password);
+            user.token = null;
+            await user.save();
+            return res.send('password reset successfully.');
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+    }
+    if (!email) return res.status(400).send('invalid request.');
+
+    // generate password reset token
+    const pwResetToken = crypto.randomBytes(64).toString('hex');
+
+    const user = await User.findOne({ email });
+
+    if (user) {
+        user.token = pwResetToken;
+        user.save();
+        if (process.env.NODE_ENV === 'production') { // only send email in production deployment (i.e. heroku)
+            try {
+                await sendPasswordResetEmail(email, pwResetToken);
+                return res.send('sent password reset email.')
+            } catch(err) {
+                console.log(err);
+                return res.status(500).send(err);  
+            }
+        }
+        return res.send(token); // send reset token back in development mode
+    }
+    return res.status(404).send('user not found.');
+});
+
+router.put('/setOAuthUsername', async (req, res) => {
+    if (!req.user) return res.status(401).send('Unauthorized');
+    if (!req.body.username) return res.status(400).send('missing username');
+    const { username } = req.body;
+    try {
+        const user = await User.findById(req.user.id);
+        if (user.username) {
+            return res.status(400).send('username already set.');
+        } else {
+            user.username = username;
+            await user.save();
+            return res.send('successfully set username');
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send(err);
+    }
+})
+
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/redirect', passport.authenticate('google', { failureRedirect: new URL('/login', CLIENT_ROOT_URL).href}),
+(req, res) => {
+    if (!req.user.username) return res.redirect(new URL('/login/oauth', CLIENT_ROOT_URL).href);
+    return res.redirect(new URL('/login/success', CLIENT_ROOT_URL).href);
+});
+
+router.get('/login/success', async (req, res) => {
     const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt, verified } = req.user;
     if (!verified) {
         return res.status(400).send('user not verified.');
@@ -70,21 +160,6 @@ router.post('/login', passport.authenticate('local'), async (req, res) => {
         createdAt,
         updatedAt,
     });
-});
-
-router.post('/logout', (req, res) => {
-    req.logout(); // passport method to clear jwt from user's cookie
-    res.send('logged out.');
-});
-
-router.put('/verify', async (req, res) => {
-    const { token } = req.body;
-    try {
-        await User.updateOne({ token }, { verified: true });
-        res.send('user verified');
-    } catch (err) {
-        res.status(500).send(err)
-    }
 });
 
 module.exports = router;

@@ -62,8 +62,8 @@ async function createMixtape() {
     return mixtape;
 }
 
-async function songSearch(query) {
-    const results = await axios.get(new URL('/youtube/search', SERVER_ROOT_URL).href, { params: { q: query } });
+async function songSearch(api, query) {
+    const results = await axios.get(new URL(`/${api}/search`, SERVER_ROOT_URL).href, { params: { q: query } });
     return results.data;
 }
 
@@ -103,8 +103,7 @@ async function userSignup(email, username, password) {
 }
 
 async function userLogin(username, password) {
-    const user = await axios.post(new URL('/auth/login', SERVER_ROOT_URL), { username, password });
-    return user.data;
+    await axios.post(new URL('/auth/login', SERVER_ROOT_URL), { username, password });
 }
 
 async function userLogout() {
@@ -113,6 +112,23 @@ async function userLogout() {
 
 async function userVerifyAccount(token) {
     await axios.put(new URL('/auth/verify', SERVER_ROOT_URL), { token });
+}
+
+async function verifyUserLoggedIn() {
+    const user = await axios.get(new URL('/auth/login/success', SERVER_ROOT_URL).href);
+    return user.data;
+}
+
+async function requestPasswordReset(email) {
+    await axios.put(new URL('/auth/resetPassword', SERVER_ROOT_URL).href, { email });
+}
+
+async function resetPassword(token, password) {
+    await axios.put(new URL('/auth/resetPassword', SERVER_ROOT_URL).href, { password, token });
+}
+
+async function setUsernameOfOAuthAccount(username) {
+    await axios.put(new URL('/auth/setOAuthUsername', SERVER_ROOT_URL).href, { username });
 }
 
 async function uploadFile(file, filename, endpoint) {
@@ -129,9 +145,13 @@ function getUserProfilePictureUrl(userId) {
     return new URL(`/user/${userId}/profilePicture`, SERVER_ROOT_URL).href;
 }
 
-async function getSongDuration(youtubeId) {
-    const songDuration = await axios.get(new URL('/youtube/videoDuration', SERVER_ROOT_URL).href, { params: { videoId: youtubeId } });
+async function getSongDuration(api, itemId) {
+    const songDuration = await axios.get(new URL(`/${api}/itemDuration`, SERVER_ROOT_URL).href, { params: { itemId } });
     return songDuration.data;
+}
+
+function getSoundCloudSongUrl(itemId) {
+    return new URL(`/soundcloud/streamAudio/${itemId}`, SERVER_ROOT_URL).href;
 }
 
 async function adminFillDatabase() {
@@ -165,6 +185,10 @@ async function userSearch(searchQuery) {
     return users.data;
 }
 
+function googleLogin() {
+    window.location.href = new URL('/auth/google', SERVER_ROOT_URL).href;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -181,11 +205,17 @@ export {
     queryForMixtapes,
     songSearch,
     getSongDuration,
+    getSoundCloudSongUrl,
+    setUsernameOfOAuthAccount,
+    verifyUserLoggedIn,
     updateMixtape,
+    googleLogin,
     userLogin,
     userLogout,
     userSignup,
     userVerifyAccount,
+    requestPasswordReset,
+    resetPassword,
     uploadFile,
     adminFillDatabase,
     adminDropDatabase,

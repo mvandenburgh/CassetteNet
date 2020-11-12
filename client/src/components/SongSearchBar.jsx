@@ -5,18 +5,18 @@ import { CircularProgress, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
 
-function YoutubeSongSearchBar(props) {
+function SongSearchBar(props) {
     const [open, setOpen] = useState(false);
     const [options, setOptions] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { setSelected } = props;
+    const { apiToUse, setSelected } = props;
 
     useEffect(() => {
         if (!searchQuery) return; // don't bother calling youtube api if search is empty
         setLoading(true); // make loading circle appear
-        songSearch(searchQuery)
+        songSearch(apiToUse, searchQuery)
             .then(res => {
                 setOptions(res);
                 setLoading(false);
@@ -32,7 +32,7 @@ function YoutubeSongSearchBar(props) {
 
   return (
     <Autocomplete
-      style={{ width: 300 }}
+      // style={{ width: 300 }}
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
@@ -45,7 +45,7 @@ function YoutubeSongSearchBar(props) {
           {...params}
           onKeyPress={() => setLoading(true)}
           onBlur={() => setLoading(false)}
-          onChange={debounce((e) => search(e), 700)} // debounce every 700ms to prevent calling api more than needed
+          onChange={debounce((e) => search(e), 500)} // debounce every 700ms to prevent calling api more than needed
           label="Search"
           variant="outlined"
           InputProps={{
@@ -63,4 +63,4 @@ function YoutubeSongSearchBar(props) {
   );
 }
 
-export default YoutubeSongSearchBar;
+export default SongSearchBar;
