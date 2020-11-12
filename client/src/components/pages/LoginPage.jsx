@@ -44,9 +44,9 @@ function LoginPage(props) {
       await userLogin(username, password);
       history.push('/login/success');
     } catch (err) {
-      if (err.response.status === 401) {
+      if (err?.response?.status === 401) {
         alert('Incorrect username or password');
-      } else if (err.response.status === 400) {
+      } else if (err?.response?.status === 400) {
         alert('Please verify your account.')
       } else {
         alert('Error logging in. Please try again later.')
