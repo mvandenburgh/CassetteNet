@@ -96,7 +96,6 @@ function SettingsModal(props) {
                     }
                     return true;
                 }
-                return true;
             }
         }
         return false;
