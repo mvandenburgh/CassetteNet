@@ -89,11 +89,8 @@ function Mixtape(props) {
 
     // set new list order
     const newSongOrder = [...mixtape.songs];
-    const [removed] = newSongOrder.splice(result.source.index, 1);
-    const moveSongTransaction = new SongPosition_Transaction(result.source.index, result.destination.index, removed, newSongOrder, mixtape);
+    const moveSongTransaction = new SongPosition_Transaction(result.source.index, result.destination.index, newSongOrder, mixtape);
     tps.addTransaction(moveSongTransaction);
-    newSongOrder.splice(result.destination.index, 0, removed);
-    mixtape.songs = newSongOrder;
     setMixtape(mixtape);
   };
 
@@ -204,14 +201,45 @@ function Mixtape(props) {
     setSongToAdd({});
   }
 
-  //var fruits = ['apple', 'banana', 'orange', 'mango', 'grapes', 'coconut'];
+  const redoHandler = () => {
+    var theName = tps.transactions[tps.getSize()-1].constructor.name
+    console.log("Top of transaction stack: " + theName);
 
-  const simulateTransaction = () => {
-    console.log("Simulate transaction");
-    // const someFruit = 'kiwi';
-    // const moveSongTransaction = new SongPosition_Transaction(1, 3, someFruit, fruits, fruitsList);
-    // tps.addTransaction(moveSongTransaction);
-    // console.log(tps.toString());
+    if(tps.getSize() > 0) {
+      switch (theName) {
+        case "SongPosition_Transaction":
+          redoChangeSongPosition();
+          break;
+        case "DeleteSong_Transaction":
+          redoDeleteSong();
+          break;
+        case "AddSong_Transaction":
+           redoAddSong();
+          break;
+        default:
+          console.log("Unknown transaction.");
+      }
+    }
+  }
+
+  const redoChangeSongPosition = () => {
+    console.log("Redo Change Song Position");
+    tps.doTransaction();
+    setMixtape(mixtape);
+    updateMixtape(mixtape);
+    setCurrentSong({
+      mixtape: currentSong.mixtape,
+      index: currentSong.index,
+      disabled: null,
+    });
+  }
+
+  const redoDeleteSong = () => {
+
+  }
+
+  const redoAddSong = () => {
+
   }
 
   function toString() {
@@ -386,7 +414,7 @@ function Mixtape(props) {
           </Droppable>
         </DragDropContext>
       </Grid>
-      <Fab color="secondary" style={{position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => simulateTransaction()}> 
+      <Fab color="secondary" style={{position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => redoHandler()}> 
           <RedoIcon />
       </Fab>
       <Fab color="primary" aria-label="add" style={{position: 'fixed', bottom: '15%', right: '20%',}} onClick={() => undoHandler()}>
