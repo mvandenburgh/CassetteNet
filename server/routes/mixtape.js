@@ -73,13 +73,23 @@ router.post('/', async (req, res) => {
 
 // RETRIEVE MIXTAPE
 router.get('/:id', async (req, res) => {
-    const mixtape = await Mixtape.findOne({ _id: (req.params.id) });
-    for (const collaborator of mixtape.collaborators) {
-        const user = await User.findOne({ _id: (collaborator.user) });
-        collaborator.username = user.username;
+    try {
+        const mixtape = await Mixtape.findOne({ _id: (req.params.id) }).lean();
+        if (!mixtape) return res.status(404).send('not found'); // if mixtape doesn't exist
+        if (!mixtape.isPublic) { // if mixtape isn't public, make sure this user is authorized to view it
+            if (!req.user) return res.status(401).send('unauthorized');
+            for (const collaborator of mixtape.collaborators) {
+                if (collaborator.user.equals(req.user._id)) {
+                    return res.send(mixtape);
+                }
+            }
+            // if the user wasn't found in collaboraters, they aren't allowed to view the mixtape
+            return res.status(401).send('unauthorized');
+        }
+        return res.send(mixtape);
+    } catch(err) {
+        res.status(400).send(err);
     }
-    delete mixtape.coverImage;
-    return res.send(mixtape);
 });
 
 // UPDATE MIXTAPE

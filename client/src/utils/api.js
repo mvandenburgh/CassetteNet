@@ -44,8 +44,12 @@ async function getMyMixtapes(_id) {
  * @param {*} _id mixtape _id
  */
 async function getMixtape(_id) {
-    const mixtape = await axios.get(new URL(`/mixtape/${_id}`, SERVER_ROOT_URL));
-    return mixtape.data;
+    try {
+        const mixtape = await axios.get(new URL(`/mixtape/${_id}`, SERVER_ROOT_URL));
+        return mixtape.data;
+    } catch (err) {
+        return null;
+    }
 }
 
 async function updateMixtape(mixtape) {

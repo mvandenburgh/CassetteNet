@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import {
     Button, 
@@ -23,6 +23,7 @@ import { getMixtape, getMixtapeCoverImageUrl, updateMixtape } from '../../utils/
 import { Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import MixtapeCoverImageUploadModal from '../modals/MixtapeCoverImageUploadModal';
+import UserContext from '../../contexts/UserContext';
 import humanizeDuration from 'humanize-duration';
 
 const usePrevious = (value) => {
@@ -36,12 +37,11 @@ const usePrevious = (value) => {
 
 function ViewMixtapePage(props) {
     const history = useHistory();
-    const goBack = () => { history.push('/') }
+    const goBack = () => history.goBack();
+
+    const { user, setUser } = useContext(UserContext);
 
     const [mixtape, setMixtape] = useState(null);
-
-    const [permissions, setPermissions] = useState([]);
-    const [permissionUserList, setPermissionUserList] = useState([]);
 
     const [open, setOpen] = useState(false);
     
@@ -62,51 +62,34 @@ function ViewMixtapePage(props) {
 
     const [changeMixtapeNamePopupIsOpen, setchangeMixtapeNamePopupIsOpen] = useState(false); // whether add song popup is open
 
+    // watch for changes to mixtape and update server accordingly
     const prevMixtape = usePrevious(mixtape);
-    useEffect(()=>{
+    useEffect(async ()=> {
         if (
             !_.isEqual(
                 prevMixtape,
                 mixtape,
             )
         ) {
-            getMixtape(props.match.params.id).then((updatedMixtape) => {
-                if (updatedMixtape.songs.length > 0) {
-                    updatedMixtape.duration = updatedMixtape.songs.map(song => song.duration).reduce((mixtapeDuration, songDuration) => mixtapeDuration + songDuration);
-                } else {
-                    updatedMixtape.duration = 0;
-                }
-                permissions.forEach((permission, i) => {
-                    updatedMixtape.collaborators[i].permissions = permission;
-                });
-                if (!mixtape) {
-                    setPermissions(updatedMixtape.collaborators.map(c => c.permissions));
-                    setPermissionUserList(updatedMixtape.collaborators.map(c => (
-                        { username: c.username, user: c.user }
-                    )));
-                }
-                console.log(updatedMixtape);
-                setMixtape(updatedMixtape);
-                setCoverImageUrl(getMixtapeCoverImageUrl(updatedMixtape._id));
-            });
+            if (mixtape) {
+                await updateMixtape(mixtape);
+                setCoverImageUrl(getMixtapeCoverImageUrl(mixtape._id));
+            }
         }
     }, [mixtape, prevMixtape]);
 
+    // fetch mixtape from server
     useEffect(async () => {
-        if (permissions && mixtape) {
-            const newMixtape = { ...mixtape };
-            permissions.forEach((permission, i) => {
-                if (newMixtape.collaborators.length < (i+1)) {
-                    newMixtape.collaborators.push(permissionUserList[i]);
-                }
-                if (newMixtape.collaborators[i])
-                    newMixtape.collaborators[i].permissions = permission;
-            });
-            setMixtape(newMixtape);
-            await updateMixtape(newMixtape);
-            console.log(newMixtape);
+        const initialMixtape = await getMixtape(props.match.params.id);
+        if (!initialMixtape) {
+            history.push('/');
+            return;
         }
-    }, [permissions]);
+        initialMixtape.duration = initialMixtape.songs.map(song => song.duration).reduce((total, current) => total + current);
+        setMixtape(initialMixtape);
+        setCoverImageUrl(getMixtapeCoverImageUrl(initialMixtape._id));
+    }, []);
+
 
     const handleChangeMixtapeNamePopup = () => {
         setchangeMixtapeNamePopupIsOpen(!changeMixtapeNamePopupIsOpen);
@@ -122,6 +105,10 @@ function ViewMixtapePage(props) {
 
     const saveName = async () => {
         updateMixtape(mixtape);
+    }
+
+    if (!mixtape) {
+        return null;
     }
 
     return (
@@ -183,7 +170,7 @@ function ViewMixtapePage(props) {
                 </div>
             </Paper>
             <Grid container justify="center">
-                <Mixtape permissionUserList={permissionUserList} setPermissionUserList={setPermissionUserList} permissions={permissions} setPermissions={setPermissions} enableEditing={true} isEditing={isEditing} setIsEditing={setIsEditing} mixtape={mixtape} setMixtape={setMixtape} />
+                <Mixtape enableEditing={true} isEditing={isEditing} setIsEditing={setIsEditing} mixtape={mixtape} setMixtape={setMixtape} />
             </Grid>
         </div>
     )
