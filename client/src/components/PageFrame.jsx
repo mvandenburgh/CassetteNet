@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import SearchBar from './SearchBar';
 import Player from './Player';
+import dashboard from '../images/dashboard.png';
 import UserContext from '../contexts/UserContext';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import { userLogout } from '../utils/api';
@@ -147,6 +148,12 @@ function PageFrame(props) {
             </div>
             <Divider />
                 <List>
+                    <ListItem onClick={() => history.push('/') } button>
+                      <ListItemIcon>
+                        <img  src={dashboard} alt='logo' /> 
+                      </ListItemIcon>
+                      <ListItemText primary="Dashboard" />
+                    </ListItem>
                 <ListItem onClick={() => history.push('/me')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
                           <MyProfileIcon className={classes.icon} />    
