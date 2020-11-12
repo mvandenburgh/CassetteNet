@@ -1,7 +1,7 @@
 import {jsTPS_Transaction} from "../../utils/jsTPS.js"
 
 /**
- * DeleteSong_Transaction.js
+ * SongPosition_Transaction.js
  * 
  * This class is a transaction that can be executed and undone. It
  * can be stored in the jsTPS transaction stack and must be constructed
@@ -9,38 +9,39 @@ import {jsTPS_Transaction} from "../../utils/jsTPS.js"
  * 
  * 
  */
-export class DeleteSong_Transaction extends jsTPS_Transaction {
+export class ChangeMixtapeName_Transaction extends jsTPS_Transaction {
     /**
      * Constructor for this transaction, it initializes this
      * object with all the data needed to both do and undo
      * the transaction.
      * 
-     * @param oldSongs
-     * @param newSongs
+     * @param oldName
+     * @param newName
      * @param mixtape
      */
-    constructor(oldSongs, songsToDelete, mixtape) {
+    constructor(oldName, newName, mixtape) {
         super();
 
-        this.oldSongs = oldSongs;
-        this.songsToDelete = songsToDelete;
+        this.oldName = oldName;
+        this.newName = newName;
         this.mixtape = mixtape;
     }
 
     /**
-     * 
+     * A transaction to change a mixtape's name.
      */
     doTransaction() {
-        const newSongs = this.mixtape.songs.filter(song => !this.songsToDelete.includes(song.id));
-        this.oldSongs = this.mixtape.songs
-        this.mixtape.songs = newSongs;
+        this.oldName = this.mixtape.name;
+        this.mixtape.name = this.newName;
+        console.log(this.oldName + " -> " + this.mixtape.name);
     }
 
     /**
-     * 
+     * Undo the name change.
      */
     undoTransaction() {
-        this.mixtape.songs = this.oldSongs;
+        this.mixtape.name = this.oldName;
+        console.log(this.newName + " -> " + this.mixtape.name);
     }
 
     /**
@@ -49,6 +50,6 @@ export class DeleteSong_Transaction extends jsTPS_Transaction {
      * @return A string storing a textual summary of this object.
      */
     toString() {
-        return "";
+        return "Old Name: " + this.oldName + ", New Name: " + this.newName;
     }
 }

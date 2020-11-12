@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Box, Fab, Grid, List, ListItem, ListItemText } from '@material-ui/core';
-import { Undo as UndoIcon, Cake as CakeIcon } from '@material-ui/icons';
+import { Undo as UndoIcon, Redo as RedoIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { getMixtapeCoverImageUrl, updateMyMixtapes } from '../utils/api';
 import JSTPSContext from '../contexts/JSTPSContext';
@@ -40,11 +40,8 @@ function MixtapeList(props) {
 
     // set new list order
     const newArray = [...mixtapes];
-    const [removed] = newArray.splice(result.source.index, 1);
-    const moveMixtapeTransaction = new MixtapePosition_Transaction(result.source.index, result.destination.index, removed, newArray);
+    const moveMixtapeTransaction = new MixtapePosition_Transaction(result.source.index, result.destination.index, newArray);
     tps.addTransaction(moveMixtapeTransaction);
-    newArray.splice(result.destination.index, 0, removed);
-
     setMixtapes(newArray);
   };
 
@@ -82,6 +79,29 @@ function MixtapeList(props) {
     printMixtapes(mixtapes);
     updateMyMixtapes(mixtapes);
   }
+
+  const redoHandler = () => {
+    var theName = tps.transactions[tps.getSize()-1].constructor.name
+    console.log("Top of transaction stack: " + theName);
+
+    if(tps.getSize() > 0) {
+      switch (theName) {
+        case "MixtapePosition_Transaction":
+          redoChangeMixtapePosition();
+          break;
+        default:
+          console.log("Unknown transaction.");
+      }
+    }
+  }
+
+  const redoChangeMixtapePosition = () => {
+    console.log("Redo Change Mixtape Position");
+    tps.doTransaction();
+    setMixtapes(mixtapes);
+    updateMyMixtapes(mixtapes);
+  }
+
 
   const printMixtapes = (mixtapes) => {
     console.log("PRINT");
@@ -171,6 +191,9 @@ function MixtapeList(props) {
           )}
         </Droppable>
       </DragDropContext>
+      <Fab color="secondary" style={{position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => redoHandler()}> 
+          <RedoIcon />
+      </Fab>
       <Fab color="primary" aria-label="add" style={{ position: 'fixed', bottom: '15%', right: '15%',}} onClick={() => undoHandler()}>
                 <UndoIcon />
       </Fab>
