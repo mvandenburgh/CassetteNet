@@ -172,17 +172,6 @@ function Mixtape(props) {
         case "AddSong_Transaction":
            undoAddSong();
           break;
-        case 3:
-          //day = "Wednesday";
-          break;
-        case 4:
-          //day = "Thursday";
-          break;
-        case 5:
-          //day = "Friday";
-          break;
-        case 6:
-          //day = "Saturday";
         default:
           console.log("Unknown transaction.");
       }
