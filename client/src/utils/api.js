@@ -137,8 +137,14 @@ async function requestPasswordReset(email) {
     await axios.put(new URL('/auth/resetPassword', SERVER_ROOT_URL).href, { email });
 }
 
+// reset password by email
 async function resetPassword(token, password) {
     await axios.put(new URL('/auth/resetPassword', SERVER_ROOT_URL).href, { password, token });
+}
+
+// change password through account settings
+async function changePassword(currentPassword, newPassword) {
+    await axios.put(new URL('/auth/changePassword', SERVER_ROOT_URL).href, { currentPassword, newPassword });
 }
 
 async function setUsernameOfOAuthAccount(username) {
@@ -181,14 +187,15 @@ async function getAdmins(){
 }
 
 async function deleteAdmin(userId) {
-    const users = await axios.put(new URL('/admin/deleteAdmin', SERVER_ROOT_URL), { userId });
+    const users = await axios.delete(new URL('/admin/deleteAdmin', SERVER_ROOT_URL), { userId });
     return users.data;
 }
 
 async function addAdmin(userId) {
-    const users = await axios.put(new URL('/admin/addAdmin', SERVER_ROOT_URL), { userId });
+    const users = await axios.post(new URL('/admin/addAdmin', SERVER_ROOT_URL), { userId });
     return users.data;
 }
+
 async function getUser(userId) {
     if (userId.charAt(0) === '#') {
         if (userId.length === 5) {
@@ -254,6 +261,7 @@ export {
     userVerifyAccount,
     requestPasswordReset,
     resetPassword,
+    changePassword,
     uploadFile,
     adminFillDatabase,
     adminDropDatabase,

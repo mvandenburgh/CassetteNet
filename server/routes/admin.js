@@ -57,16 +57,13 @@ router.get('/getAdmins', async (req, res) => {
     })));
 });
 
-router.put('/deleteAdmin', async(req,res)=>{
+router.delete('/deleteAdmin', async (req,res) => {
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
     const { userId } = req.body;
-    console.log(req.body);
-    const user = await User.findOne({ _id: userId });
+    const user = await User.findById(userId);
 
-    console.log("hi");
-    console.log(userId);
     if (user.admin == true ){
         user.admin = false;
         await user.save();
@@ -74,16 +71,14 @@ router.put('/deleteAdmin', async(req,res)=>{
     return res.send(user._id);
 });
 
-router.put('/addAdmin', async(req,res)=>{
+router.post('/addAdmin', async (req,res) => {
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
     const { userId } = req.body;
-    console.log(req.body);
-    const user = await User.findOne({ _id: userId });
 
-    console.log("hi");
-    console.log(userId);
+    const user = await User.findById(userId);
+
     if (user.admin == false ){
         user.admin = true;
         await user.save();

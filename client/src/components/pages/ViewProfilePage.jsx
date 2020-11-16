@@ -1,15 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AppBar, Box, Button, Grid, Tab, Tabs, Typography, makeStyles, IconButton } from '@material-ui/core';
-import indigo from '@material-ui/core/colors/indigo';
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import pfp from '../../images/bottle_pfp.jpg';
 import fb from '../../images/facebook.png';
 import twitter from '../../images/twitter.jpg';
-import ReactRoundedImage from "react-rounded-image";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ReactRoundedImage from 'react-rounded-image';
+import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 import UserProfilePictureUploadModal from '../modals/UserProfilePictureUploadModal';
+import ChangePasswordConfirmationModal from '../modals/ChangePasswordConfirmationModal';
 import { getUserProfilePictureUrl } from '../../utils/api';
 
 function TabPanel(props) {
@@ -121,6 +120,7 @@ function ViewProfilePage(props) {
   const lastActivity = new Date(user.updatedAt);
 
   const [profilePictureUploadModalOpen, setProfilePictureUploadModalOpen] = useState(false);
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
 
   const history = useHistory();
   const goBack = () => history.goBack();
@@ -133,6 +133,7 @@ function ViewProfilePage(props) {
       </IconButton>
       <br />
       <div >
+        <ChangePasswordConfirmationModal open={changePasswordModalOpen} setOpen={setChangePasswordModalOpen} />
 
         <UserProfilePictureUploadModal
           open={profilePictureUploadModalOpen}
@@ -163,8 +164,8 @@ function ViewProfilePage(props) {
                   <Typography style={{ fontSize: '40px' }} variant="h3">{user.username}</Typography>
                   <Typography style={{ fontSize: '20px' }} variant="h3">#{user.uniqueId}</Typography>
                 </span>
-                <Typography style={{ fontSize: '20px' }} variant="h3">User since: {userSince.getMonth()+1}/{userSince.getDate()}/{userSince.getFullYear()}</Typography>
-                <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth()+1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>
+                <Typography style={{ fontSize: '20px' }} variant="h3">User since: {userSince.getMonth() + 1}/{userSince.getDate()}/{userSince.getFullYear()}</Typography>
+                <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth() + 1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>
                 <Typography style={{ fontSize: '20px' }} variant="h3">Followers: {user.followers}</Typography>
 
               </div>
@@ -266,7 +267,9 @@ function ViewProfilePage(props) {
                 width: '300px',
                 backgroundColor: blueGrey[600],
                 color: 'white'
-              }}>Change Password</Button>
+              }}
+              onClick={() => setChangePasswordModalOpen(true)}
+            >Change Password</Button>
           </Grid>
           <Grid item xs={1} style={{ display: user.admin ? '' : 'none' }}>
             <Button
