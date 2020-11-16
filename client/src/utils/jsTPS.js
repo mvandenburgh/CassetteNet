@@ -5,7 +5,7 @@ export class jsTPS_Transaction {
     doTransaction() {
         console.log("doTransaction - MISSING IMPLEMENTATION");
     }
-    
+
     /**
      * This method is called by jTPS when a transaction is undone.
      */
@@ -16,7 +16,7 @@ export class jsTPS_Transaction {
 
 export class jsTPS {
     constructor() {
-        this.transactions = new Array();
+        this.transactions = [];
         this.numTransactions = 0;
         this.mostRecentTransaction = -1;
         this.performingDo = false;
@@ -32,7 +32,7 @@ export class jsTPS {
     }
 
     hasTransactionToRedo() {
-        return (this.mostRecentTransaction+1) < this.numTransactions;
+        return (this.mostRecentTransaction + 1) < this.numTransactions;
     }
 
     hasTransactionToUndo() {
@@ -41,19 +41,21 @@ export class jsTPS {
 
     addTransaction(transaction) {
         // ARE WE BRANCHING?
-        if ((this.mostRecentTransaction < 0) 
-            || (this.mostRecentTransaction < (this.transactions.length - 1))) {
-                for (let i = this.transactions.length - 1; i > this.mostRecentTransaction; i--) {
-                    this.transactions.splice(i, 1);
-                }
-                this.numTransactions = this.mostRecentTransaction + 2;
-        }
-        else {
+        if ((this.mostRecentTransaction < 0) ||
+            (this.mostRecentTransaction < (this.transactions.length - 1))) {
+            for (let i = this.transactions.length - 1; i > this.mostRecentTransaction; i--) {
+                this.transactions.splice(i, 1);
+            }
+            this.numTransactions = this.mostRecentTransaction + 2;
+        } else {
             this.numTransactions++;
         }
-
         // ADD THE TRANSACTION
-        this.transactions[this.mostRecentTransaction+1] = transaction;
+        if (this.mostRecentTransaction + 1 > this.transactions.length - 1) {
+            this.transactions.push(transaction);
+        } else {
+            this.transactions[this.mostRecentTransaction + 1] = transaction;
+        }
 
         // AND EXECUTE IT
         this.doTransaction();
@@ -62,7 +64,7 @@ export class jsTPS {
     doTransaction() {
         if (this.hasTransactionToRedo()) {
             this.performingDo = true;
-            let transaction = this.transactions[this.mostRecentTransaction+1];
+            let transaction = this.transactions[this.mostRecentTransaction + 1];
             transaction.doTransaction();
             this.mostRecentTransaction++;
             this.performingDo = false;
@@ -85,12 +87,12 @@ export class jsTPS {
 
     clearAllTransactions() {
         // REMOVE ALL THE TRANSACTIONS
-        this.transactions = new Array();
-        
+        this.transactions = [];
+
         // MAKE SURE TO RESET THE LOCATION OF THE
         // TOP OF THE TPS STACK TOO
-        this.mostRecentTransaction = -1;      
-        this.numTransactions = 0; 
+        this.mostRecentTransaction = -1;
+        this.numTransactions = 0;
     }
 
     getSize() {
@@ -105,7 +107,7 @@ export class jsTPS {
         return this.mostRecentTransaction + 1;
     }
 
-    toString() {        
+    toString() {
         let text = "--Number of Transactions: " + this.numTransactions + "\n";
         text += "--Current Index on Stack: " + this.mostRecentTransaction + "\n";
         text += "--Current Transaction Stack:\n";
@@ -113,6 +115,6 @@ export class jsTPS {
             let jT = this.transactions[i];
             text += "----" + jT.toString() + "\n";
         }
-        return text;        
+        return text;
     }
 }
