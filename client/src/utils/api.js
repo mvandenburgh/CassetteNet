@@ -100,6 +100,16 @@ async function unfavoriteMixtape(mixtapeId) {
     return favoritedMixtapes.data;
 }
 
+async function followUser(userId) {
+    const followedUsers = await axios.put(new URL(`/user/followUser`, SERVER_ROOT_URL), { id: userId, withCredentials: true });
+    return followedUsers.data;
+}
+
+async function unfollowUser(userId) {
+    const followedUsers = await axios.put(new URL(`/user/unfollowUser`, SERVER_ROOT_URL), { id: userId, withCredentials: true });
+    return followedUsers.data;
+}
+
 /**
  * 
  * @param {*} _id id of the user who's inbox messages we want
@@ -239,6 +249,8 @@ export {
     unfavoriteMixtape,
     getUser,
     getUsername,
+    followUser,
+    unfollowUser,
     getMixtape,
     getMixtapeUrl,
     getMixtapeCoverImageUrl,

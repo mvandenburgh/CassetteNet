@@ -54,7 +54,7 @@ router.get('/:id/favoritedMixtapes', async (req, res) => {
 router.put('/favoriteMixtape', async (req, res) => {
     if (!req.user) return res.status(401).send(null);
     const { id } = req.body;
-    const user = await User.findOne({ _id: req.user._id });
+    const user = await User.findById(req.user._id);
     if (!user.favoritedMixtapes.includes(id)) {
         user.favoritedMixtapes.push(Types.ObjectId(id));
         await user.save();
@@ -65,12 +65,65 @@ router.put('/favoriteMixtape', async (req, res) => {
 router.put('/unfavoriteMixtape', async (req, res) => {
     if (!req.user) return res.status(401).send(null);
     const { id } = req.body;
-    const user = await User.findOne({ _id: req.user._id });
+    const user = await User.findById(req.user._id);
     if (user.favoritedMixtapes.includes(id)) {
         user.favoritedMixtapes.splice(user.favoritedMixtapes.indexOf(id), 1);
         await user.save();
     }
     return res.send(user.favoritedMixtapes);
+});
+
+router.put('/followUser', async (req, res) => {
+    if (!req.user) return res.status(401).send(null);
+    const { id } = req.body;
+    const user = await User.findById(req.user._id);
+    const followedUsersDenormalized = [];
+    if (!user.followedUsers.includes(id)) {
+        user.followedUsers.push(Types.ObjectId(id));
+        await user.save();
+    }
+    for (const userId of user.followedUsers) {
+        const followedUser = await User.findById(userId);
+        const followerCount = (await User.find({ followedUsers: followedUser._id })).length;
+        const createdAt = new Date(followedUser.createdAt);
+        const updatedAt = new Date(followedUser.updatedAt);
+        followedUsersDenormalized.push({
+            _id: userId,
+            uniqueId: followedUser.uniqueId,
+            username: followedUser.username,
+            createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
+            updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
+            followers: followerCount 
+        });
+    }
+    return res.send(followedUsersDenormalized);
+});
+
+router.put('/unfollowUser', async (req, res) => {
+    if (!req.user) return res.status(401).send(null);
+    const { id } = req.body;
+    console.log(id);
+    const user = await User.findById(req.user._id);
+    if (user.followedUsers.includes(id)) {
+        user.followedUsers.splice(user.followedUsers.indexOf(id), 1);
+        await user.save();
+    }
+    const followedUsersDenormalized = [];
+    for (const userId of user.followedUsers) {
+        const followedUser = await User.findById(userId);
+        const followerCount = (await User.find({ followedUsers: followedUser._id })).length;
+        const createdAt = new Date(followedUser.createdAt);
+        const updatedAt = new Date(followedUser.updatedAt);
+        followedUsersDenormalized.push({
+            _id: userId,
+            uniqueId: followedUser.uniqueId,
+            username: followedUser.username,
+            createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
+            updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
+            followers: followerCount 
+        });
+    }
+    return res.send(followedUsersDenormalized);
 });
 
 router.put('/profilePicture', async (req, res) => {

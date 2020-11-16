@@ -5,6 +5,7 @@ import ReactRoundedImage from "react-rounded-image";
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import { getUser, getUserProfilePictureUrl, queryForMixtapes, getFavoritedMixtapes } from '../../utils/api';
+import FollowUserButton from '../FollowUserButton';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -169,7 +170,7 @@ function ViewUserPage(props) {
             <Typography style={{ fontSize: '20px' }} variant="h3">User since: {userSince.getMonth() + 1}/{userSince.getDate()}/{userSince.getFullYear()}</Typography>
             <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth() + 1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>
             <Typography style={{ fontSize: '20px' }} variant="h3">Followers: {user.followers}</Typography>
-            <Button variant="outlined" style={{ padding: '10px', marginTop: '10px', height: '40px', width: '20px', backgroundColor: blueGrey[600], color: 'white' }}>Follow</Button>
+            <FollowUserButton id={user?._id} />
           </div>
         </Box>
         <Box style={{ marginLeft: '100px', width: '86%', backgroundColor: colors.tabsContainer }} boxShadow={3} borderRadius={12}>

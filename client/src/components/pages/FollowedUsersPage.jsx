@@ -1,14 +1,9 @@
 import React, { useContext, useState } from 'react';
 import {
-  AppBar,
   Box,
   Button,
-  Grid,
-  Tab,
-  Tabs,
   TextField,
   Typography,
-  makeStyles,
   IconButton,
   Dialog,
   DialogContent,
@@ -19,14 +14,11 @@ import {
 import { blueGrey, indigo, lightBlue } from '@material-ui/core/colors'
 import { Autocomplete } from '@material-ui/lab';
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
-import { users } from '../../testData/users.json'
 import ReactRoundedImage from "react-rounded-image";
-import dio_pfp from '../../images/dio_pfp.jpg';
-import donna_pfp from '../../images/donna.jpg';
-import pepe_pfp from '../../images/pepe_pfp.png';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 import { getUserProfilePictureUrl } from '../../utils/api';
+import FollowUserButton from '../FollowUserButton';
 
 function FollowedUsersPage(props) {
   const [open, setOpen] = useState(false);
@@ -92,7 +84,7 @@ function FollowedUsersPage(props) {
             </Box>
             <Box style={{ width: "25%", display: 'flex', justifyContent: "left" }}>
               <br />
-              <Button variant="contained" boxShadow={3} style={{ marginTop: '20px', height: '45px', width: '80px', backgroundColor: colors.unfollowButtonColor }}> Unfollow</Button>
+                <FollowUserButton id={user._id} backgroundColor={colors.unfollowButtonColor} />
             </Box>
           </Box>
         </div>
