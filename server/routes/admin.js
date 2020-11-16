@@ -9,8 +9,8 @@ router.post('/populateDatabase', async (req, res) => {
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
-    const { inboxMessages, mixtapes, users } = await generateTestData();
     try {
+        const { inboxMessages, mixtapes, users } = await generateTestData();
         await Promise.all([
             ...users.map(user => User.register({
                 _id: mongoose.Types.ObjectId(user._id),
@@ -28,6 +28,7 @@ router.post('/populateDatabase', async (req, res) => {
         ]);
         res.send('success');
     } catch (err) {
+        console.log(err);
         res.status(500).send(err);
     }
 });
