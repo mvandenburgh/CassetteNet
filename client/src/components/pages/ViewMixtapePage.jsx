@@ -56,6 +56,19 @@ function ViewMixtapePage(props) {
 
     const { tps } = useContext(JSTPSContext);
 
+    useEffect(() => {
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey) {
+                if (e.code === 'KeyZ') {
+                    undoHandler();
+                } else if (e.code === 'KeyY') {
+                    redoHandler();
+                }
+            }
+        })
+    }, []);
+    
+
     const { setPlaying } = useContext(PlayingSongContext);
 
     const owner = mixtape?.collaborators.filter(c => c?.permissions === 'owner').map(c => c?.username)[0];
