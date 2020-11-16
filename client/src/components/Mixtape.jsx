@@ -34,6 +34,7 @@ import SongSearchBar from './SongSearchBar';
 import { SongPosition_Transaction } from './transactions/SongPosition_Transaction';
 import { DeleteSong_Transaction } from './transactions/DeleteSong_Transaction';
 import { AddSong_Transaction } from './transactions/AddSong_Transaction';
+import { throttle } from 'lodash';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   userSelect: 'none',
@@ -152,6 +153,7 @@ function Mixtape(props) {
   }
 
   const addSong = async () => {
+    if (mixtape.songs.map(s => s.id).includes(songToAdd.id)) return;
     const newSongs = [...mixtape.songs];
     const duration = await getSongDuration(apiToUse, songToAdd.id);
     songToAdd.duration = duration;
@@ -313,7 +315,7 @@ function Mixtape(props) {
             </DialogContentText>
           <Grid container>
             <Grid item xs={8}>
-              <SongSearchBar apiToUse={apiToUse} setSelected={setSongToAdd} />
+              <SongSearchBar apiToUse={apiToUse} setSelected={setSongToAdd} toExclude={mixtape?.songs.map(s => s.id)} />
             </Grid>
             <Grid item xs={2} />
             <Grid item xs={2}>
@@ -326,7 +328,7 @@ function Mixtape(props) {
 
         </DialogContent>
         <DialogActions>
-          <Button align="center" onClick={() => addSong()} color="primary">
+          <Button align="center" onClick={throttle(addSong, 1000)} color="primary">
             Add
             </Button>
         </DialogActions>
