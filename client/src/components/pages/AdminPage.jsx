@@ -117,11 +117,6 @@ function AdminPage(props) {
         setAdmins(admins);
         console.log(admins);
      }, []);
-     useEffect(async () => {
-        const admins = await getAdmins();
-        setAdmins(admins);
-        console.log(admins);
-     }, [admins]);
 
     const classes = useStyles();
     // TODO: add user to destructuring when needed
@@ -143,11 +138,15 @@ function AdminPage(props) {
         if(admin){
             console.log(admin._id);
             await addAdmin(admin._id);
+            const admins = await getAdmins();
+            setAdmins(admins);
         }
     }
     const deleteAdminHandler = async(admin)=>{
         console.log(admin._id);
         await deleteAdmin(admin._id);
+        const admins = await getAdmins();
+        setAdmins(admins);
     }
 
     //TODO: Possibly re-align fields

@@ -5,6 +5,7 @@ const { Types } = require('mongoose');
 const { parse, toSeconds } = require('iso8601-duration');
 const Avatar = require('avatar-builder');
 const { getPlaylistVideos, getVideoInfo } = require('../external_apis/youtube');
+const userTestData = require('./users.json');
 
 const NUM_OF_USERS = 50;
 
@@ -117,8 +118,13 @@ async function generateMixtapes() {
 async function generateUsers(count) {
     const users = [];
     let current_unique_id = 0;
-    const res = await axios.get(`https://randomuser.me/api/?results=${count}`);
-    for (const user of res.data.results) {
+    let res;
+    try {
+        res = (await axios.get(`https://randomuser.me/api/?results=${count}`)).data;
+    } catch (err) {
+        res = userTestData;
+    }
+    for (const user of res.results) {
         const { username } = user.login;
         const password = 'password';
         const { email } = user;

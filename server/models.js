@@ -42,13 +42,24 @@ userSchema.plugin(AutoIncrement, { inc_field: 'uniqueId' });
 userSchema.index({ username: 'text' });
 userSchema.plugin(mongoosePartialTextSearch);
 
+const songSchema = new Schema({
+  name: {
+    type: String,
+    searchable: true,
+  },
+  id: String,
+  coverImage: String,
+  type: String,
+  duration: Number,
+});
+
 const mixtapeSchema = new Schema({
   name: {
     type: String,
     searchable: true,
   },
   collaborators: Array, // [{ user: mongoose.Types.ObjectId, permissions: { type: String, enum: ['owner', 'viewer', 'editor'] } }]
-  songs: Array, // list of youtube/spotify/whatever song ids
+  songs: [songSchema],
   coverImage: { 
     type: {
       data: Buffer,
@@ -61,6 +72,7 @@ const mixtapeSchema = new Schema({
 
 mixtapeSchema.index({ name: 'text' });
 mixtapeSchema.plugin(mongoosePartialTextSearch);
+songSchema.plugin(mongoosePartialTextSearch);
 
 const inboxMessageSchema = new Schema({
   mixtape: mongoose.Types.ObjectId, // id of the mixtape this message corresponds to
