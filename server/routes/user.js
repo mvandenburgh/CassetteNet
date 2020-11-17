@@ -10,11 +10,21 @@ router.get('/search', async (req, res) => {
     const { query } = req.query;
     if (!query) return res.send([]);
     const users = await User.find(User.searchBuilder(query)).lean();
-    return res.send(users.map(user => ({
-        _id: user._id,
-        username: user.username,
-        uniqueId: user.uniqueId,
-    })));
+    const results = [];
+    for (const user of users) {
+        const updatedAt =new Date(user.updatedAt);
+        const createdAt = new Date(user.createdAt);
+        const followerCount = (await User.find({ followedUsers: user._id })).length;
+        results.push({
+            _id: user._id,
+            username: user.username,
+            uniqueId: user.uniqueId,
+            updatedAt,
+            createdAt,
+            followerCount,
+        });
+    }
+    return res.send(results);
 });
 
 // get a user's mixtapes

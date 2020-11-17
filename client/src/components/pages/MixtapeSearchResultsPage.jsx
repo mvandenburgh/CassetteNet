@@ -21,9 +21,9 @@ function MixtapeSearchResultsPage(props) {
 
     const [shareModalOpen, setShareModalOpen] = useState(false);
 
-    useEffect(async () => {
-        const searchResults = await mixtapeSearch(new URLSearchParams(props.location.search).get('query'));
-        setMixtapes(searchResults);
+    useEffect(() => {
+        mixtapeSearch(new URLSearchParams(props.location.search).get('query'))
+        .then(searchResults => setMixtapes(searchResults));
     }, [props.location.search]);
 
     const history = useHistory();

@@ -15,7 +15,7 @@ function UserList({ users }) {
         unfollowButtonColor: lightBlue[500],
     };
     return (
-        <div>
+        <div style={{ color: 'white', left: 0 }}>
             {users.map((user, index) => (
                 <div onMouseEnter={() => setHighlightedRow(index)} onMouseLeave={() => setHighlightedRow(null)}>
                     <Box
