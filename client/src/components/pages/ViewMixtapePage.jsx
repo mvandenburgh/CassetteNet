@@ -21,7 +21,7 @@ import {
 } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import { getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
+import { createListeningRoom, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
 import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon } from '@material-ui/icons';
@@ -324,6 +324,14 @@ function ViewMixtapePage(props) {
         }
     }
 
+    const createListeningRoomButtonHandler = () => {
+        if (mixtape) {
+            createListeningRoom(mixtape._id)
+            .then(listeningRoomId => history.push(`/listeningRoom/${listeningRoomId}`))
+            .catch(err => alert(err));
+        }
+    }
+
     return (
         <div>
             <SettingsModal
@@ -463,7 +471,7 @@ function ViewMixtapePage(props) {
                                         variant="contained"
                                         color="secondary"
                                         startIcon={<MusicNoteIcon />}
-                                    // onClick={() => history.push('/listeningroom')}
+                                        onClick={createListeningRoomButtonHandler}
                                     >
                                         Create Listening Room
                                     </Button>

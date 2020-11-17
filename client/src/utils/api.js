@@ -242,6 +242,16 @@ function getMixtapeUrl(mixtapeId) {
     return new URL(`/mixtape/${mixtapeId}`, CLIENT_ROOT_URL).href;
 }
 
+async function createListeningRoom(mixtapeId) {
+    const listeningRoomId = await axios.post(new URL('/listeningroom', SERVER_ROOT_URL).href, { mixtapeId });
+    return listeningRoomId.data;
+}
+
+async function getListeningRoom(listeningRoomId) {
+    const listeningRoom = await axios.get(new URL(`/listeningroom/${listeningRoomId}`, SERVER_ROOT_URL).href);
+    return listeningRoom.data;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -282,4 +292,6 @@ export {
     getAdmins,
     deleteAdmin,
     addAdmin,
+    createListeningRoom,
+    getListeningRoom,
 };
