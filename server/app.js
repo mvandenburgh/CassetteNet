@@ -1,4 +1,6 @@
 const express = require('express');
+const socketIO = require('socket.io');
+const http = require('http');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -62,5 +64,20 @@ app.use('/api/youtube', youtubeRoute);
 app.use('/', express.static('build'));
 app.get('*', (req, res) => res.sendFile('index.html', { root: path.join(__dirname, 'build') }));
 
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}...`));
+const server = http.createServer(app);
+const io = socketIO(server, {
+    cors: {
+      origin: 'http://localhost:3000',
+      methods: ["GET", "POST"]
+    }
+});
+app.set('socketIO', io);
+
+// io.on('connection', (socket) => {
+//     console.log(socket)
+//     socket.emit("FromAPI", 'hello socket!');
+// });
+
+server.listen(PORT);

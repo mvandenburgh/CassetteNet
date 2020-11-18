@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Mixtape from '../Mixtape';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
 import { getMixtape, getListeningRoom } from '../../utils/api';
+import { checkInToListeningRoom } from '../../utils/sockets';
+import socketIOClient from 'socket.io-client';
 
 
 function TabPanel(props) {
@@ -50,13 +52,35 @@ function ListeningRoomPage(props) {
     const handleTabChange = (e, val) => setCurrentTab(val);
 
     useEffect(() => {
-        getListeningRoom(props.match.params.id)
-            .then(lr => {
-                setListeningRoom(lr);
-                getMixtape(lr.mixtape)
-                .then(mixtape => setMixtape(mixtape));
+        checkInToListeningRoom(props.match.params.id)
+            .then(() => {
+                getListeningRoom(props.match.params.id)
+                    .then(lr => {
+                        setListeningRoom(lr);
+                        getMixtape(lr.mixtape)
+                            .then(mixtape => setMixtape(mixtape));
+                    })
             })
             .catch(err => alert(err));
+        setInterval(() => {
+            checkInToListeningRoom(props.match.params.id).then(() => {
+                getListeningRoom(props.match.params.id).then(lr => setListeningRoom(lr));
+            })
+        }, 5000);
+
+    }, []);
+
+
+
+    useEffect(() => {
+        const socket = socketIOClient('http://localhost:5000');
+        socket.on('userJoined', () => {
+            getListeningRoom(props.match.params.id)
+                .then(lr => {
+                    setListeningRoom(lr);
+                })
+                .catch(err => alert(err));
+        });
     }, []);
 
     return (
@@ -83,11 +107,11 @@ function ListeningRoomPage(props) {
                         </Grid>
                         <Grid item xs={1} />
                         <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>
-                        <Paper style={{ margin: '2%', backgroundColor: "white", height: '48%' }}>
-                                <Grid container style={{height: '10%'}}>
+                            <Paper style={{ margin: '2%', backgroundColor: "white", height: '48%' }}>
+                                <Grid container style={{ height: '10%' }}>
                                     <Typography style={{ fontSize: '2em' }} alignItems="center">Listeners</Typography>
                                 </Grid>
-                                <Grid container style={{height: '5%'}} />
+                                <Grid container style={{ height: '5%' }} />
                                 <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
                                     <Grid container>
                                         <Grid item xs={12} style={{}}>
@@ -97,10 +121,10 @@ function ListeningRoomPage(props) {
                                 </Grid>
                             </Paper>
                             <Paper style={{ margin: '2%', backgroundColor: "white", height: '48%' }}>
-                                <Grid container style={{height: '10%'}}>
+                                <Grid container style={{ height: '10%' }}>
                                     <Typography style={{ fontSize: '2em' }} alignItems="center">Chat</Typography>
                                 </Grid>
-                                <Grid container style={{height: '5%'}} />
+                                <Grid container style={{ height: '5%' }} />
                                 <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
                                     <Grid container>
                                         <Grid item xs={12} style={{}}>
