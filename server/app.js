@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -50,13 +51,16 @@ app.use(session({ // initialize login sessions
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/admin', adminRoute);
-app.use('/auth', authRoute);
-app.use('/listeningroom', listeningRoomRoute);
-app.use('/mixtape', mixtapeRoute);
-app.use('/soundcloud', soundcloudRoute);
-app.use('/user', userRoute);
-app.use('/youtube', youtubeRoute);
+app.use('/api/admin', adminRoute);
+app.use('/api/auth', authRoute);
+app.use('/api/listeningroom', listeningRoomRoute);
+app.use('/api/mixtape', mixtapeRoute);
+app.use('/api/soundcloud', soundcloudRoute);
+app.use('/api/user', userRoute);
+app.use('/api/youtube', youtubeRoute);
+
+app.use('/', express.static('build'));
+app.get('*', (req, res) => res.sendFile('index.html', { root: path.join(__dirname, 'build') }));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}...`));

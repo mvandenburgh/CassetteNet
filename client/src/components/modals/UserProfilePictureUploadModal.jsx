@@ -19,7 +19,7 @@ function UserProfilePictureUploadModal(props) {
     const [file, setFile] = useState(null);
 
     const uploadImage = async () => {
-        await uploadFile(file, 'profilePicture', '/user/profilePicture');
+        await uploadFile(file, 'profilePicture', '/api/user/profilePicture');
         setOpen(false);
         window.location.reload();
     }
