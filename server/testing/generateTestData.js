@@ -93,6 +93,7 @@ async function generateMixtapes() {
                         id: entry.snippet.resourceId.videoId,
                         coverImage: entry.snippet.thumbnails.default.url,
                         type: 'youtube',
+                        playbackUrl: `https://www.youtube.com/watch?v=${entry.snippet.resourceId.videoId}`,
                     })
             );
             const videosInfo = await getVideoInfo(songs.map(song => song.id).toString());
