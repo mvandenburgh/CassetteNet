@@ -15,6 +15,7 @@ router.get('/search', async (req, res) => {
             description: result.snippet.description,
             coverImage: result.snippet.thumbnails.default.url,
             type: 'youtube',
+            playbackUrl: `https://www.youtube.com/watch?v=${result.id.videoId}`,
         }));
         res.send(response);
     } catch (err) {

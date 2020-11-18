@@ -19,7 +19,7 @@ function MixtapeCoverImageUploadModal(props) {
     const [file, setFile] = useState(null);
 
     const uploadImage = async () => {
-        await uploadFile(file, 'coverImage', `/mixtape/${mixtape._id}/coverImage`);
+        await uploadFile(file, 'coverImage', `/api/mixtape/${mixtape._id}/coverImage`);
         setCoverImageUrl(null);
         setCoverImageUrl(coverImageUrl);
     }

@@ -21,7 +21,7 @@ import {
 } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import { getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
+import { createListeningRoom, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
 import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon } from '@material-ui/icons';
@@ -56,18 +56,55 @@ function ViewMixtapePage(props) {
 
     const { tps } = useContext(JSTPSContext);
 
-    useEffect(() => {
+    const myHandler = () => {
         document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey) {
-                if (e.code === 'KeyZ') {
-                    undoHandler();
-                } else if (e.code === 'KeyY') {
-                    redoHandler();
-                }
+            if (e.ctrlKey && e.code === 'KeyZ') {
+                undoHandler();
+            } else if (e.ctrlKey && e.code === 'KeyY') {
+                redoHandler();
             }
-        })
-    }, []);
+        });
+    }
+    useEventListener('keydown', myHandler);
+
     
+// Hook
+function useEventListener(eventName, handler, element = document){
+    // Create a ref that stores handler
+    const savedHandler = useRef();
+    
+    // Update ref.current value if handler changes.
+    // This allows our effect below to always get latest handler ...
+    // ... without us needing to pass it in effect deps array ...
+    // ... and potentially cause effect to re-run every render.
+    useEffect(() => {
+      savedHandler.current = handler;
+    }, [handler]);
+  
+    useEffect(
+      () => {
+        // Make sure element supports addEventListener
+        // On 
+        const isSupported = element && element.addEventListener;
+        if (!isSupported) return;
+        
+        // Create event listener that calls handler function stored in ref
+        const eventListener = event => savedHandler.current(event);
+        
+        // Add event listener
+        element.addEventListener(eventName, eventListener);
+        
+        // Remove event listener on cleanup
+        return () => {
+          element.removeEventListener(eventName, eventListener);
+        };
+      },
+      [eventName, element] // Re-run if eventName or element changes
+    );
+  };
+
+    
+
 
     const { setPlaying } = useContext(PlayingSongContext);
 
@@ -264,6 +301,7 @@ function ViewMixtapePage(props) {
         console.log("Redo Delete Song");
         tps.doTransaction();
         setMixtape(mixtape);
+        setSongsToDelete([]);
         setCurrentSong({
             mixtape: currentSong.mixtape,
             index: currentSong.index,
@@ -321,6 +359,14 @@ function ViewMixtapePage(props) {
                 default:
                     console.log("Unknown transaction.");
             }
+        }
+    }
+
+    const createListeningRoomButtonHandler = () => {
+        if (mixtape) {
+            createListeningRoom(mixtape._id)
+            .then(listeningRoomId => history.push(`/listeningRoom/${listeningRoomId}`))
+            .catch(err => alert(err));
         }
     }
 
@@ -463,7 +509,7 @@ function ViewMixtapePage(props) {
                                         variant="contained"
                                         color="secondary"
                                         startIcon={<MusicNoteIcon />}
-                                    // onClick={() => history.push('/listeningroom')}
+                                        onClick={createListeningRoomButtonHandler}
                                     >
                                         Create Listening Room
                                     </Button>

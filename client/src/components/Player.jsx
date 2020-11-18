@@ -5,7 +5,6 @@ import ReactPlayer from 'react-player';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
-import { getSoundCloudSongUrl } from '../utils/api';
 
 const WHITE_SMOKE = '#eee'
 const GRAY = '#878c88'
@@ -102,23 +101,6 @@ function Player(props) {
     const [shuffle, setShuffle] = useState(false);
     const [loop, setLoop] = useState(false);
 
-    const songURL = () => {
-      if (currentSong?.mixtape?.songs) {
-        const song = currentSong?.mixtape?.songs[currentSong?.index];
-        switch (song?.type) {
-          case 'youtube':
-            return `https://www.youtube.com/watch?v=${song.id}`;
-          case 'soundcloud':
-            return getSoundCloudSongUrl(song.id);
-          default:
-            return '';
-        }
-      }
-      return '';
-    }
-
-    const playerUrl = songURL();
-  
     const handlePlay = () => {
       if (currentSong.disabled === currentSong.mixtape._id) {
         return;
@@ -222,7 +204,7 @@ function Player(props) {
             <ReactPlayer 
               onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
               ref={playerRef} playing={playing} style={{display: 'none'}}
-              url={playerUrl}
+              url={currentSong.playbackUrl}
             />
         </div>
     )

@@ -51,6 +51,7 @@ const songSchema = new Schema({
   coverImage: String,
   type: String,
   duration: Number,
+  playbackUrl: String,
 });
 
 const mixtapeSchema = new Schema({
