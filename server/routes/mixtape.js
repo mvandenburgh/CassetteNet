@@ -21,6 +21,30 @@ function isAuthorized(user, mixtape) {
     return false;
 }
 
+
+/**
+ * Fisher-Yates algorithm for shuffling arrays
+ */
+function getRandomSubarray(arr, size) {
+    const shuffled = arr.slice(0);
+    let i = arr.length;
+    let temp;
+    let index;
+    while (i--) {
+        index = Math.floor((i + 1) * Math.random());
+        temp = shuffled[index];
+        shuffled[index] = shuffled[i];
+        shuffled[i] = temp;
+    }
+    return shuffled.slice(0, size);
+}
+
+router.get('/random', async (req, res) => {
+    const { count } = req.query;
+    const mixtapes = await Mixtape.find({ isPublic: true }).lean();
+    res.send(getRandomSubarray(mixtapes, count));
+});
+
 router.put('/:id/coverImage', async (req, res) => {
     if (!req.files || !req.files.coverImage) return res.status(400).send('no file uploaded.');
     const { coverImage } = req.files;
