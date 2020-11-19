@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Avatar, Box, Divider, Grid, IconButton, List, ListItem, ListItemText, ListItemAvatar, Typography } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
-import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
+import { ArrowBack as ArrowBackIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import UserContext from '../../contexts/UserContext';
-import { getInboxMessages } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
+import { getMixtapeCoverImageUrl, deleteInboxMessage } from '../../utils/api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,7 +26,13 @@ function InboxPage() {
         user = JSON.parse(localStorage.getItem('user'));
     }
 
-    const messages = getInboxMessages(user._id);
+    const [messages, setMessages] = useState(user.inboxMessages)
+
+    const deleteMessageHandler = (messageId) => {
+        deleteInboxMessage(messageId).then(messages => {
+            setMessages(messages);
+        });
+    }
 
     const history = useHistory();
     const goBack = () => { history.push('/') }
@@ -82,7 +88,7 @@ function InboxPage() {
                     </ListItem>
                     <hr />
                         {
-                            messages.map((message) => {
+                            messages?.map((message) => {
                                 return (
                                     <div>
                                         <ListItem alignItems="flex-start">
@@ -108,8 +114,11 @@ function InboxPage() {
                                                     }
                                                     />
                                                 </Grid>
-                                                <Grid item xs={4}>
-                                                    <img style={{width: '20%'}} src="https://thumbs.dreamstime.com/b/retro-mix-tape-cover-illustration-retro-mix-tape-cover-illustration-old-school-music-art-182730287.jpg" alt="mixtape_cover"></img>
+                                                <Grid item xs={3}>
+                                                    <img style={{width: '20%'}} src={getMixtapeCoverImageUrl(message.mixtape)} alt="mixtape_cover"></img>
+                                                </Grid>
+                                                <Grid item>
+                                                    <DeleteIcon onClick={() => deleteMessageHandler(message._id)} />
                                                 </Grid>
                                             </Grid>
                                         </ListItem>

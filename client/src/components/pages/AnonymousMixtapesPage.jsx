@@ -1,57 +1,48 @@
-import React, { useContext, useState } from 'react';
-import { AppBar, Box, Button, Grid, Tab, Tabs, Typography, makeStyles, IconButton } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
 import CommentIcon from '@material-ui/icons/Comment';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
-import indigo from '@material-ui/core/colors/indigo';
+import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import lightBlue from '@material-ui/core/colors/lightBlue';
-import { users } from '../../testData/users.json'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
+import { Box, Button, Grid, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
+import { getRandomMixtapes } from '../../utils/api';
 
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { TextFields, TextFieldsSharp } from '@material-ui/icons';
+const MixtapeRows = ({ mixtapes, history }) => (
+  <>
 
-
-const MixtapeRows = ({mixtapes}) => (
-    <>
-    
-      {mixtapes.map(mixtape => (
-        <Box style={{
-            margin: "5px",
-            padding: "10px",
-            backgroundColor: blueGrey[700],
-            display: "flex", 
-            flexDirection: "row",
-            borderRadius: 6,
-            fontSize: 12,
-        }}>
-            <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.name} </Box>
-            <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.collaborators} </Box>
-            <Box style={{ width: "33%", display: 'flex', flexDirection: "row", justifyContent: "center"}}> 
-                <FavoriteIcon/> 
-                <CommentIcon/> 
-                <ShareIcon/> 
-            </Box>
-
+    {mixtapes.map(mixtape => (
+      <Box
+        style={{
+          margin: "5px",
+          padding: "10px",
+          backgroundColor: blueGrey[700],
+          display: "flex",
+          flexDirection: "row",
+          borderRadius: 6,
+          fontSize: 12,
+        }}
+      >
+        <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/mixtape/${mixtape._id}`)}> {mixtape.name} </Box>
+        <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/user/${mixtape.collaborators.filter(c => c.permissions === 'owner')[0].user}`)}> {mixtape.collaborators.filter(c => c.permissions === 'owner')[0].username} </Box>
+        <Box style={{ width: "33%", display: 'flex', flexDirection: "row", justifyContent: "center" }}>
+          <FavoriteMixtapeButton id={mixtape._id} />
+          {/* <CommentIcon /> */}
+          {/* <ShareIcon /> */}
         </Box>
-      ))}
-    </>
-    ); 
+      </Box>
+    ))}
+  </>
+);
 
 function AnonymousMixtapesPage(props) {
-  const colors = {
 
-  }
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+
+  const [anonMixtapes, setAnonMixtapes] = useState([]);
 
   const handleClickOpen = () => {
+    return;
     setOpen(true);
   };
 
@@ -59,37 +50,44 @@ function AnonymousMixtapesPage(props) {
     setOpen(false);
   };
 
+  useEffect(() => {
+    getRandomMixtapes(5).then(mixtapes => { console.log(mixtapes); setAnonMixtapes(mixtapes); });
+  }, []);
 
-  var anonMixtapes = [
-    {
-        name: 'Evening Acoustic',
-        collaborators: 'purplefish313, brownmeercat530',
-    },
-    {
-        name: 'Rock Classics',
-        collaborators: 'silverbutterfly863, brownmeercat530',
-    },
-    {
-        name: 'Gold School',
-        collaborators: 'yellowleopard776',
-    },
-    {
-        name: 'Calm Down',
-        collaborators: 'goldengoose181, brownmeercat530',
-    },
-    {
-        name: 'Chill + Atmospheric',
-        collaborators: 'beautifulpanda667',
-    },  
-    ];
+  console.log(anonMixtapes)
+
+  // var anonMixtapes = [
+  //   {
+  //       name: 'Evening Acoustic',
+  //       collaborators: 'purplefish313, brownmeercat530',
+  //   },
+  //   {
+  //       name: 'Rock Classics',
+  //       collaborators: 'silverbutterfly863, brownmeercat530',
+  //   },
+  //   {
+  //       name: 'Gold School',
+  //       collaborators: 'yellowleopard776',
+  //   },
+  //   {
+  //       name: 'Calm Down',
+  //       collaborators: 'goldengoose181, brownmeercat530',
+  //   },
+  //   {
+  //       name: 'Chill + Atmospheric',
+  //       collaborators: 'beautifulpanda667',
+  //   },  
+  //   ];
+
+
 
 
   const history = useHistory();
   const goBack = () => { history.push('/') }
 
   return (
-      <div  style={{ color: 'white', left:0 }}>
-          <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+    <div style={{ color: 'white', left: 0 }}>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Write a Message!</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -98,7 +96,7 @@ function AnonymousMixtapesPage(props) {
           <TextField
             multiline
             rows={17}
-            style={{height:'300px',width:'400px'}}
+            style={{ height: '300px', width: '400px' }}
             autoFocus
             variant="filled"
             margin="dense"
@@ -114,56 +112,59 @@ function AnonymousMixtapesPage(props) {
           </Button>
         </DialogActions>
       </Dialog>
-        <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
-            <ArrowBackIcon/>
-        </IconButton>
-        <br/>
-        <Typography variant="h3" style={{textAlign: "center"}}>Mixtapes Anonymous</Typography>
-        <br/>
-        <Grid container direction="row">
-        
-        <Box style={{backgroundColor: blueGrey[900], marginLeft:"170px",width: "80%", display: "flex", flexDirection: "row", borderRadius: 3, padding: '5px' }} >
-            <Box style={{ backgroundColor: blueGrey[900],
-                            width: "33%",
-                            textAlign: "center",
-                            boxShadow: "3",
-                            borderRadius: 6
-                        }}>
-                Name
+      <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
+        <ArrowBackIcon />
+      </IconButton>
+      <br />
+      <Typography variant="h3" style={{ textAlign: "center" }}>Mixtapes Anonymous</Typography>
+      <br />
+      <Grid container direction="row">
+
+        <Box style={{ backgroundColor: blueGrey[900], marginLeft: "170px", width: "80%", display: "flex", flexDirection: "row", borderRadius: 3, padding: '5px' }} >
+          <Box style={{
+            backgroundColor: blueGrey[900],
+            width: "33%",
+            textAlign: "center",
+            boxShadow: "3",
+            borderRadius: 6
+          }}>
+            Name
             </Box>
-            <Box style={{ backgroundColor: blueGrey[900],
-                            width: "33%",
-                            textAlign: "center",
-                            boxShadow: 3,
-                            borderRadius: 6
-                        }}>
-                Collaborators
+          <Box style={{
+            backgroundColor: blueGrey[900],
+            width: "33%",
+            textAlign: "center",
+            boxShadow: 3,
+            borderRadius: 6
+          }}>
+            Creator
             </Box>
-            <Box style={{ backgroundColor: blueGrey[900],
-                            width: "34%",
-                            textAlign: "center",
-                            boxShadow: "3",
-                            borderRadius: 6
-                        }}>
-                Favorite-Comment-Share
+          <Box style={{
+            backgroundColor: blueGrey[900],
+            width: "34%",
+            textAlign: "center",
+            boxShadow: "3",
+            borderRadius: 6
+          }}>
+            Favorite
             </Box>
         </Box>
         <Box onClick={handleClickOpen} style={{
-                        marginLeft:"170px",
-                        marginTop: '5px',
-                        marginRight: '10px',
-                        padding: '5px',
-                        borderRadius: 6,
-                        backgroundColor: blueGrey[900],
-                        width: '80%'
-                    }}> 
-                <MixtapeRows mixtapes={anonMixtapes} />
-            </Box>
-        </Grid>
-        
-        
-      </div>
-);
+          marginLeft: "170px",
+          marginTop: '5px',
+          marginRight: '10px',
+          padding: '5px',
+          borderRadius: 6,
+          backgroundColor: blueGrey[900],
+          width: '80%'
+        }}>
+          <MixtapeRows mixtapes={anonMixtapes} history={history} />
+        </Box>
+      </Grid>
+
+
+    </div>
+  );
 }
 
 export default AnonymousMixtapesPage;

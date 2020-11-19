@@ -22,7 +22,7 @@ import {
 } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
+import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration, sendAnonymousMessage } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
 import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
@@ -68,43 +68,43 @@ function ViewMixtapePage(props) {
     }
     useEventListener('keydown', myHandler);
 
-    
-// Hook
-function useEventListener(eventName, handler, element = document){
-    // Create a ref that stores handler
-    const savedHandler = useRef();
-    
-    // Update ref.current value if handler changes.
-    // This allows our effect below to always get latest handler ...
-    // ... without us needing to pass it in effect deps array ...
-    // ... and potentially cause effect to re-run every render.
-    useEffect(() => {
-      savedHandler.current = handler;
-    }, [handler]);
-  
-    useEffect(
-      () => {
-        // Make sure element supports addEventListener
-        // On 
-        const isSupported = element && element.addEventListener;
-        if (!isSupported) return;
-        
-        // Create event listener that calls handler function stored in ref
-        const eventListener = event => savedHandler.current(event);
-        
-        // Add event listener
-        element.addEventListener(eventName, eventListener);
-        
-        // Remove event listener on cleanup
-        return () => {
-          element.removeEventListener(eventName, eventListener);
-        };
-      },
-      [eventName, element] // Re-run if eventName or element changes
-    );
-  };
 
-    
+    // Hook
+    function useEventListener(eventName, handler, element = document) {
+        // Create a ref that stores handler
+        const savedHandler = useRef();
+
+        // Update ref.current value if handler changes.
+        // This allows our effect below to always get latest handler ...
+        // ... without us needing to pass it in effect deps array ...
+        // ... and potentially cause effect to re-run every render.
+        useEffect(() => {
+            savedHandler.current = handler;
+        }, [handler]);
+
+        useEffect(
+            () => {
+                // Make sure element supports addEventListener
+                // On 
+                const isSupported = element && element.addEventListener;
+                if (!isSupported) return;
+
+                // Create event listener that calls handler function stored in ref
+                const eventListener = event => savedHandler.current(event);
+
+                // Add event listener
+                element.addEventListener(eventName, eventListener);
+
+                // Remove event listener on cleanup
+                return () => {
+                    element.removeEventListener(eventName, eventListener);
+                };
+            },
+            [eventName, element] // Re-run if eventName or element changes
+        );
+    };
+
+
 
 
     const { setPlaying } = useContext(PlayingSongContext);
@@ -129,6 +129,7 @@ function useEventListener(eventName, handler, element = document){
 
     const [apiToUse, setApiToUse] = useState('soundcloud');
 
+    const [writeMessageDialogOpen, setWriteMessageDialogOpen] = useState(false);
 
     const addSong = async () => {
         if (mixtape.songs.map(s => s.id).includes(songToAdd.id)) return;
@@ -366,8 +367,8 @@ function useEventListener(eventName, handler, element = document){
     const createListeningRoomButtonHandler = () => {
         if (mixtape) {
             createListeningRoom(mixtape._id)
-            .then(listeningRoomId => history.push(`/listeningRoom/${listeningRoomId}`))
-            .catch(err => alert(err));
+                .then(listeningRoomId => history.push(`/listeningRoom/${listeningRoomId}`))
+                .catch(err => alert(err));
         }
     }
 
@@ -389,6 +390,18 @@ function useEventListener(eventName, handler, element = document){
   
       setOpen(false);
     };
+    const [message, setMessage] = useState('');
+
+    const sendMessageHandler = () => {
+        if (message) {
+            const owners = mixtape.collaborators.filter(c => c.permissions === 'owner');
+            for (const owner of owners) {
+                sendAnonymousMessage(mixtape._id, owner.user, message);
+            }
+        }
+        setWriteMessageDialogOpen(false);
+        setMessage('');
+    }
 
     return (
         <div>
@@ -405,6 +418,34 @@ function useEventListener(eventName, handler, element = document){
                 open={shareMixtapePopupIsOpen}
                 setOpen={setShareMixtapePopupIsOpen}
             />
+
+            <Dialog open={writeMessageDialogOpen} onClose={() => setWriteMessageDialogOpen(false)}>
+                <DialogTitle>Write a Message!</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Give some feedback on the mixtape!
+                    </DialogContentText>
+                    <TextField
+                        multiline
+                        rows={17}
+                        style={{ height: '300px', width: '400px' }}
+                        autoFocus
+                        variant="filled"
+                        margin="dense"
+                        id="name"
+                        label="Message"
+                        type="email"
+                        fullWidth
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button align="center" onClick={sendMessageHandler} color="primary">
+                        SEND
+          </Button>
+                </DialogActions>
+            </Dialog>
 
             <MixtapeCoverImageUploadModal coverImageUrl={coverImageUrl} setCoverImageUrl={setCoverImageUrl} mixtape={mixtape} setMixtape={setMixtape} open={uploadCoverImagePopup} setOpen={setUploadCoverImagePopup} />
 
@@ -466,7 +507,7 @@ function useEventListener(eventName, handler, element = document){
                     <Grid xs={3} item>
                         <Box style={{ display: 'inline-flex', flexDirection: 'row', float: 'right' }}>
                             <FavoriteMixtapeButton id={props.match.params.id} style={{ margin: '10px' }} />
-                            <CommentIcon style={{ margin: '10px' }} />
+                            <CommentIcon onClick={() => setWriteMessageDialogOpen(true)} style={{ margin: '10px', cursor: 'pointer' }} />
                             <ShareIcon style={{ margin: '10px' }} />
                         </Box>
                     </Grid>

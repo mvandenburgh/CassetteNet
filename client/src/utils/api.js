@@ -120,14 +120,6 @@ async function unfollowUser(userId) {
     return followedUsers.data;
 }
 
-/**
- * 
- * @param {*} _id id of the user who's inbox messages we want
- */
-function getInboxMessages(_id) {
-    return inboxMessages.filter(message => message.recipient === _id);
-}
-
 async function userSignup(email, username, password) {
     try {
         await axios.post(new URL('/api/auth/signup', SERVER_ROOT_URL), { email, username, password });
@@ -258,6 +250,25 @@ async function getListeningRoom(listeningRoomId) {
     return listeningRoom.data;
 }
 
+async function sendAnonymousMessage(mixtapeId, recipient, message) {
+    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId });
+}
+
+async function deleteInboxMessage(messageId) {
+    const messages = await axios.delete(new URL(`/api/user/deleteMessage/${messageId}`, SERVER_ROOT_URL).href);
+    return messages.data;
+}
+
+async function getInboxMessages() {
+    const messages = await axios.get(new URL('/api/user/inboxMessages', SERVER_ROOT_URL).href);
+    return messages.data;
+}
+
+async function getRandomMixtapes(count) {
+    const mixtapes = await axios.get(new URL('/api/mixtape/random', SERVER_ROOT_URL).href, { params: { count } });
+    return mixtapes.data;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -299,5 +310,8 @@ export {
     addAdmin,
     createListeningRoom,
     getListeningRoom,
-    forkMixtape
+    forkMixtape,
+    sendAnonymousMessage,
+    deleteInboxMessage,
+    getRandomMixtapes,
 };
