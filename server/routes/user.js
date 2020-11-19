@@ -2,7 +2,7 @@ const express = require('express');
 const avatars = require('avatars');
 const jimp = require('jimp');
 const { Types } = require('mongoose');
-const { Mixtape, User } = require('../models');
+const { InboxMessage, Mixtape, User } = require('../models');
 
 const router = express.Router();
 
@@ -142,6 +142,23 @@ router.put('/profilePicture', async (req, res) => {
     const { profilePicture } = req.files;
     await User.findByIdAndUpdate(req.user._id, { profilePicture: { data: profilePicture.data, contentType: profilePicture.mimetype } });
     res.send('success');
+});
+
+router.post('/sendMessage', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
+    if (!req.body.message || !req.body.recipient) return res.status(400).send();
+    const { message, mixtapeId, recipient } = req.body;
+    const inboxMessage = {
+        mixtape: mixtapeId,
+        message,
+        recipient,
+    };
+    try {
+        const inboxMessageDb = await InboxMessage.create(inboxMessage);
+        res.send(inboxMessage._id);
+    } catch(err) {
+        res.status(500).send(err);
+    }
 });
 
 router.get('/:id/profilePicture', async (req, res) => {

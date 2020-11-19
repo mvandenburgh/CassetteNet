@@ -4,8 +4,8 @@ import { Avatar, Box, Divider, Grid, IconButton, List, ListItem, ListItemText, L
 import { blueGrey } from '@material-ui/core/colors';
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import UserContext from '../../contexts/UserContext';
-import { getInboxMessages } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
+import { getMixtapeCoverImageUrl } from '../../utils/api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,7 +26,7 @@ function InboxPage() {
         user = JSON.parse(localStorage.getItem('user'));
     }
 
-    const messages = getInboxMessages(user._id);
+    const messages = user.inboxMessages;
 
     const history = useHistory();
     const goBack = () => { history.push('/') }
@@ -109,7 +109,7 @@ function InboxPage() {
                                                     />
                                                 </Grid>
                                                 <Grid item xs={4}>
-                                                    <img style={{width: '20%'}} src="https://thumbs.dreamstime.com/b/retro-mix-tape-cover-illustration-retro-mix-tape-cover-illustration-old-school-music-art-182730287.jpg" alt="mixtape_cover"></img>
+                                                    <img style={{width: '20%'}} src={getMixtapeCoverImageUrl(message.mixtape)} alt="mixtape_cover"></img>
                                                 </Grid>
                                             </Grid>
                                         </ListItem>

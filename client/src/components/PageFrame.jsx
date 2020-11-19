@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Badge, Button, Typography, InputBase, Divider, Drawer, Grid, List, IconButton, ListItem, ListItemIcon, ListItemText, TextField, Toolbar } from '@material-ui/core';
 import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Person as MyProfileIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
@@ -193,7 +193,7 @@ function PageFrame(props) {
                   <ListItem onClick={() => history.push('/inbox')} button style={user.isGuest ? {display: 'none'} : {}}>
                       <ListItemIcon>
                           {/* TODO: get actual number of messages in inbox */}
-                          <Badge badgeContent={4} color="error">
+                          <Badge badgeContent={user.inboxMessages.length} color="error">
                             <InboxIcon className={classes.icon} />
                           </Badge>
                       </ListItemIcon>
