@@ -378,9 +378,9 @@ function ViewMixtapePage(props) {
 
     const [open, setOpen] = React.useState(false);
 
-    const handleClick = () => {
+    const handleClick = async(mixtape) => {
       setOpen(true);
-      forkThisMixtape();
+      forkThisMixtape(mixtape);
     };
   
     const handleClose = (event, reason) => {
@@ -402,6 +402,17 @@ function ViewMixtapePage(props) {
         setWriteMessageDialogOpen(false);
         setMessage('');
     }
+    
+    const [mixtapeToShare, setMixtapeToShare] = useState(null);
+
+    const [shareModalOpen, setShareModalOpen] = useState(false);
+    
+    const shareMixtapeHandler = (mixtape) => {
+        console.log(mixtape);
+        setMixtapeToShare(mixtape);
+        setShareModalOpen(true);
+    }
+    
 
     return (
         <div>
@@ -415,8 +426,8 @@ function ViewMixtapePage(props) {
 
             <ShareMixtapeModal
                 mixtape={mixtape}
-                open={shareMixtapePopupIsOpen}
-                setOpen={setShareMixtapePopupIsOpen}
+                open={shareModalOpen}
+                setOpen={setShareModalOpen}
             />
 
             <Dialog open={writeMessageDialogOpen} onClose={() => setWriteMessageDialogOpen(false)}>
@@ -508,7 +519,7 @@ function ViewMixtapePage(props) {
                         <Box style={{ display: 'inline-flex', flexDirection: 'row', float: 'right' }}>
                             <FavoriteMixtapeButton id={props.match.params.id} style={{ margin: '10px' }} />
                             <CommentIcon onClick={() => setWriteMessageDialogOpen(true)} style={{ margin: '10px', cursor: 'pointer' }} />
-                            <ShareIcon style={{ margin: '10px' }} />
+                            <ShareIcon style={{ margin: '10px' }} onClick={() => shareMixtapeHandler(mixtape)} />
                         </Box>
                     </Grid>
                 </Grid>
