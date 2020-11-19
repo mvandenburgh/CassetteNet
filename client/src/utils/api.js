@@ -76,10 +76,11 @@ async function createMixtape() {
     return mixtape;
 }
 
-async function forkMixtape(mixtape, user) {
+async function forkMixtape(mixtape) {
+    const newMixtape = await axios.post(new URL(`/api/mixtape/${mixtape._id}/fork`, SERVER_ROOT_URL), { mixtape });
     //console.log(mixtape);
-    console.log(user);
-    const forkedMixtape = Object.assign({}, mixtape);
+    //console.log(user);
+    /*const forkedMixtape = Object.assign({}, mixtape);
     forkedMixtape.collaborators.push(
         {
             permissions: "editor",
@@ -88,7 +89,7 @@ async function forkMixtape(mixtape, user) {
         }
     );
     //console.log(forkedMixtape);
-    const newMixtape = await axios.post(new URL(`/api/mixtape`, SERVER_ROOT_URL), { forkedMixtape });
+    const newMixtape = await axios.post(new URL(`/api/mixtape`, SERVER_ROOT_URL), { forkedMixtape }); */
     return newMixtape;
 }
 
