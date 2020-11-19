@@ -76,11 +76,18 @@ async function createMixtape() {
     return mixtape;
 }
 
-async function forkMixtape(mixtape) {
-    console.log(mixtape);
+async function forkMixtape(mixtape, user) {
+    //console.log(mixtape);
+    console.log(user);
     const forkedMixtape = Object.assign({}, mixtape);
-    forkedMixtape._id = 55;
-    console.log(forkedMixtape);
+    forkedMixtape.collaborators.push(
+        {
+            permissions: "editor",
+            user: user._id,
+            username: user.username
+        }
+    );
+    //console.log(forkedMixtape);
     const newMixtape = await axios.post(new URL(`/api/mixtape`, SERVER_ROOT_URL), { forkedMixtape });
     return newMixtape;
 }

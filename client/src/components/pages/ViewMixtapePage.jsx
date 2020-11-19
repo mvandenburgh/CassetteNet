@@ -373,7 +373,7 @@ function ViewMixtapePage(props) {
     }
 
     const forkThisMixtape = () => {
-        forkMixtape(mixtape).then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
+        forkMixtape(mixtape, user).then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
     }
 
     const [open, setOpen] = React.useState(false);
