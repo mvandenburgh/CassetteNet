@@ -122,7 +122,7 @@ router.post('/', async (req, res) => {
 // FORK MIXTAPE
 router.post('/:id', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
-    const mixtapeObject = await Mixtape.create(req.forkedMixtape);
+    const mixtapeObject = await Mixtape.create(req.body.forkedMixtape);
     return res.send(mixtapeObject);
 });
 
