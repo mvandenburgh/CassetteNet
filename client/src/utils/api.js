@@ -251,7 +251,7 @@ function oauthLogin(provider) {
 }
 
 function getMixtapeUrl(mixtapeId) {
-    return new URL(`/api/mixtape/${mixtapeId}`, CLIENT_ROOT_URL).href;
+    return new URL(`/mixtape/${mixtapeId}`, CLIENT_ROOT_URL).href;
 }
 
 async function createListeningRoom(mixtapeId) {
