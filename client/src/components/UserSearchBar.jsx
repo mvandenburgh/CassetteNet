@@ -21,6 +21,13 @@ function UserSearchBar(props) {
         setLoading(true); // make loading circle appear
         if(adminSearchBool){
           if (searchQuery.charAt(0) === '#') {
+            userSearch(searchQuery)
+            .then(res => {
+                setOptions(res);
+                setLoading(false);
+            })
+            .catch(err => alert(err));
+            /*
             getUser(searchQuery)
             .then(res => {
                 if (res) {
@@ -30,7 +37,7 @@ function UserSearchBar(props) {
                 }
                 setLoading(false);
             })
-            .catch(err => alert(err));
+            .catch(err => alert(err));*/
         } else {
             userSearch(searchQuery)
             .then(res => {
@@ -44,7 +51,13 @@ function UserSearchBar(props) {
         else{
 
          if (searchQuery.charAt(0) === '#') {
-            getUser(searchQuery)
+          userSearch(searchQuery)
+            .then(res => {
+                setOptions(res);
+                setLoading(false);
+            })
+            .catch(err => alert(err));
+           /* getUser(searchQuery)
             .then(res => {
                 if (res) {
                     setOptions([res]);
@@ -53,7 +66,7 @@ function UserSearchBar(props) {
                 }
                 setLoading(false);
             })
-            .catch(err => alert(err));
+            .catch(err => alert(err));*/
         } else {
             userSearch(searchQuery)
             .then(res => {

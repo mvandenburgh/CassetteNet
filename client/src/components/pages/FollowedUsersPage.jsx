@@ -41,13 +41,11 @@ const [followedUsers, setFollowedUsers] = useState([]);
     useEffect(async () => {
         const followedUsers = await getFollowedUsers();
         setFollowedUsers(followedUsers);
-        console.log(followedUsers);
      }, []);
      
      useEffect(async () => {
       const followedUsers = await getFollowedUsers();
         setFollowedUsers(followedUsers);
-        console.log(followedUsers);
      }, [followedUsers]);
 
 
@@ -58,8 +56,8 @@ const [followedUsers, setFollowedUsers] = useState([]);
 
   const followUserHandler = async(user) => {
     if(user){
-        console.log(user._id);
         await followUser(user._id);
+        handleClose();
     }
 }
 
