@@ -161,6 +161,16 @@ router.post('/sendMessage', async (req, res) => {
     }
 });
 
+router.delete('/deleteMessage/:id', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
+    const message = await InboxMessage.findById(req.params.id);
+    if (message) {
+        await message.deleteOne();
+    }
+    const inboxMessages = await InboxMessage.find({ recipient: req.user.id }).lean();
+    res.send(inboxMessages);
+})
+
 router.get('/:id/profilePicture', async (req, res) => {
     const user = await User.findById(req.params.id).select('+profilePicture');
     if (user && user.profilePicture && user.profilePicture.data && user.profilePicture.contentType) {
