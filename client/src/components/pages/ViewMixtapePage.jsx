@@ -14,6 +14,7 @@ import {
     MenuItem,
     Paper,
     Select,
+    Snackbar,
     TextField,
     Toolbar,
     Typography,
@@ -24,7 +25,7 @@ import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
 import { createListeningRoom, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
-import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon } from '@material-ui/icons';
+import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import MixtapeCoverImageUploadModal from '../modals/MixtapeCoverImageUploadModal';
 import ShareMixtapeModal from '../modals/ShareMixtapeModal';
@@ -370,6 +371,20 @@ function useEventListener(eventName, handler, element = document){
         }
     }
 
+    const [open, setOpen] = React.useState(false);
+
+    const handleClick = () => {
+      setOpen(true);
+    };
+  
+    const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpen(false);
+    };
+
     return (
         <div>
             <SettingsModal
@@ -526,7 +541,34 @@ function useEventListener(eventName, handler, element = document){
                                         Settings
                                     </Button>
                                 </Grid>
-                                <Grid item xs={2} />
+                                <Grid item xs={2} >
+                                    <Button
+                                    style={{ marginRight: '5%', float: 'right', backgroundColor: 'purple' }}
+                                    variant="contained"
+                                    color="secondary"
+                                    startIcon={<FileCopyIcon />}
+                                    onClick={handleClick}
+                                    >
+                                        Copy
+                                    </Button>
+                                    <Snackbar
+                                        anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                        }}
+                                        open={open}
+                                        autoHideDuration={6000}
+                                        onClose={handleClose}
+                                        message="Note archived"
+                                        action={
+                                        <React.Fragment>
+                                            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                                            <CloseIcon fontSize="small" />
+                                            </IconButton>
+                                        </React.Fragment>
+                                        }
+                                    />
+                                </Grid>
                                 <Grid item xs={2}>
                                     {
                                         !isEditing && editButtonVisible ?
