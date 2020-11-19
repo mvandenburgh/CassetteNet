@@ -76,6 +76,23 @@ async function createMixtape() {
     return mixtape;
 }
 
+async function forkMixtape(mixtape, user) {
+    //console.log(mixtape);
+    console.log(user);
+    const forkedMixtape = Object.assign({}, mixtape);
+    forkedMixtape.collaborators.push(
+        {
+            permissions: "editor",
+            user: user._id,
+            username: user.username
+        }
+    );
+    //console.log(forkedMixtape);
+    const newMixtape = await axios.post(new URL(`/api/mixtape`, SERVER_ROOT_URL), { forkedMixtape });
+    return newMixtape;
+}
+
+
 async function songSearch(api, query) {
     const results = await axios.get(new URL(`/api/${api}/search`, SERVER_ROOT_URL).href, { params: { q: query } });
     return results.data;
@@ -307,6 +324,7 @@ export {
     addAdmin,
     createListeningRoom,
     getListeningRoom,
+    forkMixtape,
     sendAnonymousMessage,
     deleteInboxMessage,
     getRandomMixtapes,

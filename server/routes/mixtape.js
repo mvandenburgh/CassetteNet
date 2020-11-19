@@ -119,6 +119,13 @@ router.post('/', async (req, res) => {
     return res.send(mixtapeObject);
 });
 
+// FORK MIXTAPE
+router.post('/:id', async (req, res) => {
+    if (!req.user) return res.status(401).send([]);
+    const mixtapeObject = await Mixtape.create(req.body.forkedMixtape);
+    return res.send(mixtapeObject);
+});
+
 // RETRIEVE MIXTAPE
 router.get('/:id', async (req, res) => {
     try {
