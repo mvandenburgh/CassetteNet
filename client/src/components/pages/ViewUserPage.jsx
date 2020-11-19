@@ -165,7 +165,7 @@ function ViewUserPage(props) {
           <div style={{ display: 'inline-flex', flexDirection: 'column', paddingLeft: '30px', }}>
             <span style={{ display: 'inline-flex', flexDirection: 'row', paddingTop: '30px', paddingBottom: '30px', height: '25%', }}>
               <Typography style={{ fontSize: '40px' }} variant="h3">{user.username}</Typography>
-              <Typography style={{ fontSize: '20px' }} variant="h3">#{user.uniqueId}</Typography>
+              <Typography style={{ fontSize: '20px' }} variant="h3">#{user.uniqueId.toString(36).padStart(4, '0').toUpperCase()}</Typography>
             </span>
             <Typography style={{ fontSize: '20px' }} variant="h3">User since: {userSince.getMonth() + 1}/{userSince.getDate()}/{userSince.getFullYear()}</Typography>
             <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth() + 1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>
