@@ -14,6 +14,7 @@ import {
     MenuItem,
     Paper,
     Select,
+    Snackbar,
     TextField,
     Toolbar,
     Typography,
@@ -21,10 +22,10 @@ import {
 } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import { createListeningRoom, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration, sendAnonymousMessage } from '../../utils/api';
+import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration, sendAnonymousMessage } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
-import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon } from '@material-ui/icons';
+import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import MixtapeCoverImageUploadModal from '../modals/MixtapeCoverImageUploadModal';
 import ShareMixtapeModal from '../modals/ShareMixtapeModal';
@@ -371,6 +372,24 @@ function ViewMixtapePage(props) {
         }
     }
 
+    const forkThisMixtape = () => {
+        forkMixtape(mixtape, user).then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
+    }
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleClick = () => {
+      setOpen(true);
+      forkThisMixtape();
+    };
+  
+    const handleClose = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setOpen(false);
+    };
     const [message, setMessage] = useState('');
 
     const sendMessageHandler = () => {
@@ -568,7 +587,34 @@ function ViewMixtapePage(props) {
                                         Settings
                                     </Button>
                                 </Grid>
-                                <Grid item xs={2} />
+                                <Grid item xs={2} >
+                                    <Button
+                                    style={{ marginRight: '5%', float: 'right', backgroundColor: 'purple' }}
+                                    variant="contained"
+                                    color="secondary"
+                                    startIcon={<FileCopyIcon />}
+                                    onClick={() => handleClick(mixtape)}
+                                    >
+                                        Copy
+                                    </Button>
+                                    <Snackbar
+                                        anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                        }}
+                                        open={open}
+                                        autoHideDuration={4000}
+                                        onClose={handleClose}
+                                        message="Copied to your mixtapes"
+                                        action={
+                                        <React.Fragment>
+                                            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                                            <CloseIcon fontSize="small" />
+                                            </IconButton>
+                                        </React.Fragment>
+                                        }
+                                    />
+                                </Grid>
                                 <Grid item xs={2}>
                                     {
                                         !isEditing && editButtonVisible ?

@@ -111,11 +111,28 @@ router.post('/', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
     const mixtape = {
         name: 'New Mixtape',
-        collaborators: [{ user: req.user.id, permissions: 'owner', username: req.user.username }],
+        collaborators: [{ user: req.user._id, permissions: 'owner', username: req.user.username }],
         songs: [],
         isPublic: true // TODO: set default to false, true for now to make testing easier
     };
     const mixtapeObject = await Mixtape.create(mixtape);
+    return res.send(mixtapeObject);
+});
+
+// FORK MIXTAPE
+router.post('/:id/fork', async (req, res) => {
+    if (!req.user) return res.status(401).send([]);
+
+    const mixtape = await Mixtape.findById(req.params.id);
+    const requser = User.findById(req.user.id);
+    const newMixtape = {
+        name: mixtape.name,
+        collaborators: [{ user: req.user._id, permissions: 'owner', username: req.user.username }],
+        songs: mixtape.songs,
+        isPublic: true // TODO: set default to false, true for now to make testing easier
+    };
+    
+    const mixtapeObject = await Mixtape.create(newMixtape);
     return res.send(mixtapeObject);
 });
 
