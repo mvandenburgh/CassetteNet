@@ -35,6 +35,29 @@ router.get('/mixtapes', async (req, res) => {
     res.send(mixtapes);
 });
 
+router.get('/getFollowedUsers', async (req, res) => {
+    if (!req.user) return res.status(401).send(null);
+    const requser = await User.findById(req.user._id);
+    const results = [];
+    for (const followedUserID of requser.followedUsers) {
+        const user = await User.findById(followedUserID);
+        const updatedAt =new Date(user.updatedAt);
+        const createdAt = new Date(user.createdAt);
+        const followerCount = (await User.find({ followedUsers: user._id })).length;
+        results.push({
+            _id: user._id,
+            username: user.username,
+            uniqueId: user.uniqueId,
+            updatedAt,
+            createdAt,
+            followerCount,
+        });
+    }
+    return res.send(results);
+});
+
+
+
 router.get('/:id/favoritedMixtapes', async (req, res) => {
     const { favoritedMixtapes } = await User.findOne({ _id: req.params.id }).lean();
     const mixtapes = [];
