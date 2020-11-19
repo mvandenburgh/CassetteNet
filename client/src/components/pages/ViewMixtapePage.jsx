@@ -22,7 +22,7 @@ import {
 } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import { createListeningRoom, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
+import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
 import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
@@ -371,10 +371,15 @@ function useEventListener(eventName, handler, element = document){
         }
     }
 
+    const forkThisMixtape = () => {
+        forkMixtape(mixtape).then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
+    }
+
     const [open, setOpen] = React.useState(false);
 
     const handleClick = () => {
       setOpen(true);
+      forkThisMixtape();
     };
   
     const handleClose = (event, reason) => {
@@ -547,7 +552,7 @@ function useEventListener(eventName, handler, element = document){
                                     variant="contained"
                                     color="secondary"
                                     startIcon={<FileCopyIcon />}
-                                    onClick={handleClick}
+                                    onClick={() => handleClick(mixtape)}
                                     >
                                         Copy
                                     </Button>
@@ -557,9 +562,9 @@ function useEventListener(eventName, handler, element = document){
                                         horizontal: 'left',
                                         }}
                                         open={open}
-                                        autoHideDuration={6000}
+                                        autoHideDuration={4000}
                                         onClose={handleClose}
-                                        message="Note archived"
+                                        message="Copied to your mixtapes"
                                         action={
                                         <React.Fragment>
                                             <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
