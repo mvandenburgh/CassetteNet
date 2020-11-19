@@ -47,6 +47,15 @@ function FollowedUsersPage(props) {
   const history = useHistory();
   const goBack = () => history.goBack();
 
+  const followUserHandler = async(user) => {
+    if(user){
+        console.log(user._id);
+        await followUser(user._id);
+        const followedUsers = await getFollowedUsers();
+        followedUsersAdmins(admins);
+    }
+}
+
   return (
 
     <div style={{ color: 'white', left: 0 }}>
@@ -56,26 +65,11 @@ function FollowedUsersPage(props) {
           <DialogContentText>
             Enter the username of the user you wish to follow
           </DialogContentText>
-          <Autocomplete
-            size="small"
-            style={{ width: 300 }}
-            freeSolo
-            disableClearable
-            options={suggestedUsers.map((option) => option.name)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                backgroundColor='white'
-                label="Search..."
-                margin="normal"
-                variant="filled"
-                InputProps={{ ...params.InputProps, type: 'search' }}
-              />
-            )}
-          />
+          <UserSearchBar userSelectHandler={} adminSearchBool={false} />
+          
         </DialogContent>
         <DialogActions>
-          <Button align="center" onClick={handleClose} color="primary">
+          <Button align="center" onClick={followUserHandler} color="primary">
             Follow
           </Button>
         </DialogActions>

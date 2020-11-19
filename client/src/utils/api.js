@@ -192,6 +192,11 @@ async function getAdmins(){
     return users.data;
 }
 
+async function getFollowedUsers(_id){
+    const users = await axios.get(new URL(`/api/user/${_id}/getFollowedUsers`,SERVER_ROOT_URL), { withCredentials: true });
+    return users.data;
+}
+
 async function deleteAdmin(userId) {
     const users = await axios.delete(new URL('/api/admin/deleteAdmin', SERVER_ROOT_URL), { userId });
     return users.data;
