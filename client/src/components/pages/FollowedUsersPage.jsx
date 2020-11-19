@@ -42,12 +42,6 @@ const [followedUsers, setFollowedUsers] = useState([]);
         const followedUsers = await getFollowedUsers();
         setFollowedUsers(followedUsers);
      }, []);
-     
-     useEffect(async () => {
-      const followedUsers = await getFollowedUsers();
-        setFollowedUsers(followedUsers);
-     }, [followedUsers]);
-
 
   const { user } = useContext(UserContext);
 
