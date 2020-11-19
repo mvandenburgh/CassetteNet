@@ -49,7 +49,7 @@ function UserList({ users }) {
                         </Box>
                         <Box style={{ width: "25%", display: 'flex', justifyContent: "left" }}>
                             <br />
-                            <FollowUserButton id={user._id} backgroundColor={colors.unfollowButtonColor} />
+                            <FollowUserButton fromFollowedUsers={true} id={user._id} backgroundColor={colors.unfollowButtonColor} />
                         </Box>
                     </Box>
                 </div>
