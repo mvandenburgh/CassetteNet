@@ -110,6 +110,11 @@ async function unfollowUser(userId) {
     return followedUsers.data;
 }
 
+async function getFollowedUsers(){
+    const users = await axios.get(new URL(`/api/user/getFollowedUsers`,SERVER_ROOT_URL), { withCredentials: true });
+    return users.data;
+}
+
 async function userSignup(email, username, password) {
     try {
         await axios.post(new URL('/api/auth/signup', SERVER_ROOT_URL), { email, username, password });
@@ -184,13 +189,14 @@ async function getAdmins(){
     return users.data;
 }
 
+
 async function deleteAdmin(userId) {
-    const users = await axios.delete(new URL('/api/admin/deleteAdmin', SERVER_ROOT_URL), { userId });
+    const users = await axios.put(new URL('/api/admin/deleteAdmin', SERVER_ROOT_URL), { userId });
     return users.data;
 }
 
 async function addAdmin(userId) {
-    const users = await axios.post(new URL('/api/admin/addAdmin', SERVER_ROOT_URL), { userId });
+    const users = await axios.put(new URL('/api/admin/addAdmin', SERVER_ROOT_URL), { userId });
     return users.data;
 }
 
@@ -268,6 +274,7 @@ export {
     getUsername,
     followUser,
     unfollowUser,
+    getFollowedUsers,
     getMixtape,
     getMixtapeUrl,
     getMixtapeCoverImageUrl,

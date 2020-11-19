@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import {
   Box,
   Button,
@@ -13,9 +13,12 @@ import {
 } from '@material-ui/core';
 import { lightBlue } from '@material-ui/core/colors';
 import { Autocomplete } from '@material-ui/lab';
+
+import { followUser, getFollowedUsers } from '../../utils/api';
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
+import UserSearchBar from '../UserSearchBar';
 import UserList from '../UserList';
 
 function FollowedUsersPage(props) {
@@ -33,19 +36,32 @@ function FollowedUsersPage(props) {
     searchButtonColor: lightBlue[700],
 }
 
-  const suggestedUsers = [
-    { name: 'DDrizzy123' },
-    { name: 'TempAdmin' },
-    { name: 'TempAdmin12' },
-    { name: 'PartyPooper123' },
-    { name: 'BobMarley' },
-    { name: 'CoolName' },
-  ];
+const [followedUsers, setFollowedUsers] = useState([]);
+
+    useEffect(async () => {
+        const followedUsers = await getFollowedUsers();
+        setFollowedUsers(followedUsers);
+        console.log(followedUsers);
+     }, []);
+     
+     useEffect(async () => {
+      const followedUsers = await getFollowedUsers();
+        setFollowedUsers(followedUsers);
+        console.log(followedUsers);
+     }, [followedUsers]);
+
 
   const { user } = useContext(UserContext);
 
   const history = useHistory();
   const goBack = () => history.goBack();
+
+  const followUserHandler = async(user) => {
+    if(user){
+        console.log(user._id);
+        await followUser(user._id);
+    }
+}
 
   return (
 
@@ -56,29 +72,9 @@ function FollowedUsersPage(props) {
           <DialogContentText>
             Enter the username of the user you wish to follow
           </DialogContentText>
-          <Autocomplete
-            size="small"
-            style={{ width: 300 }}
-            freeSolo
-            disableClearable
-            options={suggestedUsers.map((option) => option.name)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                backgroundColor='white'
-                label="Search..."
-                margin="normal"
-                variant="filled"
-                InputProps={{ ...params.InputProps, type: 'search' }}
-              />
-            )}
-          />
+          <UserSearchBar userSelectHandler={followUserHandler} adminSearchBool={false} />
+          
         </DialogContent>
-        <DialogActions>
-          <Button align="center" onClick={handleClose} color="primary">
-            Follow
-          </Button>
-        </DialogActions>
       </Dialog>
       <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
         <ArrowBackIcon />
@@ -91,7 +87,7 @@ function FollowedUsersPage(props) {
         <Button onClick={handleClickOpen} variant="contained" boxShadow={3} style={{ margin: 'auto', backgroundColor: colors.searchButtonColor }}> Search for User</Button>
       </Box>
       <div style={{ width: "70%", margin: 'auto' }}>
-        <UserList users={user.followedUsers} />
+        <UserList users={followedUsers} />
       </div>
     </div>
   );
