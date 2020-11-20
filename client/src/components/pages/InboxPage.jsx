@@ -26,11 +26,11 @@ function InboxPage() {
         user = JSON.parse(localStorage.getItem('user'));
     }
 
-    const [messages, setMessages] = useState(user.inboxMessages)
-
     const deleteMessageHandler = (messageId) => {
         deleteInboxMessage(messageId).then(messages => {
-            setMessages(messages);
+            const newUser = { ...user };
+            newUser.inboxMessages = [...messages];
+            setUser(newUser);
         });
     }
 
@@ -88,7 +88,7 @@ function InboxPage() {
                     </ListItem>
                     <hr />
                         {
-                            messages?.map((message) => {
+                            user.inboxMessages?.map((message) => {
                                 return (
                                     <div>
                                         <ListItem alignItems="flex-start">
