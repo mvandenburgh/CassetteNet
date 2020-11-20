@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AppBar, Box, Button, Grid, Tab, Tabs, Typography, makeStyles, IconButton } from '@material-ui/core';
-import { blueGrey, indigo } from '@material-ui/core/colors';
+import { blueGrey } from '@material-ui/core/colors';
 import ReactRoundedImage from "react-rounded-image";
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import { getUser, getUserProfilePictureUrl, getCreatedMixtapes, getFavoritedMixtapes } from '../../utils/api';
 import FollowUserButton from '../FollowUserButton';
+import MixtapeRows from '../MixtapeRows';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -59,31 +60,6 @@ var theirMixtapes = [
     favorites: 48,
   },
 ];
-
-const MixtapeRows = ({ mixtapes, history }) => (
-  <>
-    {mixtapes.map(mixtape => (
-      <Box
-        style={{
-          margin: "5px",
-          padding: "10px",
-          backgroundColor: blueGrey[700],
-          display: "flex",
-          flexDirection: "row",
-          borderRadius: 6,
-          fontSize: 12,
-          cursor: 'pointer',
-        }}
-        onClick={() => history.push(`/mixtape/${mixtape._id}`)}
-      >
-        <Box style={{ width: "33%", display: 'flex', justifyContent: "center" }}> {mixtape.name} </Box>
-        <Box style={{ width: "33%", display: 'flex', justifyContent: "center" }}> {mixtape.collaborators.map(collaborator => collaborator.username).toString()} </Box>
-        <Box style={{ width: "33%", display: 'flex', justifyContent: "center" }}> {mixtape.favorites} </Box>
-
-      </Box>
-    ))}
-  </>
-);
 
 
 function ViewUserPage(props) {
@@ -214,7 +190,7 @@ function ViewUserPage(props) {
               marginTop: "5px",
               backgroundColor: colors.tabsContainer
             }}>
-              <MixtapeRows mixtapes={createdMixtapes} />
+              <MixtapeRows mixtapes={createdMixtapes} history={history} />
             </Box>
           </TabPanel>
           <TabPanel value={value} index={1}>
