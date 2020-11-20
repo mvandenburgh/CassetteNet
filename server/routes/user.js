@@ -29,7 +29,7 @@ router.get('/search', async (req, res) => {
             uniqueId: user.uniqueId,
             updatedAt,
             createdAt,
-            followerCount,
+            followers: followerCount,
         });
     }
     return res.send(results);
@@ -58,7 +58,7 @@ router.get('/getFollowedUsers', async (req, res) => {
             uniqueId: user.uniqueId,
             updatedAt,
             createdAt,
-            followerCount,
+            followers: followerCount,
         });
     }
     return res.send(results);
