@@ -64,6 +64,11 @@ router.get('/:id/coverImage', async (req, res) => {
             text: mixtape.name,
             size: 32,
             quality: 100,
+            source: {
+                height: 256,
+                width: 256,
+                background: 0xFFFFFFFF,
+            },
         });
         const buf = await image.getBuffer()
         res.send(buf);
