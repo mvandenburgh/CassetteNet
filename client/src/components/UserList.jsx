@@ -35,7 +35,7 @@ function UserList({ users }) {
                         <Box style={{ width: "33%", display: 'flex', flexDirection: 'row', marginLeft: '15px' }}>
                             <ReactRoundedImage image={getUserProfilePictureUrl(user._id)} roundedSize="1" imageWidth="100" imageHeight="100" />
                             <br />
-                            <Box style={{ fontSize: '15pt', width: "50%", display: 'flex', justifyContent: "left", marginLeft: '15px' }}> {user.username}#{user.uniqueId} </Box>
+                            <Box style={{ fontSize: '15pt', width: "50%", display: 'flex', justifyContent: "left", marginLeft: '15px' }}> {user.username} #{user.uniqueId.toString(36).padStart(4, '0').toUpperCase()} </Box>
                         </Box>
 
                         <Box style={{ fontSize: '12pt', marginLeft: '50px', width: "33%", display: 'flex', flexDirection: 'column' }}>
