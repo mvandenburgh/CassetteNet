@@ -4,7 +4,7 @@ import { blueGrey, indigo } from '@material-ui/core/colors';
 import ReactRoundedImage from "react-rounded-image";
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
-import { getUser, getUserProfilePictureUrl, queryForMixtapes, getFavoritedMixtapes } from '../../utils/api';
+import { getUser, getUserProfilePictureUrl, getCreatedMixtapes, getFavoritedMixtapes } from '../../utils/api';
 import FollowUserButton from '../FollowUserButton';
 
 function TabPanel(props) {
@@ -116,7 +116,7 @@ function ViewUserPage(props) {
       if (id) {
         const userInfo = await getUser(id);
         setUser(userInfo);
-        const userCreatedMixtapes = await queryForMixtapes({ 'collaborators.user': id, 'collaborators.permissions': 'owner' });
+        const userCreatedMixtapes = await getCreatedMixtapes(id);
         setCreatedMixtapes(userCreatedMixtapes);
         const userFavoritedMixtapes = await getFavoritedMixtapes(id);
         setFavoritedMixtapes(userFavoritedMixtapes);

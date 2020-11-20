@@ -73,9 +73,21 @@ router.get('/:id/coverImage', async (req, res) => {
 });
 
 
-// executes mongoose query based on query string values
-router.get('/queryMixtapes', async (req, res) => {
-    let mixtapes = await Mixtape.find(req.query).lean();
+// get mixtapes owned by a certain user
+router.get('/createdMixtapes', async (req, res) => {
+    const { userId } = req.query;
+    let mixtapes = await Mixtape.find({ 'collaborators.user': Types.ObjectId(userId), 'collaborators.permissions': 'owner' }).lean();
+    
+    // TODO: figure out why db query isn't working. filter here for now.
+    mixtapes = mixtapes.filter(mixtape => {
+        for (const collaborator of mixtape.collaborators) {
+            if (collaborator.permissions === 'owner' && collaborator.user.toString() === userId) {
+                return true;
+            }
+        }
+        return false;
+    });
+
     // only return mixtapes the user has permission to view
     if (req.user) {
         mixtapes = mixtapes.filter(mixtape => {

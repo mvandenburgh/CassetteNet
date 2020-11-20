@@ -230,8 +230,8 @@ async function getUser(userId) {
     return user.data;
 }
 
-async function queryForMixtapes(query) {
-    const mixtapes = await axios.get(new URL(`/api/mixtape/queryMixtapes`, SERVER_ROOT_URL).href, { params: query });
+async function getCreatedMixtapes(userId) {
+    const mixtapes = await axios.get(new URL(`/api/mixtape/createdMixtapes`, SERVER_ROOT_URL).href, { params: { userId } });
     return mixtapes.data;
 }
 
@@ -300,7 +300,7 @@ export {
     getMyMixtapes,
     getFavoritedMixtapes,
     getInboxMessages,
-    queryForMixtapes,
+    getCreatedMixtapes,
     songSearch,
     getSongDuration,
     setUsernameOfOAuthAccount,
