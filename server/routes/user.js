@@ -27,8 +27,8 @@ router.get('/search', async (req, res) => {
             _id: user._id,
             username: user.username,
             uniqueId: user.uniqueId,
-            updatedAt,
-            createdAt,
+            createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
+            updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
             followers: followerCount,
         });
     }
@@ -56,8 +56,8 @@ router.get('/getFollowedUsers', async (req, res) => {
             _id: user._id,
             username: user.username,
             uniqueId: user.uniqueId,
-            updatedAt,
-            createdAt,
+            createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
+            updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
             followers: followerCount,
         });
     }
