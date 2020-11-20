@@ -10,12 +10,12 @@ router.get('/search', async (req, res) => {
     const { query } = req.query;
     if (!query) return res.send([]);
     
-    var users;
-    if(query.charAt(0)=='#'){
-        newQuery=query.substring(1);
-        users = await User.find(User.searchBuilder(newQuery)).lean();
+    let users;
+    if (query.charAt(0)=='#' && query.length === 5) {
+        const newQuery = parseInt(query.substring(1), 36);
+        users = await User.find({ uniqueId: newQuery }).lean();
     }
-    else{  
+    else {
         users = await User.find(User.searchBuilder(query)).lean();
     }
     const results = [];
