@@ -17,6 +17,7 @@ import CurrentSongContext from './contexts/CurrentSongContext';
 import PlayingSongContext from './contexts/PlayingSongContext';
 import JSTPSContext from './contexts/JSTPSContext';
 import { jsTPS } from './utils/jsTPS'
+import { verifyUserLoggedIn } from './utils/api';
 import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
 import ViewProfilePage from './components/pages/ViewProfilePage';
@@ -60,8 +61,17 @@ function App() {
 
   const [playing, setPlaying] = useState(false);
   
-  var my_tps = new jsTPS();
+  const my_tps = new jsTPS();
   const [tps, setTps] = useState(my_tps);
+
+  useEffect(() => setInterval(() => {
+    if (user.isLoggedIn) {
+      verifyUserLoggedIn().then(user => {
+        const newUser = { isLoggedIn: true, isGuest: false, ...user };
+        setUser(newUser);
+      });
+    }
+  }, 10000));
 
   return (
     <div className="App">
