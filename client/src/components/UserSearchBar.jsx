@@ -1,12 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { getAdmins, getUser, getUserProfilePictureUrl, userSearch } from '../utils/api';
+import React, { useEffect, useState } from 'react';
+import { getUser, getUserProfilePictureUrl, userSearch } from '../utils/api';
 import { debounce } from 'lodash';
 import { CircularProgress, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import UserContext from '../contexts/UserContext';
 
 function UserSearchBar(props) {
-  const { user } = useContext(UserContext);
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
