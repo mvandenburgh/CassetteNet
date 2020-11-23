@@ -65,11 +65,8 @@ router.put('/deleteAdmin', async(req,res)=>{
         return res.status(401).send('unauthorized');
     }
     const { userId } = req.body;
-    console.log(req.body);
     const user = await User.findOne({ _id: userId });
 
-    console.log("hi");
-    console.log(userId);
     if (user.admin == true ){
         user.admin = false;
         await user.save();
@@ -82,11 +79,8 @@ router.put('/addAdmin', async(req,res)=>{
         return res.status(401).send('unauthorized');
     }
     const { userId } = req.body;
-    console.log(req.body);
     const user = await User.findOne({ _id: userId });
 
-    console.log("hi");
-    console.log(userId);
     if (user.admin == false ){
         user.admin = true;
         await user.save();

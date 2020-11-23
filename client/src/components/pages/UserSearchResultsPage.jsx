@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import UserList from '../UserList';
 import { userSearch } from '../../utils/api';
+import UserContext from '../../contexts/UserContext';
 
 function UserSearchResults(props) {
+    const { user } = useContext(UserContext);
     const [users, setUsers] = useState(null);
 
     useEffect(() => {

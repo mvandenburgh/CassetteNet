@@ -18,7 +18,7 @@ router.get('/search', async (req, res) => {
     else {
         users = await User.find(User.searchBuilder(query)).lean();
     }
-    const results = [];
+    let results = [];
     for (const user of users) {
         const updatedAt =new Date(user.updatedAt);
         const createdAt = new Date(user.createdAt);
@@ -31,6 +31,9 @@ router.get('/search', async (req, res) => {
             updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
             followers: followerCount,
         });
+    }
+    if (req.user) {
+        results = results.filter(user => !user._id.equals(req.user.id));
     }
     return res.send(results);
 });
@@ -117,6 +120,7 @@ router.put('/unfavoriteMixtape', async (req, res) => {
 router.put('/followUser', async (req, res) => {
     if (!req.user) return res.status(401).send(null);
     const { id } = req.body;
+    if (req.user.id === id) return res.status(400).send('invalid request');
     const user = await User.findById(req.user._id);
     const followedUsersDenormalized = [];
     if (!user.followedUsers.includes(id)) {
