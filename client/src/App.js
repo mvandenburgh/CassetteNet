@@ -71,7 +71,7 @@ function App() {
         setUser(newUser);
       });
     }
-  }, 10000));
+  }, 10000), []);
 
   return (
     <div className="App">
