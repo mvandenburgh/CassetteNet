@@ -39,7 +39,10 @@ router.post('/dropDatabase', async (req, res) => {
     }
     try {
         const conn = mongoose.connection;
-        await conn.dropDatabase();
+        const collections = await conn.db.listCollections().toArray();
+        for (const collection of collections) {
+            await conn.db.dropCollection(collection.name);
+        }
         return res.send('database dropped.');
     } catch (err) {
         return res.status(500).send(err);

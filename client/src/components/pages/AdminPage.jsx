@@ -1,4 +1,4 @@
-import React, { useState,useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, List, Box, Grid, IconButton, Typography, makeStyles, Icon } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import { useHistory } from 'react-router-dom';
@@ -10,33 +10,12 @@ import pfp from '../../images/bottle_pfp.jpg';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import {AccountCircle as UserProfile } from '@material-ui/icons';
+import { AccountCircle as UserProfile } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UserSearchBar from '../UserSearchBar';
-import { adminFillDatabase, adminDropDatabase, getAdmins, deleteAdmin, addAdmin} from '../../utils/api';
+import { adminFillDatabase, adminDropDatabase, getAdmins, deleteAdmin, addAdmin } from '../../utils/api';
 
 function AdminPage(props) {
-    const CssTextField = withStyles({
-        root: {
-            '& label': {
-                color: 'white'
-            },
-            '& label.Mui-focused': {
-                color: 'black',
-            },
-            '& .MuiInput-underline:after': {
-                borderBottomColor: 'green',
-            },
-            '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                    borderColor: 'white',
-                },
-                '&.Mui-focused fieldset': {
-                    borderColor: 'black',
-                },
-            },
-        },
-    })(TextField);
     const colors = {
         namePfpContainer: blueGrey[900],
         tabsContainer: blueGrey[900],
@@ -112,25 +91,12 @@ function AdminPage(props) {
 
     const [admins, setAdmins] = useState([]);
 
-    useEffect(async () => {
-        const admins = await getAdmins();
-        setAdmins(admins);
-        console.log(admins);
-     }, []);
-     
-     useEffect(async () => {
-        const admins = await getAdmins();
-        setAdmins(admins);
-        console.log(admins);
-     }, [admins]);
+    useEffect(() => getAdmins().then(admins => setAdmins(admins)), []);
 
     const classes = useStyles();
-    // TODO: add user to destructuring when needed
-    // Removed for now to avoid build warnings
-    const { setUser } = useContext(UserContext);
 
     const history = useHistory();
-    const goBack = () => history.push('/');
+    const goBack = () => history.goBack();
 
     const fillDatabaseHandler = async () => {
         await adminFillDatabase();
@@ -140,15 +106,17 @@ function AdminPage(props) {
         await adminDropDatabase();
     }
 
-    const addAdminHandler = async(admin) => {
-        if(admin){
-            console.log(admin._id);
+    const addAdminHandler = async (admin) => {
+        if (admin) {
             await addAdmin(admin._id);
+            const admins = await getAdmins();
+            setAdmins(admins);
         }
     }
-    const deleteAdminHandler = async(admin)=>{
-        console.log(admin._id);
+    const deleteAdminHandler = async (admin) => {
         await deleteAdmin(admin._id);
+        const admins = await getAdmins();
+        setAdmins(admins);
     }
 
     //TODO: Possibly re-align fields
@@ -192,7 +160,7 @@ function AdminPage(props) {
                     color: 'white'
                 }}
                 onClick={fillDatabaseHandler}
-                >Fill Database</Button>
+            >Fill Database</Button>
             <Button
                 variant="outlined"
                 style={{
@@ -216,26 +184,26 @@ function AdminPage(props) {
                         <Box id='popular' style={{ width: '100%' }} className={classes.box_container} borderRadius={12} {...containerBorderProps}>
                             <Typography variant="headline" component="h1">Current Admins</Typography>
                             <List>
-                            {admins.map(admin => (
-                                <div onClick={()=>deleteAdminHandler(admin)}>
+                                {admins.map(admin => (
+                                    <div onClick={() => deleteAdminHandler(admin)}>
 
-                                    <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
-                                        <p>{admin.username}</p>  
-                                     <DeleteIcon/>
-                                </Box>
-                                </div>
-                                
-                            ))}
+                                        <Box className={classes.box_row} borderRadius={16} {...rowBorderProps}>
+                                            <p>{admin.username}</p>
+                                            <DeleteIcon />
+                                        </Box>
+                                    </div>
+
+                                ))}
                             </List>
-                            
+
                         </Box>
                     </Grid>
                     <Grid item xs={1} />
                     <Grid item xs={3}>
                         <Typography style={{ fontSize: '40px' }} variant="h3">Add An Admin</Typography>
-                        <br/>
+                        <br />
                         <Grid item xs={10}>
-                                    <UserSearchBar userSelectHandler={addAdminHandler} adminSearchBool={true} />
+                            <UserSearchBar userSelectHandler={addAdminHandler} adminSearchBool={true} />
                         </Grid>
                     </Grid>
                 </Grid>
