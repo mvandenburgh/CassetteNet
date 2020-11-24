@@ -26,7 +26,7 @@ function isAuthorized(user, mixtape) {
  * Fisher-Yates algorithm for shuffling arrays
  */
 function getRandomSubarray(arr, size) {
-    const shuffled = arr.slice(0);
+    const shuffled = [...arr];
     let i = arr.length;
     let temp;
     let index;
@@ -141,14 +141,14 @@ router.post('/:id/fork', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
 
     const mixtape = await Mixtape.findById(req.params.id);
-    const requser = User.findById(req.user.id);
+
     const newMixtape = {
         name: mixtape.name,
         collaborators: [{ user: req.user._id, permissions: 'owner', username: req.user.username }],
         songs: mixtape.songs,
         isPublic: true // TODO: set default to false, true for now to make testing easier
     };
-    
+
     const mixtapeObject = await Mixtape.create(newMixtape);
     return res.send(mixtapeObject);
 });

@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Grid } from '@material-ui/core';
-import { Loop as LoopIcon, Shuffle as ShuffleIcon } from '@material-ui/icons';
+import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
+import AtmosphereSoundContext from '../contexts/AtmosphereSoundContext';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
 
 const WHITE_SMOKE = '#eee'
 const GRAY = '#878c88'
 const GREEN = '#72d687'
- 
+
 const SliderBar = ({ direction, value, style }) => (
   <div
     style={Object.assign({}, {
@@ -22,11 +23,11 @@ const SliderBar = ({ direction, value, style }) => (
       left: 0,
       width: `${value * 100}%`,
     } : {
-      right: 0,
-      bottom: 0,
-      left: 0,
-      height: `${value * 100}%`,
-    }, style)}
+        right: 0,
+        bottom: 0,
+        left: 0,
+        height: `${value * 100}%`,
+      }, style)}
   />
 )
 
@@ -49,11 +50,11 @@ const SliderHandle = ({ direction, value, style }) => (
       marginTop: -4,
       marginLeft: -8,
     } : {
-      left: 0,
-      bottom: `${value * 100}%`,
-      marginBottom: -8,
-      marginLeft: -4,
-    }, style)}
+        left: 0,
+        bottom: `${value * 100}%`,
+        marginBottom: -8,
+        marginLeft: -4,
+      }, style)}
   />
 )
 
@@ -75,139 +76,158 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
     <SliderHandle direction={direction} value={value} style={{ background: isEnabled ? GREEN : GRAY }} />
   </Slider>
 )
- 
+
 
 function Player(props) {
-    const playerRef = useRef();
+  const playerRef = useRef();
 
-    const [currentTime, setCurrentTime] = useState(null);
+  const [currentTime, setCurrentTime] = useState(null);
 
-    setInterval(() => {
-        if (playerRef.current && playing) {
-            localStorage.setItem('timestamp', playerRef.current.getCurrentTime());
-        }
-    }, 2000);
-
-    setInterval(() => {
-        if (playerRef.current && playing) {
-            setCurrentTime(playerRef.current.getCurrentTime());
-        }
-    }, 500);
-
-    const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
-
-    const { playing, setPlaying } = useContext(PlayingSongContext);
-
-    const [shuffle, setShuffle] = useState(false);
-    const [loop, setLoop] = useState(false);
-
-    const handlePlay = () => {
-      if (currentSong.disabled === currentSong.mixtape._id) {
-        return;
-      }
-      setPlaying(true);
-      if (!currentTime) {
-        playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
-      }
-    };
-
-    const handlePause = () => {
-        setPlaying(false);
-        setCurrentTime(playerRef.current.getCurrentTime());
-    };
-
-    const handleNextSong = () => {
-      setPlaying(false);
-      const newCurrentSong = { ...currentSong };
-      if (shuffle) {
-        newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
-      } else if (currentSong.index === currentSong.mixtape.songs.length - 1) {
-        newCurrentSong.index = 0;
-      } else {
-        newCurrentSong.index = currentSong.index + 1;
-      }
-      setCurrentSong(newCurrentSong);
-      setPlaying(true);
-    };
-
-    const handlePrevSong = () => {
-      setPlaying(false);
-      const newCurrentSong = { ...currentSong };
-      if (shuffle) {
-        newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
-      } else if (currentSong.index === 0) {
-        newCurrentSong.index = currentSong.mixtape.songs.length - 1;
-      } else {
-        newCurrentSong.index = currentSong.index - 1;
-      }
-      setCurrentSong(newCurrentSong);
-      setPlaying(true);
-    };
-
-    const handleSetLoop = () => {
-      const loopState = loop;
-      setLoop(!loopState);
-      if (!loopState) {
-        setShuffle(false);
-      }
+  setInterval(() => {
+    if (playerRef.current && playing) {
+      localStorage.setItem('timestamp', playerRef.current.getCurrentTime());
     }
+  }, 2000);
 
-    const handleSetShuffle = () => {
-      const shuffleState = shuffle;
-      if (!shuffleState) {
-        setLoop(false);
-      }
-      setShuffle(!shuffleState);
+  setInterval(() => {
+    if (playerRef.current && playing) {
+      setCurrentTime(playerRef.current.getCurrentTime());
     }
+  }, 500);
 
-    useEffect(() => {
-      if (playerRef && !currentSong?.duration) {
-        currentSong.duration = playerRef.current.getDuration();
-        setCurrentSong(currentSong);
-      }
-    })
+  const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
-    const seek = (time) => {
-      playerRef.current.seekTo(time * playerRef.current.getDuration());
+  const { playing, setPlaying } = useContext(PlayingSongContext);
+
+  const [shuffle, setShuffle] = useState(false);
+  const [loop, setLoop] = useState(false);
+
+  const handlePlay = () => {
+    if (currentSong.disabled === currentSong.mixtape._id) {
+      return;
     }
+    setPlaying(true);
+    if (!currentTime) {
+      playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
+    }
+  };
 
-    return (
-        <div style={{height: '100px'}}>
-            <Grid style={{margin: '10px 0'}} container justify="center">
-              <div style={{color: 'black', marginRight: '20px'}}>
-                <FormattedTime numSeconds={currentTime} />
-              </div>
-                <ProgressBar
-                isEnabled
-                direction={Direction.HORIZONTAL}
-                value={currentSong?.duration ? (currentTime / currentSong.duration) : 0}
-                onChange={value => seek(value)}
-                />
-              <div style={{color: 'black', marginRight: '20px'}}>
-                <FormattedTime numSeconds={currentSong?.duration ? ((currentSong.duration - currentTime) * -1) : 0} />
-              </div>
-            </Grid>
-            <Grid style={{margin: '10px 0'}} container justify="center">
-                <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-                {playing ?
-                <PlayerIcon.Pause onClick={handlePause} width={32} height={32} style={{ marginRight: 32 }} /> :
-                <PlayerIcon.Play onClick={handlePlay} width={32} height={32} style={{ marginRight: 32 }} />
-                }
-                <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
-                <div style={{color: shuffle ? 'red' : 'black', marginRight: '20px'}}>
-                  <ShuffleIcon onClick={handleSetShuffle} />
-                </div>
-                <div style={{color: loop ? 'red' : 'black', marginRight: '20px'}}>
-                  <LoopIcon onClick={handleSetLoop} />
-                </div>
-            </Grid>
-            <ReactPlayer 
-              onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
-              ref={playerRef} playing={playing} style={{display: 'none'}}
-              url={currentSong.playbackUrl}
-            />
+  const handlePause = () => {
+    setPlaying(false);
+    setCurrentTime(playerRef.current.getCurrentTime());
+  };
+
+  const handleNextSong = () => {
+    setPlaying(false);
+    const newCurrentSong = { ...currentSong };
+    if (shuffle) {
+      newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
+    } else if (currentSong.index === currentSong.mixtape.songs.length - 1) {
+      newCurrentSong.index = 0;
+    } else {
+      newCurrentSong.index = currentSong.index + 1;
+    }
+    setCurrentSong(newCurrentSong);
+    setPlaying(true);
+  };
+
+  const handlePrevSong = () => {
+    setPlaying(false);
+    const newCurrentSong = { ...currentSong };
+    if (shuffle) {
+      newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
+    } else if (currentSong.index === 0) {
+      newCurrentSong.index = currentSong.mixtape.songs.length - 1;
+    } else {
+      newCurrentSong.index = currentSong.index - 1;
+    }
+    setCurrentSong(newCurrentSong);
+    setPlaying(true);
+  };
+
+  const handleSetLoop = () => {
+    const loopState = loop;
+    setLoop(!loopState);
+    if (!loopState) {
+      setShuffle(false);
+    }
+  }
+
+  const handleSetShuffle = () => {
+    const shuffleState = shuffle;
+    if (!shuffleState) {
+      setLoop(false);
+    }
+    setShuffle(!shuffleState);
+  }
+
+  useEffect(() => {
+    if (playerRef && !currentSong?.duration) {
+      currentSong.duration = playerRef.current.getDuration();
+      setCurrentSong(currentSong);
+    }
+  })
+
+  const seek = (time) => {
+    playerRef.current.seekTo(time * playerRef.current.getDuration());
+  }
+
+  const { atmosphereSound, setAtmosphereSound } = useContext(AtmosphereSoundContext);
+
+  const atmosphereButtonHandler = () => {
+    const newSound = { ...atmosphereSound };
+    newSound.isPlaying = !newSound.isPlaying;
+    setAtmosphereSound(newSound);
+  }
+
+  return (
+    <div style={{ height: '100px' }}>
+      <Grid style={{ margin: '10px 0' }} container justify="center">
+        <div style={{ color: 'black', marginRight: '20px' }}>
+          <FormattedTime numSeconds={currentTime} />
         </div>
-    )
+        <ProgressBar
+          isEnabled
+          direction={Direction.HORIZONTAL}
+          value={currentSong?.duration ? (currentTime / currentSong.duration) : 0}
+          onChange={value => seek(value)}
+        />
+        <div style={{ color: 'black', marginRight: '20px' }}>
+          <FormattedTime numSeconds={currentSong?.duration ? ((currentSong.duration - currentTime) * -1) : 0} />
+        </div>
+      </Grid>
+      <Grid style={{ margin: '10px 0' }} container justify="center">
+        <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+          <AtmosphereSoundsIcon 
+            style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
+            onClick={atmosphereButtonHandler}
+          />
+        </div>
+        <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
+        {playing ?
+          <PlayerIcon.Pause onClick={handlePause} width={32} height={32} style={{ marginRight: 32 }} /> :
+          <PlayerIcon.Play onClick={handlePlay} width={32} height={32} style={{ marginRight: 32 }} />
+        }
+        <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
+        <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+          <ShuffleIcon onClick={handleSetShuffle} />
+        </div>
+        <div style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+          <LoopIcon onClick={handleSetLoop} />
+        </div>
+      </Grid>
+      <ReactPlayer
+        onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
+        ref={playerRef} playing={playing} style={{ display: 'none' }}
+        url={currentSong.playbackUrl}
+      />
+      <ReactPlayer
+        loop
+        playing={atmosphereSound.isPlaying} style={{ display: 'none' }}
+        url={atmosphereSound.filename}
+      />
+    </div>
+  )
 }
 
 export default Player;

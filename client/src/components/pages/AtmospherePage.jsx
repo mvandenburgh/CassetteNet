@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Card, CardContent, CardMedia, IconButton, Grid, Typography, makeStyles, useTheme } from '@material-ui/core';
-import { SkipNext as SkipNextIcon, SkipPrevious as SkipPreviousIcon, PlayArrow as PlayArrowIcon } from '@material-ui/icons';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { ArrowBack as ArrowBackIcon, SkipNext as SkipNextIcon, SkipPrevious as SkipPreviousIcon, PlayArrow as PlayArrowIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
+import AtmosphereSoundContext from '../../contexts/AtmosphereSoundContext';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,7 +36,13 @@ function AtmospherePage() {
     const theme = useTheme();
 
     const history = useHistory();
-    const goBack = () => { history.push('/') }
+    const goBack = () => history.goBack();
+
+    const { setAtmosphereSound } = useContext(AtmosphereSoundContext);
+
+    const sounds = [
+      { title: 'Rainy Day', filename: '/atmosphere/rain.wav', img: '/atmosphere/rainy_window.png' },
+    ];
 
     return (
         <div style={{ color: 'white', left:0}}>
@@ -45,7 +52,7 @@ function AtmospherePage() {
             <Typography align="center" variant="h2">Atmosphere Sound</Typography>
             <br />
             <Grid style={{padding: '10%'}} container spacing={3}>
-                {[{title: 'Rainy Day', url: 'https://media2.vault.com/21223/rainy_window.jpg' }, {title: 'Crowded Street', url: 'https://www.hassemanmarketing.com/wp-content/uploads/2019/03/8bcdf2_489f56623e714d2bbe6b9471db6070b0-mv2.jpg' }, {title: 'Heavy Thunderstorm', url: 'https://kstp.com/kstpImages/repository/2020-06/800LightningThunderstormGenericGfx-MGN.jpg' }].map((item => {
+                {sounds.map((item => {
                     return (<Grid item xs>
                         <Card className={classes.root}>
                             <div className={classes.details}>
@@ -55,20 +62,17 @@ function AtmospherePage() {
                                     </Typography>
                                 </CardContent>
                                 <div className={classes.controls}>
-                                <IconButton aria-label="previous">
-                                    {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
-                                </IconButton>
-                                <IconButton aria-label="play/pause">
-                                    <PlayArrowIcon className={classes.playIcon} />
-                                </IconButton>
-                                <IconButton aria-label="next">
-                                    {theme.direction === 'rtl' ? <SkipPreviousIcon /> : <SkipNextIcon />}
+                                <IconButton>
+                                    <PlayArrowIcon
+                                      className={classes.playIcon}
+                                      onClick={() => setAtmosphereSound({ isPlaying: true, filename: item.filename })}  
+                                    />
                                 </IconButton>
                                 </div>
                             </div>
                             <CardMedia
                                 className={classes.cover}
-                                image={item.url}
+                                image={item.img}
                                 title="Rainy Day"
                             />
                         </Card>

@@ -147,7 +147,6 @@ router.put('/followUser', async (req, res) => {
 router.put('/unfollowUser', async (req, res) => {
     if (!req.user) return res.status(401).send(null);
     const { id } = req.body;
-    console.log(id);
     const user = await User.findById(req.user._id);
     if (user.followedUsers.includes(id)) {
         user.followedUsers.splice(user.followedUsers.indexOf(id), 1);
