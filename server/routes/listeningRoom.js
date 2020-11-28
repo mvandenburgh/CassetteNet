@@ -37,9 +37,11 @@ router.post('/', async (req, res) => {
     }
 
     const listeningRoom = new ListeningRoom({
+        chatMessages: [],
         currentListeners: [],
         listenerMapping: new Map(),
         mixtape: mixtapeId,
+        owner: req.user.id,
         currentSong: 0,
         snakeScores: [],
         rhythmScores: [],
@@ -67,6 +69,8 @@ router.get('/:id', async (req, res) => {
             });
         }
         listeningRoom.currentListeners = listenersDenormalized;
+        const owner = await User.findById(listeningRoom.owner).lean();
+        listeningRoom.owner = { user: owner._id, username: owner.username };
         return res.send(listeningRoom);
     } catch (err) {
         console.log(err);

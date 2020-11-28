@@ -18,6 +18,19 @@ function initSockets(io) {
             await lr.save();
             socket.emit('userJoinedOrLeft');
             socket.to(listeningRoom._id).to(defaultRoom).emit('userJoinedOrLeft');
+            socket.leave(defaultRoom); // leave the default room that socket.io creates
+        });
+
+        socket.on('sendChatMessage', async ({ message, timestamp, from }) => {
+            const roomId = socket.rooms.values().next().value;
+
+            const listeningRoom = await ListeningRoom.findById(roomId);
+
+            listeningRoom.chatMessages.push({ message, timestamp, from });
+
+            await listeningRoom.save();
+
+            io.in(roomId).emit('newChatMessage', listeningRoom.chatMessages);
         });
 
         socket.on('disconnecting', async () => {

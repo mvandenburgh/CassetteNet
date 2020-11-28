@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AppBar, Box, Grid, Paper, Tabs, Tab, Typography, TextField, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Mixtape from '../Mixtape';
@@ -6,6 +6,8 @@ import CurrentSongContext from '../../contexts/CurrentSongContext';
 import UserContext from '../../contexts/UserContext';
 import { getMixtape, getListeningRoom, SERVER_ROOT_URL } from '../../utils/api';
 import socketIOClient from 'socket.io-client';
+import 'react-chat-elements/dist/main.css';
+import { Input, MessageBox } from 'react-chat-elements';
 
 
 function TabPanel(props) {
@@ -51,25 +53,42 @@ function ListeningRoomPage(props) {
     const [mixtape, setMixtape] = useState(null);
     const [currentTab, setCurrentTab] = useState(0);
 
+    const [socket, setSocket] = useState(socketIOClient(SERVER_ROOT_URL));
+
     const handleTabChange = (e, val) => setCurrentTab(val);
 
+    const lrRef = useRef(listeningRoom);
+
+    useEffect(() => lrRef.current = listeningRoom);
+
     useEffect(() => {
-        const socket = socketIOClient(SERVER_ROOT_URL);
-        socket.on('userJoinedOrLeft', () => {
-            getListeningRoom(props.match.params.id)
-                .then(lr => {
-                    setListeningRoom(lr);
-                    getMixtape(lr.mixtape).then(mixtape => setMixtape(mixtape));
-                })
-                .catch(err => alert(err));
-        });
         getListeningRoom(props.match.params.id)
             .then(listeningRoom => {
                 setListeningRoom(listeningRoom);
                 getMixtape(listeningRoom.mixtape).then(mixtape => setMixtape(mixtape));
                 socket.emit('joinListeningRoom', { user, listeningRoom });
-            })
+                socket.on('userJoinedOrLeft', () => {
+                    getListeningRoom(props.match.params.id)
+                        .then(lr => {
+                            setListeningRoom(lr);
+                            console.log(lr);
+                            getMixtape(lr.mixtape).then(mixtape => setMixtape(mixtape));
+                        })
+                        .catch(err => alert(err));
+                });
+                socket.on('newChatMessage', newChatMessages => {
+                    const newListeningRoom = { ...lrRef.current };
+                    newListeningRoom.chatMessages = newChatMessages;
+                    setListeningRoom(newListeningRoom);
+                });
+            });
     }, []);
+
+    const [currentChatText, setCurrentChatText] = useState('');
+
+    const sendChatHandler = () => {
+        socket.emit('sendChatMessage', { message: currentChatText, timestamp: Date.now(), from: user._id });
+    }
 
     return (
         <Grid container justify="center">
@@ -87,7 +106,7 @@ function ListeningRoomPage(props) {
                         <Grid item xs={8}>
                             <Paper style={{ marginBottom: '2%' }}>
                                 <Typography>
-                                    <h1>{"<Listening Room Name>"}</h1>
+                                    <h1>{`${listeningRoom?.owner.username}'s Listening Room`}</h1>
                                 </Typography>
                                 <Typography variant="h5">~Listening to {mixtape?.name}~</Typography>
                             </Paper>
@@ -116,10 +135,27 @@ function ListeningRoomPage(props) {
                                 <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
                                     <Grid container>
                                         <Grid item xs={12} style={{}}>
-                                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 2, 3, 4, 5, 6, 7, 3, 33].map(e => <Typography>Test</Typography>)}
+                                            {listeningRoom?.chatMessages.map(message => (
+                                                <MessageBox
+                                                    position="left"
+                                                    type="text"
+                                                    text={message.message}
+                                                />
+                                            ))}
                                         </Grid>
                                     </Grid>
                                 </Grid>
+                                <Input
+                                    placeholder="Type here..."
+                                    onChange={(e) => setCurrentChatText(e.target.value)}
+                                    rightButtons={
+                                        <Button
+                                            color='white'
+                                            backgroundColor='black'
+                                            variant="contained"
+                                            onClick={sendChatHandler}
+                                        >Send</Button>
+                                    } />
                             </Paper>
 
                         </Grid>
