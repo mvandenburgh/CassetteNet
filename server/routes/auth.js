@@ -128,6 +128,7 @@ router.put('/changePassword', async (req, res) => {
 });
 
 router.get('/login/success', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
     const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt, verified } = req.user;
     if (!verified) {
         return res.status(400).send('user not verified.');
