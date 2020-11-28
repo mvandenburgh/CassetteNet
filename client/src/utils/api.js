@@ -7,16 +7,16 @@ axios.defaults.withCredentials = true;
 
 let SERVER_ROOT_URL;
 try {
-    SERVER_ROOT_URL = new URL(process.env.REACT_APP_SERVER_ROOT_URL);
+    SERVER_ROOT_URL = new URL(process.env.REACT_APP_SERVER_ROOT_URL).href;
 } catch (err) {
-    SERVER_ROOT_URL = new URL('http://localhost:5000/');
+    SERVER_ROOT_URL = new URL('http://localhost:5000/').href;
 }
 
 let CLIENT_ROOT_URL;
 try {
-    CLIENT_ROOT_URL = new URL(process.env.REACT_APP_CLIENT_ROOT_URL);
+    CLIENT_ROOT_URL = new URL(process.env.REACT_APP_CLIENT_ROOT_URL).href;
 } catch (err) {
-    CLIENT_ROOT_URL = new URL('http://localhost:3000/');
+    CLIENT_ROOT_URL = new URL('http://localhost:3000/').href;
 }
 
 // These functions return test data from local JSON files

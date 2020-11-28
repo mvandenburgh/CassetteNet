@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
  */
 router.get('/:id', async (req, res) => {
     try {
-        const listeningRoom = await ListeningRoom.findById(Types.ObjectId(req.params.id)).lean();
+        const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
         if (!listeningRoom) return res.status(404).send('listening room not found');
         const listenersDenormalized = [];
         for (const userId of listeningRoom.currentListeners) {
