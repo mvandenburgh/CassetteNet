@@ -10,6 +10,7 @@ const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const passport = require('./auth/passport');
+const initSockets = require('./sockets');
 
 // import routes
 const adminRoute = require('./routes/admin');
@@ -69,15 +70,10 @@ const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 const io = socketIO(server, {
     cors: {
-      origin: 'http://localhost:3000',
-      methods: ["GET", "POST"]
+      origin: process.env.ALLOWED_ORIGIN || 'http://localhost:3000'
     }
 });
-app.set('socketIO', io);
 
-// io.on('connection', (socket) => {
-//     console.log(socket)
-//     socket.emit("FromAPI", 'hello socket!');
-// });
+initSockets(io);
 
-server.listen(PORT);
+server.listen(PORT, () => console.log(`Server running on port ${PORT}...`));

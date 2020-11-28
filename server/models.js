@@ -87,6 +87,7 @@ const inboxMessageSchema = new Schema({
 
 const listeningRoomSchema = new Schema({
   currentListeners: Array, // array of user ids (users invited to listening room)
+  listenerMapping: Map,
   mixtape: mongoose.Types.ObjectId, // id of the mixtape this listening room is playing
   currentSong: Number, // index of currently playing song in mixtape `songs` array
   snakeScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]

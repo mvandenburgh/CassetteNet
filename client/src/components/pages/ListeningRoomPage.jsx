@@ -3,8 +3,8 @@ import { AppBar, Box, Grid, Paper, Tabs, Tab, Typography, TextField, Button } fr
 import { makeStyles } from '@material-ui/core/styles';
 import Mixtape from '../Mixtape';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
-import { getMixtape, getListeningRoom } from '../../utils/api';
-import { checkInToListeningRoom } from '../../utils/sockets';
+import UserContext from '../../contexts/UserContext';
+import { getMixtape, getListeningRoom, SERVER_ROOT_URL } from '../../utils/api';
 import socketIOClient from 'socket.io-client';
 
 
@@ -45,6 +45,8 @@ const useStyles = makeStyles((theme) => ({
 function ListeningRoomPage(props) {
     const { setCurrentSong } = useContext(CurrentSongContext);
 
+    const { user } = useContext(UserContext);
+
     const [listeningRoom, setListeningRoom] = useState(null);
     const [mixtape, setMixtape] = useState(null);
     const [currentTab, setCurrentTab] = useState(0);
@@ -52,35 +54,21 @@ function ListeningRoomPage(props) {
     const handleTabChange = (e, val) => setCurrentTab(val);
 
     useEffect(() => {
-        checkInToListeningRoom(props.match.params.id)
-            .then(() => {
-                getListeningRoom(props.match.params.id)
-                    .then(lr => {
-                        setListeningRoom(lr);
-                        getMixtape(lr.mixtape)
-                            .then(mixtape => setMixtape(mixtape));
-                    })
-            })
-            .catch(err => alert(err));
-        setInterval(() => {
-            checkInToListeningRoom(props.match.params.id).then(() => {
-                getListeningRoom(props.match.params.id).then(lr => setListeningRoom(lr));
-            })
-        }, 5000);
-
-    }, []);
-
-
-
-    useEffect(() => {
-        const socket = socketIOClient('http://localhost:5000');
-        socket.on('userJoined', () => {
+        const socket = socketIOClient(SERVER_ROOT_URL);
+        socket.on('userJoinedOrLeft', () => {
             getListeningRoom(props.match.params.id)
                 .then(lr => {
                     setListeningRoom(lr);
+                    getMixtape(lr.mixtape).then(mixtape => setMixtape(mixtape));
                 })
                 .catch(err => alert(err));
         });
+        getListeningRoom(props.match.params.id)
+            .then(listeningRoom => {
+                setListeningRoom(listeningRoom);
+                getMixtape(listeningRoom.mixtape).then(mixtape => setMixtape(mixtape));
+                socket.emit('joinListeningRoom', { user, listeningRoom });
+            })
     }, []);
 
     return (
