@@ -135,8 +135,8 @@ router.get('/login/success', async (req, res) => {
     }
     const followedUsersDenormalized = [];
     for (const userId of followedUsers) {
-        const user = await User.findById(userId);
-        const followerCount = (await User.find({ followedUsers: user._id })).length;
+        const user = await User.findById(userId).lean();
+        const followerCount = (await User.find({ followedUsers: user._id }).lean()).length;
         const createdAt = new Date(user.createdAt);
         const updatedAt = new Date(user.updatedAt);
         followedUsersDenormalized.push({
@@ -148,7 +148,7 @@ router.get('/login/success', async (req, res) => {
             followers: followerCount 
         });
     }
-    const followers = (await User.find({ followedUsers: _id })).length;
+    const followers = (await User.find({ followedUsers: _id }).lean()).length;
     const inboxMessages = await InboxMessage.find({ recipient: req.user.id }).lean();
     res.json({
         _id,

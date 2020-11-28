@@ -22,7 +22,7 @@ router.get('/search', async (req, res) => {
     for (const user of users) {
         const updatedAt =new Date(user.updatedAt);
         const createdAt = new Date(user.createdAt);
-        const followerCount = (await User.find({ followedUsers: user._id })).length;
+        const followerCount = (await User.find({ followedUsers: user._id }).lean()).length;
         results.push({
             _id: user._id,
             username: user.username,
@@ -42,19 +42,19 @@ router.get('/search', async (req, res) => {
 // TODO: secure/authentication
 router.get('/mixtapes', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
-    const mixtapes = await Mixtape.find({ 'collaborators.user': Types.ObjectId(req.user.id) });
+    const mixtapes = await Mixtape.find({ 'collaborators.user': Types.ObjectId(req.user.id) }).lean();
     res.send(mixtapes);
 });
 
 router.get('/getFollowedUsers', async (req, res) => {
     if (!req.user) return res.status(401).send(null);
-    const requser = await User.findById(req.user._id);
+    const requser = await User.findById(req.user._id).lean();
     const results = [];
     for (const followedUserID of requser.followedUsers) {
-        const user = await User.findById(followedUserID);
+        const user = await User.findById(followedUserID).lean();
         const updatedAt =new Date(user.updatedAt);
         const createdAt = new Date(user.createdAt);
-        const followerCount = (await User.find({ followedUsers: user._id })).length;
+        const followerCount = (await User.find({ followedUsers: user._id }).lean()).length;
         results.push({
             _id: user._id,
             username: user.username,
@@ -128,8 +128,8 @@ router.put('/followUser', async (req, res) => {
         await user.save();
     }
     for (const userId of user.followedUsers) {
-        const followedUser = await User.findById(userId);
-        const followerCount = (await User.find({ followedUsers: followedUser._id })).length;
+        const followedUser = await User.findById(userId).lean();
+        const followerCount = (await User.find({ followedUsers: followedUser._id }).lean()).length;
         const createdAt = new Date(followedUser.createdAt);
         const updatedAt = new Date(followedUser.updatedAt);
         followedUsersDenormalized.push({
@@ -154,8 +154,8 @@ router.put('/unfollowUser', async (req, res) => {
     }
     const followedUsersDenormalized = [];
     for (const userId of user.followedUsers) {
-        const followedUser = await User.findById(userId);
-        const followerCount = (await User.find({ followedUsers: followedUser._id })).length;
+        const followedUser = await User.findById(userId).lean();
+        const followerCount = (await User.find({ followedUsers: followedUser._id }).lean()).length;
         const createdAt = new Date(followedUser.createdAt);
         const updatedAt = new Date(followedUser.updatedAt);
         followedUsersDenormalized.push({
@@ -206,7 +206,7 @@ router.delete('/deleteMessage/:id', async (req, res) => {
 })
 
 router.get('/:id/profilePicture', async (req, res) => {
-    const user = await User.findById(req.params.id).select('+profilePicture');
+    const user = await User.findById(req.params.id).select('+profilePicture').lean();
     if (user && user.profilePicture && user.profilePicture.data && user.profilePicture.contentType) {
         res.set('Content-Type', user.profilePicture.contentType);
         res.send(user.profilePicture.data.buffer);
@@ -229,11 +229,11 @@ router.get('/:id/profilePicture', async (req, res) => {
 router.get('/:id', async (req, res) => {
     if (req.params.id.length === 5 && req.params.id.charAt(0) === '!') { // search by uniqueId
         const user = await User.findOne({ uniqueId: parseInt(req.params.id.substring(1), 36) }).select('-email -admin -verified -token').lean();
-        const followers = (await User.find({ followedUsers: Types.ObjectId(user._id) })).length;
+        const followers = (await User.find({ followedUsers: Types.ObjectId(user._id) }).lean()).length;
         res.send({ followers, ...user });
     } else { // search by _id
         const user = await User.findById(req.params.id).select('-email -admin -verified -token').lean();
-        const followers = (await User.find({ followedUsers: Types.ObjectId(req.params.id) })).length;
+        const followers = (await User.find({ followedUsers: Types.ObjectId(req.params.id) }).lean()).length;
         res.send({ followers, ...user });
     }
 });

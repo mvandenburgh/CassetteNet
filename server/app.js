@@ -22,7 +22,7 @@ const userRoute = require('./routes/user');
 const youtubeRoute = require('./routes/youtube');
 
 // connect server to the database
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 
 // initialize collection in database to store login sessions
 const store = new MongoDBStore({

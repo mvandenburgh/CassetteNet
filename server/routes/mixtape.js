@@ -49,13 +49,13 @@ router.put('/:id/coverImage', async (req, res) => {
     if (!req.files || !req.files.coverImage) return res.status(400).send('no file uploaded.');
     const { coverImage } = req.files;
     await Mixtape.findByIdAndUpdate(req.params.id, { coverImage: { data: coverImage.data, contentType: coverImage.mimetype } });
-    const mixtape = await Mixtape.findById(req.params.id);
+    const mixtape = await Mixtape.findById(req.params.id).lean();
     res.send(mixtape);
 });
 
 
 router.get('/:id/coverImage', async (req, res) => {
-    const mixtape = await Mixtape.findById(req.params.id).select('+coverImage');
+    const mixtape = await Mixtape.findById(req.params.id).select('+coverImage').lean();
     if (mixtape && mixtape.coverImage) {
         res.set('Content-Type', mixtape.coverImage.contentType);
         res.send(mixtape.coverImage.data.buffer);
@@ -140,7 +140,7 @@ router.post('/', async (req, res) => {
 router.post('/:id/fork', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
 
-    const mixtape = await Mixtape.findById(req.params.id);
+    const mixtape = await Mixtape.findById(req.params.id).lean();
 
     const newMixtape = {
         name: mixtape.name,
@@ -187,7 +187,7 @@ router.put('/:id', async (req, res) => {
 // DELETE MIXTAPE
 router.delete('/:id', async (req, res) => {
     // const { mixtape } = req.body;
-    const mixtape = await Mixtape.findOne({ _id: req.params.id });
+    const mixtape = await Mixtape.findOne({ _id: req.params.id }).lean();
     await Mixtape.deleteOne({  _id: mixtape._id });
     const users = await User.find({ favoritedMixtapes: { $in: mixtape._id } });
     for (const user of users) {
