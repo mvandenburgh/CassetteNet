@@ -119,7 +119,7 @@ function ListeningRoomPage(props) {
                     setTimeout(history.goBack, 4000);
                 });
             })
-            .catch(err => window.location.reload());
+            .catch(err => history.goBack());
     }, []);
 
     const [currentChatText, setCurrentChatText] = useState('');
