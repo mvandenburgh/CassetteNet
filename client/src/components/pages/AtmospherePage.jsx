@@ -41,7 +41,7 @@ function AtmospherePage() {
     const { setAtmosphereSound } = useContext(AtmosphereSoundContext);
 
     const sounds = [
-      { title: 'Rainy Day', filename: '/atmosphere/rain.wav', img: '/atmosphere/rainy_window.png' },
+      { title: 'Rainy Day', filename: '/atmosphere/rain.mp3', img: '/atmosphere/rainy_window.png' },
     ];
 
     return (
