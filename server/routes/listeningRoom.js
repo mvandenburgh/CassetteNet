@@ -57,9 +57,11 @@ router.post('/', async (req, res) => {
  * Get info about a listening room
  */
 router.get('/:id', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
     try {
         const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
         if (!listeningRoom) return res.status(404).send('listening room not found');
+        if (!listeningRoom.owner.equals(req.user.id) && !listeningRoom.invitedUsers.includes(req.user.id)) return res.status(401).send('unauthorized');
         const listenersDenormalized = [];
         for (const userId of listeningRoom.currentListeners) {
             const user = await User.findById(userId).lean();
@@ -78,21 +80,20 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-
-/**
- * Update a listening room
- */
-router.put('/:id', async (req, res) => {
-
+router.put('/:id/inviteUser', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
+    if (!req.body && !req.body.user) return res.status(400).send('invalid request');
+    try {
+        const listeningRoom = await ListeningRoom.findById(req.params.id);
+        if (!listeningRoom.owner.equals(req.user.id)) return res.status(401).send('unauthorized');
+        if (!listeningRoom.invitedUsers.includes(req.body.user)) {
+            listeningRoom.invitedUsers.push(req.body.user);
+            await listeningRoom.save();
+        }
+        return res.send(req.body.user);
+    } catch(err) {
+        return res.status(500).send(err);
+    }
 });
-
-
-/**
- * Delete a listening room
- */
-router.delete('/:id', async (req, res) => {
-
-});
-
 
 module.exports = router;

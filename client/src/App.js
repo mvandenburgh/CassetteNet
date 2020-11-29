@@ -66,7 +66,7 @@ function App() {
   const [tps, setTps] = useState(my_tps);
 
   const [atmosphereSound, setAtmosphereSound] = useState({});
-  console.log(atmosphereSound);
+
   useEffect(() => setInterval(() => {
     if (user.isLoggedIn) {
       verifyUserLoggedIn().then(user => {

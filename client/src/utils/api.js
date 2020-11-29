@@ -265,7 +265,7 @@ async function getListeningRoom(listeningRoomId) {
 }
 
 async function sendAnonymousMessage(mixtapeId, recipient, message) {
-    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId });
+    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId, isAnonymous: true });
 }
 
 async function deleteInboxMessage(messageId) {
@@ -276,6 +276,12 @@ async function deleteInboxMessage(messageId) {
 async function getInboxMessages() {
     const messages = await axios.get(new URL('/api/user/inboxMessages', SERVER_ROOT_URL).href);
     return messages.data;
+}
+
+async function sendListeningRoomInvitation(recipient, listeningRoomId, mixtapeId) {
+    await axios.put(new URL(`/api/listeningRoom/${listeningRoomId}/inviteUser`, SERVER_ROOT_URL).href, { user: recipient });
+    const message = `You have been invited to a listening room. <form action="/listeningRoom/${listeningRoomId}"><input type="submit" value="Join Listening Room" /></form>`;
+    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId, isAnonymous: false });
 }
 
 async function getRandomMixtapes(count) {
@@ -325,6 +331,7 @@ export {
     addAdmin,
     createListeningRoom,
     getListeningRoom,
+    sendListeningRoomInvitation,
     forkMixtape,
     sendAnonymousMessage,
     deleteInboxMessage,

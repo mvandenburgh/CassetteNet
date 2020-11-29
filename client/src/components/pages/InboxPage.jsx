@@ -5,17 +5,18 @@ import { blueGrey } from '@material-ui/core/colors';
 import { ArrowBack as ArrowBackIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import UserContext from '../../contexts/UserContext';
 import { useHistory } from 'react-router-dom';
+import parse from 'html-react-parser';
 import { getMixtapeCoverImageUrl, deleteInboxMessage } from '../../utils/api';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    maxWidth: '100%',
-    backgroundColor: blueGrey[900], // '#3E3285',
-  },
-  inline: {
-    display: 'inline',
-  },
+    root: {
+        width: '100%',
+        maxWidth: '100%',
+        backgroundColor: blueGrey[900], // '#3E3285',
+    },
+    inline: {
+        display: 'inline',
+    },
 }));
 
 function InboxPage() {
@@ -36,57 +37,59 @@ function InboxPage() {
 
     const history = useHistory();
     const goBack = () => { history.push('/') }
-
+    console.log(user.inboxMessages)
     return (
-        <div style={{color: 'white', left:0}}>
-            <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
-                <ArrowBackIcon/>
+        <div style={{ color: 'white', left: 0 }}>
+            <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
+                <ArrowBackIcon />
             </IconButton>
-            <br/>
-                
-            <br/>
-            <br/>
+            <br />
+
+            <br />
+            <br />
             <Grid container align="center" justify="center">
                 <Typography variant="h2">Inbox</Typography>
             </Grid>
             <Grid container align="center" justify="center">
-            <Box style={{display: 'inline-flex', 
-                        flexDirection: 'row', 
-                        backgroundColor: blueGrey[900], 
-                        marginRight: '10px',
-                        marginBottom: '30px',
-                        paddingLeft: '20px',
-                        paddingTop: '20px',  
-                        paddingBottom: '20px',
-                        width: '85%', 
-                        height: '30%'}} boxShadow={3} borderRadius={12}>
+                <Box style={{
+                    display: 'inline-flex',
+                    flexDirection: 'row',
+                    backgroundColor: blueGrey[900],
+                    marginRight: '10px',
+                    marginBottom: '30px',
+                    paddingLeft: '20px',
+                    paddingTop: '20px',
+                    paddingBottom: '20px',
+                    width: '85%',
+                    height: '30%'
+                }} boxShadow={3} borderRadius={12}>
                     <List subheader={<li />} className={classes.root}>
-                    <ListItem alignItems="flex-start">                
-                    <ListItemText
-                        style={{marginRight: '10%'}}
-                        primary={
-                            <React.Fragment>
-                                From
+                        <ListItem alignItems="flex-start">
+                            <ListItemText
+                                style={{ marginRight: '10%' }}
+                                primary={
+                                    <React.Fragment>
+                                        From
                             </React.Fragment>
-                        }
-                        />
-                        <ListItemText
-                        style={{marginRight: '10%'}}
-                        primary={
-                            <React.Fragment>
-                                Message
+                                }
+                            />
+                            <ListItemText
+                                style={{ marginRight: '10%' }}
+                                primary={
+                                    <React.Fragment>
+                                        Message
                             </React.Fragment>
-                        }
-                        />
-                        <ListItemText
-                        primary={
-                            <React.Fragment>
-                                Mixtape
+                                }
+                            />
+                            <ListItemText
+                                primary={
+                                    <React.Fragment>
+                                        Mixtape
                             </React.Fragment>
-                        }
-                        />
-                    </ListItem>
-                    <hr />
+                                }
+                            />
+                        </ListItem>
+                        <hr />
                         {
                             user.inboxMessages?.map((message) => {
                                 return (
@@ -102,27 +105,27 @@ function InboxPage() {
                                                             className={classes.inline}
                                                         >
                                                             {message.sender}
-                                                            </Typography>
+                                                        </Typography>
                                                     </ListItemAvatar>
                                                 </Grid>
                                                 <Grid item xs={4}>
                                                     <ListItemText
-                                                    primary={
-                                                        <React.Fragment>
-                                                        {message.message}
-                                                        </React.Fragment>
-                                                    }
+                                                        primary={
+                                                            <React.Fragment>
+                                                                {parse(message.message)}
+                                                            </React.Fragment>
+                                                        }
                                                     />
                                                 </Grid>
                                                 <Grid item xs={3}>
-                                                    <img style={{width: '20%'}} src={getMixtapeCoverImageUrl(message.mixtape)} alt="mixtape_cover"></img>
+                                                    <img style={{ width: '20%' }} src={getMixtapeCoverImageUrl(message.mixtape)} alt="mixtape_cover"></img>
                                                 </Grid>
                                                 <Grid item>
                                                     <DeleteIcon onClick={() => deleteMessageHandler(message._id)} />
                                                 </Grid>
                                             </Grid>
                                         </ListItem>
-                                        <Divider variant="inset" style={{marginRight: '10%'}} component="li" />
+                                        <Divider variant="inset" style={{ marginRight: '10%' }} component="li" />
                                     </div>
                                 );
                             })
@@ -131,7 +134,7 @@ function InboxPage() {
                 </Box>
             </Grid>
         </div>
-  );
+    );
 }
 
 export default InboxPage;

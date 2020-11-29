@@ -76,7 +76,6 @@ const [followedUsers, setFollowedUsers] = useState([]);
       <br />
       <Box style={{ width: "25%", display: 'flex', paddingLeft: '120px' }}>
         <br />
-        <Button onClick={handleClickOpen} variant="contained" boxShadow={3} style={{ margin: 'auto', backgroundColor: colors.searchButtonColor }}> Search for User</Button>
       </Box>
       <div style={{ width: "70%", margin: 'auto' }}>
         <UserList users={followedUsers} />

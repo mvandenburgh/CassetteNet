@@ -73,7 +73,7 @@ function UserSearchBar(props) {
       renderOption={(user) => (
         <React.Fragment style={{ height: '2em' }}>
           <img style={{ height: '2em', marginRight: '2em' }} src={getUserProfilePictureUrl(user._id)} />
-          <span>{user.username} #({user.uniqueId.toString(36).padStart(4, '0')})</span>
+          <span>{user.username} #({user.uniqueId.toString(36).padStart(4, '0').toUpperCase()})</span>
         </React.Fragment>
       )}
     />

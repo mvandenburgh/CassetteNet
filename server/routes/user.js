@@ -181,12 +181,15 @@ router.put('/profilePicture', async (req, res) => {
 router.post('/sendMessage', async (req, res) => {
     if (!req.user) return res.status(401).send('unauthorized');
     if (!req.body.message || !req.body.recipient) return res.status(400).send();
-    const { message, mixtapeId, recipient } = req.body;
+    const { message, mixtapeId, recipient, isAnonymous } = req.body;
     const inboxMessage = {
         mixtape: mixtapeId,
         message,
         recipient,
     };
+    if (!isAnonymous) {
+        inboxMessage.sender = req.user.username;
+    }
     try {
         const inboxMessageDb = await InboxMessage.create(inboxMessage);
         res.send(inboxMessage._id);
