@@ -10,6 +10,8 @@ import {
 } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { PlayCircleFilledWhite as PlayIcon } from '@material-ui/icons';
+import YoutubeIcon from './icons/YoutubeIcon';
+import SoundcloudIcon from './icons/SoundcloudIcon';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import JSTPSContext from '../contexts/JSTPSContext';
@@ -67,10 +69,14 @@ function Mixtape(props) {
     setSongsToDelete(toDelete);
   };
 
-
-  function toString() {
-    for (var i = 0; i < mixtape.songs.length; i++) {
-      console.log("Song: " + i + ", " + mixtape.songs[i].id);
+  const getIcon = (song) => {
+    switch (song.type) {
+      case 'youtube':
+        return <YoutubeIcon />
+      case 'soundcloud':
+        return <SoundcloudIcon />
+      default:
+        return <div />
     }
   }
 
@@ -131,8 +137,12 @@ function Mixtape(props) {
                               <ListItemText>{song.name || `song_${mixtape.songs[index]}`}</ListItemText>
                             </div>
                           </Grid>
-                          <Grid item xs={2}>
+                          <Grid item xs={1}>
                             <PlayIcon fontSize="large" onClick={() => playSong(index)} style={{ display: isEditing ? 'none' : '' }} />
+                          </Grid>
+                          <Grid justify="flex-end" item xs={1}>
+                            {/* <YoutubeIcon /> */}
+                            {getIcon(song)}
                           </Grid>
                         </ListItem>
                       </Grid>
