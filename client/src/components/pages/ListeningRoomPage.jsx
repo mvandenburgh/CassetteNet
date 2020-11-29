@@ -1,6 +1,25 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { AppBar, Box, Grid, Paper, Tabs, Tab, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import {
+    AppBar,
+    Backdrop,
+    Box,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    Fade,
+    Grid,
+    Modal,
+    Paper,
+    Tabs,
+    Tab,
+    Typography,
+} from '@material-ui/core';
+import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
+import { Alert } from '@material-ui/lab';
 import { AddCircleOutline as InviteUserIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import Mixtape from '../Mixtape';
@@ -45,9 +64,16 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
     },
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 }));
 
 function ListeningRoomPage(props) {
+    const classes = useStyles();
+
     const history = useHistory();
 
     const { setCurrentSong } = useContext(CurrentSongContext);
@@ -61,6 +87,8 @@ function ListeningRoomPage(props) {
     const [socket, setSocket] = useState(socketIOClient(SERVER_ROOT_URL));
 
     const handleTabChange = (e, val) => setCurrentTab(val);
+
+    const [endSessionPopupOpen, setEndSessionPopupOpen] = useState(false);
 
     const lrRef = useRef(listeningRoom);
 
@@ -86,8 +114,12 @@ function ListeningRoomPage(props) {
                     newListeningRoom.chatMessages = newChatMessages;
                     setListeningRoom(newListeningRoom);
                 });
+                socket.on('endListeningRoom', () => {
+                    setEndSessionPopupOpen(true);
+                    setTimeout(history.goBack, 4000);
+                });
             })
-            .catch(err => history.push('/'));
+            .catch(err => window.location.reload());
     }, []);
 
     const [currentChatText, setCurrentChatText] = useState('');
@@ -96,7 +128,6 @@ function ListeningRoomPage(props) {
         socket.emit('sendChatMessage', { message: currentChatText, timestamp: Date.now(), from: user._id });
     }
 
-    
     const [inviteUserPopupOpen, setInviteUserPopupOpen] = useState(false);
     const [userToInvite, setUserToInvite] = useState(null);
 
@@ -255,6 +286,21 @@ function ListeningRoomPage(props) {
                     <Button variant="contained" onClick={inviteUser}>Invite</Button>
                 </DialogActions>
             </Dialog>
+            <Modal
+                className={classes.modal}
+                open={endSessionPopupOpen}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                }}
+            >
+                <Fade in={endSessionPopupOpen}>
+                    <Grid container direction="row" justify="center" alignItems="center" style={{ backgroundColor: blueGrey[200], height: '15%', width: '30%' }}>
+                        <span>The host has left the listening room. Ending session...</span>
+                    </Grid>
+                </Fade>
+            </Modal>
         </div>
     )
 }

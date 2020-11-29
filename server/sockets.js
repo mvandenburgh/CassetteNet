@@ -39,12 +39,17 @@ function initSockets(io) {
             if (!lrIds || lrIds.length === 0) return;
             const lrId = lrIds[0];
             const lr = await ListeningRoom.findById(lrId);
+            const userId = lr.listenerMapping.get(socket.id);
 
             // remove user from listening room in database
-            lr.currentListeners = lr.currentListeners.filter(u => !u.equals(lr.listenerMapping.get(socket.id)));
+            lr.currentListeners = lr.currentListeners.filter(u => !u.equals(userId));
             lr.listenerMapping.delete(socket.id);
             await lr.save();
             socket.to(lrId).emit('userJoinedOrLeft');
+            if (lr.owner.equals(userId)) {
+                io.in(lrId).emit('endListeningRoom');
+                await lr.deleteOne();
+            }
         });
     });
 }
