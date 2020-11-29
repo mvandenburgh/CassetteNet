@@ -1,6 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Avatar, Box, Divider, Grid, IconButton, List, ListItem, ListItemText, ListItemAvatar, Typography } from '@material-ui/core';
+import { Avatar, Box, Button, Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle, Divider, Grid, IconButton, List, ListItem, ListItemText, ListItemAvatar, Typography } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { ArrowBack as ArrowBackIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import UserContext from '../../contexts/UserContext';
@@ -26,6 +30,9 @@ function InboxPage() {
     if (!user.isLoggedIn) {
         user = JSON.parse(localStorage.getItem('user'));
     }
+
+    const [viewMessageDialogIsOpen, setViewMessageDialogIsOpen] = useState(false); // whether add song popup is open
+    
 
     const deleteMessageHandler = (messageId) => {
         deleteInboxMessage(messageId).then(messages => {
@@ -94,7 +101,22 @@ function InboxPage() {
                             user.inboxMessages?.map((message) => {
                                 return (
                                     <div>
-                                        <ListItem alignItems="flex-start">
+                                        <Dialog open={viewMessageDialogIsOpen} onClose={() => setViewMessageDialogIsOpen(false)}>
+                                            <DialogTitle>Message from someone</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText>
+                                                    <React.Fragment>
+                                                        {parse(message.message)}
+                                                    </React.Fragment>
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                {/* <Button align="right" color="primary">
+                                                    CLOSE
+                                                </Button> */}
+                                            </DialogActions>
+                                        </Dialog>
+                                        <ListItem alignItems="flex-start" onClick={() => setViewMessageDialogIsOpen(true)}>
                                             <Grid container>
                                                 <Grid item xs={4}>
                                                     <ListItemAvatar>
@@ -109,13 +131,9 @@ function InboxPage() {
                                                     </ListItemAvatar>
                                                 </Grid>
                                                 <Grid item xs={4}>
-                                                    <ListItemText
-                                                        primary={
-                                                            <React.Fragment>
-                                                                {parse(message.message)}
-                                                            </React.Fragment>
-                                                        }
-                                                    />
+                                                    <Typography noWrap={true}>
+                                                        {parse(message.message)}
+                                                    </Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
                                                     <img style={{ width: '20%' }} src={getMixtapeCoverImageUrl(message.mixtape)} alt="mixtape_cover"></img>
