@@ -19,17 +19,17 @@ import {
 } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
-import { Alert } from '@material-ui/lab';
 import { AddCircleOutline as InviteUserIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import Mixtape from '../Mixtape';
 import UserSearchBar from '../UserSearchBar';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
 import UserContext from '../../contexts/UserContext';
-import { getMixtape, getListeningRoom, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
+import { getMixtape, getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
 import socketIOClient from 'socket.io-client';
-import 'react-chat-elements/dist/main.css';
-import { Input, MessageBox } from 'react-chat-elements';
+import logo from '../../images/logo.png';
+import '../styles/chatbox.css';
+import { ChatBox } from 'react-chatbox-component';
 
 
 function TabPanel(props) {
@@ -119,13 +119,13 @@ function ListeningRoomPage(props) {
                     setTimeout(history.goBack, 4000);
                 });
             })
-            .catch(err => history.goBack());
+            .catch(err => console.log(err));
     }, []);
 
     const [currentChatText, setCurrentChatText] = useState('');
 
-    const sendChatHandler = () => {
-        socket.emit('sendChatMessage', { message: currentChatText, timestamp: Date.now(), from: user._id });
+    const sendChatHandler = (message) => {
+        socket.emit('sendChatMessage', { message, timestamp: Date.now(), from: { user: user._id, username: user.username } });
     }
 
     const [inviteUserPopupOpen, setInviteUserPopupOpen] = useState(false);
@@ -134,6 +134,24 @@ function ListeningRoomPage(props) {
     const inviteUser = () => {
         sendListeningRoomInvitation(userToInvite._id, listeningRoom._id, listeningRoom.mixtape);
     }
+
+    const [chatMessages, setChatMessages] = useState([]);
+
+    useEffect(() => {
+        if (listeningRoom) {
+            console.log(logo)
+            const newChatMessages = listeningRoom.chatMessages.map((message, i) => ({
+                text: message.message,
+                id: i,
+                sender: {
+                    name: message?.from?.username,
+                    uid: message?.from?.user ? message.from.user : '#chatbot',
+                    avatar: message?.from?.user ? getUserProfilePictureUrl(message.from.user) : logo,
+                },
+            }));
+            setChatMessages(newChatMessages);
+        }
+    }, [listeningRoom]);
 
     if (!listeningRoom) {
         return null;
@@ -164,7 +182,7 @@ function ListeningRoomPage(props) {
                             </Grid>
                             <Grid item xs={1} />
                             <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>
-                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '48%' }}>
+                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '28%' }}>
                                     <Grid container alignItems="center" direction="row" style={{ height: '10%' }}>
                                         <Grid item xs={10}>
                                             <Typography style={{ fontSize: '2em' }} alignItems="center">Listeners</Typography>
@@ -183,35 +201,22 @@ function ListeningRoomPage(props) {
                                         </Grid>
                                     </Grid>
                                 </Paper>
-                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '48%' }}>
+                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '68%' }}>
                                     <Grid container style={{ height: '10%' }}>
                                         <Typography style={{ fontSize: '2em' }} alignItems="center">Chat</Typography>
                                     </Grid>
                                     <Grid container style={{ height: '5%' }} />
                                     <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
                                         <Grid container>
-                                            <Grid item xs={12} style={{}}>
-                                                {listeningRoom?.chatMessages.map(message => (
-                                                    <MessageBox
-                                                        position="left"
-                                                        type="text"
-                                                        text={message.message}
-                                                    />
-                                                ))}
+                                            <Grid item xs={12}>
+                                                <ChatBox
+                                                    messages={chatMessages}
+                                                    onSubmit={sendChatHandler}
+                                                    isLoading={chatMessages?.length === 0}
+                                                />
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Input
-                                        placeholder="Type here..."
-                                        onChange={(e) => setCurrentChatText(e.target.value)}
-                                        rightButtons={
-                                            <Button
-                                                color='white'
-                                                backgroundColor='black'
-                                                variant="contained"
-                                                onClick={sendChatHandler}
-                                            >Send</Button>
-                                        } />
                                 </Paper>
 
                             </Grid>

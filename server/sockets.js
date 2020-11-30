@@ -14,10 +14,15 @@ function initSockets(io) {
                 lr.currentListeners.push(Types.ObjectId(user._id));
             }
             lr.listenerMapping.set(socket.id, user._id);
-
+            lr.chatMessages.push({
+                message: `${user.username} joined the room!`,
+                timestamp: Date.now(),
+                from: { username: '#ChatBot' }, // will always be unique since usernames aren't allowed to start with #
+            });
             await lr.save();
             socket.emit('userJoinedOrLeft');
             socket.to(listeningRoom._id).to(defaultRoom).emit('userJoinedOrLeft');
+            socket.to(listeningRoom._id).to(defaultRoom).emit('newChatMessage', lr.chatMessages);
             socket.leave(defaultRoom); // leave the default room that socket.io creates
         });
 
