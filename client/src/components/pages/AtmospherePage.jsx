@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { Card, CardContent, CardMedia, IconButton, Grid, Typography, makeStyles, useTheme } from '@material-ui/core';
-import { ArrowBack as ArrowBackIcon, SkipNext as SkipNextIcon, SkipPrevious as SkipPreviousIcon, PlayArrow as PlayArrowIcon } from '@material-ui/icons';
+import { Button, Card, CardContent, CardMedia, IconButton, Grid, Typography, makeStyles, useTheme } from '@material-ui/core';
+import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import AtmosphereSoundContext from '../../contexts/AtmosphereSoundContext';
 
@@ -42,6 +42,8 @@ function AtmospherePage() {
 
     const sounds = [
       { title: 'Rainy Day', filename: '/atmosphere/rain.mp3', img: '/atmosphere/rainy_window.png' },
+      { title: 'Crowded Street', filename: '/atmosphere/city.mp3', img: '/atmosphere/city.png' },
+      { title: 'Heavy Thunderstorm', filename: '/atmosphere/thunder.mp3', img: '/atmosphere/thunder.png' },
     ];
 
     return (
@@ -53,7 +55,7 @@ function AtmospherePage() {
             <br />
             <Grid style={{padding: '10%'}} container spacing={3}>
                 {sounds.map((item => {
-                    return (<Grid item xs>
+                    return (<Grid item xs style={{ width: `${(1/sounds.length) * 100}%`}}>
                         <Card className={classes.root}>
                             <div className={classes.details}>
                                 <CardContent className={classes.content}>
@@ -62,12 +64,7 @@ function AtmospherePage() {
                                     </Typography>
                                 </CardContent>
                                 <div className={classes.controls}>
-                                <IconButton>
-                                    <PlayArrowIcon
-                                      className={classes.playIcon}
-                                      onClick={() => setAtmosphereSound({ isPlaying: true, filename: item.filename })}  
-                                    />
-                                </IconButton>
+                                <Button variant="contained" onClick={() => setAtmosphereSound({ isPlaying: true, filename: item.filename })}>Select</Button>
                                 </div>
                             </div>
                             <CardMedia
