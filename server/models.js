@@ -40,7 +40,6 @@ const userSchema = new Schema({
 
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(AutoIncrement, { inc_field: 'uniqueId' });
-userSchema.index({ username: 'text' });
 userSchema.plugin(mongoosePartialTextSearch);
 
 const songSchema = new Schema({
@@ -72,7 +71,6 @@ const mixtapeSchema = new Schema({
   isPublic: Boolean,
 });
 
-mixtapeSchema.index({ name: 'text' });
 mixtapeSchema.plugin(mongoosePartialTextSearch);
 songSchema.plugin(mongoosePartialTextSearch);
 
@@ -91,7 +89,7 @@ const listeningRoomSchema = new Schema({
   invitedUsers: Array,
   currentListeners: Array, // array of user ids (users invited to listening room)
   listenerMapping: Map, // used to map socket.io room ids to mongodb listeningroom ids
-  mixtape: mongoose.Types.ObjectId, // id of the mixtape this listening room is playing
+  mixtape: Schema.Types.Mixed, // id of the mixtape this listening room is playing
   owner: mongoose.Types.ObjectId,
   currentSong: Number, // index of currently playing song in mixtape `songs` array
   snakeScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]

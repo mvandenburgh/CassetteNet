@@ -1,5 +1,4 @@
 const express = require('express');
-const { Types } = require('mongoose');
 const { ListeningRoom, Mixtape, User } = require('../models');
 
 const router = express.Router();
@@ -36,11 +35,15 @@ router.post('/', async (req, res) => {
         return res.status(401).send('unauthorized');
     }
 
+    // remove fields that aren't needed for listening room
+    delete mixtape.isPublic;
+    delete mixtape.collaborators;
+
     const listeningRoom = new ListeningRoom({
         chatMessages: [],
         currentListeners: [],
         listenerMapping: new Map(),
-        mixtape: mixtapeId,
+        mixtape,
         owner: req.user.id,
         currentSong: 0,
         snakeScores: [],

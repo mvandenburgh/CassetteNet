@@ -4,6 +4,7 @@ const youtube = google.youtube({
     version: 'v3',
     auth: process.env.YOUTUBE_API_KEY,
 });
+const ytdl = require('ytdl-core');
 
 async function searchPlaylist(searchQuery, maxResults) {
     try {
@@ -61,6 +62,8 @@ async function getVideoInfo(videoId) {
             part: 'snippet,contentDetails',
             id: videoId
         });
+        const info = await ytdl.getInfo(videoId);
+        result.data.items[0].media = info.videoDetails.media;
         return result.data.items;
     } catch (err) {
         throw err;
