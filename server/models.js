@@ -18,7 +18,7 @@ const userSchema = new Schema({
   favoritedMixtapes: Array, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
   followedUsers: Array, // array of other user object ids
   admin: Boolean, // true if user is an admin
-  strategy: { // whether or not this user signed up w/ local strategy (true) or oauth (false)
+  strategy: {
     type: String,
     default: 'local'
   },
@@ -34,6 +34,7 @@ const userSchema = new Schema({
     },
     select: false
   },
+  socketId: String, // client id from socket.io
 }, { timestamps: true, toJSON: { getters: true } });
 
 

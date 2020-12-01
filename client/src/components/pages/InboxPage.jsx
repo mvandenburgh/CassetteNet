@@ -43,8 +43,7 @@ function InboxPage() {
     }
 
     const history = useHistory();
-    const goBack = () => { history.push('/') }
-    console.log(user.inboxMessages)
+    const goBack = () => history.goBack();
     return (
         <div style={{ color: 'white', left: 0 }}>
             <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>

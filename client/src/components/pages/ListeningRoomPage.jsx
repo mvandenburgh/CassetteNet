@@ -25,8 +25,8 @@ import Mixtape from '../Mixtape';
 import UserSearchBar from '../UserSearchBar';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
 import UserContext from '../../contexts/UserContext';
+import SocketIOContext from '../../contexts/SocketIOContext';
 import { getMixtape, getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
-import socketIOClient from 'socket.io-client';
 import logo from '../../images/logo.png';
 import '../styles/chatbox.css';
 import { ChatBox } from 'react-chatbox-component';
@@ -84,7 +84,7 @@ function ListeningRoomPage(props) {
     const [mixtape, setMixtape] = useState(null);
     const [currentTab, setCurrentTab] = useState(0);
 
-    const [socket, setSocket] = useState(socketIOClient(SERVER_ROOT_URL));
+    const { socket } = useContext(SocketIOContext);
 
     const handleTabChange = (e, val) => setCurrentTab(val);
 
@@ -119,7 +119,7 @@ function ListeningRoomPage(props) {
                     setTimeout(history.goBack, 4000);
                 });
             })
-            .catch(err => console.log(err));
+            .catch(err => history.goBack());
     }, []);
 
     const [currentChatText, setCurrentChatText] = useState('');

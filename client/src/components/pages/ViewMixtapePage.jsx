@@ -38,6 +38,7 @@ import SettingsModal from '../modals/SettingsModal';
 import SongSearchBar from '../SongSearchBar';
 import { throttle } from 'lodash';
 import PlayingSongContext from '../../contexts/PlayingSongContext';
+import SocketIOContext from '../../contexts/SocketIOContext';
 
 const usePrevious = (value) => {
     const ref = useRef();
@@ -376,9 +377,9 @@ function ViewMixtapePage(props) {
         forkMixtape(mixtape, user).then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
     }
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
-    const handleClick = async(mixtape) => {
+    const handleClick = async (mixtape) => {
       setOpen(true);
       forkThisMixtape(mixtape);
     };
@@ -392,11 +393,14 @@ function ViewMixtapePage(props) {
     };
     const [message, setMessage] = useState('');
 
+    const { socket } = useContext(SocketIOContext);
+
     const sendMessageHandler = () => {
         if (message) {
             const owners = mixtape.collaborators.filter(c => c.permissions === 'owner');
             for (const owner of owners) {
                 sendAnonymousMessage(mixtape._id, owner.user, message);
+                socket.emit('sendInboxMessage', { recipientId: owner.user });
             }
         }
         setWriteMessageDialogOpen(false);

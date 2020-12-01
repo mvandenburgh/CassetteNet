@@ -1,10 +1,16 @@
 const socketIO = require('socket.io');
-const { ListeningRoom } = require('./models');
+const { ListeningRoom, User } = require('./models');
 const { Types } = require('mongoose');
 
 
 function initSockets(io) {
-    io.on('connection', socket => {
+    io.on('connection', async (socket) => {
+        socket.on('setUserSocketId', async ({ userId }) => {
+            const user = await User.findById(userId);
+            user.socketId = socket.id;
+            await user.save();
+        });
+
         socket.on('joinListeningRoom', async ({ listeningRoom, user }) => {
             const defaultRoom = socket.rooms.values().next().value;
             socket.join(listeningRoom._id);
@@ -54,6 +60,13 @@ function initSockets(io) {
             if (lr.owner.equals(userId)) {
                 io.in(lrId).emit('endListeningRoom');
                 await lr.deleteOne();
+            }
+        });
+
+        socket.on('sendInboxMessage', async ({ recipientId }) => {
+            const currentUser = await User.findById(recipientId).lean();
+            if (currentUser.socketId) {
+                io.to(currentUser.socketId).emit('newInboxMessage');
             }
         });
     });
