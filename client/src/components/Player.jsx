@@ -181,7 +181,7 @@ function Player(props) {
   }
 
   return (
-    <div style={{ height: '100px' }}>
+    <div>
       <Grid style={{ margin: '10px 0' }} container justify="center">
         <div style={{ color: 'black', marginRight: '20px' }}>
           <FormattedTime numSeconds={currentTime} />

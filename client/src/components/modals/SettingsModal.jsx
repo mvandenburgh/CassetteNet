@@ -176,7 +176,7 @@ function SettingsModal(props) {
             }}
         >
             <Fade in={settingsPopupIsOpen}>
-                <Grid container style={{ backgroundColor: blueGrey[400], height: '70%', width: '60%' }}>
+                <Grid container style={{ backgroundColor: blueGrey[400], height: '70%', width: '60vw', overflow: 'auto' }}>
                     <Grid item xs={3} />
                     <Grid item xs={6} style={{ backgrondColor: 'green' }}>
                         <Typography align="center" variant="h3">Mixtape Settings</Typography>

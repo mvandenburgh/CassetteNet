@@ -382,12 +382,12 @@ function ViewMixtapePage(props) {
       setOpen(true);
       forkThisMixtape(mixtape);
     };
-  
+
     const handleClose = (event, reason) => {
       if (reason === 'clickaway') {
         return;
       }
-  
+
       setOpen(false);
     };
     const [message, setMessage] = useState('');
@@ -405,17 +405,17 @@ function ViewMixtapePage(props) {
         setWriteMessageDialogOpen(false);
         setMessage('');
     }
-    
+
     const [mixtapeToShare, setMixtapeToShare] = useState(null);
 
     const [shareModalOpen, setShareModalOpen] = useState(false);
-    
+
     const shareMixtapeHandler = (mixtape) => {
         console.log(mixtape);
         setMixtapeToShare(mixtape);
         setShareModalOpen(true);
     }
-    
+
 
     return (
         <div>
@@ -507,7 +507,6 @@ function ViewMixtapePage(props) {
                     <Grid style={{ height: '100%', width: '100%' }} xs={1} item>
                         <img onClick={() => isEditing ? setUploadCoverImagePopup(true) : undefined} style={{ cursor: isEditing ? 'pointer' : '', width: '80%', height: '100%', objectFit: 'contain' }} src={coverImageUrl ? coverImageUrl : ''} />
                     </Grid>
-                    {/* <Button onClick={handleChangeMixtapeNamePopup} startIcon={<EditIcon />}  style={{float: 'right'}} variant="contained">Change Mixtape Name</Button> */}
                     <Grid xs={8} item>
                         {
                             isEditing

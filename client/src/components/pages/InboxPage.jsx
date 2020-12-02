@@ -97,7 +97,7 @@ function InboxPage() {
                         </ListItem>
                         <hr />
                         {
-                            user.inboxMessages?.map((message) => {
+                            [...user.inboxMessages]?.reverse().map((message) => {
                                 return (
                                     <div>
                                         <Dialog open={viewMessageDialogIsOpen} onClose={() => setViewMessageDialogIsOpen(false)}>
