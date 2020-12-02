@@ -58,16 +58,17 @@ function ViewMixtapePage(props) {
 
     const { tps } = useContext(JSTPSContext);
 
-    const myHandler = () => {
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.code === 'KeyZ') {
-                undoHandler();
-            } else if (e.ctrlKey && e.code === 'KeyY') {
-                redoHandler();
-            }
-        });
+    const undoRedoKeyboardHandler = (e) => {
+        if (e.repeat) { // only count held down keys as one key press
+            return;
+        } else if (e.ctrlKey && e.code === 'KeyZ') {
+            undoHandler();
+        } else if (e.ctrlKey && e.code === 'KeyY') {
+            redoHandler();
+        }
     }
-    useEventListener('keydown', myHandler);
+
+    useEventListener('keypress', undoRedoKeyboardHandler);
 
 
     // Hook
@@ -226,14 +227,15 @@ function ViewMixtapePage(props) {
     }
 
     const saveMixtape = async () => {
-        setIsEditing(false);
-        mixtape.name = editMixtapeNameField;
-        setMixtape(mixtape);
-        updateMixtape(mixtape);
-        setCurrentSong({
-            mixtape: currentSong.mixtape,
-            index: currentSong.index,
-            disabled: null,
+        setIsEditing(false, () => {
+            mixtape.name = editMixtapeNameField;
+            setMixtape(mixtape);
+            updateMixtape(mixtape);
+            setCurrentSong({
+                mixtape: currentSong.mixtape,
+                index: currentSong.index,
+                disabled: null,
+            });
         });
     }
 
@@ -277,10 +279,9 @@ function ViewMixtapePage(props) {
     }
 
     const undoHandler = () => {
-        var theName = tps.transactions[tps.getSize() - 1].constructor.name
-        console.log("Top of transaction stack: " + theName);
-
-        if (tps.getSize() > 0) {
+        if (tps.getSize() > 0 && isEditing) {
+            const theName = tps.transactions[tps.getSize() - 1].constructor.name
+            console.log("Top of transaction stack: " + theName);
             switch (theName) {
                 case "ChangeMixtapeName_Transaction":
                     undoChangeMixtapeName();
@@ -342,10 +343,9 @@ function ViewMixtapePage(props) {
     }
 
     const redoHandler = () => {
-        var theName = tps.transactions[tps.getSize() - 1].constructor.name
-        console.log("Top of transaction stack: " + theName);
-
-        if (tps.getSize() > 0) {
+        if (tps.getSize() > 0 && isEditing) {
+            const theName = tps.transactions[tps.getSize() - 1].constructor.name
+            console.log("Top of transaction stack: " + theName);
             switch (theName) {
                 case "ChangeMixtapeName_Transaction":
                     redoChangeMixtapeName();

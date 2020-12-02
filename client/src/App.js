@@ -63,8 +63,7 @@ function App() {
 
   const [playing, setPlaying] = useState(false);
 
-  const my_tps = new jsTPS();
-  const [tps, setTps] = useState(my_tps);
+  const [tps, setTps] = useState(new jsTPS());
 
   const [atmosphereSound, setAtmosphereSound] = useState({});
 

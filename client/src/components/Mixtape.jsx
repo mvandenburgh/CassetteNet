@@ -37,7 +37,7 @@ function Mixtape(props) {
   const { tps } = useContext(JSTPSContext);
 
   const onDragEnd = (result) => {
-    if (!result.destination) {
+    if (!result.destination || result.source.index === result.destination.index) {
       return;
     }
 
