@@ -57,11 +57,10 @@ function MixtapeList(props) {
   };
 
   const undoHandler = () => {
-    var theName = tps.transactions[tps.getSize()-1].constructor.name
-    console.log("Top of transaction stack: " + theName);
-
     if(tps.getSize() > 0) {
-      switch (theName) {
+      const { transactionType } = tps.transactions[tps.getSize() - 1];
+      console.log("Top of transaction stack: " + transactionType);
+      switch (transactionType) {
         case "MixtapePosition_Transaction":
           undoChangeMixtapePosition();
           break;
@@ -81,11 +80,10 @@ function MixtapeList(props) {
   }
 
   const redoHandler = () => {
-    var theName = tps.transactions[tps.getSize()-1].constructor.name
-    console.log("Top of transaction stack: " + theName);
-
     if(tps.getSize() > 0) {
-      switch (theName) {
+      const { transactionType } = tps.transactions[tps.getSize() - 1];
+      console.log("Top of transaction stack: " + transactionType);
+      switch (transactionType) {
         case "MixtapePosition_Transaction":
           redoChangeMixtapePosition();
           break;
