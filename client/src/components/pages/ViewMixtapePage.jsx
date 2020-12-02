@@ -227,15 +227,14 @@ function ViewMixtapePage(props) {
     }
 
     const saveMixtape = async () => {
-        setIsEditing(false, () => {
-            mixtape.name = editMixtapeNameField;
-            setMixtape(mixtape);
-            updateMixtape(mixtape);
-            setCurrentSong({
-                mixtape: currentSong.mixtape,
-                index: currentSong.index,
-                disabled: null,
-            });
+        setIsEditing(false)
+        mixtape.name = editMixtapeNameField;
+        setMixtape(mixtape);
+        updateMixtape(mixtape);
+        setCurrentSong({
+            mixtape: currentSong.mixtape,
+            index: currentSong.index,
+            disabled: null,
         });
     }
 
