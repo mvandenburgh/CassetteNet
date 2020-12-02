@@ -30,6 +30,8 @@ export class SongPosition_Transaction extends jsTPS_Transaction {
 
         this.songOrder = songOrder;
         this.mixtape = mixtape;
+
+        this.transactionType = 'SongPosition_Transaction';
     }
 
     /**

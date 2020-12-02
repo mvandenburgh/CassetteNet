@@ -25,6 +25,8 @@ export class DeleteSong_Transaction extends jsTPS_Transaction {
         this.oldSongs = oldSongs;
         this.songsToDelete = songsToDelete;
         this.mixtape = mixtape;
+
+        this.transactionType = 'DeleteSong_Transaction';
     }
 
     /**

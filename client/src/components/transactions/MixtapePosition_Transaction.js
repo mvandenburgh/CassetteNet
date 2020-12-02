@@ -28,6 +28,8 @@ export class MixtapePosition_Transaction extends jsTPS_Transaction {
         // THE SONG'S NEW POSITION
         this.newPosition = initNewPosition;
         this.mixtapeList = mixtapeList;
+
+        this.transactionType = 'MixtapePosition_Transaction';
     }
 
     /**

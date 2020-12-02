@@ -25,6 +25,8 @@ export class AddSong_Transaction extends jsTPS_Transaction {
         this.oldSongs = oldSongs;
         this.newSongs = newSongs;
         this.mixtape = mixtape;
+
+        this.transactionType = 'AddSong_Transaction';
     }
 
     /**

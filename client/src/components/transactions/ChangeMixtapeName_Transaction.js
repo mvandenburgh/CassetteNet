@@ -25,6 +25,8 @@ export class ChangeMixtapeName_Transaction extends jsTPS_Transaction {
         this.oldName = oldName;
         this.newName = newName;
         this.mixtape = mixtape;
+
+        this.transactionType = 'ChangeMixtapeName_Transaction';
     }
 
     /**

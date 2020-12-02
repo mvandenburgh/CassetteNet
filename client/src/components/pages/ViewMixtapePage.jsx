@@ -280,9 +280,9 @@ function ViewMixtapePage(props) {
 
     const undoHandler = () => {
         if (tps.getSize() > 0 && isEditing) {
-            const theName = tps.transactions[tps.getSize() - 1].constructor.name
-            console.log("Top of transaction stack: " + theName);
-            switch (theName) {
+            const { transactionType } = tps.transactions[tps.getSize() - 1];
+            console.log("Top of transaction stack: " + transactionType);
+            switch (transactionType) {
                 case "ChangeMixtapeName_Transaction":
                     undoChangeMixtapeName();
                     break;
@@ -344,9 +344,9 @@ function ViewMixtapePage(props) {
 
     const redoHandler = () => {
         if (tps.getSize() > 0 && isEditing) {
-            const theName = tps.transactions[tps.getSize() - 1].constructor.name
-            console.log("Top of transaction stack: " + theName);
-            switch (theName) {
+            const { transactionType } = tps.transactions[tps.getSize() - 1];
+            console.log("Top of transaction stack: " + transactionType);
+            switch (transactionType) {
                 case "ChangeMixtapeName_Transaction":
                     redoChangeMixtapeName();
                     break;
