@@ -5,8 +5,7 @@ import UserContext from '../contexts/UserContext';
 
 function FollowUserButton(props) {
     const { user, setUser } = useContext(UserContext);
-    const [disabled, setDisabled] = useState(false);
-    const {fromFollowedUsers} = props;
+    const [disabled, setDisabled] = useState(props.disabled);
     const followButtonHandler = async (e) => {
         setDisabled(true);
         e.stopPropagation();

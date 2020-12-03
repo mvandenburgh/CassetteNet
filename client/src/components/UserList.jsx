@@ -6,7 +6,7 @@ import ReactRoundedImage from 'react-rounded-image';
 import FollowUserButton from './FollowUserButton';
 import { getUserProfilePictureUrl } from '../utils/api';
 
-function UserList({ users }) {
+function UserList({ users, usersToExclude }) {
     const history = useHistory();
     const [highlightedRow, setHighlightedRow] = useState(null);
     const colors = {
@@ -49,7 +49,7 @@ function UserList({ users }) {
                         </Box>
                         <Box style={{ width: "25%", display: 'flex', justifyContent: "left" }}>
                             <br />
-                            <FollowUserButton fromFollowedUsers={true} id={user._id} backgroundColor={colors.unfollowButtonColor} />
+                            <FollowUserButton disabled={usersToExclude.has(user._id)} fromFollowedUsers={true} id={user._id} backgroundColor={colors.unfollowButtonColor} />
                         </Box>
                     </Box>
                 </div>

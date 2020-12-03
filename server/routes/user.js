@@ -35,9 +35,6 @@ router.get('/search', async (req, res) => {
             followers: followerCount,
         });
     }
-    if (req.user) {
-        results = results.filter(user => !user._id.equals(req.user.id));
-    }
     return res.send({ results, currentPage: users.page, totalPages: users.totalPages, totalResults: users.totalDocs });
 });
 

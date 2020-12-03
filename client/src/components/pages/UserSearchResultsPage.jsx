@@ -49,7 +49,7 @@ function UserSearchResults(props) {
                     </Paper>
                     : undefined
                 }
-                <UserList users={users} />
+                <UserList users={users} usersToExclude={props.usersToExclude} />
                 {totalPages > 1 ?
                     <Paper style={{display: 'inline-block'}}>
                         <Pagination count={totalPages} page={new URLSearchParams(props.location.search).get('page')} onChange={changePageHandler} />

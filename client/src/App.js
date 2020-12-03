@@ -140,7 +140,7 @@ function App() {
                             <Route exact path="/me" component={ViewProfilePage}/>
                             <Route exact path="/user/:id" component={ViewUserPage}/>
                             <Route exact path="/search/mixtapes" component={MixtapeSearchResultsPage} />
-                            <Route exact path="/search/users" component={UserSearchResultsPage} />
+                            <Route exact path="/search/users" render={(props) => <UserSearchResultsPage location={{search: props.location.search}} usersToExclude={new Set([user._id])} />} />
                             <Route exact path="/listeningRoom/:id" component={ListeningRoomPage} />
                             <Route path="/*">
                               <Redirect to="/" />
