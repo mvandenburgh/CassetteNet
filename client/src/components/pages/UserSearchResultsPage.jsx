@@ -14,17 +14,17 @@ function UserSearchResults(props) {
 
     useEffect(() => {
         const page = new URLSearchParams(props.location.search).get('page');
-        let currentPage;
-        if (page && page <= totalPages) {
-            currentPage = page;
-        } else {
-            currentPage = 1;
-        }
-        userSearch(new URLSearchParams(props.location.search).get('query'), currentPage)
+        userSearch(new URLSearchParams(props.location.search).get('query'), page)
         .then(res => {
             setUsers(res.results);
             setTotalPages(res.totalPages);
             setTotalResults(res.totalResults);
+            let currentPage;
+            if (page && page <= res.totalPages) {
+                currentPage = page;
+            } else {
+                currentPage = 1;
+            }
             history.push({
                 pathname: '/search/users',
                 search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${currentPage}`

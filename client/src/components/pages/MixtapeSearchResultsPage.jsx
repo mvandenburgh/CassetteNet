@@ -29,19 +29,17 @@ function MixtapeSearchResultsPage(props) {
 
     useEffect(() => {
         const page = new URLSearchParams(props.location.search).get('page');
-        let currentPage;
-        console.log(page)
-        console.log(totalPages)
-        if (page && page <= totalPages) {
-            currentPage = page;
-        } else {
-            currentPage = 1;
-        }
-        mixtapeSearch(new URLSearchParams(props.location.search).get('query'), currentPage)
+        mixtapeSearch(new URLSearchParams(props.location.search).get('query'), page)
         .then(res => {
             setMixtapes(res.results);
             setTotalPages(res.totalPages);
             setTotalResults(res.totalResults);
+            let currentPage;
+            if (page && page <= res.totalPages) {
+                currentPage = page;
+            } else {
+                currentPage = 1;
+            }
             history.push({
                 pathname: '/search/mixtapes',
                 search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${currentPage}`
