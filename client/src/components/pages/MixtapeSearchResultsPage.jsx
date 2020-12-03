@@ -17,7 +17,6 @@ function MixtapeSearchResultsPage(props) {
     }
 
     const [mixtapes, setMixtapes] = useState([]);
-    const [currentPage, setCurrentPage] = useState(new URLSearchParams(props.location.search).get('page') || 1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalResults, setTotalResults] = useState(0);
 
@@ -29,18 +28,26 @@ function MixtapeSearchResultsPage(props) {
     const goBack = () => history.goBack();
 
     useEffect(() => {
+        const page = new URLSearchParams(props.location.search).get('page');
+        let currentPage;
+        console.log(page)
+        console.log(totalPages)
+        if (page && page <= totalPages) {
+            currentPage = page;
+        } else {
+            currentPage = 1;
+        }
         mixtapeSearch(new URLSearchParams(props.location.search).get('query'), currentPage)
         .then(res => {
             setMixtapes(res.results);
-            setCurrentPage(res.currentPage);
             setTotalPages(res.totalPages);
             setTotalResults(res.totalResults);
             history.push({
                 pathname: '/search/mixtapes',
-                search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${res.currentPage}`
+                search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${currentPage}`
             });
         });
-    }, [props.location.search, currentPage]);
+    }, [props.location.search]);
 
 
     const clickUserHandler = (e, userId) => {
@@ -49,13 +56,15 @@ function MixtapeSearchResultsPage(props) {
     }
 
     const shareMixtapeHandler = (mixtape) => {
-        console.log(mixtape);
         setMixtapeToShare(mixtape);
         setShareModalOpen(true);
     }
 
     const changePageHandler = (event, pageNumber) => {
-        setCurrentPage(pageNumber)
+        history.push({
+            pathname: '/search/mixtapes',
+            search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${pageNumber}`
+        });
     };
 
     const MixtapeRows = ({ mixtapes }) => (
@@ -116,7 +125,7 @@ function MixtapeSearchResultsPage(props) {
             <Typography style={{ marginLeft: '100px', textAlign: "left" }} variant="h4">Search results for "{new URLSearchParams(props.location.search).get('query')}" ({totalResults}):</Typography>
             {totalPages > 1 ?
                 <Paper style={{display: 'inline-block'}}>
-                    <Pagination count={totalPages} page={currentPage} onChange={changePageHandler} />
+                    <Pagination count={totalPages} page={new URLSearchParams(props.location.search).get('page')} onChange={changePageHandler} />
                 </Paper>
                 : undefined
             }
@@ -177,7 +186,7 @@ function MixtapeSearchResultsPage(props) {
                 </Box>
             {totalPages > 1 ?
                 <Paper style={{display: 'inline-block'}}>
-                    <Pagination count={totalPages} page={currentPage} onChange={changePageHandler} />
+                    <Pagination count={totalPages} page={new URLSearchParams(props.location.search).get('page')} onChange={changePageHandler} />
                 </Paper>
                 : undefined
             }
