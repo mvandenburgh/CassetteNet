@@ -49,7 +49,7 @@ function UserList({ users, usersToExclude }) {
                         </Box>
                         <Box style={{ width: "25%", display: 'flex', justifyContent: "left" }}>
                             <br />
-                            <FollowUserButton disabled={usersToExclude.has(user._id)} fromFollowedUsers={true} id={user._id} backgroundColor={colors.unfollowButtonColor} />
+                            <FollowUserButton disabled={usersToExclude?.has(user._id)} fromFollowedUsers={true} id={user._id} backgroundColor={colors.unfollowButtonColor} />
                         </Box>
                     </Box>
                 </div>
