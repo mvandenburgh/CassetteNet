@@ -3,6 +3,8 @@ const { Types } = require('mongoose');
 const textToPicture = require('text-to-picture-kazari');
 const { Mixtape, User } = require('../models');
 
+const PAGINATION_COUNT = process.env.PAGINATION_COUNT || 10;
+
 const router = express.Router();
 
 /**
@@ -115,10 +117,15 @@ router.get('/createdMixtapes', async (req, res) => {
 
 
 router.get('/search', async (req, res) => {
-    const { query } = req.query;
+    const { query, page } = req.query;
     if (!query) return res.status(400).send('missing search query');
-    const results = await Mixtape.find(Mixtape.searchBuilder(query)).lean();
-    res.send(results.filter(mixtape => isAuthorized(req.user, mixtape)));
+    const results = await Mixtape.paginate(Mixtape.searchBuilder(query), { lean: true, limit: PAGINATION_COUNT, page: page ? page : 1 });
+    res.send({
+        results: results.docs.filter(mixtape => isAuthorized(req.user, mixtape)),
+        currentPage: results.page,
+        totalPages: results.totalPages,
+        totalResults: results.totalDocs
+    });
 });
 
 

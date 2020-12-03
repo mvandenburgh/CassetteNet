@@ -3,6 +3,7 @@ const { Schema, model } = mongoose;
 const passportLocalMongoose = require('passport-local-mongoose');
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 const mongoosePartialTextSearch = require('mongoose-partial-search');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 
 const userSchema = new Schema({
@@ -41,6 +42,7 @@ const userSchema = new Schema({
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(AutoIncrement, { inc_field: 'uniqueId' });
 userSchema.plugin(mongoosePartialTextSearch);
+userSchema.plugin(mongoosePaginate);
 
 const songSchema = new Schema({
   name: {
@@ -71,6 +73,7 @@ const mixtapeSchema = new Schema({
   isPublic: Boolean,
 });
 
+mixtapeSchema.plugin(mongoosePaginate);
 mixtapeSchema.plugin(mongoosePartialTextSearch);
 songSchema.plugin(mongoosePartialTextSearch);
 

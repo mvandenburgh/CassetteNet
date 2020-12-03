@@ -4,23 +4,26 @@ const jimp = require('jimp');
 const { Types } = require('mongoose');
 const { InboxMessage, Mixtape, User } = require('../models');
 
+// how many results per page when searching
+const PAGINATION_COUNT = process.env.PAGINATION_COUNT || 10;
+
 const router = express.Router();
 
 router.get('/search', async (req, res) => {
-    const { query } = req.query;
+    const { query, page } = req.query;
     if (!query) return res.send([]);
-    
+
     let users;
     if (query.charAt(0)=='#' && query.length === 5) {
         const newQuery = parseInt(query.substring(1), 36);
-        users = await User.find({ uniqueId: newQuery }).lean();
+        users = await User.paginate({ uniqueId: newQuery }, { lean: true, limit: PAGINATION_COUNT, page: page ? page : 1 });
     }
     else {
-        users = await User.find(User.searchBuilder(query)).lean();
+        users = await User.paginate(User.searchBuilder(query), { lean: true, limit: PAGINATION_COUNT, page: page ? page : 1 });
     }
     let results = [];
-    for (const user of users) {
-        const updatedAt =new Date(user.updatedAt);
+    for (const user of users.docs) {
+        const updatedAt = new Date(user.updatedAt);
         const createdAt = new Date(user.createdAt);
         const followerCount = (await User.find({ followedUsers: user._id }).lean()).length;
         results.push({
@@ -35,7 +38,7 @@ router.get('/search', async (req, res) => {
     if (req.user) {
         results = results.filter(user => !user._id.equals(req.user.id));
     }
-    return res.send(results);
+    return res.send({ results, currentPage: users.page, totalPages: users.totalPages, totalResults: users.totalDocs });
 });
 
 // get a user's mixtapes

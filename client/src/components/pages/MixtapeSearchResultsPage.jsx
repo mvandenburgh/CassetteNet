@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Box, Grid, IconButton, Typography } from '@material-ui/core';
+import { Box, Grid, IconButton, Paper, Typography } from '@material-ui/core';
+import { Pagination } from '@material-ui/lab';
 import { blueGrey } from '@material-ui/core/colors';
 import ShareIcon from '@material-ui/icons/Share';
 import UserContext from '../../contexts/UserContext';
@@ -16,15 +17,23 @@ function MixtapeSearchResultsPage(props) {
     }
 
     const [mixtapes, setMixtapes] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalResults, setTotalResults] = useState(0);
 
     const [mixtapeToShare, setMixtapeToShare] = useState(null);
 
     const [shareModalOpen, setShareModalOpen] = useState(false);
 
     useEffect(() => {
-        mixtapeSearch(new URLSearchParams(props.location.search).get('query'))
-        .then(searchResults => setMixtapes(searchResults));
-    }, [props.location.search]);
+        mixtapeSearch(new URLSearchParams(props.location.search).get('query'), currentPage)
+        .then(res => {
+            setMixtapes(res.results);
+            setCurrentPage(res.currentPage);
+            setTotalPages(res.totalPages);
+            setTotalResults(res.totalResults);
+        });
+    }, [props.location.search, currentPage]);
 
     const history = useHistory();
     const goBack = () => history.goBack();
@@ -39,6 +48,10 @@ function MixtapeSearchResultsPage(props) {
         setMixtapeToShare(mixtape);
         setShareModalOpen(true);
     }
+
+    const changePageHandler = (event, pageNumber) => {
+        setCurrentPage(pageNumber)
+    };
 
     const MixtapeRows = ({ mixtapes }) => (
         <>
@@ -95,7 +108,10 @@ function MixtapeSearchResultsPage(props) {
             <br />
             <br />
             <br />
-            <Typography style={{ marginLeft: '100px', textAlign: "left" }} variant="h4">Search results for "{new URLSearchParams(props.location.search).get('query')}":</Typography>
+            <Typography style={{ marginLeft: '100px', textAlign: "left" }} variant="h4">Search results for "{new URLSearchParams(props.location.search).get('query')}" ({totalResults}):</Typography>
+            <Paper style={{display: 'inline-block'}}>
+                    <Pagination count={totalPages} page={currentPage} onChange={changePageHandler} />
+            </Paper>
             <Grid container >
                 <Box style={{
                     maxHeight: '60vh',
@@ -151,6 +167,9 @@ function MixtapeSearchResultsPage(props) {
                 }}>
                     <MixtapeRows mixtapes={mixtapes} />
                 </Box>
+            <Paper style={{display: 'inline-block'}}>
+                <Pagination count={totalPages} page={currentPage} onChange={changePageHandler} />
+            </Paper>
             </Grid>
         </div>
     )
