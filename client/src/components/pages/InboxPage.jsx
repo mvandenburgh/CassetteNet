@@ -32,9 +32,16 @@ function InboxPage() {
     }
 
     const [viewMessageDialogIsOpen, setViewMessageDialogIsOpen] = useState(false); // whether add song popup is open
+    const [displayedMessage, setDisplayedMessage] = useState(""); // whether add song popup is open
     
+    const printMessage = (mmm) => {
+        console.log(mmm);
+        setViewMessageDialogIsOpen(true);
+        setDisplayedMessage(mmm);
+    }
 
-    const deleteMessageHandler = (messageId) => {
+    const deleteMessageHandler = (e, messageId) => {
+        e.stopPropagation();
         deleteInboxMessage(messageId).then(messages => {
             const newUser = { ...user };
             newUser.inboxMessages = [...messages];
@@ -104,9 +111,9 @@ function InboxPage() {
                                             <DialogTitle>Message from someone</DialogTitle>
                                             <DialogContent>
                                                 <DialogContentText>
-                                                    <React.Fragment>
-                                                        {parse(message.message)}
-                                                    </React.Fragment>
+                                                    {<React.Fragment>
+                                                        {displayedMessage}
+                                                    </React.Fragment>}
                                                 </DialogContentText>
                                             </DialogContent>
                                             <DialogActions>
@@ -115,7 +122,7 @@ function InboxPage() {
                                                 </Button> */}
                                             </DialogActions>
                                         </Dialog>
-                                        <ListItem alignItems="flex-start" onClick={() => setViewMessageDialogIsOpen(true)}>
+                                        <ListItem alignItems="flex-start" onClick={() => printMessage(message.message)}>
                                             <Grid container>
                                                 <Grid item xs={4}>
                                                     <ListItemAvatar>
@@ -138,7 +145,7 @@ function InboxPage() {
                                                     <img style={{ width: '20%' }} src={getMixtapeCoverImageUrl(message.mixtape)} alt="mixtape_cover"></img>
                                                 </Grid>
                                                 <Grid item>
-                                                    <DeleteIcon onClick={() => deleteMessageHandler(message._id)} />
+                                                    <DeleteIcon onClick={(e) => deleteMessageHandler(e, message._id)} />
                                                 </Grid>
                                             </Grid>
                                         </ListItem>
