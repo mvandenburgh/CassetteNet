@@ -59,9 +59,15 @@ function MixtapeSearchResultsPage(props) {
     }
 
     const changePageHandler = (event, pageNumber) => {
+        let newPageNumber;
+        if (typeof(pageNumber) === 'string') { // weird hack to make material ui paginate component work for going to next page
+            newPageNumber = Number(new URLSearchParams(props.location.search).get('page')) + 1;
+        } else {
+            newPageNumber = pageNumber;
+        }
         history.push({
             pathname: '/search/mixtapes',
-            search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${pageNumber}`
+            search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${newPageNumber}`
         });
     };
 
