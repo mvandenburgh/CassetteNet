@@ -83,27 +83,6 @@ function App() {
     return null;
   }
 
-  if (!user.isLoggedIn) {
-    return (
-      <div className="App">
-        <UserContext.Provider value={{user, setUser}}>
-          <BrowserRouter>
-            <Route exact path="/" component={StartPage} />
-            <Route exact path="/login" component={LoginPage} />
-            <Route exact path="/login/oauth" component={OAuthUsernamePage} />
-            <Route exact path="/login/success" component={VerifyLoginPage} />
-            <Route exact path="/SignUp" component={SignUpPage}/>
-            <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
-            <Route exact path="/verify/:token" component={VerifyAccountPage} />
-            <Route path="/*">
-              <Redirect to="/" />
-            </Route>
-          </BrowserRouter>
-        </UserContext.Provider>
-      </div>
-    )
-  }
-
   return (
     <div className="App">
       <SocketIOContext.Provider value={{socket, setSocket}}>
@@ -116,7 +95,7 @@ function App() {
                       <PageFrame invisible={!user?.isLoggedIn} />
                         <div style={{ marginBottom: '105px', position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: '90%'}}>
                           <Switch>
-                            <Route exact path="/" component={DashboardPage} />
+                            <Route exact path="/" component={user?.isLoggedIn ? DashboardPage : StartPage} />
                             <Route exact path="/directory" component={Directory} /> {/* TODO: remove? */}
                             <Route exact path="/login" component={LoginPage} />
                             <Route exact path="/login/oauth" component={OAuthUsernamePage} />
