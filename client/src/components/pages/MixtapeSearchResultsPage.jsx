@@ -17,13 +17,16 @@ function MixtapeSearchResultsPage(props) {
     }
 
     const [mixtapes, setMixtapes] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(new URLSearchParams(props.location.search).get('page') || 1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalResults, setTotalResults] = useState(0);
 
     const [mixtapeToShare, setMixtapeToShare] = useState(null);
 
     const [shareModalOpen, setShareModalOpen] = useState(false);
+
+    const history = useHistory();
+    const goBack = () => history.goBack();
 
     useEffect(() => {
         mixtapeSearch(new URLSearchParams(props.location.search).get('query'), currentPage)
@@ -32,11 +35,13 @@ function MixtapeSearchResultsPage(props) {
             setCurrentPage(res.currentPage);
             setTotalPages(res.totalPages);
             setTotalResults(res.totalResults);
+            history.push({
+                pathname: '/search/mixtapes',
+                search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${res.currentPage}`
+            });
         });
     }, [props.location.search, currentPage]);
 
-    const history = useHistory();
-    const goBack = () => history.goBack();
 
     const clickUserHandler = (e, userId) => {
         e.stopPropagation();
@@ -65,7 +70,7 @@ function MixtapeSearchResultsPage(props) {
                         display: "flex",
                         flexDirection: "row",
                         borderRadius: 6,
-                        fontSize: '1.5em',
+                        fontSize: '1.25em',
                     }}
                 >
                     <Grid container style={{ height: '10vh' }}>
@@ -101,7 +106,7 @@ function MixtapeSearchResultsPage(props) {
     );
     return (
         <div style={{ color: 'white', left: 0 }}>
-            <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
+            <IconButton color="secondary" aria-label="back" onClick={() => goBack()}>
                 <ArrowBackIcon />
             </IconButton>
             <ShareMixtapeModal open={shareModalOpen} setOpen={setShareModalOpen} mixtape={mixtapeToShare} />
@@ -109,9 +114,12 @@ function MixtapeSearchResultsPage(props) {
             <br />
             <br />
             <Typography style={{ marginLeft: '100px', textAlign: "left" }} variant="h4">Search results for "{new URLSearchParams(props.location.search).get('query')}" ({totalResults}):</Typography>
-            <Paper style={{display: 'inline-block'}}>
+            {totalPages > 1 ?
+                <Paper style={{display: 'inline-block'}}>
                     <Pagination count={totalPages} page={currentPage} onChange={changePageHandler} />
-            </Paper>
+                </Paper>
+                : undefined
+            }
             <Grid container >
                 <Box style={{
                     maxHeight: '60vh',
@@ -125,7 +133,7 @@ function MixtapeSearchResultsPage(props) {
                     paddingLeft: '20px',
                     paddingTop: '20px',
                     paddingBottom: '20px',
-                    width: '80%',
+                    width: '90%',
                     height: '30%'
                 }} boxShadow={3} borderRadius={12}>
                     <Box style={{
@@ -163,13 +171,16 @@ function MixtapeSearchResultsPage(props) {
                     padding: '10px',
                     borderRadius: 6,
                     backgroundColor: blueGrey[900],
-                    width: '80%'
+                    width: '90%'
                 }}>
                     <MixtapeRows mixtapes={mixtapes} />
                 </Box>
-            <Paper style={{display: 'inline-block'}}>
-                <Pagination count={totalPages} page={currentPage} onChange={changePageHandler} />
-            </Paper>
+            {totalPages > 1 ?
+                <Paper style={{display: 'inline-block'}}>
+                    <Pagination count={totalPages} page={currentPage} onChange={changePageHandler} />
+                </Paper>
+                : undefined
+            }
             </Grid>
         </div>
     )

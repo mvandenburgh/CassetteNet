@@ -16,15 +16,6 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const suggestionsSongs = [
-    {title: 'Watermelon Sugar', artist: 'Harry Styles' },
-    {title: 'Circles', artist: 'Post Malone'},
-    {title: 'Better Now', artist: 'Post Malone'},
-    {title: 'Stand by Me', artist: 'Ben. E King'},
-    {title: 'Sucker', artist: 'Jonas Brothers'},
-    {title: 'Slow Dancing in the Dark', artist:'Joji'},
-  ];
-
 function DropDown(props) {
     const [open, setOpen] = useState(false);
     const { type, setType } = props;
@@ -111,7 +102,7 @@ function SearchBar(props) {
     const handleSearch = () => {
       history.push({
         pathname: `/search/${type}`,
-        search: `?query=${searchQuery}`
+        search: `?query=${searchQuery}&page=1`
       });
     }
 
