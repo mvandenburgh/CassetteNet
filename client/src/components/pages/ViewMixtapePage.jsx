@@ -22,7 +22,7 @@ import {
 } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration, sendAnonymousMessage } from '../../utils/api';
+import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration, sendAnonymousMessage, sendMixtapeMessage } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
 import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
@@ -398,7 +398,11 @@ function ViewMixtapePage(props) {
         if (message) {
             const owners = mixtape.collaborators.filter(c => c.permissions === 'owner');
             for (const owner of owners) {
-                sendAnonymousMessage(mixtape._id, owner.user, message);
+                if (props.anonymous) {
+                    sendAnonymousMessage(mixtape._id, owner.user, message);
+                } else {
+                    sendMixtapeMessage(mixtape._id, owner.user, message);
+                }
                 socket.emit('sendInboxMessage', { recipientId: owner.user });
             }
         }
@@ -442,7 +446,8 @@ function ViewMixtapePage(props) {
                     <TextField
                         multiline
                         rows={17}
-                        style={{ height: '300px', width: '400px' }}
+
+                        style={{ width: '400px' }}
                         autoFocus
                         variant="filled"
                         margin="dense"
@@ -450,6 +455,8 @@ function ViewMixtapePage(props) {
                         label="Message"
                         type="email"
                         fullWidth
+                        inputProps={{ maxLength: 250 }}
+                        helperText={`${message.length}/250 characters`}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                     />

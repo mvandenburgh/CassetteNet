@@ -192,7 +192,7 @@ router.post('/sendMessage', async (req, res) => {
     }
     try {
         const inboxMessageDb = await InboxMessage.create(inboxMessage);
-        res.send(inboxMessage._id);
+        res.send(inboxMessageDb._id);
     } catch(err) {
         res.status(500).send(err);
     }

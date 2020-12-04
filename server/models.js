@@ -84,7 +84,11 @@ const inboxMessageSchema = new Schema({
     default: 'Anonymous'
   },
   recipient: mongoose.Types.ObjectId, // object id for recipient user
-  message: String, // TODO: database level string length validation?
+  message: {
+    type: String,
+    maxlength: 250,
+    minlength: 1,
+  },
 });
 
 const listeningRoomSchema = new Schema({

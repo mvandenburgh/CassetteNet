@@ -108,6 +108,7 @@ function App() {
                             <Route exact path="/viewuser" component={ViewUserPage} />
                             <Route exact path="/followedusers" component={FollowedUsersPage}/>
                             <Route exact path="/anonymousmixtapes" component={AnonymousMixtapesPage}/>
+                            <Route exact path="/anonymousmixtape/:id" render={(props) => <ViewMixtapePage anonymous={true} match={{params:{id:props.match.params.id}}} />} />
                             <Route exact path="/inbox" component={InboxPage} />
                             <Route exact path="/NotFound" component={NotFoundPage}/>
                             <Route exact path="/SignUp" component={SignUpPage}/>
