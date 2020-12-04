@@ -35,7 +35,6 @@ function InboxPage() {
     const [displayedMessage, setDisplayedMessage] = useState(""); // whether add song popup is open
     
     const printMessage = (mmm) => {
-        console.log(mmm);
         setViewMessageDialogIsOpen(true);
         setDisplayedMessage(mmm);
     }
@@ -112,7 +111,7 @@ function InboxPage() {
                                             <DialogContent>
                                                 <DialogContentText>
                                                     {<React.Fragment>
-                                                        {displayedMessage}
+                                                        {parse(displayedMessage)}
                                                     </React.Fragment>}
                                                 </DialogContentText>
                                             </DialogContent>
@@ -136,16 +135,16 @@ function InboxPage() {
                                                         </Typography>
                                                     </ListItemAvatar>
                                                 </Grid>
-                                                <Grid item xs={4}>
+                                                <Grid item xs={4} style={{ cursor: 'pointer' }}>
                                                     <Typography noWrap={true}>
-                                                        {parse(message.message)}
+                                                        {parse(message.message.replace('action="/listeningRoom/', '').replace('"><input type="submit" value="Join Listening Room" /></form>', '></form> Click for more details...'))}
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item xs={3}>
                                                     <img style={{ width: '20%' }} src={getMixtapeCoverImageUrl(message.mixtape)} alt="mixtape_cover"></img>
                                                 </Grid>
                                                 <Grid item>
-                                                    <DeleteIcon onClick={(e) => deleteMessageHandler(e, message._id)} />
+                                                    <DeleteIcon style={{ cursor: 'pointer' }} onClick={(e) => deleteMessageHandler(e, message._id)} />
                                                 </Grid>
                                             </Grid>
                                         </ListItem>
