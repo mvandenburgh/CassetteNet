@@ -17,21 +17,12 @@ function UserSearchBar(props) {
       return; // don't bother calling server if search is empty
     }
     setLoading(true); // make loading circle appear
-    if (searchQuery.charAt(0) === '#') {
-      userSearch(searchQuery)
-        .then(res => {
-          setOptions(res.results);
-          setLoading(false);
-        })
-        .catch(err => alert(err));
-    } else {
-      userSearch(searchQuery)
-        .then(res => {
-          setOptions(res);
-          setLoading(false);
-        })
-        .catch(err => alert(err));
-    }
+    userSearch(searchQuery)
+      .then(res => {
+        setOptions(res.results);
+        setLoading(false);
+      })
+      .catch(err => alert(err));
   }, [searchQuery]);
 
   const search = (e) => {
