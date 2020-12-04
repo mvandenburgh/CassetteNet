@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, Slider as VolumeSlider } from '@material-ui/core';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import CurrentSongContext from '../contexts/CurrentSongContext';
@@ -180,6 +180,18 @@ function Player(props) {
     setAtmosphereSound(newSound);
   }
 
+  const [ atmosphereVolume, setAtmosphereVolume ] = useState(0.5);
+
+  const [ musicVolume, setMusicVolume ] = useState(0.5);
+
+  const handleAtmosphereVolumeChange = (event, newValue) => {
+    setAtmosphereVolume(newValue);
+  };
+
+  const handleMusicVolumeChange = (event, newValue) => {
+    setMusicVolume(newValue);
+  };
+
   return (
     <div>
       <Grid style={{ margin: '10px 0' }} container justify="center">
@@ -220,12 +232,32 @@ function Player(props) {
         onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
         ref={playerRef} playing={playing} style={{ display: 'none' }}
         url={currentSong.playbackUrl}
+        volume={musicVolume}
       />
+      <VolumeSlider 
+        value={musicVolume} 
+        onChange={handleMusicVolumeChange} 
+        defaultValue={0.5}
+        step={0.001}
+        min={0}
+        max={1}
+        style={{ width: '20%', marginLeft: '70%'}}  aria-labelledby="continuous-slider"
+        />
       <ReactPlayer
         loop
         playing={atmosphereSound.isPlaying} style={{ display: 'none' }}
         url={atmosphereSound.filename}
+        volume={atmosphereVolume}
       />
+      <VolumeSlider 
+        value={atmosphereVolume} 
+        onChange={handleAtmosphereVolumeChange} 
+        defaultValue={0.5}
+        step={0.001}
+        min={0}
+        max={1}
+        style={{ width: '10%', marginLeft: '35%'}}  aria-labelledby="continuous-slider"
+        />
     </div>
   )
 }
