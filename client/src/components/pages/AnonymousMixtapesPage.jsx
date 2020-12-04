@@ -54,33 +54,7 @@ function AnonymousMixtapesPage(props) {
     getRandomMixtapes(5).then(mixtapes => { console.log(mixtapes); setAnonMixtapes(mixtapes); });
   }, []);
 
-  console.log(anonMixtapes)
-
-  // var anonMixtapes = [
-  //   {
-  //       name: 'Evening Acoustic',
-  //       collaborators: 'purplefish313, brownmeercat530',
-  //   },
-  //   {
-  //       name: 'Rock Classics',
-  //       collaborators: 'silverbutterfly863, brownmeercat530',
-  //   },
-  //   {
-  //       name: 'Gold School',
-  //       collaborators: 'yellowleopard776',
-  //   },
-  //   {
-  //       name: 'Calm Down',
-  //       collaborators: 'goldengoose181, brownmeercat530',
-  //   },
-  //   {
-  //       name: 'Chill + Atmospheric',
-  //       collaborators: 'beautifulpanda667',
-  //   },  
-  //   ];
-
-
-
+  console.log(anonMixtapes);
 
   const history = useHistory();
   const goBack = () => { history.push('/') }
