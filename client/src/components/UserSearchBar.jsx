@@ -20,7 +20,7 @@ function UserSearchBar(props) {
     if (searchQuery.charAt(0) === '#') {
       userSearch(searchQuery)
         .then(res => {
-          setOptions(res);
+          setOptions(res.results);
           setLoading(false);
         })
         .catch(err => alert(err));
