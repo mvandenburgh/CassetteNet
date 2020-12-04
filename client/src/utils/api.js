@@ -297,6 +297,11 @@ async function getSongTempo(listeningRoomId, songIndex) {
     return analysis.data;
 }
 
+async function getPopularMixtapes(count) {
+    const mixtapes = await axios.get(new URL('/api/mixtape/popular', SERVER_ROOT_URL).href, { params: { count } });
+    return mixtapes.data;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -346,5 +351,6 @@ export {
     deleteInboxMessage,
     getRandomMixtapes,
     getSongTempo,
+    getPopularMixtapes,
     SERVER_ROOT_URL,
 };

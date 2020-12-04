@@ -1,27 +1,44 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Grid, IconButton, Card, Box, Typography } from '@material-ui/core';
 import indigo from '@material-ui/core/colors/indigo';
 import blueGrey from '@material-ui/core/colors/blueGrey';
+import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
 import { DataGrid } from '@material-ui/data-grid';
 import logo from '../../images/logo.png';
 import { makeStyles } from "@material-ui/core/styles";
 import UserContext from '../../contexts/UserContext';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { getPopularMixtapes } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
 
+const MixtapeRows = ({ mixtapes, history }) => (
+    <>
+  
+      {mixtapes.map(mixtape => (
+        <Box
+          style={{
+            margin: "5px",
+            padding: "10px",
+            backgroundColor: blueGrey[700],
+            display: "flex",
+            flexDirection: "row",
+            borderRadius: 6,
+            fontSize: 12,
+          }}
+        >
+          <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/mixtape/${mixtape._id}`)}> {mixtape.name} </Box>
+          <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/user/${mixtape.collaborators.filter(c => c.permissions === 'owner')[0].user}`)}> {mixtape.collaborators.filter(c => c.permissions === 'owner')[0].username} </Box>
+          <Box style={{ width: "33%", display: 'flex', flexDirection: "row", justifyContent: "center" }}>
+            <FavoriteMixtapeButton id={mixtape._id} />
+            {/* <CommentIcon /> */}
+            {/* <ShareIcon /> */}
+          </Box>
+        </Box>
+      ))}
+    </>
+  );
+
 function DashboardPage(props) {
-    var popularMixtapes = [
-        {
-            name: 'Calm Vibes',
-            collaborators: 'biglion179',
-            favorites: 15
-        },
-        {
-            name: 'Acoustic Soul',
-            collaborators: 'lazykoala317, tinygoose218',
-            favorites: 48,
-        },       
-        ];
 
     var userActivities = [
         "DrizzyD favorited a mixtape: summertime",
@@ -33,27 +50,6 @@ function DashboardPage(props) {
         tabsContainer: blueGrey[900],
         mixtapeRowColor: blueGrey[800]
     }
-
-    const MixtapeRows = ({mixtapes}) => (
-        <>
-          {mixtapes.map(mixtape => (
-            <Box style={{
-                margin: "5px",
-                padding: "10px",
-                backgroundColor: blueGrey[700],
-                display: "flex", 
-                flexDirection: "row",
-                borderRadius: 6,
-                fontSize: 12,
-            }}>
-                <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.name} </Box>
-                <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.collaborators} </Box>
-                <Box style={{ width: "33%", display: 'flex', justifyContent: "center"}}> {mixtape.favorites} </Box>
-    
-            </Box>
-          ))}
-        </>
-        ); 
 
     const ActivityRows = ({activities}) => (
       <>
@@ -77,6 +73,25 @@ function DashboardPage(props) {
     const goBack = () => { history.push('/') }
 
     const [value, setValue] = React.useState(0);
+
+    const [popularMixtapes, setPopularMixtapes] = useState([]);
+
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        return;
+        setOpen(true);
+      };
+    
+      const handleClose = () => {
+        setOpen(false);
+      };
+
+    useEffect(() => {
+        getPopularMixtapes(5).then(mixtapes => { console.log(mixtapes); setPopularMixtapes(mixtapes); });
+    }, []);
+
+    console.log(popularMixtapes);
   
     const handleChange = (event, newValue) => {
       setValue(newValue);
@@ -126,11 +141,16 @@ function DashboardPage(props) {
                         Favorites
                     </Box>
                 </Box>
-                <Box style={{
-                        marginTop: "5px",
-                        backgroundColor: colors.tabsContainer
-                        }}> 
-                    <MixtapeRows mixtapes={popularMixtapes} />
+                <Box onClick={handleClickOpen} style={{
+                        marginLeft: "170px",
+                        marginTop: '5px',
+                        marginRight: '10px',
+                        padding: '5px',
+                        borderRadius: 6,
+                        backgroundColor: blueGrey[900],
+                        width: '80%'
+                    }}> 
+                    <MixtapeRows mixtapes={popularMixtapes} history={history} />
                 </Box>
             </Box>
 
