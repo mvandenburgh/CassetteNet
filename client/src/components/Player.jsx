@@ -180,12 +180,16 @@ function Player(props) {
     setAtmosphereSound(newSound);
   }
 
-  const [ atmosphereVolume, setAtmosphereVolume ] = useState(0.3);
+  const [ atmosphereVolume, setAtmosphereVolume ] = useState(0.5);
 
-  //const [value, setValue] = React.useState(30);
+  const [ musicVolume, setMusicVolume ] = useState(0.5);
 
   const handleAtmosphereVolumeChange = (event, newValue) => {
     setAtmosphereVolume(newValue);
+  };
+
+  const handleMusicVolumeChange = (event, newValue) => {
+    setMusicVolume(newValue);
   };
 
   return (
@@ -228,7 +232,17 @@ function Player(props) {
         onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
         ref={playerRef} playing={playing} style={{ display: 'none' }}
         url={currentSong.playbackUrl}
+        volume={musicVolume}
       />
+      <VolumeSlider 
+        value={musicVolume} 
+        onChange={handleMusicVolumeChange} 
+        defaultValue={0.5}
+        step={0.001}
+        min={0}
+        max={1}
+        style={{ width: '20%', marginLeft: '70%'}}  aria-labelledby="continuous-slider"
+        />
       <ReactPlayer
         loop
         playing={atmosphereSound.isPlaying} style={{ display: 'none' }}
@@ -242,7 +256,8 @@ function Player(props) {
         step={0.001}
         min={0}
         max={1}
-        style={{ width: '10%', marginLeft: '35%'}}  aria-labelledby="continuous-slider" />
+        style={{ width: '10%', marginLeft: '35%'}}  aria-labelledby="continuous-slider"
+        />
     </div>
   )
 }
