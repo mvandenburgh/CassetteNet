@@ -49,7 +49,9 @@ router.get('/random', async (req, res) => {
 
 router.get('/popular', async (req, res) => {
     const { count } = req.query;
+    console.log("count: " + count);
     const mixtapes = await Mixtape.find({ isPublic: true }).lean();
+    console.log("mixtapes in router: " + mixtapes);
     res.send(getRandomSubarray(mixtapes, count));
 });
 
