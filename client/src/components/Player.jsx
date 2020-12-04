@@ -180,9 +180,9 @@ function Player(props) {
     setAtmosphereSound(newSound);
   }
 
-  const [ atmosphereVolume, setAtmosphereVolume ] = useState(0.5);
+  const [atmosphereVolume, setAtmosphereVolume] = useState(0.5);
 
-  const [ musicVolume, setMusicVolume ] = useState(0.5);
+  const [musicVolume, setMusicVolume] = useState(0.5);
 
   const handleAtmosphereVolumeChange = (event, newValue) => {
     setAtmosphereVolume(newValue);
@@ -209,8 +209,17 @@ function Player(props) {
         </div>
       </Grid>
       <Grid style={{ margin: '10px 0' }} container justify="center">
+        <VolumeSlider
+          value={atmosphereVolume}
+          onChange={handleAtmosphereVolumeChange}
+          defaultValue={0.5}
+          step={0.001}
+          min={0}
+          max={1}
+          style={{ width: '10%' }} aria-labelledby="continuous-slider"
+        />
         <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-          <AtmosphereSoundsIcon 
+          <AtmosphereSoundsIcon
             style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
             onClick={atmosphereButtonHandler}
           />
@@ -227,6 +236,15 @@ function Player(props) {
         <div style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
           <LoopIcon onClick={handleSetLoop} />
         </div>
+        <VolumeSlider
+          value={musicVolume}
+          onChange={handleMusicVolumeChange}
+          defaultValue={0.5}
+          step={0.001}
+          min={0}
+          max={1}
+          style={{ width: '20%' }} aria-labelledby="continuous-slider"
+        />
       </Grid>
       <ReactPlayer
         onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
@@ -234,30 +252,12 @@ function Player(props) {
         url={currentSong.playbackUrl}
         volume={musicVolume}
       />
-      <VolumeSlider 
-        value={musicVolume} 
-        onChange={handleMusicVolumeChange} 
-        defaultValue={0.5}
-        step={0.001}
-        min={0}
-        max={1}
-        style={{ width: '20%', marginLeft: '70%'}}  aria-labelledby="continuous-slider"
-        />
       <ReactPlayer
         loop
         playing={atmosphereSound.isPlaying} style={{ display: 'none' }}
         url={atmosphereSound.filename}
         volume={atmosphereVolume}
       />
-      <VolumeSlider 
-        value={atmosphereVolume} 
-        onChange={handleAtmosphereVolumeChange} 
-        defaultValue={0.5}
-        step={0.001}
-        min={0}
-        max={1}
-        style={{ width: '10%', marginLeft: '35%'}}  aria-labelledby="continuous-slider"
-        />
     </div>
   )
 }
