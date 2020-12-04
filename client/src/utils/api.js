@@ -285,8 +285,8 @@ async function sendListeningRoomInvitation(recipient, listeningRoomId, mixtapeId
     await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId, isAnonymous: false });
 }
 
-async function getRandomMixtapes(count) {
-    const mixtapes = await axios.get(new URL('/api/mixtape/random', SERVER_ROOT_URL).href, { params: { count } });
+async function getRandomMixtapes(count, type) {
+    const mixtapes = await axios.get(new URL('/api/mixtape/random', SERVER_ROOT_URL).href, { params: { count, type } });
     return mixtapes.data;
 }
 

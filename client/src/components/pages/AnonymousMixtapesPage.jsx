@@ -51,39 +51,13 @@ function AnonymousMixtapesPage(props) {
   };
 
   useEffect(() => {
-    getRandomMixtapes(5).then(mixtapes => { console.log(mixtapes); setAnonMixtapes(mixtapes); });
+    getRandomMixtapes(5, 'daily').then(mixtapes => { console.log(mixtapes); setAnonMixtapes(mixtapes); });
   }, []);
-
-  console.log(anonMixtapes)
-
-  // var anonMixtapes = [
-  //   {
-  //       name: 'Evening Acoustic',
-  //       collaborators: 'purplefish313, brownmeercat530',
-  //   },
-  //   {
-  //       name: 'Rock Classics',
-  //       collaborators: 'silverbutterfly863, brownmeercat530',
-  //   },
-  //   {
-  //       name: 'Gold School',
-  //       collaborators: 'yellowleopard776',
-  //   },
-  //   {
-  //       name: 'Calm Down',
-  //       collaborators: 'goldengoose181, brownmeercat530',
-  //   },
-  //   {
-  //       name: 'Chill + Atmospheric',
-  //       collaborators: 'beautifulpanda667',
-  //   },  
-  //   ];
-
-
-
 
   const history = useHistory();
   const goBack = () => { history.push('/') }
+
+  const todaysDate = new Date();
 
   return (
     <div style={{ color: 'white', left: 0 }}>
@@ -116,7 +90,7 @@ function AnonymousMixtapesPage(props) {
         <ArrowBackIcon />
       </IconButton>
       <br />
-      <Typography variant="h3" style={{ textAlign: "center" }}>Mixtapes Anonymous</Typography>
+      <Typography variant="h3" style={{ textAlign: "center" }}>Mixtapes Anonymous ({todaysDate.getMonth()+1}/{todaysDate.getDate()}/{todaysDate.getFullYear().toString().substring(2)})</Typography>
       <br />
       <Grid container direction="row">
 

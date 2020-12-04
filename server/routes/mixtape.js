@@ -1,6 +1,7 @@
 const express = require('express');
 const { Types } = require('mongoose');
 const textToPicture = require('text-to-picture-kazari');
+const seedrandom = require('seedrandom');
 const { Mixtape, User } = require('../models');
 
 const PAGINATION_COUNT = process.env.PAGINATION_COUNT || 10;
@@ -27,13 +28,17 @@ function isAuthorized(user, mixtape) {
 /**
  * Fisher-Yates algorithm for shuffling arrays
  */
-function getRandomSubarray(arr, size) {
+function getRandomSubarray(arr, size, seed) {
     const shuffled = [...arr];
     let i = arr.length;
     let temp;
     let index;
     while (i--) {
-        index = Math.floor((i + 1) * Math.random());
+        if (seed) {
+            index = Math.floor((i + 1) * seed);    
+        } else {
+            index = Math.floor((i + 1) * Math.random());
+        }
         temp = shuffled[index];
         shuffled[index] = shuffled[i];
         shuffled[i] = temp;
@@ -42,9 +47,16 @@ function getRandomSubarray(arr, size) {
 }
 
 router.get('/random', async (req, res) => {
-    const { count } = req.query;
+    const { count, type } = req.query;
     const mixtapes = await Mixtape.find({ isPublic: true }).lean();
-    res.send(getRandomSubarray(mixtapes, count));
+    if (type && type === 'daily' && req.user && req.user._id) {
+        const date = new Date(); 
+        // use an rng seed that will be unique to the logged in user AND change once per day:
+        const rng = seedrandom(`${req.user._id}_${date.getMonth()}/${date.getDay()}/${date.getFullYear()}`);
+        return res.send(getRandomSubarray(mixtapes, count, rng()));
+    } else {
+        return res.send(getRandomSubarray(mixtapes, count));
+    }
 });
 
 router.put('/:id/coverImage', async (req, res) => {
