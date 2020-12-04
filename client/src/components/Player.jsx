@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, Slider as VolumeSlider } from '@material-ui/core';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import CurrentSongContext from '../contexts/CurrentSongContext';
@@ -180,6 +180,14 @@ function Player(props) {
     setAtmosphereSound(newSound);
   }
 
+  const [ atmosphereVolume, setAtmosphereVolume ] = useState(0.3);
+
+  //const [value, setValue] = React.useState(30);
+
+  const handleAtmosphereVolumeChange = (event, newValue) => {
+    setAtmosphereVolume(newValue);
+  };
+
   return (
     <div>
       <Grid style={{ margin: '10px 0' }} container justify="center">
@@ -225,7 +233,16 @@ function Player(props) {
         loop
         playing={atmosphereSound.isPlaying} style={{ display: 'none' }}
         url={atmosphereSound.filename}
+        volume={atmosphereVolume}
       />
+      <VolumeSlider 
+        value={atmosphereVolume} 
+        onChange={handleAtmosphereVolumeChange} 
+        defaultValue={0.5}
+        step={0.001}
+        min={0}
+        max={1}
+        style={{ width: '10%', marginLeft: '35%'}}  aria-labelledby="continuous-slider" />
     </div>
   )
 }
