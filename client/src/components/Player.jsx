@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { throttle } from 'lodash';
 import { Grid, Slider as VolumeSlider } from '@material-ui/core';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import AtmosphereSoundContext from '../contexts/AtmosphereSoundContext';
+import SocketIOContext from '../contexts/SocketIOContext';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
 
 const WHITE_SMOKE = '#eee'
@@ -81,7 +83,9 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
 function Player(props) {
   const playerRef = useRef();
 
-  const [currentTime, setCurrentTime] = useState(null);
+  const { socket } = useContext(SocketIOContext);
+
+  const [currentTime, setCurrentTime] = useState(0);
 
   setInterval(() => {
     if (playerRef.current && playing) {
@@ -90,12 +94,14 @@ function Player(props) {
   }, 2000);
 
   setInterval(() => {
-    if (playerRef.current && playing) {
+    if (playerRef.current && playing && !currentSong.listeningRoomOwner) {
       setCurrentTime(playerRef.current.getCurrentTime());
     }
   }, 500);
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
+  const currentSongRef = useRef(currentSong);
+  useEffect(() => currentSongRef.current = currentSong);
 
   const { playing, setPlaying } = useContext(PlayingSongContext);
 
@@ -106,20 +112,27 @@ function Player(props) {
     if (currentSong.disabled === currentSong.mixtape._id) {
       return;
     }
+    if (currentSong.listeningRoomOwner) {
+      socket.emit('playSong', { index: currentSong.index, timestamp: currentTime })
+    }
     setPlaying(true);
-    if (!currentTime) {
+    if (!currentTime && !currentSong.listeningRoom) {
       playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
     }
   };
 
   const handlePause = () => {
     setPlaying(false);
-    setCurrentTime(playerRef.current.getCurrentTime());
+    const stoppedAt = playerRef.current.getCurrentTime()
+    if (currentSong.listeningRoomOwner) {
+      socket.emit('pauseSong', { timestamp: stoppedAt })
+    }
+    setCurrentTime(stoppedAt);
   };
 
   const handleNextSong = () => {
     setPlaying(false);
-    const newCurrentSong = { ...currentSong };
+    const newCurrentSong = { ...currentSongRef.current };
     if (shuffle) {
       newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
     } else if (currentSong.index === currentSong.mixtape.songs.length - 1) {
@@ -133,7 +146,7 @@ function Player(props) {
 
   const handlePrevSong = () => {
     setPlaying(false);
-    const newCurrentSong = { ...currentSong };
+    const newCurrentSong = { ...currentSongRef.current };
     if (shuffle) {
       newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
     } else if (currentSong.index === 0) {
@@ -162,7 +175,11 @@ function Player(props) {
   }
 
   const seek = (time) => {
-    playerRef.current.seekTo(time * playerRef.current.getDuration());
+    const seekTo = time * playerRef.current.getDuration();
+    if (currentSong.listeningRoomOwner) {
+      socket.emit('seekSong', { timestamp: seekTo });
+    }
+    playerRef.current.seekTo(seekTo);
   }
 
   const { atmosphereSound, setAtmosphereSound } = useContext(AtmosphereSoundContext);
@@ -185,6 +202,29 @@ function Player(props) {
     setMusicVolume(newValue);
   };
 
+
+  useEffect(() => {
+    socket.on('playSong', ({ index, timestamp }) => {
+      setCurrentSong({
+        index,
+        ...currentSong,
+      });
+      setCurrentTime(timestamp);
+      setPlaying(true);
+    });
+    
+    socket.on('pauseSong', ({ timestamp }) => {
+      setPlaying(false);
+      playerRef.current.seekTo(timestamp);
+      setCurrentTime(timestamp);
+    });
+
+    socket.on('seekSong', ({ timestamp }) => {
+      playerRef.current.seekTo(timestamp);
+      setCurrentTime(timestamp);
+    });
+  }, []);
+
   return (
     <div>
       <Grid style={{ margin: '10px 0' }} container justify="center">
@@ -194,11 +234,11 @@ function Player(props) {
         <ProgressBar
           isEnabled
           direction={Direction.HORIZONTAL}
-          value={currentSong.mixtape.songs[currentSong.index].duration ? (currentTime / currentSong.mixtape.songs[currentSong.index].duration) : 0}
+          value={currentSong?.mixtape?.songs[currentSong?.index].duration ? (currentTime / currentSong?.mixtape.songs[currentSong?.index].duration) : 0}
           onChange={value => seek(value)}
         />
         <div style={{ color: 'black', marginRight: '20px' }}>
-          <FormattedTime numSeconds={currentSong.mixtape.songs[currentSong.index]?.duration ? ((currentSong.mixtape.songs[currentSong.index].duration - currentTime) * -1) : 0} />
+          <FormattedTime numSeconds={currentSong?.mixtape?.songs[currentSong?.index].duration ? ((currentSong?.mixtape?.songs[currentSong?.index].duration - currentTime) * -1) : 0} />
         </div>
       </Grid>
       <Grid style={{ margin: '10px 0' }} container justify="center">
@@ -219,8 +259,8 @@ function Player(props) {
         </div>
         <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
         {playing ?
-          <PlayerIcon.Pause onClick={handlePause} width={32} height={32} style={{ marginRight: 32 }} /> :
-          <PlayerIcon.Play onClick={handlePlay} width={32} height={32} style={{ marginRight: 32 }} />
+          <PlayerIcon.Pause onClick={throttle(handlePause, 10000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+          <PlayerIcon.Play onClick={throttle(handlePlay, 10000)} width={32} height={32} style={{ marginRight: 32 }} />
         }
         <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
         <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
@@ -242,7 +282,7 @@ function Player(props) {
       <ReactPlayer
         onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
         ref={playerRef} playing={playing} style={{ display: 'none' }}
-        url={currentSong.mixtape.songs[currentSong.index].playbackUrl}
+        url={currentSong?.mixtape?.songs[currentSong.index].playbackUrl}
         volume={musicVolume}
       />
       <ReactPlayer

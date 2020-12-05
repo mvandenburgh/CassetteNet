@@ -24,6 +24,7 @@ import { useHistory } from 'react-router-dom';
 import Mixtape from '../Mixtape';
 import UserSearchBar from '../UserSearchBar';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
+import PlayingSongContext from '../../contexts/PlayingSongContext';
 import UserContext from '../../contexts/UserContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
 import { getMixtape, getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
@@ -76,7 +77,7 @@ function ListeningRoomPage(props) {
 
     const history = useHistory();
 
-    const { setCurrentSong } = useContext(CurrentSongContext);
+    const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
     const { user } = useContext(UserContext);
 
@@ -97,6 +98,13 @@ function ListeningRoomPage(props) {
     useEffect(() => {
         getListeningRoom(props.match.params.id)
             .then(listeningRoom => {
+                const newCurrentSong = { ...currentSong };
+                newCurrentSong.listeningRoomOwner = user._id === listeningRoom.owner.user;
+                newCurrentSong.listeningRoom = true;
+                newCurrentSong.mixtape = listeningRoom.mixtape;
+                newCurrentSong.index = 0;
+                setCurrentSong(newCurrentSong);
+                console.log(newCurrentSong)
                 setListeningRoom(listeningRoom);
                 setMixtape(listeningRoom.mixtape);
                 socket.emit('joinListeningRoom', { user, listeningRoom });
@@ -120,8 +128,6 @@ function ListeningRoomPage(props) {
             })
             .catch(err => history.goBack());
     }, []);
-
-    const [currentChatText, setCurrentChatText] = useState('');
 
     const sendChatHandler = (message) => {
         socket.emit('sendChatMessage', { message, timestamp: Date.now(), from: { user: user._id, username: user.username } });
@@ -177,7 +183,7 @@ function ListeningRoomPage(props) {
                                     </Typography>
                                     <Typography variant="h5">~Listening to {mixtape?.name}~</Typography>
                                 </Paper>
-                                <Mixtape mixtape={mixtape} enableEditing={false} />
+                                <Mixtape mixtape={mixtape} enableEditing={false} listeningRoom={listeningRoom?.owner?.user === user._id} />
                             </Grid>
                             <Grid item xs={1} />
                             <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>

@@ -1,6 +1,5 @@
-const socketIO = require('socket.io');
-const { ListeningRoom, User } = require('./models');
 const { Types } = require('mongoose');
+const { ListeningRoom, User } = require('./models');
 
 
 function initSockets(io) {
@@ -67,6 +66,36 @@ function initSockets(io) {
             const currentUser = await User.findById(recipientId).lean();
             if (currentUser.socketId) {
                 io.to(currentUser.socketId).emit('newInboxMessage');
+            }
+        });
+
+        socket.on('playSong', async ({ index, timestamp }) => {
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+            const userId = listeningRoom.listenerMapping.get(socket.id);
+
+            if (listeningRoom.owner.equals(userId)) {
+                io.in(roomId).emit('playSong', { index, timestamp });
+            }
+        });
+
+        socket.on('pauseSong', async ({ timestamp }) => {
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+            const userId = listeningRoom.listenerMapping.get(socket.id);
+
+            if (listeningRoom.owner.equals(userId)) {
+                io.in(roomId).emit('pauseSong', { timestamp });
+            }
+        });
+
+        socket.on('seekSong', async ({ timestamp }) => {
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+            const userId = listeningRoom.listenerMapping.get(socket.id);
+
+            if (listeningRoom.owner.equals(userId)) {
+                io.in(roomId).emit('seekSong', { timestamp });
             }
         });
     });

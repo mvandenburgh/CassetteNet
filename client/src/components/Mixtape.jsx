@@ -28,7 +28,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 
 
 function Mixtape(props) {
-  const { isEditing, songsToDelete, setSongsToDelete, mixtape, setMixtape } = props;
+  const { isEditing, songsToDelete, setSongsToDelete, mixtape, setMixtape, listeningRoom } = props;
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
@@ -54,6 +54,7 @@ function Mixtape(props) {
       mixtape,
       index,
       disabled: currentSong?.disabled,
+      listeningRoom,
     });
   };
 
