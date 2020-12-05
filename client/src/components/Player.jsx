@@ -94,7 +94,7 @@ function Player(props) {
   }, 2000);
 
   setInterval(() => {
-    if (playerRef.current && playing && !currentSong.listeningRoomOwner) {
+    if (playerRef.current && playing) {
       setCurrentTime(playerRef.current.getCurrentTime());
     }
   }, 500);
@@ -112,6 +112,9 @@ function Player(props) {
     if (currentSong.disabled === currentSong.mixtape._id) {
       return;
     }
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     if (currentSong.listeningRoomOwner) {
       socket.emit('playSong', { index: currentSong.index, timestamp: currentTime })
     }
@@ -122,6 +125,9 @@ function Player(props) {
   };
 
   const handlePause = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     setPlaying(false);
     const stoppedAt = playerRef.current.getCurrentTime()
     if (currentSong.listeningRoomOwner) {
@@ -145,6 +151,9 @@ function Player(props) {
   };
 
   const handlePrevSong = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     setPlaying(false);
     const newCurrentSong = { ...currentSongRef.current };
     if (shuffle) {
@@ -159,6 +168,9 @@ function Player(props) {
   };
 
   const handleSetLoop = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     const loopState = loop;
     setLoop(!loopState);
     if (!loopState) {
@@ -167,6 +179,9 @@ function Player(props) {
   }
 
   const handleSetShuffle = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     const shuffleState = shuffle;
     if (!shuffleState) {
       setLoop(false);
@@ -175,6 +190,9 @@ function Player(props) {
   }
 
   const seek = (time) => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     const seekTo = time * playerRef.current.getDuration();
     if (currentSong.listeningRoomOwner) {
       socket.emit('seekSong', { timestamp: seekTo });
@@ -205,6 +223,7 @@ function Player(props) {
 
   useEffect(() => {
     socket.on('playSong', ({ index, timestamp }) => {
+      console.log('playSong')
       setCurrentSong({
         index,
         ...currentSong,
@@ -214,12 +233,14 @@ function Player(props) {
     });
     
     socket.on('pauseSong', ({ timestamp }) => {
+      console.log('pauseSong')
       setPlaying(false);
       playerRef.current.seekTo(timestamp);
       setCurrentTime(timestamp);
     });
 
     socket.on('seekSong', ({ timestamp }) => {
+      console.log('seekSong')
       playerRef.current.seekTo(timestamp);
       setCurrentTime(timestamp);
     });
@@ -259,8 +280,8 @@ function Player(props) {
         </div>
         <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
         {playing ?
-          <PlayerIcon.Pause onClick={throttle(handlePause, 10000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-          <PlayerIcon.Play onClick={throttle(handlePlay, 10000)} width={32} height={32} style={{ marginRight: 32 }} />
+          <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+          <PlayerIcon.Play onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
         }
         <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
         <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
