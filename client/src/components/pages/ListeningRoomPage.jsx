@@ -113,8 +113,7 @@ function ListeningRoomPage(props) {
                         .then(lr => {
                             setListeningRoom(lr);
                             setMixtape(lr.mixtape);
-                        })
-                        .catch(err => alert(err));
+                        });
                 });
                 socket.on('newChatMessage', newChatMessages => {
                     const newListeningRoom = { ...lrRef.current };
