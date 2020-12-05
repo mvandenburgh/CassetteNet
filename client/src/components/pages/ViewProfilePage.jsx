@@ -258,18 +258,20 @@ function ViewProfilePage(props) {
         </Box>
         <Grid container>
           <Grid item xs={2}>
-            <Button
-              variant="outlined"
-              style={{
-                marginLeft: '100px',
-                marginTop: '10px',
-                height: '70px',
-                width: '300px',
-                backgroundColor: blueGrey[600],
-                color: 'white'
-              }}
-              onClick={() => setChangePasswordModalOpen(true)}
-            >Change Password</Button>
+            {user?.strategy === 'local' ?
+              <Button
+                variant="outlined"
+                style={{
+                  marginLeft: '100px',
+                  marginTop: '10px',
+                  height: '70px',
+                  width: '300px',
+                  backgroundColor: blueGrey[600],
+                  color: 'white'
+                }}
+                onClick={() => setChangePasswordModalOpen(true)}
+              >Change Password</Button>
+              : undefined}
           </Grid>
           <Grid item xs={1} style={{ display: user.admin ? '' : 'none' }}>
             <Button

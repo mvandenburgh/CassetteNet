@@ -92,7 +92,7 @@ function App() {
               <PlayingSongContext.Provider value={{playing, setPlaying}}>
                 <AtmosphereSoundContext.Provider value={{atmosphereSound, setAtmosphereSound}}>
                   <BrowserRouter>
-                      <PageFrame invisible={!user?.isLoggedIn} />
+                      <PageFrame loggedIn={user?.isLoggedIn} />
                         <div style={{ marginBottom: '105px', position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: '90%'}}>
                           <Switch>
                             <Route exact path="/" component={user?.isLoggedIn ? DashboardPage : StartPage} />

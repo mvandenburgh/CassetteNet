@@ -53,8 +53,6 @@ function Mixtape(props) {
     setCurrentSong({
       mixtape,
       index,
-      type: mixtape.songs[index].type,
-      playbackUrl: mixtape.songs[index].playbackUrl,
       disabled: currentSong?.disabled,
     });
   };

@@ -1,16 +1,18 @@
 import React, { useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Avatar, Box, Button, Dialog,
+import {
+    Avatar, Box, Button, Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle, Divider, Grid, IconButton, List, ListItem, ListItemText, ListItemAvatar, Typography } from '@material-ui/core';
+    DialogTitle, Divider, Grid, IconButton, List, ListItem, ListItemText, ListItemAvatar, Typography
+} from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { ArrowBack as ArrowBackIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import UserContext from '../../contexts/UserContext';
 import { useHistory } from 'react-router-dom';
 import parse from 'html-react-parser';
-import { getMixtapeCoverImageUrl, deleteInboxMessage } from '../../utils/api';
+import { getMixtapeCoverImageUrl, getUserProfilePictureUrl, deleteInboxMessage } from '../../utils/api';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,7 +35,7 @@ function InboxPage() {
 
     const [viewMessageDialogIsOpen, setViewMessageDialogIsOpen] = useState(false); // whether add song popup is open
     const [displayedMessage, setDisplayedMessage] = useState(""); // whether add song popup is open
-    
+
     const printMessage = (mmm) => {
         setViewMessageDialogIsOpen(true);
         setDisplayedMessage(mmm);
@@ -52,11 +54,10 @@ function InboxPage() {
     const goBack = () => history.goBack();
     return (
         <div style={{ color: 'white', left: 0 }}>
-            <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
+            <IconButton color="secondary" aria-label="back" onClick={() => goBack()}>
                 <ArrowBackIcon />
             </IconButton>
             <br />
-
             <br />
             <br />
             <Grid container align="center" justify="center">
@@ -125,13 +126,13 @@ function InboxPage() {
                                             <Grid container>
                                                 <Grid item xs={4}>
                                                     <ListItemAvatar>
-                                                        <Avatar alt={message.sender} src="/static/images/avatar/1.jpg" />
+                                                        <Avatar alt={message.senderUsername} src={message.senderId ? getUserProfilePictureUrl(message.senderId) : '/static/images/avatar/1.jpg'} />
                                                         <Typography
                                                             component="span"
                                                             variant="body2"
                                                             className={classes.inline}
                                                         >
-                                                            {message.sender}
+                                                            {message.senderUsername}
                                                         </Typography>
                                                     </ListItemAvatar>
                                                 </Grid>

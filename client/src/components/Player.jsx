@@ -161,13 +161,6 @@ function Player(props) {
     setShuffle(!shuffleState);
   }
 
-  useEffect(() => {
-    if (playerRef && !currentSong?.duration) {
-      currentSong.duration = playerRef.current.getDuration();
-      setCurrentSong(currentSong);
-    }
-  })
-
   const seek = (time) => {
     playerRef.current.seekTo(time * playerRef.current.getDuration());
   }
@@ -201,11 +194,11 @@ function Player(props) {
         <ProgressBar
           isEnabled
           direction={Direction.HORIZONTAL}
-          value={currentSong?.duration ? (currentTime / currentSong.duration) : 0}
+          value={currentSong.mixtape.songs[currentSong.index].duration ? (currentTime / currentSong.mixtape.songs[currentSong.index].duration) : 0}
           onChange={value => seek(value)}
         />
         <div style={{ color: 'black', marginRight: '20px' }}>
-          <FormattedTime numSeconds={currentSong?.duration ? ((currentSong.duration - currentTime) * -1) : 0} />
+          <FormattedTime numSeconds={currentSong.mixtape.songs[currentSong.index]?.duration ? ((currentSong.mixtape.songs[currentSong.index].duration - currentTime) * -1) : 0} />
         </div>
       </Grid>
       <Grid style={{ margin: '10px 0' }} container justify="center">
@@ -249,7 +242,7 @@ function Player(props) {
       <ReactPlayer
         onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
         ref={playerRef} playing={playing} style={{ display: 'none' }}
-        url={currentSong.playbackUrl}
+        url={currentSong.mixtape.songs[currentSong.index].playbackUrl}
         volume={musicVolume}
       />
       <ReactPlayer

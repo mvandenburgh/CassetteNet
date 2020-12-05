@@ -188,7 +188,8 @@ router.post('/sendMessage', async (req, res) => {
         recipient,
     };
     if (!isAnonymous) {
-        inboxMessage.sender = req.user.username;
+        inboxMessage.senderId = req.user._id;
+        inboxMessage.senderUsername = req.user.username;
     }
     try {
         const inboxMessageDb = await InboxMessage.create(inboxMessage);
