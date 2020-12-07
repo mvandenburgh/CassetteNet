@@ -294,7 +294,7 @@ async function getRandomMixtapes(count, type) {
     return mixtapes.data;
 }
 
-async function getSpotifyAudioAnalysis(listeningRoomId, songIndex) {
+async function getSongTempo(listeningRoomId, songIndex) {
     const analysis = await axios.get(new URL(`/api/listeningroom/${listeningRoomId}/audioAnalysis/${songIndex}`, SERVER_ROOT_URL).href);
     return analysis.data;
 }
@@ -347,6 +347,6 @@ export {
     sendMixtapeMessage,
     deleteInboxMessage,
     getRandomMixtapes,
-    getSpotifyAudioAnalysis,
+    getSongTempo,
     SERVER_ROOT_URL,
 };

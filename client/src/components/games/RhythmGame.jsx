@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Spring } from 'react-spring/renderprops';
-import { getSpotifyAudioAnalysis } from '../../utils/api';
+import { getSongTempo } from '../../utils/api';
 
 function setExactInterval(handler, time) {
     var startTime = Date.now();
@@ -35,7 +35,7 @@ function RhythmGame({ xStart, xEnd, listeningRoom }) {
     }
 
     useEffect(() => {
-        getSpotifyAudioAnalysis(listeningRoom._id, listeningRoom.currentSong)
+        getSongTempo(listeningRoom._id, listeningRoom.currentSong)
             .then(newBpm => {
                 setBpm(newBpm);
             });
