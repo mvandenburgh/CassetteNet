@@ -399,11 +399,10 @@ function ViewMixtapePage(props) {
             const owners = mixtape.collaborators.filter(c => c.permissions === 'owner');
             for (const owner of owners) {
                 if (props.anonymous) {
-                    sendAnonymousMessage(mixtape._id, owner.user, message);
+                    sendAnonymousMessage(mixtape._id, owner.user, message).then(() => socket.emit('sendInboxMessage', { recipientId: owner.user }));
                 } else {
-                    sendMixtapeMessage(mixtape._id, owner.user, message);
+                    sendMixtapeMessage(mixtape._id, owner.user, message).then(() => socket.emit('sendInboxMessage', { recipientId: owner.user }));
                 }
-                socket.emit('sendInboxMessage', { recipientId: owner.user });
             }
         }
         setWriteMessageDialogOpen(false);

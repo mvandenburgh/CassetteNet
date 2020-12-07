@@ -71,7 +71,6 @@ function App() {
     socket.on('newInboxMessage', () => {
       verifyUserLoggedIn()
         .then(user => {
-          console.log(user)
           const newUser = { isLoggedIn: true, isGuest: false, ...user };
           setUser(newUser);
         })

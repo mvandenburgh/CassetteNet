@@ -54,12 +54,21 @@ function initSockets(io) {
 
             // remove user from listening room in database
             lr.currentListeners = lr.currentListeners.filter(u => !u.equals(user._id));
+            lr.chatMessages.push({
+                message: `${user.username} has left the room.`,
+                timestamp: Date.now(),
+                from: { username: '#ChatBot' }, // will always be unique since usernames aren't allowed to start with #
+            });
             await lr.save();
             socket.to(lrId).emit('userJoinedOrLeft');
             if (lr.owner.equals(user._id)) {
                 io.in(lrId).emit('endListeningRoom');
                 await lr.deleteOne();
             }
+
+            const userDb = await User.findById(user._id);
+            userDb.set('socketId', null);
+            await userDb.save();
         });
 
         socket.on('sendInboxMessage', async ({ recipientId }) => {
