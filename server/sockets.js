@@ -106,6 +106,15 @@ function initSockets(io) {
             }
         });
 
+        socket.on('changeSong', async (index) => {
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+            if (listeningRoom) {
+                listeningRoom.currentSong = index;
+                await listeningRoom.save();
+            }
+        });
+
         socket.on('queueRhythmGame', async () => {
             const roomId = socket.rooms.values().next().value;
             const listeningRoom = await ListeningRoom.findById(roomId);

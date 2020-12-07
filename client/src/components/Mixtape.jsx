@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   Box,
@@ -15,6 +15,7 @@ import SoundcloudIcon from './icons/SoundcloudIcon';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import JSTPSContext from '../contexts/JSTPSContext';
+import SocketIOContext from '../contexts/SocketIOContext';
 import { SongPosition_Transaction } from './transactions/SongPosition_Transaction';
 
 
@@ -36,6 +37,8 @@ function Mixtape(props) {
 
   const { tps } = useContext(JSTPSContext);
 
+  const { socket } = useContext(SocketIOContext);
+
   const onDragEnd = (result) => {
     if (!result.destination || result.source.index === result.destination.index) {
       return;
@@ -50,6 +53,9 @@ function Mixtape(props) {
 
   const playSong = (index) => {
     setPlaying(true);
+    if (currentSong?.listeningRoom && currentSong?.index !== index) {
+      socket.emit('changeSong', index);
+    }
     setCurrentSong({
       mixtape,
       index,

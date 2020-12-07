@@ -185,7 +185,7 @@ function ListeningRoomPage(props) {
     return (
         <div>
             <Grid container justify="center">
-                <Grid item style={{ width: '80%' }}>
+                <Grid item style={{ width: '90%' }}>
                     <AppBar position="static">
                         <Tabs value={currentTab} onChange={handleTabChange} centered={true} variant="fullWidth">
                             <Tab label="Listen" {...a11yProps(0)} />
@@ -193,7 +193,7 @@ function ListeningRoomPage(props) {
                         </Tabs>
                     </AppBar>
                 </Grid>
-                <Grid item style={{ width: '80%', backgroundColor: '#30A9ED' }}>
+                <Grid item style={{ width: '90%', backgroundColor: '#30A9ED' }}>
                     <TabPanel value={currentTab} index={0}>
                         <Grid style={{ height: '70vh' }} container>
                             <Grid item xs={8}>
