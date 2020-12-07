@@ -79,7 +79,7 @@ io.use(passportSocketIo.authorize({
     key: SESSION_KEY,
     secret: SESSION_SECRET,
     store,
-    fail: () => { throw new Error('passport-socket.io failed!') },
+    fail: (data, message, error, accept) => console.log(message),
 }));
 initSockets(io);
 
