@@ -96,7 +96,6 @@ const listeningRoomSchema = new Schema({
   chatMessages: Array,
   invitedUsers: Array,
   currentListeners: Array, // array of user ids (users invited to listening room)
-  listenerMapping: Map, // used to map socket.io room ids to mongodb listeningroom ids
   mixtape: Schema.Types.Mixed, // id of the mixtape this listening room is playing
   owner: mongoose.Types.ObjectId,
   currentSong: Number, // index of currently playing song in mixtape `songs` array

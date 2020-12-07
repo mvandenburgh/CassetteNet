@@ -4,13 +4,15 @@ const { ListeningRoom, User } = require('./models');
 
 function initSockets(io) {
     io.on('connection', async (socket) => {
-        socket.on('setUserSocketId', async ({ userId }) => {
-            const user = await User.findById(userId);
-            user.socketId = socket.id;
-            await user.save();
+        const { user } = socket.request; // user object from passport, generated from `passportSocketIo.authorize` in app.js
+
+        socket.on('setUserSocketId', async () => {
+            const userDb = await User.findById(user._id);
+            userDb.socketId = socket.id;
+            await userDb.save();
         });
 
-        socket.on('joinListeningRoom', async ({ listeningRoom, user }) => {
+        socket.on('joinListeningRoom', async ({ listeningRoom }) => {
             const defaultRoom = socket.rooms.values().next().value;
             socket.join(listeningRoom._id);
             const lr = await ListeningRoom.findById(listeningRoom._id);
@@ -18,7 +20,6 @@ function initSockets(io) {
             if (!lr.currentListeners.includes(Types.ObjectId(user._id))) {
                 lr.currentListeners.push(Types.ObjectId(user._id));
             }
-            lr.listenerMapping.set(socket.id, user._id);
             lr.chatMessages.push({
                 message: `${user.username} joined the room!`,
                 timestamp: Date.now(),
@@ -31,11 +32,12 @@ function initSockets(io) {
             socket.leave(defaultRoom); // leave the default room that socket.io creates
         });
 
-        socket.on('sendChatMessage', async ({ message, timestamp, from }) => {
+        socket.on('sendChatMessage', async ({ message, timestamp }) => {
             const roomId = socket.rooms.values().next().value;
 
-            const listeningRoom = await ListeningRoom.findById(roomId);
+            const from = { user: user._id, username: user.username };
 
+            const listeningRoom = await ListeningRoom.findById(roomId);
             listeningRoom.chatMessages.push({ message, timestamp, from });
 
             await listeningRoom.save();
@@ -49,32 +51,29 @@ function initSockets(io) {
             if (!lrIds || lrIds.length === 0) return;
             const lrId = lrIds[0];
             const lr = await ListeningRoom.findById(lrId);
-            const userId = lr.listenerMapping.get(socket.id);
 
             // remove user from listening room in database
-            lr.currentListeners = lr.currentListeners.filter(u => !u.equals(userId));
-            lr.listenerMapping.delete(socket.id);
+            lr.currentListeners = lr.currentListeners.filter(u => !u.equals(user._id));
             await lr.save();
             socket.to(lrId).emit('userJoinedOrLeft');
-            if (lr.owner.equals(userId)) {
+            if (lr.owner.equals(user._id)) {
                 io.in(lrId).emit('endListeningRoom');
                 await lr.deleteOne();
             }
         });
 
         socket.on('sendInboxMessage', async ({ recipientId }) => {
-            const currentUser = await User.findById(recipientId).lean();
-            if (currentUser.socketId) {
-                io.to(currentUser.socketId).emit('newInboxMessage');
+            const userReceivingMessage = await User.findById(recipientId).lean();
+            if (userReceivingMessage && userReceivingMessage.socketId) {
+                io.to(userReceivingMessage.socketId).emit('newInboxMessage'); // notify user that they have a new message
             }
         });
 
         socket.on('playSong', async ({ index, timestamp }) => {
             const roomId = socket.rooms.values().next().value;
             const listeningRoom = await ListeningRoom.findById(roomId);
-            const userId = listeningRoom.listenerMapping.get(socket.id);
 
-            if (listeningRoom.owner.equals(userId)) {
+            if (listeningRoom.owner.equals(user._id)) {
                 io.in(roomId).emit('playSong', { index, timestamp });
             }
         });
@@ -82,9 +81,8 @@ function initSockets(io) {
         socket.on('pauseSong', async ({ timestamp }) => {
             const roomId = socket.rooms.values().next().value;
             const listeningRoom = await ListeningRoom.findById(roomId);
-            const userId = listeningRoom.listenerMapping.get(socket.id);
 
-            if (listeningRoom.owner.equals(userId)) {
+            if (listeningRoom.owner.equals(user._id)) {
                 io.in(roomId).emit('pauseSong', { timestamp });
             }
         });
@@ -92,9 +90,8 @@ function initSockets(io) {
         socket.on('seekSong', async ({ timestamp }) => {
             const roomId = socket.rooms.values().next().value;
             const listeningRoom = await ListeningRoom.findById(roomId);
-            const userId = listeningRoom.listenerMapping.get(socket.id);
 
-            if (listeningRoom.owner.equals(userId)) {
+            if (listeningRoom.owner.equals(user._id)) {
                 io.in(roomId).emit('seekSong', { timestamp });
             }
         });

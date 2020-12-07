@@ -9,6 +9,7 @@ const MongoDBStore = require('connect-mongodb-session')(session); // stores sess
 const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const passport = require('./auth/passport');
+const passportSocketIo = require('passport.socketio');
 const initSockets = require('./sockets');
 
 // import routes
@@ -37,8 +38,13 @@ app.use(fileUpload({
 app.use(cookieParser()); // middleware for parsing cookies in requests
 app.use(bodyParser.urlencoded({ extended: false })); // middleware for parsing req.body
 app.use(bodyParser.json());
+
+const SESSION_KEY = 'connect.sid';
+const SESSION_SECRET = process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'secret';
+
 app.use(session({ // initialize login sessions
-    secret: process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'secret',
+    key: SESSION_KEY,
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -66,8 +72,15 @@ app.get('*', (req, res) => res.sendFile('index.html', { root: path.join(__dirnam
 
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
-const io = socketIO(server);
 
+const io = socketIO(server);
+io.use(passportSocketIo.authorize({
+    cookieParser,
+    key: SESSION_KEY,
+    secret: SESSION_SECRET,
+    store,
+    fail: () => { throw new Error('passport-socket.io failed!') },
+}));
 initSockets(io);
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}...`));
