@@ -25,7 +25,7 @@ async function getAudioAnalysisFromYoutube(videoId) {
     } else {
         tracks = await spotifyApi.searchTracks(vidInfo[0].snippet.title);
     }
-    if (!tracks.body || !tracks.body.tracks.items) {
+    if (!tracks || !tracks.body || !tracks.body.tracks.items) {
         return null;
     }
 

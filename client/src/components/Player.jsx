@@ -3,6 +3,7 @@ import { throttle } from 'lodash';
 import { Grid, Slider as VolumeSlider } from '@material-ui/core';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
+import useInterval from '../hooks/useInterval';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import AtmosphereSoundContext from '../contexts/AtmosphereSoundContext';
@@ -87,21 +88,17 @@ function Player(props) {
 
   const [currentTime, setCurrentTime] = useState(0);
 
-  setInterval(() => {
-    if (playerRef.current && playing) {
-      localStorage.setItem('timestamp', playerRef.current.getCurrentTime());
-    }
-  }, 2000);
+  const { playing, setPlaying } = useContext(PlayingSongContext);
 
-  // setInterval(() => {
-  //   if (playerRef.current && playing) {
-  //     setCurrentTime(playerRef.current.getCurrentTime());
-  //   }
-  // }, 500);
+  useInterval(() => {
+      if (playerRef.current && playing) {
+        const time = playerRef.current.getCurrentTime()
+        setCurrentTime(time);
+        localStorage.setItem('timestamp', time);
+      }
+  }, 500);
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
-
-  const { playing, setPlaying } = useContext(PlayingSongContext);
 
   const [shuffle, setShuffle] = useState(false);
   const [loop, setLoop] = useState(false);
