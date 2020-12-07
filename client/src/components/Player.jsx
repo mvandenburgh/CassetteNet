@@ -93,15 +93,13 @@ function Player(props) {
     }
   }, 2000);
 
-  setInterval(() => {
-    if (playerRef.current && playing) {
-      setCurrentTime(playerRef.current.getCurrentTime());
-    }
-  }, 500);
+  // setInterval(() => {
+  //   if (playerRef.current && playing) {
+  //     setCurrentTime(playerRef.current.getCurrentTime());
+  //   }
+  // }, 500);
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
-  const currentSongRef = useRef(currentSong);
-  useEffect(() => currentSongRef.current = currentSong);
 
   const { playing, setPlaying } = useContext(PlayingSongContext);
 
@@ -138,7 +136,7 @@ function Player(props) {
 
   const handleNextSong = () => {
     setPlaying(false);
-    const newCurrentSong = { ...currentSongRef.current };
+    const newCurrentSong = { ...currentSong };
     if (shuffle) {
       newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
     } else if (currentSong.index === currentSong.mixtape.songs.length - 1) {
@@ -155,7 +153,7 @@ function Player(props) {
       return;
     }
     setPlaying(false);
-    const newCurrentSong = { ...currentSongRef.current };
+    const newCurrentSong = { ...currentSong };
     if (shuffle) {
       newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
     } else if (currentSong.index === 0) {
@@ -224,10 +222,9 @@ function Player(props) {
   useEffect(() => {
     socket.on('playSong', ({ index, timestamp }) => {
       console.log('playSong')
-      setCurrentSong({
-        index,
-        ...currentSong,
-      });
+      const newCurrentSong = { ...currentSong };
+      newCurrentSong.index = index;
+      setCurrentSong(newCurrentSong);
       setCurrentTime(timestamp);
       setPlaying(true);
     });

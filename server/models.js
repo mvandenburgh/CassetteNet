@@ -101,6 +101,7 @@ const listeningRoomSchema = new Schema({
   currentSong: Number, // index of currently playing song in mixtape `songs` array
   snakeScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]
   rhythmScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]
+  rhythmGameQueue: Array,
 });
 
 module.exports = {

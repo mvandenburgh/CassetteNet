@@ -40,7 +40,7 @@ async function getAudioAnalysisFromYoutube(videoId) {
             break;
         }
     }
-    if (!track) {
+    if (!track && tracks.body.tracks.items.length) {
         return null;
     }
     const analysis = await spotifyApi.getAudioAnalysisForTrack(track);

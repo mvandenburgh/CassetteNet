@@ -1,5 +1,6 @@
 const express = require('express');
 const { ListeningRoom, Mixtape, User } = require('../models');
+const { getAudioAnalysisFromYoutube } = require('../external_apis/spotify');
 
 const router = express.Router();
 
@@ -96,6 +97,15 @@ router.put('/:id/inviteUser', async (req, res) => {
     } catch(err) {
         return res.status(500).send(err);
     }
+});
+
+router.get('/:id/audioAnalysis/:songIndex', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
+    const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
+    const song = listeningRoom.mixtape.songs[req.params.songIndex];
+    if (song.type !== 'youtube') return res.status(400).send(`audio analysis only works with youtube. requested song is from ${song.type}.`);
+    const analysis = await getAudioAnalysisFromYoutube(song.id);
+    res.json(analysis.track.tempo); // just send tempo for now
 });
 
 module.exports = router;

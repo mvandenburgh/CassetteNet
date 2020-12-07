@@ -51,19 +51,20 @@ function initSockets(io) {
             if (!lrIds || lrIds.length === 0) return;
             const lrId = lrIds[0];
             const lr = await ListeningRoom.findById(lrId);
-
-            // remove user from listening room in database
-            lr.currentListeners = lr.currentListeners.filter(u => !u.equals(user._id));
-            lr.chatMessages.push({
-                message: `${user.username} has left the room.`,
-                timestamp: Date.now(),
-                from: { username: '#ChatBot' }, // will always be unique since usernames aren't allowed to start with #
-            });
-            await lr.save();
-            socket.to(lrId).emit('userJoinedOrLeft');
-            if (lr.owner.equals(user._id)) {
-                io.in(lrId).emit('endListeningRoom');
-                await lr.deleteOne();
+            if (lr) {
+                // remove user from listening room in database
+                lr.currentListeners = lr.currentListeners.filter(u => !u.equals(user._id));
+                lr.chatMessages.push({
+                    message: `${user.username} has left the room.`,
+                    timestamp: Date.now(),
+                    from: { username: '#ChatBot' }, // will always be unique since usernames aren't allowed to start with #
+                });
+                await lr.save();
+                socket.to(lrId).emit('userJoinedOrLeft');
+                if (lr.owner.equals(user._id)) {
+                    io.in(lrId).emit('endListeningRoom');
+                    await lr.deleteOne();
+                }
             }
 
             const userDb = await User.findById(user._id);
@@ -102,6 +103,16 @@ function initSockets(io) {
 
             if (listeningRoom.owner.equals(user._id)) {
                 io.in(roomId).emit('seekSong', { timestamp });
+            }
+        });
+
+        socket.on('queueRhythmGame', async () => {
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+
+            if (!listeningRoom.rhythmGameQueue.includes(user._id)) {
+                listeningRoom.rhythmGameQueue.push(user._id);
+                await listeningRoom.save();
             }
         });
     });

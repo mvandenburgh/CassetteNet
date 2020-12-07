@@ -31,6 +31,7 @@ import { getMixtape, getListeningRoom, getUserProfilePictureUrl, sendListeningRo
 import logo from '../../images/logo.png';
 import '../styles/chatbox.css';
 import { ChatBox } from 'react-chatbox-component';
+import RhythmGame from '../games/RhythmGame';
 
 
 function TabPanel(props) {
@@ -157,6 +158,26 @@ function ListeningRoomPage(props) {
         }
     }, [listeningRoom]);
 
+    const [screen, setScreen] = useState('home'); // can be one of ['home', 'snake', 'rhythm']
+
+    const gameScreenRef = useRef();
+
+    const [gameScreenStartX, setGameScreenStartX] = useState(null);
+    const [gameScreenEndX, setGameScreenEndX] = useState(null);
+
+    useEffect(() => {
+        if (gameScreenRef?.current) {
+            const { offsetLeft, clientWidth } = gameScreenRef.current;
+            setGameScreenStartX(offsetLeft);
+            setGameScreenEndX(offsetLeft + clientWidth)
+        }
+    });
+
+    const rhythmGameHandler = () => {
+        socket.emit('queueRhythmGame');
+        setScreen('rhythm'); // TODO: implement queuing. This shouldn't redirect like this.
+    }
+
     if (!listeningRoom) {
         return null;
     }
@@ -232,37 +253,41 @@ function ListeningRoomPage(props) {
                                 <Grid style={{ backgroundColor: 'red' }} item xs={12}>
                                     <Typography variant="h7">Invite</Typography>
                                 </Grid>
-                                {/* TODO: remove backgroundColors. just there for now to help with development */}
                                 <Grid style={{ height: '75vh' }} item xs={12}>
                                     <Grid container style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
-                                        <Paper style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
-                                            <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
-                                                <Grid item xs={2} />
-                                                <Grid item xs={10}>
-                                                    <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>
-                                                        <Typography variant="h5">Select the game you want to play:</Typography>
-                                                    </Paper>
-                                                    <Grid item xs={2} />
-                                                </Grid>
-                                                <Grid container style={{ height: '30%' }}>
-                                                    <Grid item xs={3} />
-                                                    <Grid style={{ backgroundColor: 'yellow' }} item xs={2}>
-                                                        Rhythm Game
-                                                </Grid>
-                                                    <Grid item xs={2} />
-                                                    <Grid style={{ backgroundColor: 'green' }} item xs={2}>
-                                                        Snake Game
-                                                </Grid>
-                                                    <Grid item xs={3} />
-                                                </Grid>
-                                                <Grid container style={{ height: '20%', backgroundColor: 'yellow' }}>
-                                                    <Grid style={{ backgroundColor: 'pink' }} item xs={4} />
-                                                    <Grid item xs={4}>
-                                                        <Button style={{ height: '100%', width: '100%' }} variant="contained">Start Game</Button>
+                                        <Paper ref={gameScreenRef} style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
+
+                                            {screen === 'rhythm' ?
+                                                <RhythmGame xStart={gameScreenStartX} xEnd={gameScreenEndX} listeningRoom={listeningRoom} />
+                                                : screen === 'snake' ?
+                                                    <div /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
+                                                        <Grid item xs={2} />
+                                                        <Grid item xs={10}>
+                                                            <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>
+                                                                <Typography variant="h5">Select the game you want to play:</Typography>
+                                                            </Paper>
+                                                            <Grid item xs={2} />
+                                                        </Grid>
+                                                        <Grid container style={{ height: '30%' }}>
+                                                            <Grid item xs={3} />
+                                                            <Grid style={{ backgroundColor: 'yellow', cursor: 'pointer' }} item xs={2} onClick={rhythmGameHandler}>
+                                                                Rhythm Game
+                                                                </Grid>
+                                                            <Grid item xs={2} />
+                                                            <Grid style={{ backgroundColor: 'green' }} item xs={2}>
+                                                                Snake Game
+                                                                </Grid>
+                                                            <Grid item xs={3} />
+                                                        </Grid>
+                                                        <Grid container style={{ height: '20%', backgroundColor: 'yellow' }}>
+                                                            <Grid style={{ backgroundColor: 'pink' }} item xs={4} />
+                                                            <Grid item xs={4}>
+                                                                <Button style={{ height: '100%', width: '100%' }} variant="contained">Start Game</Button>
+                                                            </Grid>
+                                                            <Grid style={{ backgroundColor: 'orange' }} item xs={4} />
+                                                        </Grid>
                                                     </Grid>
-                                                    <Grid style={{ backgroundColor: 'orange' }} item xs={4} />
-                                                </Grid>
-                                            </Grid>
+                                            }
                                         </Paper>
                                     </Grid>
                                 </Grid>
