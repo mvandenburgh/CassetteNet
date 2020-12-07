@@ -3,7 +3,7 @@ import { throttle } from 'lodash';
 import { Grid, Slider as VolumeSlider } from '@material-ui/core';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
-import useInterval from '../hooks/useInterval';
+import { useInterval } from '../hooks';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import AtmosphereSoundContext from '../contexts/AtmosphereSoundContext';
