@@ -2,6 +2,7 @@ const child_process = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
+const proxy = require('express-http-proxy');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const NodeMediaServer = require('node-media-server');
@@ -22,7 +23,7 @@ const config = {
         allow_origin: '*'
     },
     trans: {
-        ffmpeg: 'ffmpeg',
+        ffmpeg: '/usr/bin/ffmpeg',
         tasks: [
             {
                 app: 'live',
@@ -45,6 +46,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
+app.use('/stream', proxy(`http://localhost:${process.env.MEDIA_PORT || 8888}/`));
 
 app.post('/startStream', (req, res) => {
     const { type, id } = req.body;
@@ -68,6 +70,6 @@ app.post('/startStream', (req, res) => {
     }
 });
 
-const PORT = process.env.EXPRESS_PORT || 5001;
+const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => console.log(`Stream server running on port ${PORT}...`));
