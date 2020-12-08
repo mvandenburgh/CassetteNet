@@ -622,6 +622,7 @@ function ViewMixtapePage(props) {
                         setIsEditing={setIsEditing}
                         mixtape={mixtape}
                         setMixtape={setMixtape}
+                        listeningRoom={false}
                     />
                 </Grid>
             </Grid>

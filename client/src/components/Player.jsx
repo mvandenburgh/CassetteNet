@@ -90,6 +90,9 @@ function Player(props) {
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
+  const currentSongRef = useRef();
+  useEffect(() => currentSongRef.current = currentSong, [currentSong]);
+
   const { playing, setPlaying } = useContext(PlayingSongContext);
 
   useInterval(() => {
@@ -132,6 +135,9 @@ function Player(props) {
   };
 
   const handleNextSong = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     setPlaying(false);
     const newCurrentSong = { ...currentSong };
     if (shuffle) {
@@ -143,9 +149,10 @@ function Player(props) {
     }
     if (currentSong.listeningRoomOwner) {
       socket.emit('changeSong', newCurrentSong.index);
+    } else {
+      setCurrentSong(newCurrentSong);
+      setPlaying(true);
     }
-    setCurrentSong(newCurrentSong);
-    setPlaying(true);
   };
 
   const handlePrevSong = () => {
@@ -188,13 +195,10 @@ function Player(props) {
   }
 
   const seek = (time) => {
-    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+    if (currentSong.listeningRoom) {
       return;
     }
     const seekTo = time * playerRef.current.getDuration();
-    if (currentSong.listeningRoomOwner) {
-      socket.emit('seekSong', { timestamp: seekTo });
-    }
     playerRef.current.seekTo(seekTo);
   }
 
@@ -278,6 +282,14 @@ function Player(props) {
       playerRef.current.seekTo(timestamp);
       setCurrentTime(timestamp);
     });
+
+    socket.on('changeSong', index => {
+      console.log(`changeSong to ${index}`);
+      setSongLoaded(false);
+      const newCurrentSong = { ...currentSongRef.current };
+      newCurrentSong.index = index;
+      setCurrentSong(newCurrentSong);
+    });
   }, []);
 
   return (
@@ -312,12 +324,12 @@ function Player(props) {
             onClick={atmosphereButtonHandler}
           />
         </div>
-        <PlayerIcon.Previous onClick={currentSong?.listeningRoom ? undefined : handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
+        <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
         {playing ?
           <PlayerIcon.Pause onClick={currentSong?.listeningRoom ? undefined : throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
           <PlayerIcon.Play onClick={!currentSong?.listeningRoom ? undefined : throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
         }
-        <PlayerIcon.Next onClick={currentSong?.listeningRoom ? undefined : handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
+        <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
         <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
           <ShuffleIcon onClick={currentSong?.listeningRoom ? undefined : handleSetShuffle} />
         </div>

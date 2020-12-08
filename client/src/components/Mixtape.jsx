@@ -56,12 +56,14 @@ function Mixtape(props) {
     if (currentSong?.listeningRoom && currentSong?.index !== index) {
       socket.emit('changeSong', index);
     }
-    setCurrentSong({
-      mixtape,
-      index,
-      disabled: currentSong?.disabled,
-      listeningRoom,
-    });
+    if (!listeningRoom) {
+      setCurrentSong({
+        mixtape,
+        index,
+        disabled: currentSong?.disabled,
+        listeningRoom,
+      });
+    }
   };
 
   const clickCheckbox = (songId) => {

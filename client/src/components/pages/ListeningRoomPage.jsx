@@ -81,17 +81,7 @@ function ListeningRoomPage(props) {
 
     useEffect(() => {
         const unlisten = history.listen(location => {
-            console.log(location);
-            const newCurrentSong = { ...currentSong };
-            if (location.pathname.indexOf('/listeningRoom') === 0) {
-                newCurrentSong.listeningRoom = true;
-                setCurrentSong(newCurrentSong);
-            } else {
-                newCurrentSong.listeningRoom = false;
-                setCurrentSong(newCurrentSong);
-                window.location.reload();
-            }
-            
+            setCurrentSong({});
         });
         return unlisten;
     }, []);
@@ -116,7 +106,7 @@ function ListeningRoomPage(props) {
     useEffect(() => {
         getListeningRoom(props.match.params.id)
             .then(listeningRoom => {
-                const newCurrentSong = { ...currentSong };
+                const newCurrentSong = {};
                 newCurrentSong.listeningRoomOwner = user._id === listeningRoom.owner.user;
                 newCurrentSong.listeningRoom = true;
                 newCurrentSong.mixtape = listeningRoom.mixtape;
@@ -221,7 +211,7 @@ function ListeningRoomPage(props) {
                                     </Typography>
                                     <Typography variant="h5">~Listening to {mixtape?.name}~</Typography>
                                 </Paper>
-                                <Mixtape mixtape={mixtape} enableEditing={false} listeningRoom={listeningRoom?.owner?.user === user._id} />
+                                <Mixtape mixtape={mixtape} enableEditing={false} listeningRoom={true} />
                             </Grid>
                             <Grid item xs={1} />
                             <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>

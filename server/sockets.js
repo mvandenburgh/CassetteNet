@@ -116,7 +116,16 @@ function initSockets(io) {
                 if (listeningRoom.rhythmGameQueue.length > 0) {
                     io.in(roomId).emit('rhythmGameAboutToBegin');
                 }
+                listeningRoom.startedAt = null;
+                listeningRoom.wasAt = null;
+                for (const listener of listeningRoom.currentListeners) {
+                    listener.ready = false;
+                }
+                listeningRoom.markModified('currentListeners');
                 await listeningRoom.save();
+                console.log(listeningRoom.currentListeners);
+                console.log('emiiting......')
+                io.in(roomId).emit('changeSong', index);
             }
         });
 
@@ -131,6 +140,7 @@ function initSockets(io) {
         });
 
         socket.on('songIsLoaded', async () => {
+            console.log(user.username);
             const lrIds = Array.from(socket.rooms).filter(room => Types.ObjectId.isValid(room));
             if (!lrIds || lrIds.length === 0) return;
             const lrId = lrIds[0];
@@ -152,6 +162,7 @@ function initSockets(io) {
                     allReady = false;
                 }
             }
+            console.log(listeningRoom.currentListeners);
             if (allReady && !listeningRoom.startedAt) {
                 io.in(lrId).emit('playSong');
                 listeningRoom.startedAt = Date.now() / 1000;
