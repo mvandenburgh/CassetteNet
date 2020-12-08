@@ -39,7 +39,6 @@ function initSockets(io) {
             const roomId = socket.rooms.values().next().value;
 
             const from = { user: user._id, username: user.username };
-
             const listeningRoom = await ListeningRoom.findById(roomId);
             listeningRoom.chatMessages.push({ message, timestamp, from });
 
@@ -132,8 +131,11 @@ function initSockets(io) {
         });
 
         socket.on('songIsLoaded', async () => {
-            const roomId = socket.rooms.values().next().value;
-            const listeningRoom = await ListeningRoom.findById(roomId);
+            const lrIds = Array.from(socket.rooms).filter(room => Types.ObjectId.isValid(room));
+            if (!lrIds || lrIds.length === 0) return;
+            const lrId = lrIds[0];
+            // const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(lrId);
             let allReady = true; // whether all connected clients are ready to begin song playback
             for (const queuedUser of listeningRoom.rhythmGameQueue) {
                 if (queuedUser.user.equals(user._id)) {
@@ -151,7 +153,7 @@ function initSockets(io) {
                 }
             }
             if (allReady && !listeningRoom.startedAt) {
-                io.in(roomId).emit('playSong');
+                io.in(lrId).emit('playSong');
                 listeningRoom.startedAt = Date.now() / 1000;
                 listeningRoom.wasAt = 0;
             }

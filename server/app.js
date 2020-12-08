@@ -41,7 +41,7 @@ app.use(bodyParser.json());
 
 const SESSION_KEY = 'connect.sid';
 const SESSION_SECRET = process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'secret';
-app.set('trust proxy', 1) // trust first proxy
+app.set('trust proxy', 1); // trust first proxy
 app.use(session({ // initialize login sessions
     key: SESSION_KEY,
     secret: SESSION_SECRET,
