@@ -22,7 +22,7 @@ const config = {
         allow_origin: '*'
     },
     trans: {
-        ffmpeg: '/usr/bin/ffmpeg',
+        ffmpeg: 'ffmpeg',
         tasks: [
             {
                 app: 'live',
@@ -71,4 +71,3 @@ app.post('/startStream', (req, res) => {
 const PORT = process.env.EXPRESS_PORT || 5001;
 
 app.listen(PORT, () => console.log(`Stream server running on port ${PORT}...`));
-
