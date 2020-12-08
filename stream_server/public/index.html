@@ -1,0 +1,54 @@
+<script src="https://cdn.bootcss.com/flv.js/1.5.0/flv.min.js"></script>
+<audio id="videoElement"></audio>
+<br />
+<input type="text" id="yt_id" placeholder="youtube id">
+<br />
+<button id="create_btn">Create room</button>
+<br />
+<br />
+<br />
+<input type="text" id="stream_id" placeholder="room id">
+<br />
+<button id="join_btn">Join room</button>
+<br />
+<br />
+<br />
+<span>Current room: <span id="room_id">None</span></span>
+<script>
+    document.getElementById('join_btn').addEventListener('click', (e) => {
+        if (flvjs.isSupported()) {
+            var stream_id = document.getElementById('stream_id').value;
+            console.log(stream_id)
+            var videoElement = document.getElementById('videoElement');
+            var flvPlayer = flvjs.createPlayer({
+                type: 'flv',
+                url: `https://cassettenet-stream.herokuapp.com/stream/live/${stream_id}.flv`
+                // url: `http://localhost:5001/stream/live/${stream_id}.flv`
+            });
+            flvPlayer.attachMediaElement(videoElement);
+            flvPlayer.load();
+            flvPlayer.play();
+            document.getElementById('room_id').innerHTML = stream_id;
+        }
+    });
+    document.getElementById('create_btn').addEventListener('click', (e) => {
+        // const url = 'http://localhost:5001/startStream';
+        const url = 'https://cassettenet-stream.herokuapp.com/startStream';
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({ type: 'youtube', id: document.getElementById('yt_id').value }),
+            headers: { 'Content-type': 'application/json' }
+        }).then(res => res.json().then(res => {
+            var videoElement = document.getElementById('videoElement');
+            var flvPlayer = flvjs.createPlayer({
+                type: 'flv',
+                url: `https://cassettenet-stream.herokuapp.com/stream/live/${res}.flv`
+                // url: `http://localhost:5001/stream/live/${stream_id}.flv`
+            });
+            flvPlayer.attachMediaElement(videoElement);
+            flvPlayer.load();
+            flvPlayer.play();
+            document.getElementById('room_id').innerHTML = res;
+        }));
+    });
+</script> 
