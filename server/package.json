@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "heroku-postbuild": "cd client && npm install && npm run build && mkdir -p ../build && mv build/* ../build"
+    "heroku-postbuild": "cd client && npm install && npm run build && mkdir -p ../build && mv build/* ../build && cd .. && rm -R client"
   },
   "author": "",
   "license": "ISC",
