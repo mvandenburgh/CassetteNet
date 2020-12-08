@@ -24,10 +24,9 @@ import { useHistory } from 'react-router-dom';
 import Mixtape from '../Mixtape';
 import UserSearchBar from '../UserSearchBar';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
-import PlayingSongContext from '../../contexts/PlayingSongContext';
 import UserContext from '../../contexts/UserContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
-import { getMixtape, getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
+import { getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
 import logo from '../../images/logo.png';
 import '../styles/chatbox.css';
 import { ChatBox } from 'react-chatbox-component';
@@ -76,9 +75,27 @@ const useStyles = makeStyles((theme) => ({
 function ListeningRoomPage(props) {
     const classes = useStyles();
 
+    const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
+
     const history = useHistory();
 
-    const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
+    useEffect(() => {
+        const unlisten = history.listen(location => {
+            console.log(location);
+            const newCurrentSong = { ...currentSong };
+            if (location.pathname.indexOf('/listeningRoom') === 0) {
+                newCurrentSong.listeningRoom = true;
+                setCurrentSong(newCurrentSong);
+            } else {
+                newCurrentSong.listeningRoom = false;
+                setCurrentSong(newCurrentSong);
+                window.location.reload();
+            }
+            
+        });
+        return unlisten;
+    }, []);
+
 
     const { user } = useContext(UserContext);
 
@@ -125,6 +142,9 @@ function ListeningRoomPage(props) {
                     setEndSessionPopupOpen(true);
                     setTimeout(history.goBack, 4000);
                 });
+                socket.on('rhythmGameAboutToBegin', () => {
+                    setScreen('rhythm');
+                });
             })
             .catch(err => history.goBack());
     }, []);
@@ -144,7 +164,6 @@ function ListeningRoomPage(props) {
 
     useEffect(() => {
         if (listeningRoom) {
-            console.log(logo)
             const newChatMessages = listeningRoom.chatMessages.map((message, i) => ({
                 text: message.message,
                 id: i,
@@ -175,7 +194,6 @@ function ListeningRoomPage(props) {
 
     const rhythmGameHandler = () => {
         socket.emit('queueRhythmGame');
-        setScreen('rhythm'); // TODO: implement queuing. This shouldn't redirect like this.
     }
 
     if (!listeningRoom) {

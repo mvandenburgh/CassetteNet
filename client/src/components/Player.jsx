@@ -88,17 +88,17 @@ function Player(props) {
 
   const [currentTime, setCurrentTime] = useState(0);
 
+  const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
+
   const { playing, setPlaying } = useContext(PlayingSongContext);
 
   useInterval(() => {
-      if (playerRef.current && playing) {
-        const time = playerRef.current.getCurrentTime()
-        setCurrentTime(time);
-        localStorage.setItem('timestamp', time);
-      }
+    if (playerRef.current && playing && (!currentSong.listeningRoom || songLoaded)) {
+      const time = playerRef.current.getCurrentTime()
+      setCurrentTime(time);
+      localStorage.setItem('timestamp', time);
+    }
   }, 500);
-
-  const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
   const [shuffle, setShuffle] = useState(false);
   const [loop, setLoop] = useState(false);
@@ -140,6 +140,9 @@ function Player(props) {
       newCurrentSong.index = 0;
     } else {
       newCurrentSong.index = currentSong.index + 1;
+    }
+    if (currentSong.listeningRoomOwner) {
+      socket.emit('changeSong', newCurrentSong.index);
     }
     setCurrentSong(newCurrentSong);
     setPlaying(true);
@@ -207,6 +210,10 @@ function Player(props) {
 
   const [musicVolume, setMusicVolume] = useState(0.5);
 
+  const [songLoaded, setSongLoaded] = useState(false);
+
+  const [listeningRoomInfo, setListeningRoomInfo] = useState(null);
+
   const handleAtmosphereVolumeChange = (event, newValue) => {
     setAtmosphereVolume(newValue);
   };
@@ -215,17 +222,50 @@ function Player(props) {
     setMusicVolume(newValue);
   };
 
+  // notify listening room server that the song is loaded and ready to be played
+  const songIsLoaded = () => {
+    if (currentSong.listeningRoom) {
+      console.log('loaded!')
+      setSongLoaded(true);
+      socket.emit('songIsLoaded');
+    }
+  };
+
+  const onSongStart = () => {
+    console.log('s')
+  }
 
   useEffect(() => {
-    socket.on('playSong', ({ index, timestamp }) => {
-      console.log('playSong')
-      const newCurrentSong = { ...currentSong };
-      newCurrentSong.index = index;
+    if (!songLoaded || !playerRef?.current) {
+      return;
+    }
+    const newCurrentSong = { ...currentSong };
+    if (listeningRoomInfo?.index) {
+      newCurrentSong.index = listeningRoomInfo.index;
       setCurrentSong(newCurrentSong);
-      setCurrentTime(timestamp);
-      setPlaying(true);
-    });
+    }
+    if (listeningRoomInfo?.timestamp) {
+      const time = Number(((Date.now() / 1000) - listeningRoomInfo.timestamp.startedAt) + listeningRoomInfo.timestamp.wasAt) + 1;
+      console.log(time)
+      playerRef.current.seekTo(time);
+      setCurrentTime(time);
+    }
     
+    setPlaying(true);
+  }, [songLoaded]);
+
+
+  useEffect(() => {
+    socket.on('playSong', (payload) => {
+      console.log('playSong')
+      console.log(payload)
+      // listeningRoomInfo
+      // if (!payload) {
+      setListeningRoomInfo(payload);
+      setSongLoaded(true);
+      // }
+    });
+
     socket.on('pauseSong', ({ timestamp }) => {
       console.log('pauseSong')
       setPlaying(false);
@@ -272,17 +312,17 @@ function Player(props) {
             onClick={atmosphereButtonHandler}
           />
         </div>
-        <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
+        <PlayerIcon.Previous onClick={currentSong?.listeningRoom ? undefined : handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
         {playing ?
-          <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-          <PlayerIcon.Play onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+          <PlayerIcon.Pause onClick={currentSong?.listeningRoom ? undefined : throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+          <PlayerIcon.Play onClick={!currentSong?.listeningRoom ? undefined : throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
         }
-        <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
+        <PlayerIcon.Next onClick={currentSong?.listeningRoom ? undefined : handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
         <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-          <ShuffleIcon onClick={handleSetShuffle} />
+          <ShuffleIcon onClick={currentSong?.listeningRoom ? undefined : handleSetShuffle} />
         </div>
         <div style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-          <LoopIcon onClick={handleSetLoop} />
+          <LoopIcon onClick={currentSong?.listeningRoom ? undefined : handleSetLoop} />
         </div>
         <VolumeSlider
           value={musicVolume}
@@ -299,6 +339,8 @@ function Player(props) {
         ref={playerRef} playing={playing} style={{ display: 'none' }}
         url={currentSong?.mixtape?.songs[currentSong.index].playbackUrl}
         volume={musicVolume}
+        onReady={songIsLoaded}
+        onStart={onSongStart}
       />
       <ReactPlayer
         loop

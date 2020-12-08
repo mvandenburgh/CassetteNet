@@ -102,6 +102,8 @@ const listeningRoomSchema = new Schema({
   snakeScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]
   rhythmScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]
   rhythmGameQueue: Array,
+  startedAt: String, // real life time when current song started playing
+  wasAt: String, // timestamp of the song at `startedAt`
 });
 
 module.exports = {

@@ -64,10 +64,10 @@ router.get('/:id', async (req, res) => {
     try {
         const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
         if (!listeningRoom) return res.status(404).send('listening room not found');
-        if (!listeningRoom.owner.equals(req.user.id) && !listeningRoom.invitedUsers.includes(req.user.id)) return res.status(401).send('unauthorized');
+        // if (!listeningRoom.owner.equals(req.user.id) && !listeningRoom.invitedUsers.includes(req.user.id)) return res.status(401).send('unauthorized');
         const listenersDenormalized = [];
-        for (const userId of listeningRoom.currentListeners) {
-            const user = await User.findById(userId).lean();
+        for (const listener of listeningRoom.currentListeners) {
+            const user = await User.findById(listener.user).lean();
             listenersDenormalized.push({
                 id: user._id,
                 username: user.username,
