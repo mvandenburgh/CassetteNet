@@ -79,24 +79,31 @@ songSchema.plugin(mongoosePartialTextSearch);
 
 const inboxMessageSchema = new Schema({
   mixtape: mongoose.Types.ObjectId, // id of the mixtape this message corresponds to
-  sender: {
+  senderUsername: {
     type: String,
     default: 'Anonymous'
   },
+  senderId: mongoose.Types.ObjectId,
   recipient: mongoose.Types.ObjectId, // object id for recipient user
-  message: String, // TODO: database level string length validation?
+  message: {
+    type: String,
+    maxlength: 250,
+    minlength: 1,
+  },
 });
 
 const listeningRoomSchema = new Schema({
   chatMessages: Array,
   invitedUsers: Array,
   currentListeners: Array, // array of user ids (users invited to listening room)
-  listenerMapping: Map, // used to map socket.io room ids to mongodb listeningroom ids
   mixtape: Schema.Types.Mixed, // id of the mixtape this listening room is playing
   owner: mongoose.Types.ObjectId,
   currentSong: Number, // index of currently playing song in mixtape `songs` array
   snakeScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]
   rhythmScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]
+  rhythmGameQueue: Array,
+  startedAt: String, // real life time when current song started playing
+  wasAt: String, // timestamp of the song at `startedAt`
 });
 
 module.exports = {

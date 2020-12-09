@@ -129,7 +129,7 @@ router.put('/changePassword', async (req, res) => {
 
 router.get('/login/success', async (req, res) => {
     if (!req.user) return res.status(401).send('unauthorized');
-    const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt, verified } = req.user;
+    const { username, uniqueId, _id, favoritedMixtapes, followedUsers, admin, createdAt, updatedAt, verified, strategy } = req.user;
     if (!verified) {
         return res.status(400).send('user not verified.');
     }
@@ -161,6 +161,7 @@ router.get('/login/success', async (req, res) => {
         createdAt,
         updatedAt,
         inboxMessages,
+        strategy,
     });
 });
 

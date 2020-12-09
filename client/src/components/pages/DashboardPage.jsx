@@ -12,32 +12,32 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getPopularMixtapes, getRandomMixtapes } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
 
-// const MixtapeRows = ({ mixtapes, history }) => (
-//     <>
+const MixtapeRows = ({ mixtapes, history }) => (
+    <>
   
-//       {mixtapes.map(mixtape => (
-//         <Box
-//           style={{
-//             margin: "5px",
-//             padding: "10px",
-//             backgroundColor: blueGrey[700],
-//             display: "flex",
-//             flexDirection: "row",
-//             borderRadius: 6,
-//             fontSize: 12,
-//           }}
-//         >
-//           <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/mixtape/${mixtape._id}`)}> {mixtape.name} </Box>
-//           <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/user/${mixtape.collaborators.filter(c => c.permissions === 'owner')[0].user}`)}> {mixtape.collaborators.filter(c => c.permissions === 'owner')[0].username} </Box>
-//           <Box style={{ width: "33%", display: 'flex', flexDirection: "row", justifyContent: "center" }}>
-//             <FavoriteMixtapeButton id={mixtape._id} />
-//             {/* <CommentIcon /> */}
-//             {/* <ShareIcon /> */}
-//           </Box>
-//         </Box>
-//       ))}
-//     </>
-//   );
+      {mixtapes.map(mixtape => (
+        <Box
+          style={{
+            margin: "5px",
+            padding: "10px",
+            backgroundColor: blueGrey[700],
+            display: "flex",
+            flexDirection: "row",
+            borderRadius: 6,
+            fontSize: 12,
+          }}
+        >
+          <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/mixtape/${mixtape._id}`)}> {mixtape.name} </Box>
+          <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/user/${mixtape.collaborators.filter(c => c.permissions === 'owner')[0].user}`)}> {mixtape.collaborators.filter(c => c.permissions === 'owner')[0].username} </Box>
+          <Box style={{ width: "33%", display: 'flex', flexDirection: "row", justifyContent: "center" }}>
+            <FavoriteMixtapeButton id={mixtape._id} />
+            {/* <CommentIcon /> */}
+            {/* <ShareIcon /> */}
+          </Box>
+        </Box>
+      ))}
+    </>
+  );
 
 function DashboardPage(props) {
 
@@ -75,7 +75,7 @@ function DashboardPage(props) {
 
     const [value, setValue] = React.useState(0);
 
-    const [popularMixtapes, setPopularMixtapes] = useState([]);
+    //const [popularMixtapes, setPopularMixtapes] = useState([]);
 
     const [open, setOpen] = useState(false);
 
@@ -88,19 +88,23 @@ function DashboardPage(props) {
         setOpen(false);
       };
 
-    const [mixtapes, setMixtapes] = useState(null);
+    const [mixtapes, setMixtapes] = useState([]);//useState(null);
 
     useEffect(() => {
-        async function getMixtapes() {
-            const updatedMixtapes = await getPopularMixtapes(5);  
-            console.log("Update mixtapes: " + updatedMixtapes);         
-            if (!updatedMixtapes) {
-                setMixtapes([]);
-            } else {
-                setMixtapes(updatedMixtapes);
-            }
-        }
-        getMixtapes();
+        // async function getMixtapes() {
+        //     const updatedMixtapes = await getPopularMixtapes(5);  
+        //     console.log("Update mixtapes: " + updatedMixtapes);         
+        //     if (!updatedMixtapes) {
+        //         setMixtapes([]);
+        //     } else {
+        //         setMixtapes(updatedMixtapes);
+        //     }
+        // }
+        // getMixtapes();
+        //getRandomMixtapes(5, 'daily').then(mixtapes => { console.log(mixtapes); setMixtapes(mixtapes); });
+        console.log("Before getPopularMixtapes");
+        getPopularMixtapes(5).then(mixtapes => { console.log(mixtapes); setMixtapes(mixtapes); });
+        console.log("After getPopularMixtapes");
     }, []);
 
     console.log(mixtapes);
@@ -153,7 +157,7 @@ function DashboardPage(props) {
                         Favorites
                     </Box>
                 </Box> */}
-                {/* <Box onClick={handleClickOpen} style={{
+                <Box onClick={handleClickOpen} style={{
                         marginLeft: "170px",
                         marginTop: '5px',
                         marginRight: '10px',
@@ -162,9 +166,9 @@ function DashboardPage(props) {
                         backgroundColor: blueGrey[900],
                         width: '80%'
                     }}> 
-                    <MixtapeRows mixtapes={popularMixtapes} history={history} />
-                </Box> */}
-                <Box style={{
+                    <MixtapeRows mixtapes={mixtapes} history={history} />
+                </Box>
+                {/* <Box style={{
                             maxHeight: '60vh',
                             overflow: 'auto',
                             display: 'inline-flex', 
@@ -178,9 +182,9 @@ function DashboardPage(props) {
                             width: '85%', 
                             height: '30%'}} boxShadow={3} borderRadius={12}>
                     <Grid container justify="center">
-                        <MixtapeList mixtapes={mixtapes} setMixtapes={setMixtapes} />
+                        <MixtapeRows mixtapes={mixtapes} setMixtapes={setMixtapes} />
                     </Grid>
-                </Box>
+                </Box> */}
             </Box>
 
             <br/>

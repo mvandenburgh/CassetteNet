@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Grid } from '@material-ui/core';
+import { throttle } from 'lodash';
+import { Grid, Slider as VolumeSlider } from '@material-ui/core';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
+import { useInterval } from '../hooks';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import AtmosphereSoundContext from '../contexts/AtmosphereSoundContext';
+import SocketIOContext from '../contexts/SocketIOContext';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
 
 const WHITE_SMOKE = '#eee'
@@ -81,23 +84,24 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
 function Player(props) {
   const playerRef = useRef();
 
-  const [currentTime, setCurrentTime] = useState(null);
+  const { socket } = useContext(SocketIOContext);
 
-  setInterval(() => {
-    if (playerRef.current && playing) {
-      localStorage.setItem('timestamp', playerRef.current.getCurrentTime());
-    }
-  }, 2000);
-
-  setInterval(() => {
-    if (playerRef.current && playing) {
-      setCurrentTime(playerRef.current.getCurrentTime());
-    }
-  }, 500);
+  const [currentTime, setCurrentTime] = useState(0);
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
+  const currentSongRef = useRef();
+  useEffect(() => currentSongRef.current = currentSong, [currentSong]);
+
   const { playing, setPlaying } = useContext(PlayingSongContext);
+
+  useInterval(() => {
+    if (playerRef.current && playing && (!currentSong.listeningRoom || songLoaded)) {
+      const time = playerRef.current.getCurrentTime()
+      setCurrentTime(time);
+      localStorage.setItem('timestamp', time);
+    }
+  }, 500);
 
   const [shuffle, setShuffle] = useState(false);
   const [loop, setLoop] = useState(false);
@@ -106,18 +110,34 @@ function Player(props) {
     if (currentSong.disabled === currentSong.mixtape._id) {
       return;
     }
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
+    if (currentSong.listeningRoomOwner) {
+      socket.emit('playSong', { index: currentSong.index, timestamp: currentTime })
+    }
     setPlaying(true);
-    if (!currentTime) {
+    if (!currentTime && !currentSong.listeningRoom) {
       playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
     }
   };
 
   const handlePause = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     setPlaying(false);
-    setCurrentTime(playerRef.current.getCurrentTime());
+    const stoppedAt = playerRef.current.getCurrentTime()
+    if (currentSong.listeningRoomOwner) {
+      socket.emit('pauseSong', { timestamp: stoppedAt })
+    }
+    setCurrentTime(stoppedAt);
   };
 
   const handleNextSong = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     setPlaying(false);
     const newCurrentSong = { ...currentSong };
     if (shuffle) {
@@ -127,11 +147,18 @@ function Player(props) {
     } else {
       newCurrentSong.index = currentSong.index + 1;
     }
-    setCurrentSong(newCurrentSong);
-    setPlaying(true);
+    if (currentSong.listeningRoomOwner) {
+      socket.emit('changeSong', newCurrentSong.index);
+    } else {
+      setCurrentSong(newCurrentSong);
+      setPlaying(true);
+    }
   };
 
   const handlePrevSong = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     setPlaying(false);
     const newCurrentSong = { ...currentSong };
     if (shuffle) {
@@ -146,6 +173,9 @@ function Player(props) {
   };
 
   const handleSetLoop = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     const loopState = loop;
     setLoop(!loopState);
     if (!loopState) {
@@ -154,6 +184,9 @@ function Player(props) {
   }
 
   const handleSetShuffle = () => {
+    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+      return;
+    }
     const shuffleState = shuffle;
     if (!shuffleState) {
       setLoop(false);
@@ -161,15 +194,12 @@ function Player(props) {
     setShuffle(!shuffleState);
   }
 
-  useEffect(() => {
-    if (playerRef && !currentSong?.duration) {
-      currentSong.duration = playerRef.current.getDuration();
-      setCurrentSong(currentSong);
-    }
-  })
-
   const seek = (time) => {
-    playerRef.current.seekTo(time * playerRef.current.getDuration());
+    if (currentSong.listeningRoom) {
+      return;
+    }
+    const seekTo = time * playerRef.current.getDuration();
+    playerRef.current.seekTo(seekTo);
   }
 
   const { atmosphereSound, setAtmosphereSound } = useContext(AtmosphereSoundContext);
@@ -180,6 +210,88 @@ function Player(props) {
     setAtmosphereSound(newSound);
   }
 
+  const [atmosphereVolume, setAtmosphereVolume] = useState(0.5);
+
+  const [musicVolume, setMusicVolume] = useState(0.5);
+
+  const [songLoaded, setSongLoaded] = useState(false);
+
+  const [listeningRoomInfo, setListeningRoomInfo] = useState(null);
+
+  const handleAtmosphereVolumeChange = (event, newValue) => {
+    setAtmosphereVolume(newValue);
+  };
+
+  const handleMusicVolumeChange = (event, newValue) => {
+    setMusicVolume(newValue);
+  };
+
+  // notify listening room server that the song is loaded and ready to be played
+  const songIsLoaded = () => {
+    if (currentSong.listeningRoom) {
+      console.log('loaded!')
+      setSongLoaded(true);
+      socket.emit('songIsLoaded');
+    }
+  };
+
+  const onSongStart = () => {
+    console.log('s')
+  }
+
+  useEffect(() => {
+    if (!songLoaded || !playerRef?.current) {
+      return;
+    }
+    const newCurrentSong = { ...currentSong };
+    if (listeningRoomInfo?.index) {
+      newCurrentSong.index = listeningRoomInfo.index;
+      setCurrentSong(newCurrentSong);
+    }
+    if (listeningRoomInfo?.timestamp) {
+      const time = Number(((Date.now() / 1000) - listeningRoomInfo.timestamp.startedAt) + listeningRoomInfo.timestamp.wasAt) + 1;
+      console.log(time)
+      playerRef.current.seekTo(time);
+      setCurrentTime(time);
+    }
+    
+    setPlaying(true);
+  }, [songLoaded]);
+
+
+  useEffect(() => {
+    socket.on('playSong', (payload) => {
+      console.log('playSong')
+      console.log(payload)
+      // listeningRoomInfo
+      // if (!payload) {
+      setListeningRoomInfo(payload);
+      setSongLoaded(true);
+      // }
+    });
+
+    socket.on('pauseSong', ({ timestamp }) => {
+      console.log('pauseSong')
+      setPlaying(false);
+      playerRef.current.seekTo(timestamp);
+      setCurrentTime(timestamp);
+    });
+
+    socket.on('seekSong', ({ timestamp }) => {
+      console.log('seekSong')
+      playerRef.current.seekTo(timestamp);
+      setCurrentTime(timestamp);
+    });
+
+    socket.on('changeSong', index => {
+      console.log(`changeSong to ${index}`);
+      setSongLoaded(false);
+      const newCurrentSong = { ...currentSongRef.current };
+      newCurrentSong.index = index;
+      setCurrentSong(newCurrentSong);
+    });
+  }, []);
+
   return (
     <div>
       <Grid style={{ margin: '10px 0' }} container justify="center">
@@ -189,42 +301,64 @@ function Player(props) {
         <ProgressBar
           isEnabled
           direction={Direction.HORIZONTAL}
-          value={currentSong?.duration ? (currentTime / currentSong.duration) : 0}
+          value={currentSong?.mixtape?.songs[currentSong?.index].duration ? (currentTime / currentSong?.mixtape.songs[currentSong?.index].duration) : 0}
           onChange={value => seek(value)}
         />
         <div style={{ color: 'black', marginRight: '20px' }}>
-          <FormattedTime numSeconds={currentSong?.duration ? ((currentSong.duration - currentTime) * -1) : 0} />
+          <FormattedTime numSeconds={currentSong?.mixtape?.songs[currentSong?.index].duration ? ((currentSong?.mixtape?.songs[currentSong?.index].duration - currentTime) * -1) : 0} />
         </div>
       </Grid>
       <Grid style={{ margin: '10px 0' }} container justify="center">
+        <VolumeSlider
+          value={atmosphereVolume}
+          onChange={handleAtmosphereVolumeChange}
+          defaultValue={0.5}
+          step={0.001}
+          min={0}
+          max={1}
+          style={{ width: '10%' }} aria-labelledby="continuous-slider"
+        />
         <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-          <AtmosphereSoundsIcon 
+          <AtmosphereSoundsIcon
             style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
             onClick={atmosphereButtonHandler}
           />
         </div>
         <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
         {playing ?
-          <PlayerIcon.Pause onClick={handlePause} width={32} height={32} style={{ marginRight: 32 }} /> :
-          <PlayerIcon.Play onClick={handlePlay} width={32} height={32} style={{ marginRight: 32 }} />
+          <PlayerIcon.Pause onClick={currentSong?.listeningRoom ? undefined : throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+          <PlayerIcon.Play onClick={!currentSong?.listeningRoom ? undefined : throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
         }
         <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
         <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-          <ShuffleIcon onClick={handleSetShuffle} />
+          <ShuffleIcon onClick={currentSong?.listeningRoom ? undefined : handleSetShuffle} />
         </div>
         <div style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-          <LoopIcon onClick={handleSetLoop} />
+          <LoopIcon onClick={currentSong?.listeningRoom ? undefined : handleSetLoop} />
         </div>
+        <VolumeSlider
+          value={musicVolume}
+          onChange={handleMusicVolumeChange}
+          defaultValue={0.5}
+          step={0.001}
+          min={0}
+          max={1}
+          style={{ width: '20%' }} aria-labelledby="continuous-slider"
+        />
       </Grid>
       <ReactPlayer
         onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
         ref={playerRef} playing={playing} style={{ display: 'none' }}
-        url={currentSong.playbackUrl}
+        url={currentSong?.mixtape?.songs[currentSong.index].playbackUrl}
+        volume={musicVolume}
+        onReady={songIsLoaded}
+        onStart={onSongStart}
       />
       <ReactPlayer
         loop
         playing={atmosphereSound.isPlaying} style={{ display: 'none' }}
         url={atmosphereSound.filename}
+        volume={atmosphereVolume}
       />
     </div>
   )

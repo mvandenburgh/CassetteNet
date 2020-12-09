@@ -62,8 +62,11 @@ async function getVideoInfo(videoId) {
             part: 'snippet,contentDetails',
             id: videoId
         });
-        const info = await ytdl.getInfo(videoId);
-        result.data.items[0].media = info.videoDetails.media;
+        let info;
+        try {
+            info = await ytdl.getInfo(videoId);
+            result.data.items[0].media = info.videoDetails.media;
+        } catch(err) {}
         return result.data.items;
     } catch (err) {
         throw err;

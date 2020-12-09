@@ -1,5 +1,6 @@
 const express = require('express');
 const { ListeningRoom, Mixtape, User } = require('../models');
+const { getAudioAnalysisFromYoutube } = require('../external_apis/spotify');
 
 const router = express.Router();
 
@@ -42,7 +43,6 @@ router.post('/', async (req, res) => {
     const listeningRoom = new ListeningRoom({
         chatMessages: [],
         currentListeners: [],
-        listenerMapping: new Map(),
         mixtape,
         owner: req.user.id,
         currentSong: 0,
@@ -64,10 +64,10 @@ router.get('/:id', async (req, res) => {
     try {
         const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
         if (!listeningRoom) return res.status(404).send('listening room not found');
-        if (!listeningRoom.owner.equals(req.user.id) && !listeningRoom.invitedUsers.includes(req.user.id)) return res.status(401).send('unauthorized');
+        // if (!listeningRoom.owner.equals(req.user.id) && !listeningRoom.invitedUsers.includes(req.user.id)) return res.status(401).send('unauthorized');
         const listenersDenormalized = [];
-        for (const userId of listeningRoom.currentListeners) {
-            const user = await User.findById(userId).lean();
+        for (const listener of listeningRoom.currentListeners) {
+            const user = await User.findById(listener.user).lean();
             listenersDenormalized.push({
                 id: user._id,
                 username: user.username,
@@ -97,6 +97,15 @@ router.put('/:id/inviteUser', async (req, res) => {
     } catch(err) {
         return res.status(500).send(err);
     }
+});
+
+router.get('/:id/audioAnalysis/:songIndex', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
+    const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
+    const song = listeningRoom.mixtape.songs[req.params.songIndex];
+    if (song.type !== 'youtube') return res.status(400).send(`audio analysis only works with youtube. requested song is from ${song.type}.`);
+    const analysis = await getAudioAnalysisFromYoutube(song.id);
+    res.json(analysis.track.tempo); // just send tempo for now
 });
 
 module.exports = router;

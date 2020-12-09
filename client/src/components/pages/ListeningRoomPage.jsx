@@ -26,10 +26,11 @@ import UserSearchBar from '../UserSearchBar';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
 import UserContext from '../../contexts/UserContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
-import { getMixtape, getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
+import { getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
 import logo from '../../images/logo.png';
 import '../styles/chatbox.css';
 import { ChatBox } from 'react-chatbox-component';
+import RhythmGame from '../games/RhythmGame';
 
 
 function TabPanel(props) {
@@ -74,9 +75,17 @@ const useStyles = makeStyles((theme) => ({
 function ListeningRoomPage(props) {
     const classes = useStyles();
 
+    const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
+
     const history = useHistory();
 
-    const { setCurrentSong } = useContext(CurrentSongContext);
+    useEffect(() => {
+        const unlisten = history.listen(location => {
+            setCurrentSong({});
+        });
+        return unlisten;
+    }, []);
+
 
     const { user } = useContext(UserContext);
 
@@ -97,6 +106,13 @@ function ListeningRoomPage(props) {
     useEffect(() => {
         getListeningRoom(props.match.params.id)
             .then(listeningRoom => {
+                const newCurrentSong = {};
+                newCurrentSong.listeningRoomOwner = user._id === listeningRoom.owner.user;
+                newCurrentSong.listeningRoom = true;
+                newCurrentSong.mixtape = listeningRoom.mixtape;
+                newCurrentSong.index = 0;
+                setCurrentSong(newCurrentSong);
+                console.log(newCurrentSong)
                 setListeningRoom(listeningRoom);
                 setMixtape(listeningRoom.mixtape);
                 socket.emit('joinListeningRoom', { user, listeningRoom });
@@ -105,8 +121,7 @@ function ListeningRoomPage(props) {
                         .then(lr => {
                             setListeningRoom(lr);
                             setMixtape(lr.mixtape);
-                        })
-                        .catch(err => alert(err));
+                        });
                 });
                 socket.on('newChatMessage', newChatMessages => {
                     const newListeningRoom = { ...lrRef.current };
@@ -117,11 +132,12 @@ function ListeningRoomPage(props) {
                     setEndSessionPopupOpen(true);
                     setTimeout(history.goBack, 4000);
                 });
+                socket.on('rhythmGameAboutToBegin', () => {
+                    setScreen('rhythm');
+                });
             })
             .catch(err => history.goBack());
     }, []);
-
-    const [currentChatText, setCurrentChatText] = useState('');
 
     const sendChatHandler = (message) => {
         socket.emit('sendChatMessage', { message, timestamp: Date.now(), from: { user: user._id, username: user.username } });
@@ -138,7 +154,6 @@ function ListeningRoomPage(props) {
 
     useEffect(() => {
         if (listeningRoom) {
-            console.log(logo)
             const newChatMessages = listeningRoom.chatMessages.map((message, i) => ({
                 text: message.message,
                 id: i,
@@ -152,6 +167,25 @@ function ListeningRoomPage(props) {
         }
     }, [listeningRoom]);
 
+    const [screen, setScreen] = useState('home'); // can be one of ['home', 'snake', 'rhythm']
+
+    const gameScreenRef = useRef();
+
+    const [gameScreenStartX, setGameScreenStartX] = useState(null);
+    const [gameScreenEndX, setGameScreenEndX] = useState(null);
+
+    useEffect(() => {
+        if (gameScreenRef?.current) {
+            const { offsetLeft, clientWidth } = gameScreenRef.current;
+            setGameScreenStartX(offsetLeft);
+            setGameScreenEndX(offsetLeft + clientWidth)
+        }
+    });
+
+    const rhythmGameHandler = () => {
+        socket.emit('queueRhythmGame');
+    }
+
     if (!listeningRoom) {
         return null;
     }
@@ -159,7 +193,7 @@ function ListeningRoomPage(props) {
     return (
         <div>
             <Grid container justify="center">
-                <Grid item style={{ width: '80%' }}>
+                <Grid item style={{ width: '90%' }}>
                     <AppBar position="static">
                         <Tabs value={currentTab} onChange={handleTabChange} centered={true} variant="fullWidth">
                             <Tab label="Listen" {...a11yProps(0)} />
@@ -167,7 +201,7 @@ function ListeningRoomPage(props) {
                         </Tabs>
                     </AppBar>
                 </Grid>
-                <Grid item style={{ width: '80%', backgroundColor: '#30A9ED' }}>
+                <Grid item style={{ width: '90%', backgroundColor: '#30A9ED' }}>
                     <TabPanel value={currentTab} index={0}>
                         <Grid style={{ height: '70vh' }} container>
                             <Grid item xs={8}>
@@ -177,7 +211,7 @@ function ListeningRoomPage(props) {
                                     </Typography>
                                     <Typography variant="h5">~Listening to {mixtape?.name}~</Typography>
                                 </Paper>
-                                <Mixtape mixtape={mixtape} enableEditing={false} />
+                                <Mixtape mixtape={mixtape} enableEditing={false} listeningRoom={true} />
                             </Grid>
                             <Grid item xs={1} />
                             <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>
@@ -227,37 +261,41 @@ function ListeningRoomPage(props) {
                                 <Grid style={{ backgroundColor: 'red' }} item xs={12}>
                                     <Typography variant="h7">Invite</Typography>
                                 </Grid>
-                                {/* TODO: remove backgroundColors. just there for now to help with development */}
                                 <Grid style={{ height: '75vh' }} item xs={12}>
                                     <Grid container style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
-                                        <Paper style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
-                                            <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
-                                                <Grid item xs={2} />
-                                                <Grid item xs={10}>
-                                                    <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>
-                                                        <Typography variant="h5">Select the game you want to play:</Typography>
-                                                    </Paper>
-                                                    <Grid item xs={2} />
-                                                </Grid>
-                                                <Grid container style={{ height: '30%' }}>
-                                                    <Grid item xs={3} />
-                                                    <Grid style={{ backgroundColor: 'yellow' }} item xs={2}>
-                                                        Rhythm Game
-                                                </Grid>
-                                                    <Grid item xs={2} />
-                                                    <Grid style={{ backgroundColor: 'green' }} item xs={2}>
-                                                        Snake Game
-                                                </Grid>
-                                                    <Grid item xs={3} />
-                                                </Grid>
-                                                <Grid container style={{ height: '20%', backgroundColor: 'yellow' }}>
-                                                    <Grid style={{ backgroundColor: 'pink' }} item xs={4} />
-                                                    <Grid item xs={4}>
-                                                        <Button style={{ height: '100%', width: '100%' }} variant="contained">Start Game</Button>
+                                        <Paper ref={gameScreenRef} style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
+
+                                            {screen === 'rhythm' ?
+                                                <RhythmGame xStart={gameScreenStartX} xEnd={gameScreenEndX} listeningRoom={listeningRoom} />
+                                                : screen === 'snake' ?
+                                                    <div /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
+                                                        <Grid item xs={2} />
+                                                        <Grid item xs={10}>
+                                                            <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>
+                                                                <Typography variant="h5">Select the game you want to play:</Typography>
+                                                            </Paper>
+                                                            <Grid item xs={2} />
+                                                        </Grid>
+                                                        <Grid container style={{ height: '30%' }}>
+                                                            <Grid item xs={3} />
+                                                            <Grid style={{ backgroundColor: 'yellow', cursor: 'pointer' }} item xs={2} onClick={rhythmGameHandler}>
+                                                                Rhythm Game
+                                                                </Grid>
+                                                            <Grid item xs={2} />
+                                                            <Grid style={{ backgroundColor: 'green' }} item xs={2}>
+                                                                Snake Game
+                                                                </Grid>
+                                                            <Grid item xs={3} />
+                                                        </Grid>
+                                                        <Grid container style={{ height: '20%', backgroundColor: 'yellow' }}>
+                                                            <Grid style={{ backgroundColor: 'pink' }} item xs={4} />
+                                                            <Grid item xs={4}>
+                                                                <Button style={{ height: '100%', width: '100%' }} variant="contained">Start Game</Button>
+                                                            </Grid>
+                                                            <Grid style={{ backgroundColor: 'orange' }} item xs={4} />
+                                                        </Grid>
                                                     </Grid>
-                                                    <Grid style={{ backgroundColor: 'orange' }} item xs={4} />
-                                                </Grid>
-                                            </Grid>
+                                            }
                                         </Paper>
                                     </Grid>
                                 </Grid>

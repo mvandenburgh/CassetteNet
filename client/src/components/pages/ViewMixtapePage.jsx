@@ -22,7 +22,7 @@ import {
 } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration, sendAnonymousMessage } from '../../utils/api';
+import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration, sendAnonymousMessage, sendMixtapeMessage } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
 import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
@@ -39,6 +39,7 @@ import SongSearchBar from '../SongSearchBar';
 import { throttle } from 'lodash';
 import PlayingSongContext from '../../contexts/PlayingSongContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
+import { useEventListener } from '../../hooks';
 
 const usePrevious = (value) => {
     const ref = useRef();
@@ -69,45 +70,6 @@ function ViewMixtapePage(props) {
     }
 
     useEventListener('keypress', undoRedoKeyboardHandler);
-
-
-    // Hook
-    function useEventListener(eventName, handler, element = document) {
-        // Create a ref that stores handler
-        const savedHandler = useRef();
-
-        // Update ref.current value if handler changes.
-        // This allows our effect below to always get latest handler ...
-        // ... without us needing to pass it in effect deps array ...
-        // ... and potentially cause effect to re-run every render.
-        useEffect(() => {
-            savedHandler.current = handler;
-        }, [handler]);
-
-        useEffect(
-            () => {
-                // Make sure element supports addEventListener
-                // On 
-                const isSupported = element && element.addEventListener;
-                if (!isSupported) return;
-
-                // Create event listener that calls handler function stored in ref
-                const eventListener = event => savedHandler.current(event);
-
-                // Add event listener
-                element.addEventListener(eventName, eventListener);
-
-                // Remove event listener on cleanup
-                return () => {
-                    element.removeEventListener(eventName, eventListener);
-                };
-            },
-            [eventName, element] // Re-run if eventName or element changes
-        );
-    };
-
-
-
 
     const { setPlaying } = useContext(PlayingSongContext);
 
@@ -379,16 +341,16 @@ function ViewMixtapePage(props) {
     const [open, setOpen] = useState(false);
 
     const handleClick = async (mixtape) => {
-      setOpen(true);
-      forkThisMixtape(mixtape);
+        setOpen(true);
+        forkThisMixtape(mixtape);
     };
 
     const handleClose = (event, reason) => {
-      if (reason === 'clickaway') {
-        return;
-      }
+        if (reason === 'clickaway') {
+            return;
+        }
 
-      setOpen(false);
+        setOpen(false);
     };
     const [message, setMessage] = useState('');
 
@@ -398,8 +360,11 @@ function ViewMixtapePage(props) {
         if (message) {
             const owners = mixtape.collaborators.filter(c => c.permissions === 'owner');
             for (const owner of owners) {
-                sendAnonymousMessage(mixtape._id, owner.user, message);
-                socket.emit('sendInboxMessage', { recipientId: owner.user });
+                if (props.anonymous) {
+                    sendAnonymousMessage(mixtape._id, owner.user, message).then(() => socket.emit('sendInboxMessage', { recipientId: owner.user }));
+                } else {
+                    sendMixtapeMessage(mixtape._id, owner.user, message).then(() => socket.emit('sendInboxMessage', { recipientId: owner.user }));
+                }
             }
         }
         setWriteMessageDialogOpen(false);
@@ -442,7 +407,8 @@ function ViewMixtapePage(props) {
                     <TextField
                         multiline
                         rows={17}
-                        style={{ height: '300px', width: '400px' }}
+
+                        style={{ width: '400px' }}
                         autoFocus
                         variant="filled"
                         margin="dense"
@@ -450,6 +416,8 @@ function ViewMixtapePage(props) {
                         label="Message"
                         type="email"
                         fullWidth
+                        inputProps={{ maxLength: 250 }}
+                        helperText={`${message.length}/250 characters`}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                     />
@@ -494,12 +462,6 @@ function ViewMixtapePage(props) {
             <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
                 <ArrowBackIcon />
             </IconButton>
-            <br />
-
-            <br />
-
-            <br />
-            <br />
 
             <Paper style={{ height: '10em', padding: '1%', marginLeft: '5%', marginBottom: '2%', width: '70%' }}>
                 {/* {isEditing ? <TextField value={mixtape.name} /> : <h1>{mixtape.name || 'Mixtape Title'}</h1>} */}
@@ -518,11 +480,15 @@ function ViewMixtapePage(props) {
                         <Typography variant="h6" style={{ display: 'inline-block' }}>{`Created by ${owner} ${mixtape?.songs.length} songs, ${humanizeDuration(mixtape?.duration * 1000).replaceAll(',', '')}`}</Typography>
                     </Grid>
                     <Grid xs={3} item>
-                        <Box style={{ display: 'inline-flex', flexDirection: 'row', float: 'right' }}>
-                            <FavoriteMixtapeButton id={props.match.params.id} style={{ margin: '10px' }} />
-                            <CommentIcon onClick={() => setWriteMessageDialogOpen(true)} style={{ margin: '10px', cursor: 'pointer' }} />
-                            <ShareIcon style={{ margin: '10px' }} onClick={() => shareMixtapeHandler(mixtape)} />
-                        </Box>
+                        {
+                            user.isLoggedIn ?
+                                <Box style={{ display: 'inline-flex', flexDirection: 'row', float: 'right' }}>
+                                    <FavoriteMixtapeButton id={props.match.params.id} style={{ margin: '10px' }} />
+                                    <CommentIcon onClick={() => setWriteMessageDialogOpen(true)} style={{ margin: '10px', cursor: 'pointer' }} />
+                                    <ShareIcon style={{ margin: '10px' }} onClick={() => shareMixtapeHandler(mixtape)} />
+                                </Box>
+                                : undefined
+                        }
                     </Grid>
                 </Grid>
 
@@ -576,73 +542,74 @@ function ViewMixtapePage(props) {
                                 </Grid>
                             </Grid>
                             :
-                            <Grid container>
-                                <Grid item xs={4}>
-                                    <Button
-                                        style={{ marginRight: '5%', float: 'left', backgroundColor: 'steelblue' }}
-                                        variant="contained"
-                                        color="secondary"
-                                        startIcon={<MusicNoteIcon />}
-                                        onClick={createListeningRoomButtonHandler}
-                                    >
-                                        Create Listening Room
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={2} />
-                                <Grid item xs={2}>
-                                    <Button
-                                        style={{ marginRight: '5%', float: 'right', backgroundColor: 'green' }}
-                                        variant="contained"
-                                        color="secondary"
-                                        startIcon={<SettingsIcon />}
-                                        onClick={() => setSettingsPopupIsOpen(!settingsPopupIsOpen)}
-                                    >
-                                        Settings
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={2} >
-                                    <Button
-                                    style={{ marginRight: '5%', float: 'right', backgroundColor: 'purple' }}
-                                    variant="contained"
-                                    color="secondary"
-                                    startIcon={<FileCopyIcon />}
-                                    onClick={() => handleClick(mixtape)}
-                                    >
-                                        Copy
-                                    </Button>
-                                    <Snackbar
-                                        anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'left',
-                                        }}
-                                        open={open}
-                                        autoHideDuration={4000}
-                                        onClose={handleClose}
-                                        message="Copied to your mixtapes"
-                                        action={
-                                        <React.Fragment>
-                                            <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-                                            <CloseIcon fontSize="small" />
-                                            </IconButton>
-                                        </React.Fragment>
-                                        }
-                                    />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    {
-                                        !isEditing && editButtonVisible ?
-                                            <Button
-                                                startIcon={<EditIcon />}
-                                                onClick={enableEditingHandler}
-                                                style={{ position: 'absolute', right: '5%' }}
-                                                variant="contained">
-                                                EDIT
+                            user?.isLoggedIn ?
+                                <Grid container>
+                                    <Grid item xs={4}>
+                                        <Button
+                                            style={{ marginRight: '5%', float: 'left', backgroundColor: 'steelblue' }}
+                                            variant="contained"
+                                            color="secondary"
+                                            startIcon={<MusicNoteIcon />}
+                                            onClick={createListeningRoomButtonHandler}
+                                        >
+                                            Create Listening Room
+                                        </Button>
+                                    </Grid>
+                                    <Grid item xs={2} />
+                                    <Grid item xs={2}>
+                                        <Button
+                                            style={{ marginRight: '5%', float: 'right', backgroundColor: 'green' }}
+                                            variant="contained"
+                                            color="secondary"
+                                            startIcon={<SettingsIcon />}
+                                            onClick={() => setSettingsPopupIsOpen(!settingsPopupIsOpen)}
+                                        >
+                                            Settings
+                                        </Button>
+                                    </Grid>
+                                    <Grid item xs={2} >
+                                        <Button
+                                            style={{ marginRight: '5%', float: 'right', backgroundColor: 'purple' }}
+                                            variant="contained"
+                                            color="secondary"
+                                            startIcon={<FileCopyIcon />}
+                                            onClick={() => handleClick(mixtape)}
+                                        >
+                                            Copy
                                             </Button>
-                                            : undefined
-                                    }
+                                        <Snackbar
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'left',
+                                            }}
+                                            open={open}
+                                            autoHideDuration={4000}
+                                            onClose={handleClose}
+                                            message="Copied to your mixtapes"
+                                            action={
+                                                <React.Fragment>
+                                                    <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                                                        <CloseIcon fontSize="small" />
+                                                    </IconButton>
+                                                </React.Fragment>
+                                            }
+                                        />
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        {
+                                            !isEditing && editButtonVisible ?
+                                                <Button
+                                                    startIcon={<EditIcon />}
+                                                    onClick={enableEditingHandler}
+                                                    style={{ position: 'absolute', right: '5%' }}
+                                                    variant="contained">
+                                                    EDIT
+                                                </Button>
+                                                : undefined
+                                        }
+                                    </Grid>
                                 </Grid>
-
-                            </Grid>
+                                : undefined
                         }
                     </Toolbar>
                 </Grid>
@@ -655,6 +622,7 @@ function ViewMixtapePage(props) {
                         setIsEditing={setIsEditing}
                         mixtape={mixtape}
                         setMixtape={setMixtape}
+                        listeningRoom={false}
                     />
                 </Grid>
             </Grid>

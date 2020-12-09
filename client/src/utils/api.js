@@ -9,7 +9,7 @@ let SERVER_ROOT_URL;
 try {
     SERVER_ROOT_URL = new URL(process.env.REACT_APP_SERVER_ROOT_URL).href;
 } catch (err) {
-    SERVER_ROOT_URL = new URL('http://localhost:5000/').href;
+    SERVER_ROOT_URL = new URL('http://localhost:3000/').href;
 }
 
 let CLIENT_ROOT_URL;
@@ -268,6 +268,10 @@ async function sendAnonymousMessage(mixtapeId, recipient, message) {
     await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId, isAnonymous: true });
 }
 
+async function sendMixtapeMessage(mixtapeId, recipient, message) {
+    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId, isAnonymous: false });
+}
+
 async function deleteInboxMessage(messageId) {
     const messages = await axios.delete(new URL(`/api/user/deleteMessage/${messageId}`, SERVER_ROOT_URL).href);
     return messages.data;
@@ -285,14 +289,24 @@ async function sendListeningRoomInvitation(recipient, listeningRoomId, mixtapeId
     await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId, isAnonymous: false });
 }
 
-async function getRandomMixtapes(count) {
-    const mixtapes = await axios.get(new URL('/api/mixtape/random', SERVER_ROOT_URL).href, { params: { count } });
+async function getRandomMixtapes(count, type) {
+    const mixtapes = await axios.get(new URL('/api/mixtape/random', SERVER_ROOT_URL).href, { params: { count, type } });
     return mixtapes.data;
 }
 
+// async function getPopularMixtapes(count) {
+//     const mixtapes = await axios.get(new URL('/api/mixtape/popular', SERVER_ROOT_URL).href, { params: { count } });
+//     return mixtapes.data;
+// }
+
 async function getPopularMixtapes(count) {
-    const mixtapes = await axios.get(new URL('/api/mixtape/popular', SERVER_ROOT_URL).href, { params: { count } });
+    const mixtapes = await axios.get(new URL('/api/user/popular', SERVER_ROOT_URL).href, { params: { count } });
     return mixtapes.data;
+}
+
+async function getSongTempo(listeningRoomId, songIndex) {
+    const analysis = await axios.get(new URL(`/api/listeningroom/${listeningRoomId}/audioAnalysis/${songIndex}`, SERVER_ROOT_URL).href);
+    return analysis.data;
 }
 
 export {
@@ -340,8 +354,10 @@ export {
     sendListeningRoomInvitation,
     forkMixtape,
     sendAnonymousMessage,
+    sendMixtapeMessage,
     deleteInboxMessage,
     getRandomMixtapes,
     getPopularMixtapes,
+    getSongTempo,
     SERVER_ROOT_URL,
 };

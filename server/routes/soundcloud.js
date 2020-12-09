@@ -29,7 +29,7 @@ router.get('/itemDuration', async (req, res) => {
     const { itemId } = req.query;
     try {
         const results = await getSongInfo(itemId);
-        const duration = results.duration;
+        const duration = results.duration / 1000; // soundcloud api returns duration in milliseconds
         res.json(duration);
     } catch(err) {
         console.log(err);

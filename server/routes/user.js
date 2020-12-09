@@ -188,11 +188,12 @@ router.post('/sendMessage', async (req, res) => {
         recipient,
     };
     if (!isAnonymous) {
-        inboxMessage.sender = req.user.username;
+        inboxMessage.senderId = req.user._id;
+        inboxMessage.senderUsername = req.user.username;
     }
     try {
         const inboxMessageDb = await InboxMessage.create(inboxMessage);
-        res.send(inboxMessage._id);
+        res.send(inboxMessageDb._id);
     } catch(err) {
         res.status(500).send(err);
     }
@@ -241,5 +242,18 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.get('/popular', async (req, res) => {
+    console.log("Inside user.js");
+    const { count } = req.params.count; //req.query;
+    console.log("count: " + count);
+    var group = {$group:{favoritedMixtapes:"$favoritedMixtapes", fullDocument:{$push:"$$ROOT"}, count:{$sum:1}}}
+    var sort = {$sort:{"_id":-1}}
+    var limit= {$limit:1}
+    const result = await User.aggregate([group, sort, limit])
+    console.log(result);
+    // const mixtapes = await Mixtape.find({ isPublic: true }).lean();
+    // console.log("mixtapes in router: " + mixtapes);
+    // res.send(getRandomSubarray(mixtapes, count));
+});
 
 module.exports = router;

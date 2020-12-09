@@ -93,8 +93,6 @@ function PageFrame(props) {
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
-  // TODO: add setUser to destructuring when needed
-    // Removed for now to avoid build warnings
   const { user, setUser } = useContext(UserContext);
 
   const logout = async () => {
@@ -113,110 +111,104 @@ function PageFrame(props) {
   };
 
 
-  if (props.invisible) {
+  if (!user.isLoggedIn) {
     return (<div />);
   }
   return (
-    <div style={{position: 'relative'}}>
+    <div style={{ position: 'relative' }}>
       <AppBar className={classes.navbar} position="static">
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
-            {user.username} {/* TODO: get from dummy data */ }
+            {user.username}
           </Typography>
           <SearchBar showDropdown />
-          <Button onClick={() => logout()} style={{margin: '1em', backgroundColor: '#4f7aa1', align: 'right'}} variant="contained">Logout</Button>
+          {user?.isLoggedIn ?
+            <Button onClick={() => logout()} style={{ margin: '1em', backgroundColor: '#4f7aa1', align: 'right' }} variant="contained">Logout</Button>
+            : undefined
+          }
         </Toolbar>
       </AppBar>
       <Drawer
         variant="permanent"
         className={clsx(classes.drawer, {
-        [classes.drawerOpen]: open,
-        [classes.drawerClose]: !open,
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
         })}
         classes={{
-        paper: clsx({
+          paper: clsx({
             [classes.drawerOpen]: open,
             [classes.drawerClose]: !open,
             [classes.paper]: true,
-        }),
+          }),
         }}
-        >
-            <div className={classes.toolbar}>
-                <IconButton onClick={open ? handleDrawerClose : handleDrawerOpen}>
-                    {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                </IconButton>
+      >
+        <div className={classes.toolbar}>
+          <IconButton onClick={open ? handleDrawerClose : handleDrawerOpen}>
+            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton>
+        </div>
+        <Divider />
+        <List>
+          {user?.isLoggedIn ?
+            <div>
+              <ListItem onClick={() => history.push('/')} button>
+                <ListItemIcon>
+                  <img src={dashboard} alt='logo' />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard" />
+              </ListItem>
+              <ListItem onClick={() => history.push('/me')} button>
+                <ListItemIcon>
+                  <MyProfileIcon className={classes.icon} />
+                </ListItemIcon>
+                <ListItemText primary="My Profile" />
+              </ListItem>
+              <ListItem onClick={() => history.push('/mymixtapes')} button>
+                <ListItemIcon>
+                  <CassetteTapeIcon className={classes.icon} />
+                </ListItemIcon>
+                <ListItemText primary="My Mixtapes" />
+              </ListItem>
+              <ListItem onClick={() => history.push('/followedusers')} button style={user.isGuest ? { display: 'none' } : {}}>
+                <ListItemIcon>
+                  <FollowedUsersIcon className={classes.icon} />
+                </ListItemIcon>
+                <ListItemText primary="Followed Users" />
+              </ListItem>
+              <ListItem onClick={() => history.push('/favoritedmixtapes')} button style={user.isGuest ? { display: 'none' } : {}}>
+                <ListItemIcon>
+                  <FavoritedMixtapesIcon className={classes.icon} />
+                </ListItemIcon>
+                <ListItemText primary="Favorited Mixtapes" />
+              </ListItem>
+              <ListItem onClick={() => history.push('/inbox')} button style={user.isGuest ? { display: 'none' } : {}}>
+                <ListItemIcon>
+                  <Badge badgeContent={user.inboxMessages.length} color="error">
+                    <InboxIcon className={classes.icon} />
+                  </Badge>
+                </ListItemIcon>
+                <ListItemText primary="Inbox" />
+              </ListItem>
+              <ListItem onClick={() => history.push('/anonymousmixtapes')} button style={user.isGuest ? { display: 'none' } : {}}>
+                <ListItemIcon>
+                  <AnonymousMixtapesIcon className={classes.icon} />
+                </ListItemIcon>
+                <ListItemText primary="Anonymous Mixtapes" />
+              </ListItem>
             </div>
-            <Divider />
-                <List>
-                    <ListItem onClick={() => history.push('/') } button>
-                      <ListItemIcon>
-                        <img  src={dashboard} alt='logo' /> 
-                      </ListItemIcon>
-                      <ListItemText primary="Dashboard" />
-                    </ListItem>
-                <ListItem onClick={() => history.push('/me')} button style={user.isGuest ? {display: 'none'} : {}}>
-                      <ListItemIcon>
-                          <MyProfileIcon className={classes.icon} />    
-                      </ListItemIcon>
-                      <ListItemText primary="My Profile" />
-                    </ListItem>
-                    <ListItem onClick={() => history.push('/mymixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
-                      <ListItemIcon>
-                          <CassetteTapeIcon className={classes.icon} />    
-                      </ListItemIcon>
-                      <ListItemText primary="My Mixtapes" />
-                    </ListItem>
-                    {/* <ListItem onClick={() => history.push('/NotFound')} button>
-                        <ListItemIcon>
-                            <NotFoundIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Page Not Found" />
-                    </ListItem> */}
-                    {/* <ListItem onClick={() => history.push('/SignUp')} button>
-                        <ListItemIcon>
-                            <SignUpIcon />    
-                        </ListItemIcon>
-                        <ListItemText primary="Sign Up" />
-                    </ListItem> */}
-                  <ListItem onClick={() => history.push('/followedusers')} button style={user.isGuest ? {display: 'none'} : {}}>
-                      <ListItemIcon>
-                          <FollowedUsersIcon className={classes.icon} />    
-                      </ListItemIcon>
-                      <ListItemText primary="Followed Users" />
-                  </ListItem>
-                  <ListItem onClick={() => history.push('/favoritedmixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
-                      <ListItemIcon>
-                          <FavoritedMixtapesIcon className={classes.icon} />    
-                      </ListItemIcon>
-                      <ListItemText primary="Favorited Mixtapes" />
-                  </ListItem>
-                  <ListItem onClick={() => history.push('/inbox')} button style={user.isGuest ? {display: 'none'} : {}}>
-                      <ListItemIcon>
-                          {/* TODO: get actual number of messages in inbox */}
-                          <Badge badgeContent={user.inboxMessages.length} color="error">
-                            <InboxIcon className={classes.icon} />
-                          </Badge>
-                      </ListItemIcon>
-                      <ListItemText primary="Inbox" />
-                  </ListItem>
-                  <ListItem onClick={() => history.push('/anonymousmixtapes')} button style={user.isGuest ? {display: 'none'} : {}}>
-                      <ListItemIcon>
-                          <AnonymousMixtapesIcon className={classes.icon} />    
-                      </ListItemIcon>
-                      <ListItemText primary="Anonymous Mixtapes" />
-                  </ListItem>
-                  <ListItem onClick={() => history.push('/atmosphere')} button>
-                        <ListItemIcon>
-                            <AtmosphereSoundsIcon className={classes.icon} />    
-                        </ListItemIcon>
-                        <ListItemText primary="Atmosphere Sounds" />
-                    </ListItem>
-                </List>
-            <Divider />
-        </Drawer>
-        <AppBar style={{ backgroundColor: '#fff', display: currentSong ? '' : 'none', top: 'auto', bottom: 0,}}>
-            <Player />
-        </AppBar>
+            : undefined}
+          <ListItem onClick={() => history.push('/atmosphere')} button>
+            <ListItemIcon>
+              <AtmosphereSoundsIcon className={classes.icon} />
+            </ListItemIcon>
+            <ListItemText primary="Atmosphere Sounds" />
+          </ListItem>
+        </List>
+        <Divider />
+      </Drawer>
+      <AppBar style={{ backgroundColor: '#fff', display: currentSong ? '' : 'none', top: 'auto', bottom: 0, }}>
+        <Player />
+      </AppBar>
     </div>
   );
 }

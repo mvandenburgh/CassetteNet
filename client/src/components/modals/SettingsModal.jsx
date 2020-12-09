@@ -81,6 +81,8 @@ function SettingsModal(props) {
 
     const [toDelete, setToDelete] = useState([]);
 
+    const [selectedUser, setSelectedUser] = useState(null);
+
     useEffect(() => {
         if (mixtape?.collaborators)
             setUnsavedCollaborators(mixtape.collaborators);
@@ -134,10 +136,6 @@ function SettingsModal(props) {
         history.goBack();
     };
 
-    const showDoneIcon = () => {
-        return mixtape?.collaborators.length !== unsavedCollaborators.length || editing;
-    };
-
     const savePermissions = () => {
         setEditing(false);
         mixtape.collaborators = unsavedCollaborators;
@@ -145,12 +143,19 @@ function SettingsModal(props) {
         updateMixtape(mixtape);
     }
 
-    const selectUser = (newUser) => {
+    const selectUser = (user) => {
+        setSelectedUser(user);
+    }
+
+    const addUser = (newUser) => {
         if (!newUser) return;
         const newCollaborators = [...unsavedCollaborators];
-        const { username, _id } = newUser;
-        newCollaborators.push({ username, user: _id, permissions: 'viewer' });
-        setUnsavedCollaborators(newCollaborators);
+        const { username, _id } = selectedUser;
+        const newCollaboratorsIds = newCollaborators.map(c => c.user);
+        if (!newCollaboratorsIds.includes(_id)) {
+            newCollaborators.push({ username, user: _id, permissions: 'viewer' });    
+            setUnsavedCollaborators(newCollaborators);
+        }
     }
 
     const changePublicStatus = () => {
@@ -179,7 +184,16 @@ function SettingsModal(props) {
                 <Grid container style={{ backgroundColor: blueGrey[400], height: '70%', width: '60vw', overflow: 'auto' }}>
                     <Grid item xs={3} />
                     <Grid item xs={6} style={{ backgrondColor: 'green' }}>
-                        <Typography align="center" variant="h3">Mixtape Settings</Typography>
+                        <Typography align="center" variant="h3">
+                            {"Mixtape Settings "}
+                            {
+                            editing ? <DoneIcon align="right" style={{ color: 'white' }} onClick={savePermissions} />
+                            :
+                            canEdit() ? <EditIcon align="right" style={{ color: 'white' }} onClick={() => setEditing(true)} />
+                            :
+                            undefined
+                            }
+                        </Typography>
                         <hr />
                     </Grid>
                     <Grid item xs={3} />
@@ -198,18 +212,12 @@ function SettingsModal(props) {
                                 <Grid item xs={4}>
                                     <Typography style={{ color: 'white' }} align="center" variant="h6">Role</Typography>
                                 </Grid>
-                                <Grid item xs={1}>
-                                    {editing ?
-                                        <DeleteIcon align="right" style={{ color: 'white' }} onClick={handleClickGarbage} />
-                                        :
-                                        canEdit() ?
-                                        <EditIcon align="right" style={{ color: 'white' }} onClick={() => setEditing(true)} />
+                                <Grid item xs={2}>
+                                    {
+                                        editing ? <DeleteIcon align="right" style={{ color: 'white' }} onClick={handleClickGarbage} />
                                         :
                                         undefined
                                     }
-                                </Grid>
-                                <Grid item xs={1} style={{ display: showDoneIcon() ? '' : 'none' }}>
-                                    <DoneIcon align="right" style={{ color: 'white' }} onClick={savePermissions} />
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} style={{ overflow: 'auto', maxHeight: '100%' }}>
@@ -243,10 +251,10 @@ function SettingsModal(props) {
 
                             <Grid container style={{ marginTop: '1em' }}>
                                 <Grid item xs={10}>
-                                    <UserSearchBar userSelectHandler={selectUser} adminSearchBool={false} />
+                                    {editing ? <UserSearchBar userSelectHandler={selectUser} adminSearchBool={false} /> : undefined}
                                 </Grid>
                                 <Grid item xs={1}>
-                                    <Button style={{ marginTop: '1em' }} variant="contained"><AddIcon /></Button>
+                                    {editing ? <Button style={{ marginTop: '1em' }} onClick={addUser} variant="contained"><AddIcon /></Button> : undefined}
                                 </Grid>
                                 <Grid item xs={1} style={{ width: '100%', height: '100%' }} />
                             </Grid>
@@ -257,7 +265,7 @@ function SettingsModal(props) {
                         <Grid container justify="center" alignItems="center" style={{ height: '50%' }}>
                             <Grid item xs={12}>
                                 <FormControlLabel
-                                    control={<Switch disabled={!canEdit()} checked={isPublic} onChange={changePublicStatus} />}
+                                    control={<Switch disabled={!editing} checked={isPublic} onChange={changePublicStatus} />}
                                     label="Mixtape Public?"
                                 />
                             </Grid>
@@ -270,6 +278,7 @@ function SettingsModal(props) {
                                         color="secondary"
                                         onClick={() => handleDeleteMixtape(mixtape)}
                                         startIcon={<WarningIcon />}
+                                        disabled={!editing}
                                     >
                                         Delete Mixtape
                                 </Button>

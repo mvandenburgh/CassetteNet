@@ -8,8 +8,8 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session); // stores session info in database instead of server memory
 const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const passport = require('./auth/passport');
+const passportSocketIo = require('passport.socketio');
 const initSockets = require('./sockets');
 
 // import routes
@@ -32,19 +32,23 @@ const store = new MongoDBStore({
 
 const app =  express();
 
-app.set('trust proxy', 1) // trust first proxy (needed for netlify)
-app.use(cors({ credentials: true, origin: process.env.ALLOWED_ORIGIN || 'http://localhost:3000' }));
 app.use(fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 }, // TODO: decide on file size limit
 }));
 app.use(cookieParser()); // middleware for parsing cookies in requests
 app.use(bodyParser.urlencoded({ extended: false })); // middleware for parsing req.body
 app.use(bodyParser.json());
+
+const SESSION_KEY = 'connect.sid';
+const SESSION_SECRET = process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'secret';
+app.set('trust proxy', 1); // trust first proxy
 app.use(session({ // initialize login sessions
-    secret: process.env.NODE_ENV === 'production' ? process.env.JWT_SECRET : 'secret',
+    key: SESSION_KEY,
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
+        maxAge: 86400000, // expire in one day
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     },
@@ -68,12 +72,15 @@ app.get('*', (req, res) => res.sendFile('index.html', { root: path.join(__dirnam
 
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
-const io = socketIO(server, {
-    cors: {
-      origin: process.env.ALLOWED_ORIGIN || 'http://localhost:3000'
-    }
-});
 
+const io = socketIO(server);
+io.use(passportSocketIo.authorize({
+    cookieParser,
+    key: SESSION_KEY,
+    secret: SESSION_SECRET,
+    store,
+    fail: (data, message, error, accept) => console.log(message),
+}));
 initSockets(io);
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}...`));
