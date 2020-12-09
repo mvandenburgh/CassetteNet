@@ -475,7 +475,7 @@ function ViewMixtapePage(props) {
                         }
 
                         <br />
-                        <Typography variant="h6" style={{ display: 'inline-block' }}>{`Created by ${owner} ${mixtape?.songs.length} songs, ${humanizeDuration(mixtape?.duration * 1000).replaceAll(',', '')}`}</Typography>
+                        <Typography variant="h6" style={{ display: 'inline-block' }}>{`Created by ${owner} ${mixtape?.songs.length} songs, ${humanizeDuration(mixtape?.duration * 1000, { round: true }).replaceAll(',', '')}`}</Typography>
                     </Grid>
                     <Grid xs={3} item>
                         {
