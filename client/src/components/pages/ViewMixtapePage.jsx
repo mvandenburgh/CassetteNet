@@ -193,11 +193,9 @@ function ViewMixtapePage(props) {
         mixtape.name = editMixtapeNameField;
         setMixtape(mixtape);
         updateMixtape(mixtape);
-        setCurrentSong({
-            mixtape: currentSong.mixtape,
-            index: currentSong.index,
-            disabled: null,
-        });
+        const newCurrentSong = { ...currentSong };
+        newCurrentSong.disabled = null;
+        setCurrentSong(newCurrentSong);
     }
 
     const undoDeleteSong = () => {

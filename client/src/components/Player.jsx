@@ -109,24 +109,18 @@ function Player(props) {
       return;
     }
     setPlaying(true);
-    if (!currentTime && !currentSong.listeningRoom) {
+    if (!currentTime) {
       playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
     }
   };
 
   const handlePause = () => {
-    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
-      return;
-    }
     setPlaying(false);
     const stoppedAt = playerRef.current.getCurrentTime();
     setCurrentTime(stoppedAt);
   };
 
   const handleNextSong = () => {
-    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
-      return;
-    }
     setPlaying(false);
     const newCurrentSong = { ...currentSong };
     if (shuffle) {
@@ -141,9 +135,6 @@ function Player(props) {
   };
 
   const handlePrevSong = () => {
-    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
-      return;
-    }
     setPlaying(false);
     const newCurrentSong = { ...currentSong };
     if (shuffle) {
@@ -158,9 +149,6 @@ function Player(props) {
   };
 
   const handleSetLoop = () => {
-    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
-      return;
-    }
     const loopState = loop;
     setLoop(!loopState);
     if (!loopState) {
@@ -169,9 +157,6 @@ function Player(props) {
   }
 
   const handleSetShuffle = () => {
-    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
-      return;
-    }
     const shuffleState = shuffle;
     if (!shuffleState) {
       setLoop(false);
@@ -180,9 +165,6 @@ function Player(props) {
   }
 
   const seek = (time) => {
-    if (currentSong.listeningRoom) {
-      return;
-    }
     const seekTo = time * playerRef.current.getDuration();
     playerRef.current.seekTo(seekTo);
   }
@@ -207,7 +189,7 @@ function Player(props) {
     setMusicVolume(newValue);
   };
 
-  if (!currentSong?.index) {
+  if (!currentSong?.index && currentSong.index !== 0) {
     return null;
   }
 
@@ -245,15 +227,15 @@ function Player(props) {
         </div>
         <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
         {playing ?
-          <PlayerIcon.Pause onClick={currentSong?.listeningRoom ? undefined : throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-          <PlayerIcon.Play onClick={!currentSong?.listeningRoom ? undefined : throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+          <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+          <PlayerIcon.Play onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
         }
         <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
         <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-          <ShuffleIcon onClick={currentSong?.listeningRoom ? undefined : handleSetShuffle} />
+          <ShuffleIcon onClick={handleSetShuffle} />
         </div>
         <div style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-          <LoopIcon onClick={currentSong?.listeningRoom ? undefined : handleSetLoop} />
+          <LoopIcon onClick={handleSetLoop} />
         </div>
         <VolumeSlider
           value={musicVolume}
