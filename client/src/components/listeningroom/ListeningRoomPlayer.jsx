@@ -94,8 +94,11 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
     useInterval(() => {
         if (playerRef.current && playing && listeningRoom?.startedAt && listeningRoom?.wasAt) {
             const time = ((Date.now() / 1000) - listeningRoom.startedAt) + listeningRoom.wasAt;
-            console.log(time);
-            setCurrentTime(time);
+            if (time >= 0) {
+                setCurrentTime(time);
+            } else {
+                setCurrentTime(0);
+            }
         }
     }, 500);
 
@@ -112,7 +115,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
             newListeningRoom.currentSong = Math.floor(Math.random() * newListeningRoom.mixtape.songs.length);
         } else if (newListeningRoom.currentSong === newListeningRoom.mixtape.songs.length - 1) {
             newListeningRoom.currentSong = 0;
-        } else {
+        } else if (!loop) {
             newListeningRoom.currentSong = newListeningRoom.currentSong + 1;
         }
         socket.emit('changeSong', newListeningRoom.currentSong);
@@ -128,7 +131,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
             newListeningRoom.currentSong = Math.floor(Math.random() * newListeningRoom.mixtape.songs.length);
         } else if (newListeningRoom.currentSong === 0) {
             newListeningRoom.currentSong = newListeningRoom.mixtape.songs.length - 1;
-        } else {
+        } else if (!loop) {
             newListeningRoom.currentSong = newListeningRoom.currentSong - 1;
         }
         socket.emit('changeSong', newListeningRoom.currentSong);
@@ -230,7 +233,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
                 />
             </Grid>
             <ReactPlayer
-                onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
+                onEnded={handleNextSong}
                 ref={playerRef} playing={playing} style={{ display: 'none' }}
                 url={listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.listeningRoomPlaybackUrl}
                 volume={musicVolume}
