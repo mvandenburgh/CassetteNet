@@ -14,6 +14,7 @@
     "express": "^4.17.1",
     "express-http-proxy": "^1.6.2",
     "node-media-server": "^2.2.4",
+    "socket.io-client": "^3.0.4",
     "soundcloud-downloader": "^0.2.1",
     "ytdl-core": "^4.1.4"
   }

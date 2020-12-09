@@ -6,8 +6,13 @@ const proxy = require('express-http-proxy');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const NodeMediaServer = require('node-media-server');
+const socketIOClient = require('socket.io-client');
 const ytdl = require('ytdl-core');
 const scdl = require('soundcloud-downloader').default;
+
+const SERVER_ROOT_URL = process.env.SERVER_ROOT_URL || 'http://localhost:5000';
+
+const socket = socketIOClient(SERVER_ROOT_URL);
 
 // configuration for node-media-server
 const config = {
@@ -50,7 +55,8 @@ app.use(cors());
 app.use('/stream', proxy(`http://localhost:${process.env.MEDIA_PORT || 8888}/`));
 
 app.post('/startStream', async (req, res) => {
-    const { type, id } = req.body;
+    const { type, id, index, listeningRoomId } = req.body;
+    if (!type || !id || (!index && index !== 0) || !listeningRoomId) return res.status(400).send('invalid request');
     const filename = Date.now();
     let writeStream;
     if (type === 'youtube') {
@@ -63,8 +69,14 @@ app.post('/startStream', async (req, res) => {
     writeStream.on('finish', () => {
         // spawn ffmpeg process to start live stream
         const ffmpegStreamProcess = child_process.spawn('ffmpeg', [`-re -i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/${filename}`], { shell: true });
-        res.json(filename);
 
+        res.json(filename);
+        // ffmpegStreamProcess.stderr.on('data', (data) => {
+        //     const dataString = data.toString();
+        //     if (dataString.includes('[INFO] [rtmp play] Join stream.')) {
+        //         socket.emit('confirmSongChanged', { startedAt: streamStartedAt, index, listeningRoomId });
+        //     }
+        // });
         // remove mp3 file and streaming files after stream is over
         ffmpegStreamProcess.on('close', (code) => {
             fs.unlink(path.join(__dirname, `mp3/${filename}.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}.mp3`)}'.`));

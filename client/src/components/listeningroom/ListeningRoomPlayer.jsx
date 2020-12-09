@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { throttle } from 'lodash';
 import { Grid, Slider as VolumeSlider } from '@material-ui/core';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import { useInterval } from '../../hooks';
-import CurrentSongContext from '../../contexts/CurrentSongContext';
+import UserContext from '../../contexts/UserContext';
 import PlayingSongContext from '../../contexts/PlayingSongContext';
 import AtmosphereSoundContext from '../../contexts/AtmosphereSoundContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
@@ -87,21 +86,14 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
     const { socket } = useContext(SocketIOContext);
 
     const [currentTime, setCurrentTime] = useState(0);
-    const [startedAt, setStartedAt] = useState(null);
-    const [songWasAt, setSongWasAt] = useState(null);
 
-    const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
-
-    const [currentSongUrl, setCurrentSongUrl] = useState(listeningRoom?.mixtape.songs[currentSong?.index]?.listeningRoomPlaybackUrl);
-
-    const currentSongRef = useRef();
-    useEffect(() => currentSongRef.current = currentSong, [currentSong]);
+    const { user } = useContext(UserContext);
 
     const { playing, setPlaying } = useContext(PlayingSongContext);
 
     useInterval(() => {
-        if (playerRef.current && playing && startedAt >= 0 && songWasAt >= 0) {
-            const time = ((Date.now() / 1000) - startedAt) + songWasAt;
+        if (playerRef.current && playing && listeningRoom?.startedAt && listeningRoom?.wasAt) {
+            const time = ((Date.now() / 1000) - listeningRoom.startedAt) + listeningRoom.wasAt;
             console.log(time);
             setCurrentTime(time);
         }
@@ -110,69 +102,40 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
     const [shuffle, setShuffle] = useState(false);
     const [loop, setLoop] = useState(false);
 
-    const handlePlay = () => {
-        if (!currentSong.listeningRoomOwner) {
-            return;
-        }
-        socket.emit('playSong', { index: currentSong.index, timestamp: currentTime })
-        setPlaying(true);
-        if (!currentTime && !currentSong.listeningRoom) {
-            playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
-        }
-    };
-
-    const handlePause = () => {
-        if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
-            return;
-        }
-        setPlaying(false);
-        const stoppedAt = playerRef.current.getCurrentTime()
-        if (currentSong.listeningRoomOwner) {
-            socket.emit('pauseSong', { timestamp: stoppedAt })
-        }
-        setCurrentTime(stoppedAt);
-    };
-
     const handleNextSong = () => {
-        if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+        if (user._id !== listeningRoom.owner.user) {
             return;
         }
         setPlaying(false);
-        const newCurrentSong = { ...currentSong };
+        const newListeningRoom = { ...listeningRoom };
         if (shuffle) {
-            newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
-        } else if (currentSong.index === currentSong.mixtape.songs.length - 1) {
-            newCurrentSong.index = 0;
+            newListeningRoom.currentSong = Math.floor(Math.random() * newListeningRoom.mixtape.songs.length);
+        } else if (newListeningRoom.currentSong === newListeningRoom.mixtape.songs.length - 1) {
+            newListeningRoom.currentSong = 0;
         } else {
-            newCurrentSong.index = currentSong.index + 1;
+            newListeningRoom.currentSong = newListeningRoom.currentSong + 1;
         }
-        if (currentSong.listeningRoomOwner) {
-            socket.emit('changeSong', newCurrentSong.index);
-        } else {
-            setCurrentSong(newCurrentSong);
-            setPlaying(true);
-        }
+        socket.emit('changeSong', newListeningRoom.currentSong);
     };
 
     const handlePrevSong = () => {
-        if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+        if (user._id !== listeningRoom.owner.user) {
             return;
         }
         setPlaying(false);
-        const newCurrentSong = { ...currentSong };
+        const newListeningRoom = { ...listeningRoom };
         if (shuffle) {
-            newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
-        } else if (currentSong.index === 0) {
-            newCurrentSong.index = currentSong.mixtape.songs.length - 1;
+            newListeningRoom.currentSong = Math.floor(Math.random() * newListeningRoom.mixtape.songs.length);
+        } else if (newListeningRoom.currentSong === 0) {
+            newListeningRoom.currentSong = newListeningRoom.mixtape.songs.length - 1;
         } else {
-            newCurrentSong.index = currentSong.index - 1;
+            newListeningRoom.currentSong = newListeningRoom.currentSong - 1;
         }
-        setCurrentSong(newCurrentSong);
-        setPlaying(true);
+        socket.emit('changeSong', newListeningRoom.currentSong);
     };
 
     const handleSetLoop = () => {
-        if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+        if (user._id !== listeningRoom.owner.user) {
             return;
         }
         const loopState = loop;
@@ -183,7 +146,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
     }
 
     const handleSetShuffle = () => {
-        if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
+        if (user._id !== listeningRoom.owner.user) {
             return;
         }
         const shuffleState = shuffle;
@@ -191,14 +154,6 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
             setLoop(false);
         }
         setShuffle(!shuffleState);
-    }
-
-    const seek = (time) => {
-        if (currentSong.listeningRoom) {
-            return;
-        }
-        const seekTo = time * playerRef.current.getDuration();
-        playerRef.current.seekTo(seekTo);
     }
 
     const { atmosphereSound, setAtmosphereSound } = useContext(AtmosphereSoundContext);
@@ -221,37 +176,6 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
         setMusicVolume(newValue);
     };
 
-    const play = () => {
-        // setCurrentTime(0);
-        setSongWasAt(0);
-        setStartedAt(Date.now() / 1000);
-        setPlaying(true);
-    }
-
-    useEffect(() => {
-        socket.on('changeSong', (payload) => {
-            console.log(`changeSong to ${payload.index}`);
-            console.log(payload.listeningRoom);
-            const newCurrentSong = { ...currentSongRef.current };
-            newCurrentSong.index = payload.index;
-            setCurrentSong(newCurrentSong);
-            setCurrentSongUrl(payload.url);
-            // setStartedAt(Date.now() / 1000);
-            // setSongWasAt(0);
-        });
-
-        socket.on('timestamp', (payload) => {
-            if (payload?.timestamp) {
-                const time = Number(((Date.now() / 1000) - payload.timestamp.startedAt) + payload.timestamp.wasAt) + 1;
-                setStartedAt(payload.timestamp.startedAt);
-                setSongWasAt(payload.timestamp.wasAt);
-                setCurrentTime(time);
-            } else if (payload?.index) {
-                // TODO: do something here
-            }
-        });
-    }, []);
-
     return (
         <div>
             <Grid style={{ margin: '10px 0' }} container justify="center">
@@ -261,11 +185,10 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
                 <ProgressBar
                     isEnabled
                     direction={Direction.HORIZONTAL}
-                    value={currentSong?.mixtape?.songs[currentSong?.index]?.duration ? (currentTime / currentSong?.mixtape.songs[currentSong?.index]?.duration) : 0}
-                    onChange={value => seek(value)}
+                    value={listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration ? (currentTime / listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration) : 0}
                 />
                 <div style={{ color: 'black', marginRight: '20px' }}>
-                    <FormattedTime numSeconds={currentSong?.mixtape?.songs[currentSong?.index]?.duration ? ((currentSong?.mixtape?.songs[currentSong?.index]?.duration - currentTime) * -1) : 0} />
+                    <FormattedTime numSeconds={listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration ? ((listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration - currentTime) * -1) : 0} />
                 </div>
             </Grid>
             <Grid style={{ margin: '10px 0' }} container justify="center">
@@ -286,15 +209,15 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
                 </div>
                 <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
                 {playing ?
-                    <PlayerIcon.Pause onClick={currentSong?.listeningRoom ? undefined : throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-                    <PlayerIcon.Play onClick={!currentSong?.listeningRoom ? undefined : throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+                    <PlayerIcon.Pause width={32} height={32} style={{ marginRight: 32 }} /> :
+                    <PlayerIcon.Play width={32} height={32} style={{ marginRight: 32 }} />
                 }
                 <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
                 <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-                    <ShuffleIcon onClick={currentSong?.listeningRoom ? undefined : handleSetShuffle} />
+                    <ShuffleIcon onClick={handleSetShuffle} />
                 </div>
                 <div style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-                    <LoopIcon onClick={currentSong?.listeningRoom ? undefined : handleSetLoop} />
+                    <LoopIcon onClick={handleSetLoop} />
                 </div>
                 <VolumeSlider
                     value={musicVolume}
@@ -308,10 +231,9 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
             </Grid>
             <ReactPlayer
                 onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
-                ref={playerRef} playing={true} style={{ display: 'none' }}
-                url={currentSongUrl}
+                ref={playerRef} playing={playing} style={{ display: 'none' }}
+                url={listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.listeningRoomPlaybackUrl}
                 volume={musicVolume}
-                onReady={play}
             />
             <ReactPlayer
                 loop

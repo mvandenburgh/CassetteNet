@@ -77,9 +77,9 @@ const useStyles = makeStyles((theme) => ({
 function ListeningRoomPage(props) {
     const classes = useStyles();
 
-    const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
+    const { setCurrentSong } = useContext(CurrentSongContext);
 
-    const { playing, setPlaying } = useContext(PlayingSongContext);
+    const { setPlaying } = useContext(PlayingSongContext);
 
     const history = useHistory();
 
@@ -110,15 +110,7 @@ function ListeningRoomPage(props) {
     useEffect(() => {
         getListeningRoom(props.match.params.id)
             .then(listeningRoom => {
-                console.log(listeningRoom)
-                const newCurrentSong = {};
-                newCurrentSong.listeningRoomOwner = user._id === listeningRoom.owner.user;
-                newCurrentSong.listeningRoom = true;
-                newCurrentSong.mixtape = listeningRoom.mixtape;
-                newCurrentSong.index = 0;
-                setCurrentSong(newCurrentSong);
-                // setPlaying(true);
-                console.log(newCurrentSong)
+                setPlaying(true);
                 setListeningRoom(listeningRoom);
                 setMixtape(listeningRoom.mixtape);
                 socket.emit('joinListeningRoom', { user, listeningRoom });
@@ -133,6 +125,12 @@ function ListeningRoomPage(props) {
                     const newListeningRoom = { ...lrRef.current };
                     newListeningRoom.chatMessages = newChatMessages;
                     setListeningRoom(newListeningRoom);
+                });
+                socket.on('changeSong', () => {
+                    getListeningRoom(props.match.params.id).then(lr => {
+                        setListeningRoom(lr);
+                        setPlaying(true);
+                    });
                 });
                 socket.on('endListeningRoom', () => {
                     setEndSessionPopupOpen(true);

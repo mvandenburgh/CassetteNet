@@ -48,20 +48,28 @@ router.post('/', async (req, res) => {
     delete mixtape.isPublic;
     delete mixtape.collaborators;
 
-    const livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, { type: mixtape.songs[0].type, id: mixtape.songs[0].id });
-    const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
-    
-    mixtape.songs[0].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
-
     const listeningRoom = new ListeningRoom({
         chatMessages: [],
         currentListeners: [],
-        mixtape,
         owner: req.user.id,
         currentSong: 0,
         snakeScores: [],
         rhythmScores: [],
     });
+
+    const livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, 
+        { 
+            type: mixtape.songs[0].type,
+            id: mixtape.songs[0].id,
+            index: 0,
+            listeningRoomId: listeningRoom._id,
+        }
+    );
+    const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
+
+    mixtape.songs[0].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
+
+    listeningRoom.mixtape = mixtape;
 
     await listeningRoom.save();
 

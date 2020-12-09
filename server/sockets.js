@@ -41,9 +41,9 @@ function initSockets(io) {
             socket.emit('userJoinedOrLeft');
             socket.to(listeningRoom._id).to(defaultRoom).emit('userJoinedOrLeft');
             socket.to(listeningRoom._id).to(defaultRoom).emit('newChatMessage', lr.chatMessages);
-            if (lr.startedAt && lr.wasAt) {
-                socket.emit('timestamp', { index: lr.currentSong, timestamp: {startedAt: lr.startedAt, wasAt: lr.wasAt } });
-            }
+            // if (lr.startedAt && lr.wasAt) {
+            //     socket.emit('timestamp', { index: lr.currentSong, timestamp: {startedAt: lr.startedAt, wasAt: lr.wasAt } });
+            // }
             socket.leave(defaultRoom); // leave the default room that socket.io creates
         });
 
@@ -124,21 +124,28 @@ function initSockets(io) {
             console.log('changeSong ' + index)
             const roomId = socket.rooms.values().next().value;
             const listeningRoom = await ListeningRoom.findById(roomId);
-            if (listeningRoom) {
+            if (listeningRoom && listeningRoom.owner && listeningRoom.owner.equals(user._id)) {
                 listeningRoom.currentSong = index;
                 if (listeningRoom.rhythmGameQueue.length > 0) {
                     io.in(roomId).emit('rhythmGameAboutToBegin');
                 }
                 listeningRoom.startedAt = null;
                 listeningRoom.wasAt = null;
-                const livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, { type: listeningRoom.mixtape.songs[index].type, id: listeningRoom.mixtape.songs[index].id });
+                const livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href,
+                    {
+                        type: listeningRoom.mixtape.songs[index].type,
+                        id: listeningRoom.mixtape.songs[index].id,
+                        listeningRoomId: roomId,
+                        index,
+                    }
+                );
                 const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
                 listeningRoom.mixtape.songs[index].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
                 listeningRoom.markModified('currentListeners');
+                listeningRoom.markModified('mixtape.songs');
+                listeningRoom.startedAt = Date.now() / 1000;
+                listeningRoom.wasAt = 0;
                 await listeningRoom.save();
-                console.log(listeningRoom)
-                console.log(listeningRoom.currentListeners);
-                console.log('emiiting......')
                 io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl });
             }
         });

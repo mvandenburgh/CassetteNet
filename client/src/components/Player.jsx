@@ -84,8 +84,6 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
 function Player(props) {
   const playerRef = useRef();
 
-  const { socket } = useContext(SocketIOContext);
-
   const [currentTime, setCurrentTime] = useState(0);
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
@@ -96,7 +94,7 @@ function Player(props) {
   const { playing, setPlaying } = useContext(PlayingSongContext);
 
   useInterval(() => {
-    if (playerRef.current && playing && (!currentSong.listeningRoom || songLoaded)) {
+    if (playerRef.current && playing) {
       const time = playerRef.current.getCurrentTime()
       setCurrentTime(time);
       localStorage.setItem('timestamp', time);
@@ -110,12 +108,6 @@ function Player(props) {
     if (currentSong.disabled === currentSong.mixtape._id) {
       return;
     }
-    if (currentSong.listeningRoom && !currentSong.listeningRoomOwner) {
-      return;
-    }
-    if (currentSong.listeningRoomOwner) {
-      socket.emit('playSong', { index: currentSong.index, timestamp: currentTime })
-    }
     setPlaying(true);
     if (!currentTime && !currentSong.listeningRoom) {
       playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
@@ -127,10 +119,7 @@ function Player(props) {
       return;
     }
     setPlaying(false);
-    const stoppedAt = playerRef.current.getCurrentTime()
-    if (currentSong.listeningRoomOwner) {
-      socket.emit('pauseSong', { timestamp: stoppedAt })
-    }
+    const stoppedAt = playerRef.current.getCurrentTime();
     setCurrentTime(stoppedAt);
   };
 
@@ -147,12 +136,8 @@ function Player(props) {
     } else {
       newCurrentSong.index = currentSong.index + 1;
     }
-    if (currentSong.listeningRoomOwner) {
-      socket.emit('changeSong', newCurrentSong.index);
-    } else {
-      setCurrentSong(newCurrentSong);
-      setPlaying(true);
-    }
+    setCurrentSong(newCurrentSong);
+    setPlaying(true);
   };
 
   const handlePrevSong = () => {
@@ -214,10 +199,6 @@ function Player(props) {
 
   const [musicVolume, setMusicVolume] = useState(0.5);
 
-  const [songLoaded, setSongLoaded] = useState(false);
-
-  const [listeningRoomInfo, setListeningRoomInfo] = useState(null);
-
   const handleAtmosphereVolumeChange = (event, newValue) => {
     setAtmosphereVolume(newValue);
   };
@@ -226,73 +207,7 @@ function Player(props) {
     setMusicVolume(newValue);
   };
 
-  // notify listening room server that the song is loaded and ready to be played
-  const songIsLoaded = () => {
-    if (currentSong.listeningRoom) {
-      console.log('loaded!')
-      setSongLoaded(true);
-      socket.emit('songIsLoaded');
-    }
-  };
-
-  const onSongStart = () => {
-    console.log('s')
-  }
-
-  useEffect(() => {
-    if (!songLoaded || !playerRef?.current) {
-      return;
-    }
-    const newCurrentSong = { ...currentSong };
-    if (listeningRoomInfo?.index) {
-      newCurrentSong.index = listeningRoomInfo.index;
-      setCurrentSong(newCurrentSong);
-    }
-    if (listeningRoomInfo?.timestamp) {
-      const time = Number(((Date.now() / 1000) - listeningRoomInfo.timestamp.startedAt) + listeningRoomInfo.timestamp.wasAt) + 1;
-      console.log(time)
-      playerRef.current.seekTo(time);
-      setCurrentTime(time);
-    }
-    
-    setPlaying(true);
-  }, [songLoaded]);
-
-
-  useEffect(() => {
-    socket.on('playSong', (payload) => {
-      console.log('playSong')
-      console.log(payload)
-      // listeningRoomInfo
-      // if (!payload) {
-      setListeningRoomInfo(payload);
-      setSongLoaded(true);
-      // }
-    });
-
-    socket.on('pauseSong', ({ timestamp }) => {
-      console.log('pauseSong')
-      setPlaying(false);
-      playerRef.current.seekTo(timestamp);
-      setCurrentTime(timestamp);
-    });
-
-    socket.on('seekSong', ({ timestamp }) => {
-      console.log('seekSong')
-      playerRef.current.seekTo(timestamp);
-      setCurrentTime(timestamp);
-    });
-
-    socket.on('changeSong', index => {
-      console.log(`changeSong to ${index}`);
-      setSongLoaded(false);
-      const newCurrentSong = { ...currentSongRef.current };
-      newCurrentSong.index = index;
-      setCurrentSong(newCurrentSong);
-    });
-  }, []);
-
-  if (!currentSong?.index || currentSong?.listeningRoom) {
+  if (!currentSong?.index) {
     return null;
   }
 
@@ -355,8 +270,6 @@ function Player(props) {
         ref={playerRef} playing={playing} style={{ display: 'none' }}
         url={currentSong?.mixtape?.songs[currentSong.index].playbackUrl}
         volume={musicVolume}
-        onReady={songIsLoaded}
-        onStart={onSongStart}
       />
       <ReactPlayer
         loop
