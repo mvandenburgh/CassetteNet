@@ -2,8 +2,6 @@ import axios from 'axios';
 import { users } from '../testData/users.json';
 import { inboxMessages } from '../testData/inboxMessages.json';
 
-axios.defaults.withCredentials = true;
-
 
 let SERVER_ROOT_URL;
 try {

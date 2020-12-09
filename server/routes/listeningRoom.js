@@ -1,6 +1,14 @@
 const express = require('express');
+const axios = require('axios');
 const { ListeningRoom, Mixtape, User } = require('../models');
 const { getAudioAnalysisFromYoutube } = require('../external_apis/spotify');
+
+let STREAM_SERVER_ROOT_URL;
+try {
+    STREAM_SERVER_ROOT_URL = new URL(process.env.STREAM_SERVER_ROOT_URL).href;
+} catch (err) {
+    STREAM_SERVER_ROOT_URL = new URL('http://localhost:5001/').href;
+}
 
 const router = express.Router();
 
@@ -39,6 +47,11 @@ router.post('/', async (req, res) => {
     // remove fields that aren't needed for listening room
     delete mixtape.isPublic;
     delete mixtape.collaborators;
+
+    const livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, { type: mixtape.songs[0].type, id: mixtape.songs[0].id });
+    const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
+    
+    mixtape.songs[0].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
 
     const listeningRoom = new ListeningRoom({
         chatMessages: [],

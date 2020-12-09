@@ -54,8 +54,9 @@ app.post('/startStream', (req, res) => {
     if (type === 'youtube') {
         const writeStream = ytdl(`http://www.youtube.com/watch?v=${id}`, { quality: 'lowestaudio' }).pipe(fs.createWriteStream(path.join(__dirname, `mp3/${filename}.mp3`)));
         writeStream.on('finish', () => {
-            const ffmepgStreamProcess = child_process.spawn('ffmpeg', [`-re -i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/${filename}`], { shell: true });
             res.json(filename);
+
+            const ffmepgStreamProcess = child_process.spawn('ffmpeg', [`-re -i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/${filename}`], { shell: true });
 
             // remove mp3 file and streaming files after stream is over
             ffmepgStreamProcess.on('close', (code) => {

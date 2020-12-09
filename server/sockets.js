@@ -25,12 +25,16 @@ function initSockets(io) {
                 timestamp: Date.now(),
                 from: { username: '#ChatBot' }, // will always be unique since usernames aren't allowed to start with #
             });
+            if (!lr.startedAt) {
+                lr.startedAt = Date.now() / 1000;
+                lr.wasAt = 0;
+            }
             await lr.save();
             socket.emit('userJoinedOrLeft');
             socket.to(listeningRoom._id).to(defaultRoom).emit('userJoinedOrLeft');
             socket.to(listeningRoom._id).to(defaultRoom).emit('newChatMessage', lr.chatMessages);
             if (lr.startedAt && lr.wasAt) {
-                socket.emit('playSong', { index: lr.currentSong, timestamp: {startedAt: lr.startedAt, wasAt: lr.wasAt } });
+                socket.emit('timestamp', { index: lr.currentSong, timestamp: {startedAt: lr.startedAt, wasAt: lr.wasAt } });
             }
             socket.leave(defaultRoom); // leave the default room that socket.io creates
         });
@@ -139,37 +143,37 @@ function initSockets(io) {
             }
         });
 
-        socket.on('songIsLoaded', async () => {
-            console.log(user.username);
-            const lrIds = Array.from(socket.rooms).filter(room => Types.ObjectId.isValid(room));
-            if (!lrIds || lrIds.length === 0) return;
-            const lrId = lrIds[0];
-            // const roomId = socket.rooms.values().next().value;
-            const listeningRoom = await ListeningRoom.findById(lrId);
-            let allReady = true; // whether all connected clients are ready to begin song playback
-            for (const queuedUser of listeningRoom.rhythmGameQueue) {
-                if (queuedUser.user.equals(user._id)) {
-                    queuedUser.ready = true;
-                    listeningRoom.markModified('rhythmGameQueue');
-                    break;
-                }
-            }
-            for (const listener of listeningRoom.currentListeners) {
-                if (listener.user.equals(user._id)) {
-                    listener.ready = true;
-                    listeningRoom.markModified('currentListeners');
-                } else if (!listener.ready) {
-                    allReady = false;
-                }
-            }
-            console.log(listeningRoom.currentListeners);
-            if (allReady && !listeningRoom.startedAt) {
-                io.in(lrId).emit('playSong');
-                listeningRoom.startedAt = Date.now() / 1000;
-                listeningRoom.wasAt = 0;
-            }
-            await listeningRoom.save();
-        });
+        // socket.on('songIsLoaded', async () => {
+        //     console.log(user.username);
+        //     const lrIds = Array.from(socket.rooms).filter(room => Types.ObjectId.isValid(room));
+        //     if (!lrIds || lrIds.length === 0) return;
+        //     const lrId = lrIds[0];
+        //     // const roomId = socket.rooms.values().next().value;
+        //     const listeningRoom = await ListeningRoom.findById(lrId);
+        //     let allReady = true; // whether all connected clients are ready to begin song playback
+        //     for (const queuedUser of listeningRoom.rhythmGameQueue) {
+        //         if (queuedUser.user.equals(user._id)) {
+        //             queuedUser.ready = true;
+        //             listeningRoom.markModified('rhythmGameQueue');
+        //             break;
+        //         }
+        //     }
+        //     for (const listener of listeningRoom.currentListeners) {
+        //         if (listener.user.equals(user._id)) {
+        //             listener.ready = true;
+        //             listeningRoom.markModified('currentListeners');
+        //         } else if (!listener.ready) {
+        //             allReady = false;
+        //         }
+        //     }
+        //     console.log(listeningRoom.currentListeners);
+        //     if (allReady && !listeningRoom.startedAt) {
+        //         io.in(lrId).emit('playSong');
+        //         listeningRoom.startedAt = Date.now() / 1000;
+        //         listeningRoom.wasAt = 0;
+        //     }
+        //     await listeningRoom.save();
+        // });
     });
 }
 

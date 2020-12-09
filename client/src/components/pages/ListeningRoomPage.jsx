@@ -24,13 +24,15 @@ import { useHistory } from 'react-router-dom';
 import Mixtape from '../Mixtape';
 import UserSearchBar from '../UserSearchBar';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
+import PlayingSongContext from '../../contexts/PlayingSongContext';
 import UserContext from '../../contexts/UserContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
-import { getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
+import { getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation } from '../../utils/api';
 import logo from '../../images/logo.png';
 import '../styles/chatbox.css';
 import { ChatBox } from 'react-chatbox-component';
-import RhythmGame from '../games/RhythmGame';
+import RhythmGame from '../listeningroom/RhythmGame';
+import ListeningRoomPlayer from '../listeningroom/ListeningRoomPlayer';
 
 
 function TabPanel(props) {
@@ -77,6 +79,8 @@ function ListeningRoomPage(props) {
 
     const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
+    const { playing, setPlaying } = useContext(PlayingSongContext);
+
     const history = useHistory();
 
     useEffect(() => {
@@ -106,12 +110,14 @@ function ListeningRoomPage(props) {
     useEffect(() => {
         getListeningRoom(props.match.params.id)
             .then(listeningRoom => {
+                console.log(listeningRoom)
                 const newCurrentSong = {};
                 newCurrentSong.listeningRoomOwner = user._id === listeningRoom.owner.user;
                 newCurrentSong.listeningRoom = true;
                 newCurrentSong.mixtape = listeningRoom.mixtape;
                 newCurrentSong.index = 0;
                 setCurrentSong(newCurrentSong);
+                setPlaying(true);
                 console.log(newCurrentSong)
                 setListeningRoom(listeningRoom);
                 setMixtape(listeningRoom.mixtape);
@@ -316,6 +322,7 @@ function ListeningRoomPage(props) {
                     </TabPanel>
                 </Grid>
             </Grid>
+            <ListeningRoomPlayer listeningRoom={listeningRoom} />
             <Dialog open={inviteUserPopupOpen} onClose={() => setInviteUserPopupOpen(false)}>
                 <DialogTitle>Invite a User</DialogTitle>
                 <DialogContent>
