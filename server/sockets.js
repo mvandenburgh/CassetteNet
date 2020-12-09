@@ -101,14 +101,19 @@ function initSockets(io) {
                 }
                 listeningRoom.startedAt = null;
                 listeningRoom.wasAt = null;
-                const livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href,
-                    {
-                        type: listeningRoom.mixtape.songs[index].type,
-                        id: listeningRoom.mixtape.songs[index].id,
-                        listeningRoomId: roomId,
-                        index,
-                    }
-                );
+                let livestreamId;
+                try {
+                    livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href,
+                        {
+                            type: listeningRoom.mixtape.songs[index].type,
+                            id: listeningRoom.mixtape.songs[index].id,
+                            listeningRoomId: roomId,
+                            index,
+                        }
+                    );
+                } catch (err) {
+                    return;
+                }
                 const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
                 listeningRoom.mixtape.songs[index].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
                 listeningRoom.markModified('currentListeners');

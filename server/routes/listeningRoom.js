@@ -57,14 +57,20 @@ router.post('/', async (req, res) => {
         rhythmScores: [],
     });
 
-    const livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, 
-        { 
-            type: mixtape.songs[0].type,
-            id: mixtape.songs[0].id,
-            index: 0,
-            listeningRoomId: listeningRoom._id,
-        }
-    );
+    let livestreamId;
+    try {
+        livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, 
+            { 
+                type: mixtape.songs[0].type,
+                id: mixtape.songs[0].id,
+                index: 0,
+                listeningRoomId: listeningRoom._id,
+            }
+        );
+    } catch (err) {
+        return res.send('error starting stream');
+    }
+
     const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
 
     mixtape.songs[0].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;

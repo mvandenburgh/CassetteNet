@@ -53,15 +53,11 @@ function Mixtape(props) {
 
   const playSong = (index) => {
     setPlaying(true);
-    if (currentSong?.listeningRoom && currentSong?.index !== index) {
-      socket.emit('changeSong', index);
-    }
     if (!listeningRoom) {
       setCurrentSong({
         mixtape,
         index,
         disabled: currentSong?.disabled,
-        listeningRoom,
       });
     }
   };
