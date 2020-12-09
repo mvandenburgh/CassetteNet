@@ -40,9 +40,9 @@
     "passport.socketio": "^3.7.0",
     "seedrandom": "^3.0.5",
     "socket.io": "^3.0.2",
-    "soundcloud-downloader": "^0.1.8",
+    "soundcloud-downloader": "^0.2.1",
     "spotify-web-api-node": "^5.0.0",
     "text-to-picture-kazari": "^3.0.0",
-    "ytdl-core": "^4.1.3"
+    "ytdl-core": "^4.1.4"
   }
 }
