@@ -2,8 +2,6 @@ import axios from 'axios';
 import { users } from '../testData/users.json';
 import { inboxMessages } from '../testData/inboxMessages.json';
 
-axios.defaults.withCredentials = true;
-
 
 let SERVER_ROOT_URL;
 try {
@@ -293,11 +291,6 @@ async function getRandomMixtapes(count, type) {
     const mixtapes = await axios.get(new URL('/api/mixtape/random', SERVER_ROOT_URL).href, { params: { count, type } });
     return mixtapes.data;
 }
-
-// async function getPopularMixtapes(count) {
-//     const mixtapes = await axios.get(new URL('/api/mixtape/popular', SERVER_ROOT_URL).href, { params: { count } });
-//     return mixtapes.data;
-// }
 
 async function getPopularMixtapes(count) {
     const mixtapes = await axios.get(new URL('/api/user/popular', SERVER_ROOT_URL).href, { params: { count } });

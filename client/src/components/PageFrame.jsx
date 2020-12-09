@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import SearchBar from './SearchBar';
 import Player from './Player';
+import ListeningRoomPlayer from './listeningroom/ListeningRoomPlayer';
 import dashboard from '../images/dashboard.png';
 import UserContext from '../contexts/UserContext';
 import CurrentSongContext from '../contexts/CurrentSongContext';
@@ -207,7 +208,7 @@ function PageFrame(props) {
         <Divider />
       </Drawer>
       <AppBar style={{ backgroundColor: '#fff', display: currentSong ? '' : 'none', top: 'auto', bottom: 0, }}>
-        <Player />
+        {currentSong.listeningRoom ? undefined : <Player />}
       </AppBar>
     </div>
   );

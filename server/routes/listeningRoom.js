@@ -1,6 +1,14 @@
 const express = require('express');
+const axios = require('axios');
 const { ListeningRoom, Mixtape, User } = require('../models');
-const { getAudioAnalysisFromYoutube } = require('../external_apis/spotify');
+// const { getAudioAnalysisFromYoutube } = require('../external_apis/spotify');
+
+let STREAM_SERVER_ROOT_URL;
+try {
+    STREAM_SERVER_ROOT_URL = new URL(process.env.STREAM_SERVER_ROOT_URL).href;
+} catch (err) {
+    STREAM_SERVER_ROOT_URL = new URL('http://localhost:5001/').href;
+}
 
 const router = express.Router();
 
@@ -43,12 +51,25 @@ router.post('/', async (req, res) => {
     const listeningRoom = new ListeningRoom({
         chatMessages: [],
         currentListeners: [],
-        mixtape,
         owner: req.user.id,
         currentSong: 0,
         snakeScores: [],
         rhythmScores: [],
     });
+
+    const livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, 
+        { 
+            type: mixtape.songs[0].type,
+            id: mixtape.songs[0].id,
+            index: 0,
+            listeningRoomId: listeningRoom._id,
+        }
+    );
+    const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
+
+    mixtape.songs[0].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
+
+    listeningRoom.mixtape = mixtape;
 
     await listeningRoom.save();
 
@@ -67,7 +88,7 @@ router.get('/:id', async (req, res) => {
         // if (!listeningRoom.owner.equals(req.user.id) && !listeningRoom.invitedUsers.includes(req.user.id)) return res.status(401).send('unauthorized');
         const listenersDenormalized = [];
         for (const listener of listeningRoom.currentListeners) {
-            const user = await User.findById(listener.user).lean();
+            const user = await User.findById(listener).lean();
             listenersDenormalized.push({
                 id: user._id,
                 username: user.username,
@@ -104,8 +125,9 @@ router.get('/:id/audioAnalysis/:songIndex', async (req, res) => {
     const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
     const song = listeningRoom.mixtape.songs[req.params.songIndex];
     if (song.type !== 'youtube') return res.status(400).send(`audio analysis only works with youtube. requested song is from ${song.type}.`);
-    const analysis = await getAudioAnalysisFromYoutube(song.id);
-    res.json(analysis.track.tempo); // just send tempo for now
+    // const analysis = await getAudioAnalysisFromYoutube(song.id);
+    // res.json(analysis.track.tempo); // just send tempo for now
+    res.send(null);
 });
 
 module.exports = router;

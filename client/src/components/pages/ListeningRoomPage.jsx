@@ -24,13 +24,15 @@ import { useHistory } from 'react-router-dom';
 import Mixtape from '../Mixtape';
 import UserSearchBar from '../UserSearchBar';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
+import PlayingSongContext from '../../contexts/PlayingSongContext';
 import UserContext from '../../contexts/UserContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
-import { getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, SERVER_ROOT_URL } from '../../utils/api';
+import { getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation } from '../../utils/api';
 import logo from '../../images/logo.png';
 import '../styles/chatbox.css';
 import { ChatBox } from 'react-chatbox-component';
-import RhythmGame from '../games/RhythmGame';
+import RhythmGame from '../listeningroom/RhythmGame';
+import ListeningRoomPlayer from '../listeningroom/ListeningRoomPlayer';
 
 
 function TabPanel(props) {
@@ -75,7 +77,9 @@ const useStyles = makeStyles((theme) => ({
 function ListeningRoomPage(props) {
     const classes = useStyles();
 
-    const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
+    const { setCurrentSong } = useContext(CurrentSongContext);
+
+    const { setPlaying } = useContext(PlayingSongContext);
 
     const history = useHistory();
 
@@ -106,13 +110,7 @@ function ListeningRoomPage(props) {
     useEffect(() => {
         getListeningRoom(props.match.params.id)
             .then(listeningRoom => {
-                const newCurrentSong = {};
-                newCurrentSong.listeningRoomOwner = user._id === listeningRoom.owner.user;
-                newCurrentSong.listeningRoom = true;
-                newCurrentSong.mixtape = listeningRoom.mixtape;
-                newCurrentSong.index = 0;
-                setCurrentSong(newCurrentSong);
-                console.log(newCurrentSong)
+                setPlaying(true);
                 setListeningRoom(listeningRoom);
                 setMixtape(listeningRoom.mixtape);
                 socket.emit('joinListeningRoom', { user, listeningRoom });
@@ -127,6 +125,12 @@ function ListeningRoomPage(props) {
                     const newListeningRoom = { ...lrRef.current };
                     newListeningRoom.chatMessages = newChatMessages;
                     setListeningRoom(newListeningRoom);
+                });
+                socket.on('changeSong', () => {
+                    getListeningRoom(props.match.params.id).then(lr => {
+                        setListeningRoom(lr);
+                        setPlaying(true);
+                    });
                 });
                 socket.on('endListeningRoom', () => {
                     setEndSessionPopupOpen(true);
@@ -316,6 +320,7 @@ function ListeningRoomPage(props) {
                     </TabPanel>
                 </Grid>
             </Grid>
+            <ListeningRoomPlayer listeningRoom={listeningRoom} setListeningRoom={setListeningRoom} />
             <Dialog open={inviteUserPopupOpen} onClose={() => setInviteUserPopupOpen(false)}>
                 <DialogTitle>Invite a User</DialogTitle>
                 <DialogContent>

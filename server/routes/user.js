@@ -251,9 +251,6 @@ router.get('/popular', async (req, res) => {
     var limit= {$limit:1}
     const result = await User.aggregate([group, sort, limit])
     console.log(result);
-    // const mixtapes = await Mixtape.find({ isPublic: true }).lean();
-    // console.log("mixtapes in router: " + mixtapes);
-    // res.send(getRandomSubarray(mixtapes, count));
 });
 
 module.exports = router;
