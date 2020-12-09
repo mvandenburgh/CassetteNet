@@ -1,5 +1,13 @@
 const { Types } = require('mongoose');
+const axios = require('axios');
 const { ListeningRoom, User } = require('./models');
+
+let STREAM_SERVER_ROOT_URL;
+try {
+    STREAM_SERVER_ROOT_URL = new URL(process.env.STREAM_SERVER_ROOT_URL).href;
+} catch (err) {
+    STREAM_SERVER_ROOT_URL = new URL('http://localhost:5001/').href;
+}
 
 
 function initSockets(io) {
@@ -18,7 +26,7 @@ function initSockets(io) {
             const lr = await ListeningRoom.findById(listeningRoom._id);
 
             if (!lr.currentListeners.map(l => l.user).includes(Types.ObjectId(user._id))) {
-                lr.currentListeners.push({ user: Types.ObjectId(user._id), ready: false });
+                lr.currentListeners.push(Types.ObjectId(user._id));
             }
             lr.chatMessages.push({
                 message: `${user.username} joined the room!`,
@@ -59,7 +67,7 @@ function initSockets(io) {
             const lr = await ListeningRoom.findById(lrId);
             if (lr) {
                 // remove user from listening room in database
-                lr.currentListeners = lr.currentListeners.filter(u => !u.user.equals(user._id));
+                lr.currentListeners = lr.currentListeners.filter(u => !u.equals(user._id));
                 lr.chatMessages.push({
                     message: `${user.username} has left the room.`,
                     timestamp: Date.now(),
@@ -113,6 +121,7 @@ function initSockets(io) {
         // });
 
         socket.on('changeSong', async (index) => {
+            console.log('changeSong ' + index)
             const roomId = socket.rooms.values().next().value;
             const listeningRoom = await ListeningRoom.findById(roomId);
             if (listeningRoom) {
@@ -122,14 +131,15 @@ function initSockets(io) {
                 }
                 listeningRoom.startedAt = null;
                 listeningRoom.wasAt = null;
-                for (const listener of listeningRoom.currentListeners) {
-                    listener.ready = false;
-                }
+                const livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, { type: listeningRoom.mixtape.songs[index].type, id: listeningRoom.mixtape.songs[index].id });
+                const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
+                listeningRoom.mixtape.songs[index].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
                 listeningRoom.markModified('currentListeners');
                 await listeningRoom.save();
+                console.log(listeningRoom)
                 console.log(listeningRoom.currentListeners);
                 console.log('emiiting......')
-                io.in(roomId).emit('changeSong', index);
+                io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl });
             }
         });
 
@@ -138,7 +148,7 @@ function initSockets(io) {
             const listeningRoom = await ListeningRoom.findById(roomId);
 
             if (!listeningRoom.rhythmGameQueue.includes(Types.ObjectId(user._id))) {
-                listeningRoom.rhythmGameQueue.push({ user: user._id, ready: false });
+                listeningRoom.rhythmGameQueue.push(Types.ObjectId(user._id));
                 await listeningRoom.save();
             }
         });

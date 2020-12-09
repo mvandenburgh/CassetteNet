@@ -117,7 +117,7 @@ function ListeningRoomPage(props) {
                 newCurrentSong.mixtape = listeningRoom.mixtape;
                 newCurrentSong.index = 0;
                 setCurrentSong(newCurrentSong);
-                setPlaying(true);
+                // setPlaying(true);
                 console.log(newCurrentSong)
                 setListeningRoom(listeningRoom);
                 setMixtape(listeningRoom.mixtape);
@@ -322,7 +322,7 @@ function ListeningRoomPage(props) {
                     </TabPanel>
                 </Grid>
             </Grid>
-            <ListeningRoomPlayer listeningRoom={listeningRoom} />
+            <ListeningRoomPlayer listeningRoom={listeningRoom} setListeningRoom={setListeningRoom} />
             <Dialog open={inviteUserPopupOpen} onClose={() => setInviteUserPopupOpen(false)}>
                 <DialogTitle>Invite a User</DialogTitle>
                 <DialogContent>
