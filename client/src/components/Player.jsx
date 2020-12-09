@@ -292,6 +292,10 @@ function Player(props) {
     });
   }, []);
 
+  if (!currentSong?.index || currentSong?.listeningRoom) {
+    return null;
+  }
+
   return (
     <div>
       <Grid style={{ margin: '10px 0' }} container justify="center">
