@@ -1,12 +1,28 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { AppBar, Box, Button, Grid, Tab, Tabs, Typography, makeStyles, IconButton } from '@material-ui/core';
+import {
+  AppBar,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+  makeStyles,
+  IconButton
+} from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import ReactRoundedImage from "react-rounded-image";
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
-import { getUser, getUserProfilePictureUrl, getCreatedMixtapes, getFavoritedMixtapes } from '../../utils/api';
+import { getUser, getUserProfilePictureUrl, getCreatedMixtapes, getFavoritedMixtapes, sendAnonymousMessage, sendMixtapeMessage } from '../../utils/api';
 import FollowUserButton from '../FollowUserButton';
 import MixtapeRows from '../MixtapeRows';
+import SocketIOContext from '../../contexts/SocketIOContext';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -27,40 +43,6 @@ function TabPanel(props) {
     </div>
   );
 }
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
-var favorites = [
-  {
-    name: 'Evening Acoustic',
-    collaborators: 'purplefish313, brownmeercat530',
-    favorites: 106
-  },
-  {
-    name: 'Rock Classics',
-    collaborators: 'silverbutterfly863, brownmeercat530',
-    favorites: 93,
-  },
-];
-
-var theirMixtapes = [
-  {
-    name: 'Calm Vibes',
-    collaborators: 'biglion179',
-    favorites: 15
-  },
-  {
-    name: 'Acoustic Soul',
-    collaborators: 'lazykoala317, tinygoose218',
-    favorites: 48,
-  },
-];
-
 
 function ViewUserPage(props) {
   const useStyles = makeStyles((theme) => ({
@@ -113,12 +95,62 @@ function ViewUserPage(props) {
     setValue(newValue);
   };
 
+  const [message, setMessage] = useState('');
+
+  const { socket } = useContext(SocketIOContext);
+
+  const [writeMessageDialogOpen, setWriteMessageDialogOpen] = useState(false);
+
+  const sendMessageHandler = () => {
+    if (message) {
+      if (props.anonymous) {
+        sendAnonymousMessage(user._id, message).then(() => socket.emit('sendInboxMessage', { recipientId: user._id }));
+      } else {
+        sendMixtapeMessage(user._id, message).then(() => socket.emit('sendInboxMessage', { recipientId: user._id }));
+      }
+    }
+    setWriteMessageDialogOpen(false);
+    setMessage('');
+  }
+
   if (!user.username) {
     return null;
   }
 
+
+
   return (
     <div style={{ color: 'white', left: 0 }}>
+      <Dialog open={writeMessageDialogOpen} onClose={() => setWriteMessageDialogOpen(false)}>
+        <DialogTitle>Write a Message!</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Write here...
+                    </DialogContentText>
+          <TextField
+            multiline
+            rows={17}
+
+            style={{ width: '400px' }}
+            autoFocus
+            variant="filled"
+            margin="dense"
+            id="name"
+            label="Message"
+            type="email"
+            fullWidth
+            inputProps={{ maxLength: 250 }}
+            helperText={`${message.length}/250 characters`}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button align="center" onClick={sendMessageHandler} color="primary">
+            SEND
+          </Button>
+        </DialogActions>
+      </Dialog>
       <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
         <ArrowBackIcon />
       </IconButton>
@@ -147,6 +179,16 @@ function ViewUserPage(props) {
             <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth() + 1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>
             <Typography style={{ fontSize: '20px' }} variant="h3">Followers: {user.followers}</Typography>
             <FollowUserButton id={user?._id} />
+            <Button
+              variant="contained"
+              style={{
+                marginTop: '20px',
+                height: '45px',
+                width: '80px',
+                backgroundColor: props.backgroundColor,
+              }}
+              onClick={() => setWriteMessageDialogOpen(true)}
+            >Send Message</Button>
           </div>
         </Box>
         <Box style={{ marginLeft: '100px', width: '86%', backgroundColor: colors.tabsContainer }} boxShadow={3} borderRadius={12}>

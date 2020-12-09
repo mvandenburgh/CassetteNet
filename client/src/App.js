@@ -25,7 +25,7 @@ import ListeningRoomPage from './components/pages/ListeningRoomPage';
 import ViewProfilePage from './components/pages/ViewProfilePage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
 import FollowedUsersPage from './components/pages/FollowedUsersPage';
-import AnonymousMixtapesPage from './components/pages/AnonymousMixtapesPage';
+import MixtapesOfTheDayPage from './components/pages/MixtapesOfTheDayPage';
 import MixtapeSearchResultsPage from './components/pages/MixtapeSearchResultsPage';
 import UserSearchResultsPage from './components/pages/UserSearchResultsPage';
 import AdminPage from './components/pages/AdminPage';
@@ -106,8 +106,7 @@ function App() {
                             <Route exact path="/favoritedmixtapes" component={FavoritedMixtapesPage} />
                             <Route exact path="/viewuser" component={ViewUserPage} />
                             <Route exact path="/followedusers" component={FollowedUsersPage}/>
-                            <Route exact path="/anonymousmixtapes" component={AnonymousMixtapesPage}/>
-                            <Route exact path="/anonymousmixtape/:id" render={(props) => <ViewMixtapePage anonymous={true} match={{params:{id:props.match.params.id}}} />} />
+                            <Route exact path="/mixtapesoftheday" component={MixtapesOfTheDayPage}/>
                             <Route exact path="/inbox" component={InboxPage} />
                             <Route exact path="/NotFound" component={NotFoundPage}/>
                             <Route exact path="/SignUp" component={SignUpPage}/>

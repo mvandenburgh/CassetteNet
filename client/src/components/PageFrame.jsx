@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Badge, Button, Typography, InputBase, Divider, Drawer, Grid, List, IconButton, ListItem, ListItemIcon, ListItemText, TextField, Toolbar } from '@material-ui/core';
-import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Person as MyProfileIcon, Language as AnonymousMixtapesIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
+import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Person as MyProfileIcon, Language as MixtapesOfTheDayIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import SearchBar from './SearchBar';
@@ -190,11 +190,11 @@ function PageFrame(props) {
                 </ListItemIcon>
                 <ListItemText primary="Inbox" />
               </ListItem>
-              <ListItem onClick={() => history.push('/anonymousmixtapes')} button style={user.isGuest ? { display: 'none' } : {}}>
+              <ListItem onClick={() => history.push('/mixtapesoftheday')} button style={user.isGuest ? { display: 'none' } : {}}>
                 <ListItemIcon>
-                  <AnonymousMixtapesIcon className={classes.icon} />
+                  <MixtapesOfTheDayIcon className={classes.icon} />
                 </ListItemIcon>
-                <ListItemText primary="Anonymous Mixtapes" />
+                <ListItemText primary="Mixtapes of the Day" />
               </ListItem>
             </div>
             : undefined}

@@ -18,11 +18,11 @@ import {
     TextField,
     Toolbar,
     Typography,
-
 } from '@material-ui/core';
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration, sendAnonymousMessage, sendMixtapeMessage } from '../../utils/api';
+import MixtapeComments from '../MixtapeComments';
+import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
 import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
@@ -92,8 +92,6 @@ function ViewMixtapePage(props) {
     const { user } = useContext(UserContext);
 
     const [apiToUse, setApiToUse] = useState('soundcloud');
-
-    const [writeMessageDialogOpen, setWriteMessageDialogOpen] = useState(false);
 
     const addSong = async () => {
         if (mixtape.songs.map(s => s.id).includes(songToAdd.id)) return;
@@ -350,24 +348,6 @@ function ViewMixtapePage(props) {
 
         setOpen(false);
     };
-    const [message, setMessage] = useState('');
-
-    const { socket } = useContext(SocketIOContext);
-
-    const sendMessageHandler = () => {
-        if (message) {
-            const owners = mixtape.collaborators.filter(c => c.permissions === 'owner');
-            for (const owner of owners) {
-                if (props.anonymous) {
-                    sendAnonymousMessage(mixtape._id, owner.user, message).then(() => socket.emit('sendInboxMessage', { recipientId: owner.user }));
-                } else {
-                    sendMixtapeMessage(mixtape._id, owner.user, message).then(() => socket.emit('sendInboxMessage', { recipientId: owner.user }));
-                }
-            }
-        }
-        setWriteMessageDialogOpen(false);
-        setMessage('');
-    }
 
     const [mixtapeToShare, setMixtapeToShare] = useState(null);
 
@@ -395,37 +375,6 @@ function ViewMixtapePage(props) {
                 open={shareModalOpen}
                 setOpen={setShareModalOpen}
             />
-
-            <Dialog open={writeMessageDialogOpen} onClose={() => setWriteMessageDialogOpen(false)}>
-                <DialogTitle>Write a Message!</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Give some feedback on the mixtape!
-                    </DialogContentText>
-                    <TextField
-                        multiline
-                        rows={17}
-
-                        style={{ width: '400px' }}
-                        autoFocus
-                        variant="filled"
-                        margin="dense"
-                        id="name"
-                        label="Message"
-                        type="email"
-                        fullWidth
-                        inputProps={{ maxLength: 250 }}
-                        helperText={`${message.length}/250 characters`}
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button align="center" onClick={sendMessageHandler} color="primary">
-                        SEND
-          </Button>
-                </DialogActions>
-            </Dialog>
 
             <MixtapeCoverImageUploadModal coverImageUrl={coverImageUrl} setCoverImageUrl={setCoverImageUrl} mixtape={mixtape} setMixtape={setMixtape} open={uploadCoverImagePopup} setOpen={setUploadCoverImagePopup} />
 
@@ -482,7 +431,7 @@ function ViewMixtapePage(props) {
                             user.isLoggedIn ?
                                 <Box style={{ display: 'inline-flex', flexDirection: 'row', float: 'right' }}>
                                     <FavoriteMixtapeButton id={props.match.params.id} style={{ margin: '10px' }} />
-                                    <CommentIcon onClick={() => setWriteMessageDialogOpen(true)} style={{ margin: '10px', cursor: 'pointer' }} />
+                                    {/* <CommentIcon onClick={() => setWriteMessageDialogOpen(true)} style={{ margin: '10px', cursor: 'pointer' }} /> */}
                                     <ShareIcon style={{ margin: '10px' }} onClick={() => shareMixtapeHandler(mixtape)} />
                                 </Box>
                                 : undefined
@@ -622,6 +571,9 @@ function ViewMixtapePage(props) {
                         setMixtape={setMixtape}
                         listeningRoom={false}
                     />
+                </Grid>
+                <Grid item xs={12} style={{ width: '90%' }}>
+                    <MixtapeComments mixtape={mixtape} setMixtape={setMixtape} />
                 </Grid>
             </Grid>
             <div style={{ display: isEditing ? '' : 'none' }}>

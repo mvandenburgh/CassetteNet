@@ -91,6 +91,16 @@ router.get('/:id/coverImage', async (req, res) => {
     }
 });
 
+router.post('/:id/comment', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
+    const createdAt = new Date();
+    const mixtape = await Mixtape.findById(req.params.id);
+    const { comment } = req.body;
+    if (!mixtape || !comment) return res.status(400).send('invalid request');
+    mixtape.comments.push({ createdAt, comment, author: { user: req.user._id, username: req.user.username } });
+    await mixtape.save();
+    res.send(mixtape.comments);
+});
 
 // get mixtapes owned by a certain user
 router.get('/createdMixtapes', async (req, res) => {
