@@ -218,6 +218,7 @@ function Player(props) {
           min={0}
           max={1}
           style={{ width: '10%' }} aria-labelledby="continuous-slider"
+          disabled={!atmosphereSound.isPlaying}
         />
         <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
           <AtmosphereSoundsIcon
