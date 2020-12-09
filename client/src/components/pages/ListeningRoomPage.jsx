@@ -138,7 +138,12 @@ function ListeningRoomPage(props) {
                     setTimeout(history.goBack, 4000);
                 });
                 socket.on('rhythmGameAboutToBegin', () => {
+                    getListeningRoom(props.match.params.id).then(lr => {
+                        setListeningRoom(lr);
+                    });
+                    setCurrentTab(1); // TODO: prompt user that game is about to start before changing tabs
                     setScreen('rhythm');
+                    
                 });
             })
             .catch(err => history.goBack());
