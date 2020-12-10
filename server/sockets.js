@@ -98,29 +98,34 @@ function initSockets(io) {
             if (listeningRoom && listeningRoom.owner && listeningRoom.owner.equals(user._id)) {
                 listeningRoom.currentSong = index;
                 if (listeningRoom.rhythmGameQueue.length > 0) {
-                    // const analysis = await getAudioAnalysisFromYoutube(listeningRoom.mixtape.songs[index].id);
-                    // console.log(analysis);
-                    // listeningRoom.mixtape.songs[index].bpm = analysis.track.tempo;
-                    listeningRoom.mixtape.songs[index].bpm = 60; // TODO: actually calculate this
                     io.in(roomId).emit('rhythmGameAboutToBegin');
                 }
                 listeningRoom.startedAt = null;
                 listeningRoom.wasAt = null;
-                let livestreamId;
+                let stream;
+
+                // only request tempo of song if:
+                //   1) there is at least one person in the rhythm game queue AND
+                //   2) the tempo hasn't already been calculated prior
+                const getTempo = listeningRoom.rhythmGameQueue.length > -1 && !Boolean(listeningRoom.mixtape.songs[index].tempo || listeningRoom.mixtape.songs[index].tempo === 0);
+
                 try {
-                    livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href,
+                    stream = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href,
                         {
                             type: listeningRoom.mixtape.songs[index].type,
                             id: listeningRoom.mixtape.songs[index].id,
                             listeningRoomId: roomId,
                             index,
+                            getTempo,
                         }
                     );
                 } catch (err) {
                     return;
                 }
-                const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
+                const { listeningRoomPlaybackId, tempo } = stream.data;
+                const listeningRoomPlaybackUrl = new URL(`/stream/live/${listeningRoomPlaybackId}.flv`, STREAM_SERVER_ROOT_URL).href;
                 listeningRoom.mixtape.songs[index].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
+                listeningRoom.mixtape.songs[index].tempo = tempo;
                 listeningRoom.markModified('currentListeners');
                 listeningRoom.markModified('mixtape.songs');
                 listeningRoom.startedAt = (Date.now() / 1000) + 4; // its usually off by about 4 seconds

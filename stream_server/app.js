@@ -9,6 +9,8 @@ const NodeMediaServer = require('node-media-server');
 const socketIOClient = require('socket.io-client');
 const ytdl = require('ytdl-core');
 const scdl = require('soundcloud-downloader').default;
+const AudioContext = require('web-audio-api').AudioContext;
+const MusicTempo = require('music-tempo');
 
 const SERVER_ROOT_URL = process.env.SERVER_ROOT_URL || 'http://localhost:5000';
 
@@ -55,7 +57,7 @@ app.use(cors());
 app.use('/stream', proxy(`http://localhost:${process.env.MEDIA_PORT || 8888}/`));
 
 app.post('/startStream', async (req, res) => {
-    const { type, id, index, listeningRoomId } = req.body;
+    const { type, id, index, listeningRoomId, getTempo } = req.body;
     if (!type || !id || (!index && index !== 0) || !listeningRoomId) return res.status(400).send('invalid request');
     const filename = Date.now();
     let writeStream;
@@ -67,21 +69,60 @@ app.post('/startStream', async (req, res) => {
         return res.status(400).send('invalid request.');
     }
     writeStream.on('finish', () => {
-        // spawn ffmpeg process to start live stream
-        const ffmpegStreamProcess = child_process.spawn('ffmpeg', [`-re -i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/${filename}`], { shell: true });
+        // use a boolean in the request body to determine whether we want to calculate tempo.
+        // this operation is expensive (makes the request rtt several seconds longer), so the client
+        // should only do this once per song and save the tempos for future use.
+        if (getTempo) {
+            // use ffmpeg to create higher quality audio file so we can calculate tempo
+            const tempoDetect = child_process.spawn('ffmpeg', [`-i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -vn -ar 44100 -ac 2 -b:a 192k ${path.join(__dirname, `mp3/${filename}_hq.mp3`)}`], { shell: true });
 
-        res.json(filename);
-        // ffmpegStreamProcess.stderr.on('data', (data) => {
-        //     const dataString = data.toString();
-        //     if (dataString.includes('[INFO] [rtmp play] Join stream.')) {
-        //         socket.emit('confirmSongChanged', { startedAt: streamStartedAt, index, listeningRoomId });
-        //     }
-        // });
-        // remove mp3 file and streaming files after stream is over
-        ffmpegStreamProcess.on('close', (code) => {
-            fs.unlink(path.join(__dirname, `mp3/${filename}.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}.mp3`)}'.`));
-            fs.rmdir(path.join(__dirname, `mp3/live/${filename}`), { recursive: true }, (e) => console.log(`Removed folder '${path.join(__dirname, `mp3/live/${filename}`)}'.`));
-        });
+            tempoDetect.on('close', () => {
+                // spawn ffmpeg process to start live stream
+                const ffmpegStreamProcess = child_process.spawn('ffmpeg', [`-re -i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/${filename}`], { shell: true });
+
+                // remove mp3 file and streaming files after stream is over
+                ffmpegStreamProcess.on('close', (code) => {
+                    fs.unlink(path.join(__dirname, `mp3/${filename}.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}.mp3`)}'.`));
+                    fs.rmdir(path.join(__dirname, `mp3/live/${filename}`), { recursive: true }, (e) => console.log(`Removed folder '${path.join(__dirname, `mp3/live/${filename}`)}'.`));
+                });
+
+                // read in the new high quality file
+                const data = fs.readFileSync(path.join(__dirname, `mp3/${filename}_hq.mp3`));
+
+                // perform tempo detection
+                const context = new AudioContext();
+                context.decodeAudioData(data, (buffer) => {
+                    const audioData = [];
+                    if (buffer.numberOfChannels == 2) {
+                        const channel1Data = buffer.getChannelData(0);
+                        const channel2Data = buffer.getChannelData(1);
+                        for (let i = 0; i < channel1Data.length; i++) {
+                            audioData.push((channel1Data[i] + channel2Data[i]) / 2);
+                        }
+                    } else {
+                        audioData = buffer.getChannelData(0);
+                    }
+                    const tempoData = new MusicTempo(audioData);
+                    res.json({ listeningRoomPlaybackId: filename, tempo: tempoData.tempo });
+                    
+                    // delete the high quality file asynchronously (it's no longer needed)
+                    fs.unlink(path.join(__dirname, `mp3/${filename}_hq.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}_hq.mp3`)}'.`));
+                });
+            });
+
+            tempoDetect.stderr.on('data', data => console.log(data.toString())); // print any errors to log
+        } else {
+            // send response back to client
+            res.json({ listeningRoomPlaybackId: filename });
+
+            // spawn ffmpeg process to start live stream
+            const ffmpegStreamProcess = child_process.spawn('ffmpeg', [`-re -i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/${filename}`], { shell: true });
+            // remove mp3 file and streaming files after stream is over
+            ffmpegStreamProcess.on('close', (code) => {
+                fs.unlink(path.join(__dirname, `mp3/${filename}.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}.mp3`)}'.`));
+                fs.rmdir(path.join(__dirname, `mp3/live/${filename}`), { recursive: true }, (e) => console.log(`Removed folder '${path.join(__dirname, `mp3/live/${filename}`)}'.`));
+            });
+        }
     }); 
 });
 

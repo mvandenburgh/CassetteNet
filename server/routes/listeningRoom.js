@@ -57,21 +57,24 @@ router.post('/', async (req, res) => {
         rhythmScores: [],
     });
 
-    let livestreamId;
+    let stream;
     try {
-        livestreamId = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, 
+        stream = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href, 
             { 
                 type: mixtape.songs[0].type,
                 id: mixtape.songs[0].id,
                 index: 0,
                 listeningRoomId: listeningRoom._id,
+                getTempo: false, // not possible to play rhythm game on first song in LR, so no need for tempo.
             }
         );
     } catch (err) {
         return res.send('error starting stream');
     }
 
-    const listeningRoomPlaybackUrl = new URL(`/stream/live/${livestreamId.data}.flv`, STREAM_SERVER_ROOT_URL).href;
+    const { listeningRoomPlaybackId } = stream.data;
+
+    const listeningRoomPlaybackUrl = new URL(`/stream/live/${listeningRoomPlaybackId}.flv`, STREAM_SERVER_ROOT_URL).href;
 
     mixtape.songs[0].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
 
