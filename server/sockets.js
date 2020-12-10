@@ -128,6 +128,10 @@ function initSockets(io) {
                 listeningRoom.markModified('mixtape.songs');
                 listeningRoom.startedAt = (Date.now() / 1000) + 4; // its usually off by about 4 seconds
                 listeningRoom.wasAt = 0;
+                listeningRoom.rhythmScores = new Map();
+                listeningRoom.snakeScores = new Map();
+                listeningRoom.markModified('rhythmScores');
+                listeningRoom.markModified('snakeScores');
                 await listeningRoom.save();
                 io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl });
             }
@@ -142,6 +146,20 @@ function initSockets(io) {
                 await listeningRoom.save();
             }
         });
+
+        socket.on('rhythmScoreChange', async (changeBy) => {
+            console.log(`Change ${user.username}'s (${user._id.toString()}) score by ${changeBy}`)
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+
+            const userScore = listeningRoom.rhythmScores.get(user._id.toString());
+            if (userScore) {
+                listeningRoom.rhythmScores.set(user._id.toString(), userScore + changeBy);
+            } else {
+                listeningRoom.rhythmScores.set(user._id.toString(), changeBy);
+            }
+            await listeningRoom.save();
+        })
     });
 }
 

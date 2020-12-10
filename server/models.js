@@ -99,8 +99,8 @@ const listeningRoomSchema = new Schema({
   mixtape: Schema.Types.Mixed, // id of the mixtape this listening room is playing
   owner: mongoose.Types.ObjectId,
   currentSong: Number, // index of currently playing song in mixtape `songs` array
-  snakeScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]
-  rhythmScores: Array, // [{user: mongoose.Types.ObjectId, score: Number}]
+  snakeScores: Map, // [{user: mongoose.Types.ObjectId, score: Number}]
+  rhythmScores: Map, // [{user: mongoose.Types.ObjectId, score: Number}]
   rhythmGameQueue: Array,
   startedAt: String, // real life time when current song started playing
   wasAt: String, // timestamp of the song at `startedAt`
