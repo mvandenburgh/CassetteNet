@@ -176,10 +176,16 @@ function ViewUserPage(props) {
             <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth() + 1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>
             <Typography style={{ fontSize: '20px' }} variant="h3">Followers: {user.followers}</Typography>
             <FollowUserButton id={user?._id} />
-            <SendMessageButton 
-              id={user?._id}
-              onClick={() => setWriteMessageDialogOpen(true)}>
-            </SendMessageButton>
+            <Button
+              variant="contained"
+              style={{
+                marginTop: '20px',
+                height: '45px',
+                width: '80px',
+                backgroundColor: props.backgroundColor,
+              }}
+              onClick={() => setWriteMessageDialogOpen(true)}
+            >Send Message</Button>
           </div>
         </Box>
         <Box style={{ marginLeft: '100px', width: '86%', backgroundColor: colors.tabsContainer }} boxShadow={3} borderRadius={12}>
