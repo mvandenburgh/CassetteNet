@@ -9,7 +9,7 @@ import {
   directions
 } from "./constants";
 
-function SnakeGame(){
+function SnakeGame(props){
   const canvasRef = useRef();
   const [snake, setSnake] = useState(snakePos);
   const [apple, setApple] = useState(goalPos);
