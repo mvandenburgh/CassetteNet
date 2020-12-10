@@ -19,7 +19,7 @@ import { blueGrey } from '@material-ui/core/colors';
 import ReactRoundedImage from "react-rounded-image";
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
-import { getUser, getUserProfilePictureUrl, getCreatedMixtapes, getFavoritedMixtapes, sendAnonymousMessage, sendMixtapeMessage } from '../../utils/api';
+import { getUser, getUserProfilePictureUrl, getCreatedMixtapes, getFavoritedMixtapes, sendAnonymousMessage, sendMixtapeMessage, sendDM } from '../../utils/api';
 import FollowUserButton from '../FollowUserButton';
 import MixtapeRows from '../MixtapeRows';
 import SocketIOContext from '../../contexts/SocketIOContext';
@@ -101,13 +101,9 @@ function ViewUserPage(props) {
 
   const [writeMessageDialogOpen, setWriteMessageDialogOpen] = useState(false);
 
-  const sendMessageHandler = () => {
+  const sendDMHandler = () => {
     if (message) {
-      if (props.anonymous) {
-        sendAnonymousMessage(user._id, message).then(() => socket.emit('sendInboxMessage', { recipientId: user._id }));
-      } else {
-        sendMixtapeMessage(user._id, message).then(() => socket.emit('sendInboxMessage', { recipientId: user._id }));
-      }
+      sendDM(user._id, message).then(() => socket.emit('sendInboxMessage', { recipientId: user._id }));
     }
     setWriteMessageDialogOpen(false);
     setMessage('');
@@ -146,7 +142,7 @@ function ViewUserPage(props) {
           />
         </DialogContent>
         <DialogActions>
-          <Button align="center" onClick={sendMessageHandler} color="primary">
+          <Button align="center" onClick={sendDMHandler} color="primary">
             SEND
           </Button>
         </DialogActions>

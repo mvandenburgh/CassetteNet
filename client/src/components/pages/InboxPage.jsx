@@ -94,13 +94,7 @@ function InboxPage() {
                             </React.Fragment>
                                 }
                             />
-                            <ListItemText
-                                primary={
-                                    <React.Fragment>
-                                        Mixtape
-                            </React.Fragment>
-                                }
-                            />
+
                         </ListItem>
                         <hr />
                         {
@@ -108,7 +102,7 @@ function InboxPage() {
                                 return (
                                     <div>
                                         <Dialog open={viewMessageDialogIsOpen} onClose={() => setViewMessageDialogIsOpen(false)}>
-                                            <DialogTitle>Message from someone</DialogTitle>
+                                <DialogTitle>Message from {message.senderUsername}</DialogTitle>
                                             <DialogContent>
                                                 <DialogContentText>
                                                     {<React.Fragment>
@@ -123,8 +117,8 @@ function InboxPage() {
                                             </DialogActions>
                                         </Dialog>
                                         <ListItem alignItems="flex-start" onClick={() => printMessage(message.message)}>
-                                            <Grid container>
-                                                <Grid item xs={4}>
+                                            <Grid container >
+                                                <Grid item xs={4} onClick={() => history.push(`/user/${message.senderId}`)}>
                                                     <ListItemAvatar>
                                                         <Avatar alt={message.senderUsername} src={message.senderId ? getUserProfilePictureUrl(message.senderId) : '/static/images/avatar/1.jpg'} />
                                                         <Typography
@@ -141,10 +135,7 @@ function InboxPage() {
                                                         {parse(message.message.replace('action="/listeningRoom/', '').replace('"><input type="submit" value="Join Listening Room" /></form>', '></form> Click for more details...'))}
                                                     </Typography>
                                                 </Grid>
-                                                <Grid item xs={3}>
-                                                    <img style={{ width: '20%' }} src={getMixtapeCoverImageUrl(message.mixtape)} alt="mixtape_cover"></img>
-                                                </Grid>
-                                                <Grid item>
+                                                <Grid item >
                                                     <DeleteIcon style={{ cursor: 'pointer' }} onClick={(e) => deleteMessageHandler(e, message._id)} />
                                                 </Grid>
                                             </Grid>
