@@ -22,7 +22,7 @@ function FollowUserButton(props) {
     }
     return (
         <Button
-            disabled={disabled}
+            disabled={disabled || user._id == props.id}
             variant="contained"
             boxShadow={3}
             style={{
