@@ -123,8 +123,8 @@ function InboxPage() {
                                             </DialogActions>
                                         </Dialog>
                                         <ListItem alignItems="flex-start" onClick={() => printMessage(message.message)}>
-                                            <Grid container>
-                                                <Grid item xs={4}>
+                                            <Grid container >
+                                                <Grid item xs={4} onClick={() => history.push(`/user/${message.senderId}`)}>
                                                     <ListItemAvatar>
                                                         <Avatar alt={message.senderUsername} src={message.senderId ? getUserProfilePictureUrl(message.senderId) : '/static/images/avatar/1.jpg'} />
                                                         <Typography
