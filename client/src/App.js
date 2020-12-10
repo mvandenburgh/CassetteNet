@@ -15,6 +15,7 @@ import ViewUserPage from './components/pages/ViewUserPage';
 import UserContext from './contexts/UserContext';
 import CurrentSongContext from './contexts/CurrentSongContext';
 import PlayingSongContext from './contexts/PlayingSongContext';
+import PlayerAnimationContext from './contexts/PlayerAnimationContext';
 import JSTPSContext from './contexts/JSTPSContext';
 import AtmosphereSoundContext from './contexts/AtmosphereSoundContext';
 import SocketIOContext from './contexts/SocketIOContext';
@@ -62,6 +63,7 @@ function App() {
 
 
   const [playing, setPlaying] = useState(false);
+  const [animating, setAnimating] = useState(false);
 
   const [tps, setTps] = useState(new jsTPS());
 
@@ -89,6 +91,7 @@ function App() {
           <UserContext.Provider value={{user, setUser}}>
             <CurrentSongContext.Provider value={{currentSong, setCurrentSong}}>
               <PlayingSongContext.Provider value={{playing, setPlaying}}>
+                <PlayerAnimationContext.Provider value = {{animating, setAnimating}}>
                 <AtmosphereSoundContext.Provider value={{atmosphereSound, setAtmosphereSound}}>
                   <BrowserRouter>
                       <PageFrame loggedIn={user?.isLoggedIn} />
@@ -127,6 +130,7 @@ function App() {
                         </div>
                   </BrowserRouter>
                 </AtmosphereSoundContext.Provider>
+                </PlayerAnimationContext.Provider>
               </PlayingSongContext.Provider>
             </CurrentSongContext.Provider>
           </UserContext.Provider>
