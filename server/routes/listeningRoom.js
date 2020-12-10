@@ -29,6 +29,16 @@ function isAuthorized(user, mixtape) {
 }
 
 
+router.get('/:id/rhythmScores', async (req, res) => {
+    const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
+    if (listeningRoom) {
+        return res.send(listeningRoom.rhythmScores);
+    } else {
+        return res.status(404).send('listening room not found.');
+    }
+});
+
+
 /**
  * Create a listening room
  */
@@ -53,8 +63,8 @@ router.post('/', async (req, res) => {
         currentListeners: [],
         owner: req.user.id,
         currentSong: 0,
-        snakeScores: [],
-        rhythmScores: [],
+        snakeScores: new Map(),
+        rhythmScores: new Map(),
     });
 
     let stream;
@@ -127,14 +137,14 @@ router.put('/:id/inviteUser', async (req, res) => {
     }
 });
 
-router.get('/:id/audioAnalysis/:songIndex', async (req, res) => {
-    if (!req.user) return res.status(401).send('unauthorized');
-    const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
-    const song = listeningRoom.mixtape.songs[req.params.songIndex];
-    if (song.type !== 'youtube') return res.status(400).send(`audio analysis only works with youtube. requested song is from ${song.type}.`);
-    // const analysis = await getAudioAnalysisFromYoutube(song.id);
-    // res.json(analysis.track.tempo); // just send tempo for now
-    res.send(null);
-});
+// router.get('/:id/audioAnalysis/:songIndex', async (req, res) => {
+//     if (!req.user) return res.status(401).send('unauthorized');
+//     const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
+//     const song = listeningRoom.mixtape.songs[req.params.songIndex];
+//     if (song.type !== 'youtube') return res.status(400).send(`audio analysis only works with youtube. requested song is from ${song.type}.`);
+//     // const analysis = await getAudioAnalysisFromYoutube(song.id);
+//     // res.json(analysis.track.tempo); // just send tempo for now
+//     res.send(null);
+// });
 
 module.exports = router;

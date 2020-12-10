@@ -189,14 +189,18 @@ function ListeningRoomPage(props) {
 
     const [gameScreenStartX, setGameScreenStartX] = useState(null);
     const [gameScreenEndX, setGameScreenEndX] = useState(null);
+    const [gameScreenStartY, setGameScreenStartY] = useState(null);
+    const [gameScreenEndY, setGameScreenEndY] = useState(null);
     const [gameScreenHeight, setGameScreenHeight] = useState(null);
     const [gameScreenWidth, setGameScreenWidth] = useState(null);
 
     useEffect(() => {
         if (gameScreenRef?.current) {
-            const { offsetLeft, clientWidth } = gameScreenRef.current;
+            const { offsetLeft, offsetTop, clientHeight, clientWidth } = gameScreenRef.current;
             setGameScreenStartX(offsetLeft);
             setGameScreenEndX(offsetLeft + clientWidth);
+            setGameScreenStartY(offsetTop);
+            setGameScreenEndY(offsetTop + clientHeight);
             setGameScreenHeight(gameScreenRef.current.clientHeight);
             setGameScreenWidth(gameScreenRef.current.clientWidth);
         }
@@ -300,7 +304,7 @@ function ListeningRoomPage(props) {
                                             ref={gameScreenRef} style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
                                             {screen ==='home' ? <div></div> : <Button style={{alignItems:'right',}} onClick={exitGameHandler}> Exit Game </Button>}
                                             {screen === 'rhythm' ?
-                                                <RhythmGame xStart={gameScreenStartX} xEnd={gameScreenEndX} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
+                                                <RhythmGame gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
                                                 : screen === 'snake' ?
                                                     <SnakeGame></SnakeGame> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
                                                         <Grid item xs={2} />

@@ -142,6 +142,20 @@ function initSockets(io) {
                 await listeningRoom.save();
             }
         });
+
+        socket.on('rhythmScoreChange', async (changeBy) => {
+            console.log(`Change ${user.username}'s (${user._id.toString()}) score by ${changeBy}`)
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+
+            const userScore = listeningRoom.rhythmScores.get(user._id.toString());
+            if (userScore) {
+                listeningRoom.rhythmScores.set(user._id.toString(), userScore + changeBy);
+            } else {
+                listeningRoom.rhythmScores.set(user._id.toString(), changeBy);
+            }
+            await listeningRoom.save();
+        })
     });
 }
 

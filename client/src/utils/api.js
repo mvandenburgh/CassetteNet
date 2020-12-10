@@ -306,6 +306,11 @@ async function commentOnMixtape(mixtapeId, comment) {
     return comments.data;
 }
 
+async function getRhythmGameScores(listeningRoomId) {
+    const scores = await axios.get(new URL(`/api/listeningroom/${listeningRoomId}/rhythmScores`, SERVER_ROOT_URL).href);
+    return scores.data;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -357,5 +362,6 @@ export {
     getSongTempo,
     commentOnMixtape,
     sendDM,
+    getRhythmGameScores,
     SERVER_ROOT_URL,
 };
