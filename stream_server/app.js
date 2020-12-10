@@ -77,15 +77,6 @@ app.post('/startStream', async (req, res) => {
             const tempoDetect = child_process.spawn('ffmpeg', [`-i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -vn -ar 44100 -ac 2 -b:a 192k ${path.join(__dirname, `mp3/${filename}_hq.mp3`)}`], { shell: true });
 
             tempoDetect.on('close', () => {
-                // spawn ffmpeg process to start live stream
-                const ffmpegStreamProcess = child_process.spawn('ffmpeg', [`-re -i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/${filename}`], { shell: true });
-
-                // remove mp3 file and streaming files after stream is over
-                ffmpegStreamProcess.on('close', (code) => {
-                    fs.unlink(path.join(__dirname, `mp3/${filename}.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}.mp3`)}'.`));
-                    fs.rmdir(path.join(__dirname, `mp3/live/${filename}`), { recursive: true }, (e) => console.log(`Removed folder '${path.join(__dirname, `mp3/live/${filename}`)}'.`));
-                });
-
                 // read in the new high quality file
                 const data = fs.readFileSync(path.join(__dirname, `mp3/${filename}_hq.mp3`));
 
@@ -104,6 +95,14 @@ app.post('/startStream', async (req, res) => {
                     }
                     const tempoData = new MusicTempo(audioData);
                     res.json({ listeningRoomPlaybackId: filename, tempo: tempoData.tempo });
+                    // spawn ffmpeg process to start live stream
+                    const ffmpegStreamProcess = child_process.spawn('ffmpeg', [`-re -i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -c:v libx264 -preset veryfast -tune zerolatency -c:a aac -ar 44100 -f flv rtmp://localhost/live/${filename}`], { shell: true });
+
+                    // remove mp3 file and streaming files after stream is over
+                    ffmpegStreamProcess.on('close', (code) => {
+                        fs.unlink(path.join(__dirname, `mp3/${filename}.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}.mp3`)}'.`));
+                        fs.rmdir(path.join(__dirname, `mp3/live/${filename}`), { recursive: true }, (e) => console.log(`Removed folder '${path.join(__dirname, `mp3/live/${filename}`)}'.`));
+                    });
                     
                     // delete the high quality file asynchronously (it's no longer needed)
                     fs.unlink(path.join(__dirname, `mp3/${filename}_hq.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}_hq.mp3`)}'.`));
