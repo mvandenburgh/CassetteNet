@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import PlayingSongContext from '../../contexts/PlayingSongContext';
 import { Spring } from 'react-spring/renderprops';
-import { getSongTempo } from '../../utils/api';
 
 function setExactInterval(handler, time) {
     var startTime = Date.now();
@@ -16,9 +16,9 @@ function setExactInterval(handler, time) {
     }, time - 50);
 }
 
-const BOX_WIDTH = 25; // width of animated boxes in pixels
+const BOX_WIDTH = 90; // width of animated boxes in pixels
 
-function RhythmGame({ xStart, xEnd, listeningRoom }) {
+function RhythmGame({ xStart, xEnd, gameScreenHeight, gameScreenWidth, listeningRoom }) {
     const [bpm, setBpm] = useState(-1);
     const bps = bpm / 60; // beats per second
     const beatDuration = 1 / bps; // how long a square should take to get from the beginning of screen to middle
@@ -29,22 +29,19 @@ function RhythmGame({ xStart, xEnd, listeningRoom }) {
 
     const [red, setRed] = useState(false);
 
+    const { playing, setPlaying } = useContext(PlayingSongContext);
+
     const onAnimationEnd = (a) => {
         setStartNewAnimation(true)
         setFirstBeatDone(true);
     }
 
     useEffect(() => {
-        // getSongTempo(listeningRoom._id, listeningRoom.currentSong)
-        //     .then(newBpm => {
-        //         setBpm(newBpm);
-        //     });
-        console.log(listeningRoom.mixtape.songs[listeningRoom.currentSong]);
-        setBpm(listeningRoom.mixtape.songs[listeningRoom.currentSong].bpm);
+        setBpm(listeningRoom.mixtape.songs[listeningRoom.currentSong].tempo);
         setStartNewAnimation(true);
     }, [listeningRoom]);
 
-    if (!xStart || !xEnd || bpm < 0) {
+    if (!xStart || !xEnd || bpm < 0 || !playing) {
         return null;
     }
 
@@ -74,7 +71,7 @@ function RhythmGame({ xStart, xEnd, listeningRoom }) {
             >
                 {props => (
                     <div style={props}>
-                        <div style={{ position: 'absolute', left: `${props.x}px`, ...c2Style }} />
+                        <div style={{ position: 'absolute', left: `${props.x}px`, top: `${gameScreenHeight/3}px`, ...c2Style }} />
                     </div>
                 )}
             </Spring>
@@ -90,7 +87,7 @@ function RhythmGame({ xStart, xEnd, listeningRoom }) {
                 >
                     {props => (
                         <div style={props}>
-                            <div style={{ position: 'absolute', left: `${props.x}px`, ...c1Style }} />
+                            <div style={{ position: 'absolute', left: `${props.x}px`, top: `${gameScreenHeight/3}px`, ...c1Style }} />
                         </div>
                     )}
                 </Spring>
