@@ -42,7 +42,7 @@
             var videoElement = document.getElementById('videoElement');
             var flvPlayer = flvjs.createPlayer({
                 type: 'flv',
-                url: `/stream/live/${res}.flv`
+                url: `/stream/live/${res.listeningRoomPlaybackId}.flv`
                 // url: `http://localhost:5001/stream/live/${stream_id}.flv`
             });
             flvPlayer.attachMediaElement(videoElement);
