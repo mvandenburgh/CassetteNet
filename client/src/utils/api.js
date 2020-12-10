@@ -280,6 +280,10 @@ async function getInboxMessages() {
     return messages.data;
 }
 
+async function sendDM(recipient, message) {
+    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, isAnonymous: false });
+}
+
 async function sendListeningRoomInvitation(recipient, listeningRoomId, mixtapeId) {
     console.log("Inside api.js - sendListeningRoomInvitation");
     await axios.put(new URL(`/api/listeningRoom/${listeningRoomId}/inviteUser`, SERVER_ROOT_URL).href, { user: recipient });
@@ -352,5 +356,6 @@ export {
     getRandomMixtapes,
     getSongTempo,
     commentOnMixtape,
+    sendDM,
     SERVER_ROOT_URL,
 };
