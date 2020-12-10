@@ -74,7 +74,7 @@ app.post('/startStream', async (req, res) => {
         // should only do this once per song and save the tempos for future use.
         if (getTempo) {
             // use ffmpeg to create higher quality audio file so we can calculate tempo
-            const tempoDetect = child_process.spawn('ffmpeg', [`-i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -vn -ar 44100 -ac 2 -b:a 192k ${path.join(__dirname, `mp3/${filename}_hq.mp3`)}`], { shell: true });
+            const tempoDetect = child_process.spawn('ffmpeg', [`-i "${path.join(__dirname, `mp3/${filename}.mp3`)}" -map 0:a:0 -b:a 96k "${path.join(__dirname, `mp3/${filename}_hq.mp3`)}"`], { shell: true });
 
             tempoDetect.on('close', () => {
                 // read in the new high quality file

@@ -104,6 +104,8 @@ function ListeningRoomPage(props) {
 
     const [endSessionPopupOpen, setEndSessionPopupOpen] = useState(false);
 
+    const [queuedUpForRhythmGame, setQueuedUpForRhythmGame] = useState(false);
+
     const lrRef = useRef(listeningRoom);
 
     useEffect(() => lrRef.current = listeningRoom);
@@ -183,17 +185,22 @@ function ListeningRoomPage(props) {
 
     const [gameScreenStartX, setGameScreenStartX] = useState(null);
     const [gameScreenEndX, setGameScreenEndX] = useState(null);
+    const [gameScreenHeight, setGameScreenHeight] = useState(null);
+    const [gameScreenWidth, setGameScreenWidth] = useState(null);
 
     useEffect(() => {
         if (gameScreenRef?.current) {
             const { offsetLeft, clientWidth } = gameScreenRef.current;
             setGameScreenStartX(offsetLeft);
-            setGameScreenEndX(offsetLeft + clientWidth)
+            setGameScreenEndX(offsetLeft + clientWidth);
+            setGameScreenHeight(gameScreenRef.current.clientHeight);
+            setGameScreenWidth(gameScreenRef.current.clientWidth);
         }
     });
 
     const rhythmGameHandler = () => {
         socket.emit('queueRhythmGame');
+        setQueuedUpForRhythmGame(true);
     }
 
     if (!listeningRoom) {
@@ -276,7 +283,7 @@ function ListeningRoomPage(props) {
                                         <Paper ref={gameScreenRef} style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
 
                                             {screen === 'rhythm' ?
-                                                <RhythmGame xStart={gameScreenStartX} xEnd={gameScreenEndX} listeningRoom={listeningRoom} />
+                                                <RhythmGame xStart={gameScreenStartX} xEnd={gameScreenEndX} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
                                                 : screen === 'snake' ?
                                                     <div /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
                                                         <Grid item xs={2} />
@@ -326,7 +333,7 @@ function ListeningRoomPage(props) {
                     </TabPanel>
                 </Grid>
             </Grid>
-            <ListeningRoomPlayer listeningRoom={listeningRoom} setListeningRoom={setListeningRoom} />
+            <ListeningRoomPlayer listeningRoom={listeningRoom} setListeningRoom={setListeningRoom} rhythmGame={queuedUpForRhythmGame} />
             <Dialog open={inviteUserPopupOpen} onClose={() => setInviteUserPopupOpen(false)}>
                 <DialogTitle>Invite a User</DialogTitle>
                 <DialogContent>
