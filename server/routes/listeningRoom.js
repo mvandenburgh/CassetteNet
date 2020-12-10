@@ -63,8 +63,6 @@ router.post('/', async (req, res) => {
             { 
                 type: mixtape.songs[0].type,
                 id: mixtape.songs[0].id,
-                index: 0,
-                listeningRoomId: listeningRoom._id,
                 getTempo: false, // not possible to play rhythm game on first song in LR, so no need for tempo.
             }
         );

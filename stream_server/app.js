@@ -57,8 +57,8 @@ app.use(cors());
 app.use('/stream', proxy(`http://localhost:${process.env.MEDIA_PORT || 8888}/`));
 
 app.post('/startStream', async (req, res) => {
-    const { type, id, index, listeningRoomId, getTempo } = req.body;
-    if (!type || !id || (!index && index !== 0) || !listeningRoomId) return res.status(400).send('invalid request');
+    const { type, id, getTempo } = req.body;
+    if (!type || !id) return res.status(400).send('invalid request');
     const filename = Date.now();
     let writeStream;
     if (type === 'youtube') {

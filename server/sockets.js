@@ -114,8 +114,6 @@ function initSockets(io) {
                         {
                             type: listeningRoom.mixtape.songs[index].type,
                             id: listeningRoom.mixtape.songs[index].id,
-                            listeningRoomId: roomId,
-                            index,
                             getTempo,
                         }
                     );
