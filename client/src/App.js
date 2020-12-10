@@ -35,6 +35,7 @@ import VerifyLoginPage from './components/pages/VerifyLoginPage';
 import OAuthUsernamePage from './components/pages/OAuthUsernamePage';
 import ResetPasswordPage from './components/pages/ResetPasswordPage';
 import socketIOClient from 'socket.io-client';
+import SnakeGame from './components/Snake/SnakeGame';
 
 function App() {
   const [socket, setSocket] = useState(socketIOClient(SERVER_ROOT_URL));
@@ -115,6 +116,7 @@ function App() {
                             <Route exact path="/SignUp" component={SignUpPage}/>
                             <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
                             <Route exact path="/verify/:token" component={VerifyAccountPage} />
+                            <Route exact path="/SnakeGame" component={SnakeGame} />
                             <Route exact path="/Admin">
                               {user?.admin ? <AdminPage /> : <Redirect to="/" />}
                             </Route>
