@@ -22,7 +22,7 @@
             var videoElement = document.getElementById('videoElement');
             var flvPlayer = flvjs.createPlayer({
                 type: 'flv',
-                url: `https://cassettenet-stream.herokuapp.com/stream/live/${stream_id}.flv`
+                url: `/stream/live/${stream_id}.flv`
                 // url: `http://localhost:5001/stream/live/${stream_id}.flv`
             });
             flvPlayer.attachMediaElement(videoElement);
@@ -42,7 +42,7 @@
             var videoElement = document.getElementById('videoElement');
             var flvPlayer = flvjs.createPlayer({
                 type: 'flv',
-                url: `https://cassettenet-stream.herokuapp.com/stream/live/${res}.flv`
+                url: `/stream/live/${res}.flv`
                 // url: `http://localhost:5001/stream/live/${stream_id}.flv`
             });
             flvPlayer.attachMediaElement(videoElement);
