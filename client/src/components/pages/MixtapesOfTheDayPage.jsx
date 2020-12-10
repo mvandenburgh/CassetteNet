@@ -35,11 +35,11 @@ const MixtapeRows = ({ mixtapes, history }) => (
   </>
 );
 
-function AnonymousMixtapesPage(props) {
+function MixtapesOfTheDayPage(props) {
 
   const [open, setOpen] = useState(false);
 
-  const [anonMixtapes, setAnonMixtapes] = useState([]);
+  const [mixtapes, setMixtapes] = useState([]);
 
   const handleClickOpen = () => {
     return;
@@ -51,7 +51,7 @@ function AnonymousMixtapesPage(props) {
   };
 
   useEffect(() => {
-    getRandomMixtapes(5, 'daily').then(mixtapes => { console.log(mixtapes); setAnonMixtapes(mixtapes); });
+    getRandomMixtapes(10, 'daily').then(mixtapes => setMixtapes(mixtapes));
   }, []);
 
   const history = useHistory();
@@ -90,7 +90,7 @@ function AnonymousMixtapesPage(props) {
         <ArrowBackIcon />
       </IconButton>
       <br />
-      <Typography variant="h3" style={{ textAlign: "center" }}>Mixtapes Anonymous ({todaysDate.getMonth()+1}/{todaysDate.getDate()}/{todaysDate.getFullYear().toString().substring(2)})</Typography>
+      <Typography variant="h3" style={{ textAlign: "center" }}>Mixtapes of the Day ({todaysDate.getMonth()+1}/{todaysDate.getDate()}/{todaysDate.getFullYear().toString().substring(2)})</Typography>
       <br />
       <Grid container direction="row">
 
@@ -132,7 +132,7 @@ function AnonymousMixtapesPage(props) {
           backgroundColor: blueGrey[900],
           width: '80%'
         }}>
-          <MixtapeRows mixtapes={anonMixtapes} history={history} />
+          <MixtapeRows mixtapes={mixtapes} history={history} />
         </Box>
       </Grid>
 
@@ -141,4 +141,4 @@ function AnonymousMixtapesPage(props) {
   );
 }
 
-export default AnonymousMixtapesPage;
+export default MixtapesOfTheDayPage;

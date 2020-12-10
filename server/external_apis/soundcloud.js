@@ -1,4 +1,4 @@
-const soundcloud = require('soundcloud-downloader');
+const soundcloud = require('soundcloud-downloader').default;
 
 async function searchSong(song) {
     const songs = await soundcloud.search('tracks', song);

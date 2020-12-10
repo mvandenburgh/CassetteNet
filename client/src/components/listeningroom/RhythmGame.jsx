@@ -35,11 +35,14 @@ function RhythmGame({ xStart, xEnd, listeningRoom }) {
     }
 
     useEffect(() => {
-        getSongTempo(listeningRoom._id, listeningRoom.currentSong)
-            .then(newBpm => {
-                setBpm(newBpm);
-            });
-    }, []);
+        // getSongTempo(listeningRoom._id, listeningRoom.currentSong)
+        //     .then(newBpm => {
+        //         setBpm(newBpm);
+        //     });
+        console.log(listeningRoom.mixtape.songs[listeningRoom.currentSong]);
+        setBpm(listeningRoom.mixtape.songs[listeningRoom.currentSong].bpm);
+        setStartNewAnimation(true);
+    }, [listeningRoom]);
 
     if (!xStart || !xEnd || bpm < 0) {
         return null;

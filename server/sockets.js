@@ -1,6 +1,7 @@
 const { Types } = require('mongoose');
 const axios = require('axios');
 const { ListeningRoom, User } = require('./models');
+const { getAudioAnalysisFromYoutube } = require('./external_apis/spotify');
 
 let STREAM_SERVER_ROOT_URL;
 try {
@@ -97,6 +98,10 @@ function initSockets(io) {
             if (listeningRoom && listeningRoom.owner && listeningRoom.owner.equals(user._id)) {
                 listeningRoom.currentSong = index;
                 if (listeningRoom.rhythmGameQueue.length > 0) {
+                    // const analysis = await getAudioAnalysisFromYoutube(listeningRoom.mixtape.songs[index].id);
+                    // console.log(analysis);
+                    // listeningRoom.mixtape.songs[index].bpm = analysis.track.tempo;
+                    listeningRoom.mixtape.songs[index].bpm = 60; // TODO: actually calculate this
                     io.in(roomId).emit('rhythmGameAboutToBegin');
                 }
                 listeningRoom.startedAt = null;

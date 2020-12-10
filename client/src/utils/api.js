@@ -262,12 +262,12 @@ async function getListeningRoom(listeningRoomId) {
     return listeningRoom.data;
 }
 
-async function sendAnonymousMessage(mixtapeId, recipient, message) {
-    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId, isAnonymous: true });
+async function sendAnonymousMessage(recipient, message) {
+    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, isAnonymous: true });
 }
 
-async function sendMixtapeMessage(mixtapeId, recipient, message) {
-    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId, isAnonymous: false });
+async function sendMixtapeMessage(recipient, message) {
+    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, isAnonymous: false });
 }
 
 async function deleteInboxMessage(messageId) {
@@ -278,6 +278,10 @@ async function deleteInboxMessage(messageId) {
 async function getInboxMessages() {
     const messages = await axios.get(new URL('/api/user/inboxMessages', SERVER_ROOT_URL).href);
     return messages.data;
+}
+
+async function sendDM(recipient, message) {
+    await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, isAnonymous: false });
 }
 
 async function sendListeningRoomInvitation(recipient, listeningRoomId, mixtapeId) {
@@ -300,6 +304,11 @@ async function getPopularMixtapes(count) {
 async function getSongTempo(listeningRoomId, songIndex) {
     const analysis = await axios.get(new URL(`/api/listeningroom/${listeningRoomId}/audioAnalysis/${songIndex}`, SERVER_ROOT_URL).href);
     return analysis.data;
+}
+
+async function commentOnMixtape(mixtapeId, comment) {
+    const comments = await axios.post(new URL(`/api/mixtape/${mixtapeId}/comment`, SERVER_ROOT_URL).href, { comment });
+    return comments.data;
 }
 
 export {
@@ -352,5 +361,7 @@ export {
     getRandomMixtapes,
     getPopularMixtapes,
     getSongTempo,
+    commentOnMixtape,
+    sendDM,
     SERVER_ROOT_URL,
 };

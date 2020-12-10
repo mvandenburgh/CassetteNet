@@ -25,24 +25,26 @@ async function getAudioAnalysisFromYoutube(videoId) {
     } else {
         tracks = await spotifyApi.searchTracks(vidInfo[0].snippet.title);
     }
-    if (!tracks || !tracks.body || !tracks.body.tracks.items) {
+    if (!tracks || !tracks.body || !tracks.body.tracks.items || tracks.body.tracks.items.length === 0) {
         return null;
     }
 
     const durationFromYt = toSeconds(parse(vidInfo[0].contentDetails.duration));
-    let track;
 
+    const track = tracks.body.tracks.items[0].id;
+    // let track;
     // try to find spotify track with best chance of being identical to youtube track
-    for (let i = 0; i < tracks.body.tracks.items.length; i++) {
-        let currentDuration = tracks.body.tracks.items[i].duration_ms / 1000;
-        if (Math.abs(durationFromYt - currentDuration) <= 10) {
-            track = tracks.body.tracks.items[i].id;
-            break;
-        }
-    }
-    if (!track && tracks.body.tracks.items.length) {
-        return null;
-    }
+    // for (let i = 0; i < tracks.body.tracks.items.length; i++) {
+    //     let currentDuration = tracks.body.tracks.items[i].duration_ms / 1000;
+    //     if (Math.abs(durationFromYt - currentDuration) <= 10) {
+    //         track = tracks.body.tracks.items[i].id;
+    //         break;
+    //     }
+    // }
+    // if (!track || tracks.body.tracks.items.length === 0) {
+    //     return null;
+    // }
+    // console.log(track);
     const analysis = await spotifyApi.getAudioAnalysisForTrack(track);
     if (analysis.body.track.codestring) {
         delete analysis.body.track.codestring;
