@@ -107,7 +107,7 @@ function initSockets(io) {
                 // only request tempo of song if:
                 //   1) there is at least one person in the rhythm game queue AND
                 //   2) the tempo hasn't already been calculated prior
-                const getTempo = listeningRoom.rhythmGameQueue.length > -1 && !Boolean(listeningRoom.mixtape.songs[index].tempo || listeningRoom.mixtape.songs[index].tempo === 0);
+                const getTempo = listeningRoom.rhythmGameQueue.length > 0 && !Boolean(listeningRoom.mixtape.songs[index].tempo || listeningRoom.mixtape.songs[index].tempo === 0);
 
                 try {
                     stream = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href,
