@@ -65,6 +65,19 @@ router.get('/:id/snake/scores', async (req, res) => {
     }
 });
 
+router.delete('/:id/snake/scores', async (req, res) => {
+    const listeningRoom = await ListeningRoom.findById(req.params.id);
+    console.log('clearing snake scores.')
+    if (listeningRoom) {
+        listeningRoom.snakeScores = new Map();
+        listeningRoom.markModified('snakeScores');
+        await listeningRoom.save();
+        res.send('success');
+    } else {
+        return res.status(404).send('listening room not found.');
+    }
+});
+
 /**
  * Create a listening room
  */

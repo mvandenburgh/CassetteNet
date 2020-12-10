@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { useInterval } from "./useInterval.js";
 import {
   gameSize,
@@ -9,8 +9,10 @@ import {
   directions
 } from "./constants";
 import { Typography } from "@material-ui/core";
+import SocketIOContext from '../../contexts/SocketIOContext';
+import { resetGameScores } from '../../utils/api';
 
-function SnakeGame(){
+function SnakeGame({ listeningRoom }){
   const canvasRef = useRef();
   const [snake, setSnake] = useState(snakePos);
   const [apple, setApple] = useState(goalPos);
@@ -19,14 +21,22 @@ function SnakeGame(){
   const [speed, setSpeed] = useState(null);
   const [gameOver, setGameOver] = useState(false);
 
+  const { socket } = useContext(SocketIOContext);
+
   useInterval(() => gameLoop(), speed);
 
   const endGame = () => {
-    setSpeed(null);
+    resetGameScores(listeningRoom._id, 'snake').then(() => {
+      setSpeed(null);
     setGameOver(true);
+    setScore(0);
+    });
+
+    
   };
   const addScore=()=>{
     setScore(score+1);
+    socket.emit('snakeScoreChange', 1);
   }
   const moveSnake = ({ keyCode }) =>
     keyCode >= 37 && keyCode <= 40 && setDir(directions[keyCode]);
