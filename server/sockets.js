@@ -118,6 +118,7 @@ function initSockets(io) {
                         }
                     );
                 } catch (err) {
+                    console.log(err.message);
                     return;
                 }
                 const { listeningRoomPlaybackId, tempo } = stream.data;
