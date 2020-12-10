@@ -137,7 +137,7 @@ function MixtapeList(props) {
                   </Grid>
                 </Grid>
               </ListItem>
-              {mixtapes.map((mixtape, index) => (
+              {mixtapes?.map((mixtape, index) => (
                 <div onClick={() => openMixtape(index)}>
                   <Grid container>
                     <Draggable
