@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Grid, Slider as VolumeSlider } from '@material-ui/core';
+import { Grid, Slider as VolumeSlider, Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import { useInterval } from '../../hooks';
@@ -80,7 +81,7 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
 )
 
 
-function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
+function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame }) {
     const playerRef = useRef();
 
     const { socket } = useContext(SocketIOContext);
@@ -91,11 +92,16 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
 
     const { playing, setPlaying } = useContext(PlayingSongContext);
 
+    const [rhythmGameStartingPopup, setRhythmGameStartingPopup] = useState(false);
+
     useInterval(() => {
         if (playerRef.current && playing && listeningRoom?.startedAt && listeningRoom?.wasAt) {
             const time = ((Date.now() / 1000) - listeningRoom.startedAt) + listeningRoom.wasAt;
             if (time >= 0) {
                 setCurrentTime(time);
+                if (rhythmGame && listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration - currentTime <= 6) {
+                    setRhythmGameStartingPopup(true);
+                }
             } else {
                 setCurrentTime(0);
             }
@@ -244,6 +250,17 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom }) {
                 url={atmosphereSound.filename}
                 volume={atmosphereVolume}
             />
+            <Snackbar
+                open={rhythmGameStartingPopup}
+                autoHideDuration={8000}
+                onClose={() => setRhythmGameStartingPopup(false)}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <Alert severity="info">Rhythm game will start in {Math.ceil(listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration - currentTime)}</Alert>
+            </Snackbar>
         </div>
     )
 }

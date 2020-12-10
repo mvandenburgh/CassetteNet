@@ -104,6 +104,8 @@ function ListeningRoomPage(props) {
 
     const [endSessionPopupOpen, setEndSessionPopupOpen] = useState(false);
 
+    const [queuedUpForRhythmGame, setQueuedUpForRhythmGame] = useState(false);
+
     const lrRef = useRef(listeningRoom);
 
     useEffect(() => lrRef.current = listeningRoom);
@@ -198,6 +200,7 @@ function ListeningRoomPage(props) {
 
     const rhythmGameHandler = () => {
         socket.emit('queueRhythmGame');
+        setQueuedUpForRhythmGame(true);
     }
 
     if (!listeningRoom) {
@@ -330,7 +333,7 @@ function ListeningRoomPage(props) {
                     </TabPanel>
                 </Grid>
             </Grid>
-            <ListeningRoomPlayer listeningRoom={listeningRoom} setListeningRoom={setListeningRoom} />
+            <ListeningRoomPlayer listeningRoom={listeningRoom} setListeningRoom={setListeningRoom} rhythmGame={queuedUpForRhythmGame} />
             <Dialog open={inviteUserPopupOpen} onClose={() => setInviteUserPopupOpen(false)}>
                 <DialogTitle>Invite a User</DialogTitle>
                 <DialogContent>
