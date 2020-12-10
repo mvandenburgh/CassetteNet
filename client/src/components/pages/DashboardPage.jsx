@@ -11,7 +11,6 @@ import UserContext from '../../contexts/UserContext';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getPopularMixtapes, getRandomMixtapes } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
-
 const MixtapeRows = ({ mixtapes, history }) => (
     <>
   
@@ -71,6 +70,12 @@ function DashboardPage(props) {
     ); 
 
     const history = useHistory();
+    const [mixtapes, setMixtapes] = useState([]);
+
+  useEffect(() => {
+    getRandomMixtapes(10, 'daily').then(mixtapes => setMixtapes(mixtapes));
+  }, []);
+
     const goBack = () => { history.push('/') }
 
     const [value, setValue] = React.useState(0);
@@ -86,11 +91,7 @@ function DashboardPage(props) {
         setOpen(false);
       };
 
-    const [mixtapes, setMixtapes] = useState([]);//useState(null);
 
-    useEffect(() => {
-        getPopularMixtapes(5).then(mixtapes => setMixtapes(mixtapes));
-    }, []);
 
     console.log(mixtapes);
   
