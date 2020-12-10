@@ -27,13 +27,14 @@ import CurrentSongContext from '../../contexts/CurrentSongContext';
 import PlayingSongContext from '../../contexts/PlayingSongContext';
 import UserContext from '../../contexts/UserContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
-import { getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation } from '../../utils/api';
+import { getListeningRoom, getUserProfilePictureUrl, sendListeningRoomInvitation, getGameScores } from '../../utils/api';
 import logo from '../../images/logo.png';
 import '../styles/chatbox.css';
 import { ChatBox } from 'react-chatbox-component';
 import RhythmGame from '../listeningroom/RhythmGame';
 import SnakeGame from '../Snake/SnakeGame';
 import ListeningRoomPlayer from '../listeningroom/ListeningRoomPlayer';
+import { useInterval } from '../../hooks';
 
 
 function TabPanel(props) {
@@ -106,6 +107,14 @@ function ListeningRoomPage(props) {
     const [endSessionPopupOpen, setEndSessionPopupOpen] = useState(false);
 
     const [queuedUpForRhythmGame, setQueuedUpForRhythmGame] = useState(false);
+
+    const [scores, setScores] = useState([]);
+
+    useInterval(() => {
+        if (screen !== 'home') {
+            getGameScores(listeningRoom._id, screen).then(newScores => setScores(newScores));
+        }
+    }, 3000);
 
     const lrRef = useRef(listeningRoom);
 
@@ -185,7 +194,20 @@ function ListeningRoomPage(props) {
 
     const [screen, setScreen] = useState('home'); // can be one of ['home', 'snake', 'rhythm']
 
-    const gameScreenRef = useRef();
+    useEffect(() => {
+        if (screen !== 'home') {
+            getGameScores(listeningRoom._id, screen).then(newScores => {
+                const scoresArray = [];
+                for (const score in newScores) {
+                    scoresArray.push({ score: newScores[score], user: score });
+                }
+                console.log(scoresArray)
+                setScores(scoresArray);
+            });
+        }
+    }, [screen]);
+
+    const gameScreenRef = useRef();     
 
     const [gameScreenStartX, setGameScreenStartX] = useState(null);
     const [gameScreenEndX, setGameScreenEndX] = useState(null);
@@ -217,6 +239,8 @@ function ListeningRoomPage(props) {
     if (!listeningRoom) {
         return null;
     }
+
+    console.log(scores);
 
     return (
         <div>
@@ -343,6 +367,9 @@ function ListeningRoomPage(props) {
                                     <Paper style={{ backgroundColor: "#ACDCFF" }}>
                                         <Typography alignItems="center" variant="h4">Scoreboard</Typography>
                                     </Paper>
+                                    {scores ? scores?.map(score => (
+                                        <div>{score.username}: {score.score}</div>
+                                    )) : undefined}
                                 </Grid>
                                 <Grid item xs={12} style={{ backgroundColor: 'white', height: '50%' }} >
                                     <Paper style={{ backgroundColor: "#ACDCFF" }}>

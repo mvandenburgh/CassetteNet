@@ -25,6 +25,12 @@ function RhythmGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameSc
 
     const { socket } = useContext(SocketIOContext);
 
+    useEffect(() => {
+        if (!playing) {
+            setScore(0);
+        }
+    }, [playing]);
+
     const onAnimationEnd = (a) => {
         setStartNewAnimation(true)
         setFirstBeatDone(true);

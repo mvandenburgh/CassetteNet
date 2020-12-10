@@ -29,15 +29,41 @@ function isAuthorized(user, mixtape) {
 }
 
 
-router.get('/:id/rhythmScores', async (req, res) => {
+router.get('/:id/rhythm/scores', async (req, res) => {
     const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
     if (listeningRoom) {
-        return res.send(listeningRoom.rhythmScores);
+        const newRhythmScores = [];
+        for (const userId in listeningRoom.rhythmScores) {
+            const user = await User.findById(userId).lean();
+            newRhythmScores.push({
+                score: listeningRoom.rhythmScores[userId],
+                user: userId,
+                username: user.username,
+            });
+        }
+        return res.send(newRhythmScores);
     } else {
         return res.status(404).send('listening room not found.');
     }
 });
 
+router.get('/:id/snake/scores', async (req, res) => {
+    const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
+    if (listeningRoom) {
+        const newRhythmScores = [];
+        for (const userId in listeningRoom.snakeScores) {
+            const user = await User.findById(userId).lean();
+            newRhythmScores.push({
+                score: listeningRoom.snakeScores[userId],
+                user: userId,
+                username: user.username,
+            });
+        }
+        return res.send(newRhythmScores);
+    } else {
+        return res.status(404).send('listening room not found.');
+    }
+});
 
 /**
  * Create a listening room

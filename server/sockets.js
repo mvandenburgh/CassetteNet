@@ -128,6 +128,10 @@ function initSockets(io) {
                 listeningRoom.markModified('mixtape.songs');
                 listeningRoom.startedAt = (Date.now() / 1000) + 4; // its usually off by about 4 seconds
                 listeningRoom.wasAt = 0;
+                listeningRoom.rhythmScores = new Map();
+                listeningRoom.snakeScores = new Map();
+                listeningRoom.markModified('rhythmScores');
+                listeningRoom.markModified('snakeScores');
                 await listeningRoom.save();
                 io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl });
             }
