@@ -32,6 +32,7 @@ import logo from '../../images/logo.png';
 import '../styles/chatbox.css';
 import { ChatBox } from 'react-chatbox-component';
 import RhythmGame from '../listeningroom/RhythmGame';
+import SnakeGame from '../Snake/SnakeGame';
 import ListeningRoomPlayer from '../listeningroom/ListeningRoomPlayer';
 
 
@@ -154,6 +155,9 @@ function ListeningRoomPage(props) {
     const sendChatHandler = (message) => {
         socket.emit('sendChatMessage', { message, timestamp: Date.now(), from: { user: user._id, username: user.username } });
     }
+    const exitGameHandler = ()=>{
+        setScreen('home');
+    }
 
     const [inviteUserPopupOpen, setInviteUserPopupOpen] = useState(false);
     const [userToInvite, setUserToInvite] = useState(null);
@@ -201,6 +205,9 @@ function ListeningRoomPage(props) {
     const rhythmGameHandler = () => {
         socket.emit('queueRhythmGame');
         setQueuedUpForRhythmGame(true);
+    }
+    const snakeGameHandler = () => {
+        setScreen('snake');
     }
 
     if (!listeningRoom) {
@@ -280,12 +287,22 @@ function ListeningRoomPage(props) {
                                 </Grid>
                                 <Grid style={{ height: '75vh' }} item xs={12}>
                                     <Grid container style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
-                                        <Paper ref={gameScreenRef} style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
-
+                                        <Paper onKeyDown={e => {        //ignores scrolling on arrow keys
+                                                console.log(e);
+                                                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                                console.log(e.key);
+                                                return false;
+                                                }
+                                                e.stopPropagation();
+                                            }}
+                                            ref={gameScreenRef} style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
+                                            {screen ==='home' ? <div></div> : <Button style={{alignItems:'right',}} onClick={exitGameHandler}> Exit Game </Button>}
                                             {screen === 'rhythm' ?
                                                 <RhythmGame xStart={gameScreenStartX} xEnd={gameScreenEndX} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
                                                 : screen === 'snake' ?
-                                                    <div /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
+                                                    <SnakeGame></SnakeGame> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
                                                         <Grid item xs={2} />
                                                         <Grid item xs={10}>
                                                             <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>
@@ -299,7 +316,7 @@ function ListeningRoomPage(props) {
                                                                 Rhythm Game
                                                                 </Grid>
                                                             <Grid item xs={2} />
-                                                            <Grid style={{ backgroundColor: 'green' }} item xs={2}>
+                                                            <Grid style={{ backgroundColor: 'green', cursor: 'pointer' }} item xs={2} onClick={snakeGameHandler}>
                                                                 Snake Game
                                                                 </Grid>
                                                             <Grid item xs={3} />

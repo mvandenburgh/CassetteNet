@@ -1,4 +1,4 @@
-const gameSize = [400, 400];
+const gameSize = [920, 520];
 const snakePos = [
   [8, 7],
   [8, 8]

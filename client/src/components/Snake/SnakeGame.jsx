@@ -8,11 +8,13 @@ import {
   SPEED,
   directions
 } from "./constants";
+import { Typography } from "@material-ui/core";
 
-function SnakeGame(props){
+function SnakeGame(){
   const canvasRef = useRef();
   const [snake, setSnake] = useState(snakePos);
   const [apple, setApple] = useState(goalPos);
+  const [score,setScore] = useState(0);
   const [dir, setDir] = useState([0, -1]);
   const [speed, setSpeed] = useState(null);
   const [gameOver, setGameOver] = useState(false);
@@ -23,7 +25,9 @@ function SnakeGame(props){
     setSpeed(null);
     setGameOver(true);
   };
-
+  const addScore=()=>{
+    setScore(score+1);
+  }
   const moveSnake = ({ keyCode }) =>
     keyCode >= 37 && keyCode <= 40 && setDir(directions[keyCode]);
 
@@ -47,6 +51,7 @@ function SnakeGame(props){
 
   const checkAppleCollision = newSnake => {
     if (newSnake[0][0] === apple[0] && newSnake[0][1] === apple[1]) {
+      addScore();
       let newApple = createApple();
       while (checkCollision(newApple, newSnake)) {
         newApple = createApple();
@@ -67,6 +72,7 @@ function SnakeGame(props){
   };
 
   const startGame = () => {
+    setScore(0);
     setSnake(snakePos);
     setApple(goalPos);
     setDir([0, -1]);
@@ -80,7 +86,9 @@ function SnakeGame(props){
     context.clearRect(0, 0, window.innerWidth, window.innerHeight);
     context.fillStyle = "pink";
     snake.forEach(([x, y]) => context.fillRect(x, y, 1, 1));
-    context.fillStyle = "lightblue";
+    context.fillStyle = "green";
+    context.fillRect(snake[0], snake[1], 1, 1);
+    context.fillStyle = "blue";
     context.fillRect(apple[0], apple[1], 1, 1);
   }, [snake, apple, gameOver]);
 
@@ -92,6 +100,7 @@ function SnakeGame(props){
         width={`${gameSize[0]}px`}
         height={`${gameSize[1]}px`}
       />
+      <Typography style={{ fontSize: '40px' }} variant="h3">{score}</Typography>
       {gameOver && <div>GAME OVER!</div>}
       <button onClick={startGame}>Start Game</button>
     </div>
