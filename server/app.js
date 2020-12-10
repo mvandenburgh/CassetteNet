@@ -49,8 +49,8 @@ app.use(session({ // initialize login sessions
     saveUninitialized: false,
     cookie: {
         maxAge: 86400000, // expire in one day
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: false,
+        sameSite: 'lax',
     },
     store,
 }));
