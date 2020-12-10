@@ -75,8 +75,6 @@ function DashboardPage(props) {
 
     const [value, setValue] = React.useState(0);
 
-    //const [popularMixtapes, setPopularMixtapes] = useState([]);
-
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
@@ -91,20 +89,7 @@ function DashboardPage(props) {
     const [mixtapes, setMixtapes] = useState([]);//useState(null);
 
     useEffect(() => {
-        // async function getMixtapes() {
-        //     const updatedMixtapes = await getPopularMixtapes(5);  
-        //     console.log("Update mixtapes: " + updatedMixtapes);         
-        //     if (!updatedMixtapes) {
-        //         setMixtapes([]);
-        //     } else {
-        //         setMixtapes(updatedMixtapes);
-        //     }
-        // }
-        // getMixtapes();
-        //getRandomMixtapes(5, 'daily').then(mixtapes => { console.log(mixtapes); setMixtapes(mixtapes); });
-        console.log("Before getPopularMixtapes");
-        getPopularMixtapes(5).then(mixtapes => { console.log(mixtapes); setMixtapes(mixtapes); });
-        console.log("After getPopularMixtapes");
+        getPopularMixtapes(5).then(mixtapes => setMixtapes(mixtapes));
     }, []);
 
     console.log(mixtapes);

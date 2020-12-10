@@ -59,14 +59,6 @@ router.get('/random', async (req, res) => {
     }
 });
 
-// router.get('/popular', async (req, res) => {
-//     const { count } = req.query;
-//     console.log("count: " + count);
-//     const mixtapes = await Mixtape.find({ isPublic: true }).lean();
-//     console.log("mixtapes in router: " + mixtapes);
-//     res.send(getRandomSubarray(mixtapes, count));
-// });
-
 router.put('/:id/coverImage', async (req, res) => {
     if (!req.files || !req.files.coverImage) return res.status(400).send('no file uploaded.');
     const { coverImage } = req.files;

@@ -228,6 +228,18 @@ router.get('/:id/profilePicture', async (req, res) => {
     }
 });
 
+router.get('/popular', async (req, res) => {
+    console.log("Inside user.js");
+    const { count } = req.params.count; //req.query;
+    console.log("count: " + count);
+    var group = {$group:{favoritedMixtapes:"$favoritedMixtapes", fullDocument:{$push:"$$ROOT"}, count:{$sum:1}}}
+    var sort = {$sort:{"_id":-1}}
+    var limit= {$limit:5}
+    const result = await User.aggregate([group, sort, limit])
+    console.log(result);
+    return res.send(result);
+});
+
 // Get info about any user. Exclude sensitive fields since this is public.
 router.get('/:id', async (req, res) => {
     if (req.params.id.length === 5 && req.params.id.charAt(0) === '!') { // search by uniqueId
@@ -241,15 +253,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get('/popular', async (req, res) => {
-    console.log("Inside user.js");
-    const { count } = req.params.count; //req.query;
-    console.log("count: " + count);
-    var group = {$group:{favoritedMixtapes:"$favoritedMixtapes", fullDocument:{$push:"$$ROOT"}, count:{$sum:1}}}
-    var sort = {$sort:{"_id":-1}}
-    var limit= {$limit:1}
-    const result = await User.aggregate([group, sort, limit])
-    console.log(result);
-});
+
 
 module.exports = router;
