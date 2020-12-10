@@ -330,7 +330,7 @@ function ListeningRoomPage(props) {
                                             {screen === 'rhythm' ?
                                                 <RhythmGame gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
                                                 : screen === 'snake' ?
-                                                    <SnakeGame></SnakeGame> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
+                                                    <SnakeGame listeningRoom={listeningRoom} /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
                                                         <Grid item xs={2} />
                                                         <Grid item xs={10}>
                                                             <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>

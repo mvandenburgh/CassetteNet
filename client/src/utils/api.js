@@ -311,6 +311,10 @@ async function getGameScores(listeningRoomId, gameType) {
     return scores.data;
 }
 
+async function resetGameScores(listeningRoomId, gameType) {
+    await axios.delete(new URL(`/api/listeningroom/${listeningRoomId}/${gameType}/scores`, SERVER_ROOT_URL).href);
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -363,5 +367,6 @@ export {
     commentOnMixtape,
     sendDM,
     getGameScores,
+    resetGameScores,
     SERVER_ROOT_URL,
 };

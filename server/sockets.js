@@ -148,7 +148,7 @@ function initSockets(io) {
         });
 
         socket.on('rhythmScoreChange', async (changeBy) => {
-            console.log(`Change ${user.username}'s (${user._id.toString()}) score by ${changeBy}`)
+            console.log(`Change ${user.username}'s (${user._id.toString()}) rhythm score by ${changeBy}`)
             const roomId = socket.rooms.values().next().value;
             const listeningRoom = await ListeningRoom.findById(roomId);
 
@@ -159,7 +159,21 @@ function initSockets(io) {
                 listeningRoom.rhythmScores.set(user._id.toString(), changeBy);
             }
             await listeningRoom.save();
-        })
+        });
+
+        socket.on('snakeScoreChange', async (changeBy) => {
+            console.log(`Change ${user.username}'s (${user._id.toString()}) snake score by ${changeBy}`)
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+
+            const userScore = listeningRoom.snakeScores.get(user._id.toString());
+            if (userScore) {
+                listeningRoom.snakeScores.set(user._id.toString(), userScore + changeBy);
+            } else {
+                listeningRoom.snakeScores.set(user._id.toString(), changeBy);
+            }
+            await listeningRoom.save();
+        });
     });
 }
 
