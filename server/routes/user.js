@@ -25,14 +25,13 @@ router.get('/search', async (req, res) => {
     for (const user of users.docs) {
         const updatedAt = new Date(user.updatedAt);
         const createdAt = new Date(user.createdAt);
-        const followerCount = (await User.find({ followedUsers: user._id }).lean()).length;
         results.push({
             _id: user._id,
             username: user.username,
             uniqueId: user.uniqueId,
             createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
             updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
-            followers: followerCount,
+            followers: user.followers,
         });
     }
     return res.send({ results, currentPage: users.page, totalPages: users.totalPages, totalResults: users.totalDocs });
@@ -54,14 +53,13 @@ router.get('/getFollowedUsers', async (req, res) => {
         const user = await User.findById(followedUserID).lean();
         const updatedAt =new Date(user.updatedAt);
         const createdAt = new Date(user.createdAt);
-        const followerCount = (await User.find({ followedUsers: user._id }).lean()).length;
         results.push({
             _id: user._id,
             username: user.username,
             uniqueId: user.uniqueId,
             createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
             updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
-            followers: followerCount,
+            followers: user.followers,
         });
     }
     return res.send(results);
@@ -122,14 +120,16 @@ router.put('/followUser', async (req, res) => {
     const { id } = req.body;
     if (req.user.id === id) return res.status(400).send('invalid request');
     const user = await User.findById(req.user._id);
-    const followedUsersDenormalized = [];
-    if (!user.followedUsers.includes(id)) {
+    const followedUser = await User.findById(id);
+    if (followedUser && !user.followedUsers.includes(id)) {
         user.followedUsers.push(Types.ObjectId(id));
         await user.save();
+        followedUser.followers = followedUser.followers + 1;
+        await followedUser.save();
     }
+    const followedUsersDenormalized = [];
     for (const userId of user.followedUsers) {
         const followedUser = await User.findById(userId).lean();
-        const followerCount = (await User.find({ followedUsers: followedUser._id }).lean()).length;
         const createdAt = new Date(followedUser.createdAt);
         const updatedAt = new Date(followedUser.updatedAt);
         followedUsersDenormalized.push({
@@ -138,7 +138,7 @@ router.put('/followUser', async (req, res) => {
             username: followedUser.username,
             createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
             updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
-            followers: followerCount 
+            followers: followedUser.followers, 
         });
     }
     return res.send(followedUsersDenormalized);
@@ -148,14 +148,18 @@ router.put('/unfollowUser', async (req, res) => {
     if (!req.user) return res.status(401).send(null);
     const { id } = req.body;
     const user = await User.findById(req.user._id);
+    const followedUser = await User.findById(id);
     if (user.followedUsers.includes(id)) {
         user.followedUsers.splice(user.followedUsers.indexOf(id), 1);
         await user.save();
     }
+    if (followedUser) {
+        followedUser.followers = followedUser.followers - 1;
+        await followedUser.save();
+    }
     const followedUsersDenormalized = [];
     for (const userId of user.followedUsers) {
         const followedUser = await User.findById(userId).lean();
-        const followerCount = (await User.find({ followedUsers: followedUser._id }).lean()).length;
         const createdAt = new Date(followedUser.createdAt);
         const updatedAt = new Date(followedUser.updatedAt);
         followedUsersDenormalized.push({
@@ -164,7 +168,7 @@ router.put('/unfollowUser', async (req, res) => {
             username: followedUser.username,
             createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
             updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
-            followers: followerCount 
+            followers: followedUser.followers, 
         });
     }
     return res.send(followedUsersDenormalized);
@@ -244,12 +248,10 @@ router.get('/popular', async (req, res) => {
 router.get('/:id', async (req, res) => {
     if (req.params.id.length === 5 && req.params.id.charAt(0) === '!') { // search by uniqueId
         const user = await User.findOne({ uniqueId: parseInt(req.params.id.substring(1), 36) }).select('-email -admin -verified -token').lean();
-        const followers = (await User.find({ followedUsers: Types.ObjectId(user._id) }).lean()).length;
-        res.send({ followers, ...user });
+        res.send(user);
     } else { // search by _id
         const user = await User.findById(req.params.id).select('-email -admin -verified -token').lean();
-        const followers = (await User.find({ followedUsers: Types.ObjectId(req.params.id) }).lean()).length;
-        res.send({ followers, ...user });
+        res.send(user);
     }
 });
 

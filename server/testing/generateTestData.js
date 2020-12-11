@@ -200,6 +200,7 @@ async function generateUsers(count) {
             verified,
             favoritedMixtapes,
             followedUsers,
+            followers: 0,
             admin,
             uniqueId: current_unique_id,
             profilePicture: {
@@ -258,6 +259,8 @@ async function generateTestData(mixtapes, users) {
                 followUser = randInt(0, users.length);
             }
             followedUsers.add(users[followUser]._id);
+            users[followUser].followers = users[followUser].followers + 1;
+            await users[followUser].save();
         }
         user.followedUsers = Array.from(followedUsers);
 

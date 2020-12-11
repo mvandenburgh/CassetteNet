@@ -18,6 +18,10 @@ const userSchema = new Schema({
   token: String, // email verification token
   favoritedMixtapes: Array, // [{ mixtape: mongoose.Types.ObjectId, inRotation: Boolean }]
   followedUsers: Array, // array of other user object ids
+  followers: {
+    type: Number,
+    default: 0,
+  }, // # of followers this user has
   admin: Boolean, // true if user is an admin
   strategy: {
     type: String,

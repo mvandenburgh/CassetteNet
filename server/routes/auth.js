@@ -136,7 +136,6 @@ router.get('/login/success', async (req, res) => {
     const followedUsersDenormalized = [];
     for (const userId of followedUsers) {
         const user = await User.findById(userId).lean();
-        const followerCount = (await User.find({ followedUsers: user._id }).lean()).length;
         const createdAt = new Date(user.createdAt);
         const updatedAt = new Date(user.updatedAt);
         followedUsersDenormalized.push({
@@ -145,10 +144,10 @@ router.get('/login/success', async (req, res) => {
             username: user.username,
             createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
             updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
-            followers: followerCount 
+            followers: user.followers, 
         });
     }
-    const followers = (await User.find({ followedUsers: _id }).lean()).length;
+    const followers = req.user.followers;
     const inboxMessages = await InboxMessage.find({ recipient: req.user.id }).lean();
     res.json({
         _id,
