@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { followUser, unfollowUser } from '../utils/api';
+import Tooltip from '@material-ui/core/Tooltip';
 import UserContext from '../contexts/UserContext';
 
 function FollowUserButton(props) {
@@ -21,18 +22,26 @@ function FollowUserButton(props) {
         setDisabled(false);
     }
     return (
-        <Button
-            disabled={disabled || user._id == props.id}
-            variant="contained"
-            boxShadow={3}
-            style={{
-                marginTop: '20px',
-                height: '45px',
-                width: '80px',
-                backgroundColor: props.backgroundColor,
-            }}
-            onClick={followButtonHandler}
-        > {user.followedUsers.map(u => u._id).includes(props.id) ? 'Unfollow' : 'Follow'} </Button>
+        <Tooltip title="You may not follow yourself"  
+        disableHoverListener={!(props.id == user?._id)}
+        >
+            <span>
+                <Button
+                    disabled={disabled || user._id == props.id}
+                    variant="contained"
+                    boxShadow={3}
+                    style={{
+                        marginTop: '20px',
+                        height: '45px',
+                        width: '80px',
+                        backgroundColor: props.backgroundColor,
+                    }}
+                    onClick={followButtonHandler}
+                > 
+                {user.followedUsers.map(u => u._id).includes(props.id) ? 'Unfollow' : 'Follow'} 
+                </Button>
+            </span>
+        </Tooltip>
     )
 }
 
