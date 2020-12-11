@@ -1,11 +1,11 @@
-const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const { Types } = require('mongoose');
 const Avatar = require('avatar-builder');
 const ytpl = require('ytpl');
-const userTestData = require('./users.json');
 const { Mixtape, User } = require('../models');
+const Fakerator = require('fakerator');
+const fakerator = new Fakerator();
 
 const NUM_OF_USERS = 50;
 
@@ -129,25 +129,18 @@ async function generateMixtapes() {
 async function generateUsers(count) {
     const users = [];
     let current_unique_id = 0;
-    let res;
-    try {
-        res = (await axios.get(`https://randomuser.me/api/?results=${count}`)).data;
-    } catch (err) {
-        console.log(err);
-        res = userTestData;
-    }
     const emails = new Set();
     const usernames = new Set();
-    for (const user of res.results) {
-        let { username } = user.login;
+    for (let i = 0; i < count; i++) {
+        let username = fakerator.internet.userName();
         if (usernames.has(username)) {
             username = `${username}${Date.now().toString().substring(0, 5)}`
         }
         usernames.add(username);
         const password = 'password';
-        let { email } = user;
+        let email = fakerator.internet.email();
         if (emails.has(email)) {
-            email = `${Date.now().toString()}${email}`;
+            email = `${Date.now().toString().substring(0, 5)}${email}`;
         }
         emails.add(email);
         const verified = true;

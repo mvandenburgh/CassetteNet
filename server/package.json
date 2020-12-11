@@ -23,6 +23,7 @@
     "express-fileupload": "^1.2.0",
     "express-jwt": "^6.0.0",
     "express-session": "^1.17.1",
+    "fakerator": "^0.3.2",
     "googleapis": "^64.0.0",
     "iso8601-duration": "^1.2.0",
     "jimp": "^0.16.1",
