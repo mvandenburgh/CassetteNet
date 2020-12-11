@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const NodeMediaServer = require('node-media-server');
 const scdl = require('soundcloud-downloader').default;
-const YoutubeMp3Downloader = require("youtube-mp3-downloader");
+const YoutubeMp3Downloader = require('youtube-mp3-downloader');
 const AudioContext = require('web-audio-api').AudioContext;
 const MusicTempo = require('music-tempo');
 
@@ -101,9 +101,6 @@ app.post('/startStream', async (req, res) => {
                             fs.unlink(path.join(__dirname, `mp3/${filename}.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}.mp3`)}'.`));
                             fs.rmdir(path.join(__dirname, `mp3/live/${filename}`), { recursive: true }, (e) => console.log(`Removed folder '${path.join(__dirname, `mp3/live/${filename}`)}'.`));
                         });
-
-                        // delete the high quality file asynchronously (it's no longer needed)
-                        fs.unlink(path.join(__dirname, `mp3/${filename}_hq.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}_hq.mp3`)}'.`));
                     });
                 } else {
                     // send response back to client3
@@ -155,9 +152,6 @@ app.post('/startStream', async (req, res) => {
                         fs.unlink(path.join(__dirname, `mp3/${filename}.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}.mp3`)}'.`));
                         fs.rmdir(path.join(__dirname, `mp3/live/${filename}`), { recursive: true }, (e) => console.log(`Removed folder '${path.join(__dirname, `mp3/live/${filename}`)}'.`));
                     });
-                    
-                    // delete the high quality file asynchronously (it's no longer needed)
-                    fs.unlink(path.join(__dirname, `mp3/${filename}_hq.mp3`), () => console.log(`Removed file '${path.join(__dirname, `mp3/${filename}_hq.mp3`)}'.`));
                 });
             } else {
                 // send response back to client3
