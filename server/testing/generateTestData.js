@@ -137,8 +137,13 @@ async function generateUsers(count) {
         res = userTestData;
     }
     const emails = new Set();
+    const usernames = new Set();
     for (const user of res.results) {
-        const { username } = user.login;
+        let { username } = user.login;
+        if (usernames.has(username)) {
+            username = `${username}${Date.now().toString().substring(0, 5)}`
+        }
+        usernames.add(username);
         const password = 'password';
         let { email } = user;
         if (emails.has(email)) {
