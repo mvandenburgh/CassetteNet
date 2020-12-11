@@ -178,7 +178,7 @@ router.put('/setOAuthUsername', async (req, res) => {
             const userCount = await User.estimatedDocumentCount();
             user.username = username;
             user.verified = true;
-            user.admin = userCount === 0;
+            user.admin = userCount === 1; // oauth user is already signed up so usercount will be 1
             await user.save();
             return res.send('successfully set username');
         }
