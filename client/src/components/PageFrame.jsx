@@ -98,8 +98,8 @@ function PageFrame(props) {
 
   const logout = async () => {
     await userLogout();
-    setUser({ isLoggedIn: false });
     history.push('/');
+    setUser({ isLoggedIn: false });
   }
 
 
