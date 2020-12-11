@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom';
 import { AppBar, Box, Button, Grid, Tab, Tabs, Typography, makeStyles, IconButton } from '@material-ui/core';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import fb from '../../images/facebook.png';
@@ -11,88 +12,6 @@ import UserProfilePictureUploadModal from '../modals/UserProfilePictureUploadMod
 import ChangePasswordConfirmationModal from '../modals/ChangePasswordConfirmationModal';
 import { getUserProfilePictureUrl } from '../../utils/api';
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
-var favorites = [
-  {
-    name: 'Evening Acoustic',
-    collaborators: 'purplefish313, brownmeercat530',
-    favorites: 106
-  },
-  {
-    name: 'Rock Classics',
-    collaborators: 'silverbutterfly863, brownmeercat530',
-    favorites: 93,
-  },
-];
-
-var theirMixtapes = [
-  {
-    name: 'Calm Vibes',
-    collaborators: 'biglion179',
-    favorites: 15
-  },
-  {
-    name: 'Acoustic Soul',
-    collaborators: 'lazykoala317, tinygoose218',
-    favorites: 48,
-  },
-];
-
-const MixtapeRows = ({ mixtapes }) => (
-  <>
-    {mixtapes.map(mixtape => (
-      <Box style={{
-        margin: "5px",
-        padding: "10px",
-        backgroundColor: blueGrey[700],
-        display: "flex",
-        flexDirection: "row",
-        borderRadius: 6,
-        fontSize: 12,
-      }}>
-        <Box style={{ width: "33%", display: 'flex', justifyContent: "center" }}> {mixtape.name} </Box>
-        <Box style={{ width: "33%", display: 'flex', justifyContent: "center" }}> {mixtape.collaborators} </Box>
-        <Box style={{ width: "33%", display: 'flex', justifyContent: "center" }}> {mixtape.favorites} </Box>
-
-      </Box>
-    ))}
-  </>
-);
-
 
 function ViewProfilePage(props) {
   const useStyles = makeStyles((theme) => ({
@@ -103,8 +22,6 @@ function ViewProfilePage(props) {
       color: "white",
     }
   }));
-
-  const classes = useStyles();
 
   const colors = {
     namePfpContainer: blueGrey[900],
@@ -124,6 +41,12 @@ function ViewProfilePage(props) {
 
   const history = useHistory();
   const goBack = () => history.goBack();
+
+  if(!user?.isLoggedIn) {
+    return(
+      <Redirect to="/" />
+    );
+  }
 
   return (
     <div style={{ color: 'white', left: 0 }}>
