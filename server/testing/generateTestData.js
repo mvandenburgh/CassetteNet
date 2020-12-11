@@ -133,12 +133,18 @@ async function generateUsers(count) {
     try {
         res = (await axios.get(`https://randomuser.me/api/?results=${count}`)).data;
     } catch (err) {
+        console.log(err);
         res = userTestData;
     }
+    const emails = new Set();
     for (const user of res.results) {
         const { username } = user.login;
         const password = 'password';
-        const { email } = user;
+        let { email } = user;
+        if (emails.has(email)) {
+            email = `${Date.now().toString()}${email}`;
+        }
+        emails.add(email);
         const verified = true;
         const favoritedMixtapes = [];
         const followedUsers = [];

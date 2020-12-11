@@ -1,17 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, List, Box, Grid, IconButton, Typography, makeStyles, Icon } from '@material-ui/core';
-import logo from '../../images/logo.png';
+import { Button, List, Box, Grid, IconButton, Typography, makeStyles, TextField } from '@material-ui/core';
+import { ArrowBack as ArrowBackIcon, Delete as DeleteIcon, TextFields } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import UserContext from '../../contexts/UserContext';
-import { Autocomplete } from '@material-ui/lab';
-import ReactRoundedImage from "react-rounded-image";
-import pfp from '../../images/bottle_pfp.jpg';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import { AccountCircle as UserProfile } from '@material-ui/icons';
-import DeleteIcon from '@material-ui/icons/Delete';
 import UserSearchBar from '../UserSearchBar';
 import { adminFillDatabase, adminDropDatabase, getAdmins, deleteAdmin, addAdmin } from '../../utils/api';
 
@@ -99,11 +90,15 @@ function AdminPage(props) {
     const goBack = () => history.goBack();
 
     const fillDatabaseHandler = async () => {
-        await adminFillDatabase();
+        setDisabled(true);
+        await adminFillDatabase(usersToGenerate);
+        setDisabled(false);
     }
 
     const dropDatabaseHandler = async () => {
+        setDisabled(true);
         await adminDropDatabase();
+        setDisabled(false);
     }
 
     const addAdminHandler = async (admin) => {
@@ -118,6 +113,10 @@ function AdminPage(props) {
         const admins = await getAdmins();
         setAdmins(admins);
     }
+
+    const [usersToGenerate, setUsersToGenerate] = useState(50);
+
+    const [disabled, setDisabled] = useState(false); // if DB operation buttons are enabled or not
 
     //TODO: Possibly re-align fields
     return (
@@ -151,6 +150,7 @@ function AdminPage(props) {
             <br />
             <Button
                 variant="outlined"
+                disabled={disabled}
                 style={{
                     marginLeft: '100px',
                     padding: '50px',
@@ -163,6 +163,7 @@ function AdminPage(props) {
             >Fill Database</Button>
             <Button
                 variant="outlined"
+                disabled={disabled}
                 style={{
                     marginLeft: '200px',
                     padding: '50px',
@@ -175,6 +176,19 @@ function AdminPage(props) {
                 onClick={dropDatabaseHandler}
             >Clear Database</Button>
             <br />
+            <TextField
+                label="Number of users to generate"
+                type="number"
+                InputLabelProps={{
+                    shrink: true,
+                    inputProps: { 
+                        min: 1
+                    }
+                }}
+                value={usersToGenerate}
+                onChange={(e) => setUsersToGenerate(e.target.value)}
+                variant="filled"
+            />
             <br />
             <br />
             <Box flexDirection="row" >

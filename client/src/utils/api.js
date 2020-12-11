@@ -193,8 +193,8 @@ async function getSongDuration(api, itemId) {
     return songDuration.data;
 }
 
-async function adminFillDatabase() {
-    await axios.post(new URL('/api/admin/populateDatabase', SERVER_ROOT_URL).href);
+async function adminFillDatabase(numOfUsers) {
+    await axios.post(new URL('/api/admin/populateDatabase', SERVER_ROOT_URL).href, { userCount: numOfUsers });
 }
 
 async function adminDropDatabase() {
