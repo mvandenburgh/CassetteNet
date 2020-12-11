@@ -156,7 +156,7 @@ function ListeningRoomPage(props) {
                     });
                     setCurrentTab(1); // TODO: prompt user that game is about to start before changing tabs
                     setScreen('rhythm');
-                    
+
                 });
             })
             .catch(err => history.goBack());
@@ -165,7 +165,7 @@ function ListeningRoomPage(props) {
     const sendChatHandler = (message) => {
         socket.emit('sendChatMessage', { message, timestamp: Date.now(), from: { user: user._id, username: user.username } });
     }
-    const exitGameHandler = ()=>{
+    const exitGameHandler = () => {
         setScreen('home');
     }
 
@@ -208,7 +208,7 @@ function ListeningRoomPage(props) {
         }
     }, [screen]);
 
-    const gameScreenRef = useRef();     
+    const gameScreenRef = useRef();
 
     const [gameScreenStartX, setGameScreenStartX] = useState(null);
     const [gameScreenEndX, setGameScreenEndX] = useState(null);
@@ -304,7 +304,6 @@ function ListeningRoomPage(props) {
                                         </Grid>
                                     </Grid>
                                 </Paper>
-
                             </Grid>
                         </Grid>
                     </TabPanel>
@@ -317,21 +316,21 @@ function ListeningRoomPage(props) {
                                 <Grid style={{ height: '75vh' }} item xs={12}>
                                     <Grid container style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
                                         <Paper onKeyDown={e => {        //ignores scrolling on arrow keys
-                                                console.log(e);
-                                                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                                            console.log(e);
+                                            if (e.key === "ArrowUp" || e.key === "ArrowDown") {
                                                 e.stopPropagation();
                                                 e.preventDefault();
                                                 console.log(e.key);
                                                 return false;
-                                                }
-                                                e.stopPropagation();
-                                            }}
+                                            }
+                                            e.stopPropagation();
+                                        }}
                                             ref={gameScreenRef} style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
-                                            {screen ==='home' ? <div></div> : <Button style={{alignItems:'right',}} onClick={exitGameHandler}> Exit Game </Button>}
+                                            {screen === 'home' ? <div></div> : <Button style={{ alignItems: 'right', position: 'absolute', zIndex: 1}} onClick={exitGameHandler}> Exit Game </Button>}
                                             {screen === 'rhythm' ?
                                                 <RhythmGame gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
                                                 : screen === 'snake' ?
-                                                    <SnakeGame listeningRoom={listeningRoom} /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
+                                                    <SnakeGame gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
                                                         <Grid item xs={2} />
                                                         <Grid item xs={10}>
                                                             <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>
@@ -363,7 +362,63 @@ function ListeningRoomPage(props) {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid container xs={3}>
+                            <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>
+                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '28%' }}>
+                                    <Grid container alignItems="center" direction="row" style={{ height: '10%' }}>
+                                        <Grid item xs={12}>
+                                            <Typography style={{ fontSize: '2em' }} alignItems="center">Scores</Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container style={{ height: '5%' }} />
+                                    <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
+                                        <Grid container>
+                                            <Grid item xs={12} style={{}}>
+                                                {scores ? scores?.map(score => (
+                                                    <> {score.username}: {score.score} </>
+                                                )) : undefined}
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Paper>
+                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '68%' }}>
+                                    <Grid container style={{ height: '10%' }}>
+                                        <Typography style={{ fontSize: '2em' }} alignItems="center">Chat</Typography>
+                                    </Grid>
+                                    <Grid container style={{ height: '5%' }} />
+                                    <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
+                                        <Grid container>
+                                            <Grid item xs={12}>
+                                                <ChatBox
+                                                    messages={chatMessages}
+                                                    onSubmit={sendChatHandler}
+                                                    isLoading={chatMessages?.length === 0}
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Paper>
+                            </Grid>
+                            {/* <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>
+                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '68%' }}>
+                                    <Grid container style={{ height: '10%' }}>
+                                        <Typography style={{ fontSize: '2em' }} alignItems="center">Chat</Typography>
+                                    </Grid>
+                                    <Grid container style={{ height: '5%' }} />
+                                    <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
+                                        <Grid container>
+                                            <Grid item xs={12}>
+                                                <ChatBox
+                                                    messages={chatMessages}
+                                                    onSubmit={sendChatHandler}
+                                                    isLoading={chatMessages?.length === 0}
+                                                />
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Paper>
+                            </Grid> */}
+
+                            {/* <Grid container xs={3}>
                                 <Grid item xs={12} style={{ backgroundColor: 'white', height: '50%' }} >
                                     <Paper style={{ backgroundColor: "#ACDCFF" }}>
                                         <Typography alignItems="center" variant="h4">Scoreboard</Typography>
@@ -377,7 +432,7 @@ function ListeningRoomPage(props) {
                                         <Typography alignItems="center" variant="h4">Chat</Typography>
                                     </Paper>
                                 </Grid>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </TabPanel>
                 </Grid>

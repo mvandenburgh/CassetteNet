@@ -1,7 +1,6 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { useInterval } from "./useInterval.js";
 import {
-  gameSize,
   snakePos,
   goalPos,
   scale,
@@ -12,7 +11,7 @@ import { Typography } from "@material-ui/core";
 import SocketIOContext from '../../contexts/SocketIOContext';
 import { resetGameScores } from '../../utils/api';
 
-function SnakeGame({ listeningRoom }){
+function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom }) {
   const canvasRef = useRef();
   const [snake, setSnake] = useState(snakePos);
   const [apple, setApple] = useState(goalPos);
@@ -20,6 +19,8 @@ function SnakeGame({ listeningRoom }){
   const [dir, setDir] = useState([0, -1]);
   const [speed, setSpeed] = useState(null);
   const [gameOver, setGameOver] = useState(false);
+
+  const gameSize = [gameScreenWidth, gameScreenHeight]
 
   const { socket } = useContext(SocketIOContext);
 
@@ -104,13 +105,14 @@ function SnakeGame({ listeningRoom }){
 
   return (
     <div role="button" tabIndex="0" onKeyDown={e => moveSnake(e)}>
+      <Typography variant="h5" style={{left: `calc(${gameScreenEndX}px - 1em)`, position: 'absolute', zIndex: 1}}>{score}</Typography>
       <canvas
         style={{ border: "1px solid black" }}
         ref={canvasRef}
         width={`${gameSize[0]}px`}
         height={`${gameSize[1]}px`}
       />
-      <Typography style={{ fontSize: '40px' }} variant="h3">{score}</Typography>
+      {/* TODO: display game over as a dialog box or something */}
       {gameOver && <div>GAME OVER!</div>}
       <button onClick={startGame}>Start Game</button>
     </div>
