@@ -15,9 +15,6 @@ const MAX_COLLABORATORS_PER_MIXTAPE = 35;
 const MIN_FAVORITED_MIXTAPES_PER_USER = 5;
 const MAX_FAVORITED_MIXTAPES_PER_USER = 25;
 
-const MIN_FOLLOWED_USERS_PER_USER = 6;
-const MAX_FOLLOWED_USERS_PER_USER = 40;
-
 const MIN_ANONYMOUS_INBOX_MESSAGES_PER_USER = 5;
 const MAX_ANONYMOUS_INBOX_MESSAGES_PER_USER = 30;
 
@@ -253,7 +250,7 @@ async function generateTestData(mixtapes, users) {
         user.favoritedMixtapes = Array.from(favoritedMixtapes);
 
         // GENERATE FOLLOWED USERS
-        const followedCount = randInt(MIN_FOLLOWED_USERS_PER_USER, MAX_FOLLOWED_USERS_PER_USER);
+        const followedCount = randInt(Math.ceil(users.length / 4), users.length-1);
         const followedUsers = new Set();
         for (let i = 0; i < followedCount; i++) {
             let followUser = randInt(0, users.length);
