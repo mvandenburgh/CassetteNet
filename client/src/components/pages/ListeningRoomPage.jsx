@@ -121,6 +121,7 @@ function ListeningRoomPage(props) {
     useEffect(() => lrRef.current = listeningRoom);
 
     useEffect(() => {
+        setCurrentSong({});
         getListeningRoom(props.match.params.id)
             .then(listeningRoom => {
                 setPlaying(true);

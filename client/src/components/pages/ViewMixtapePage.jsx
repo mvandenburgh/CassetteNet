@@ -324,6 +324,7 @@ function ViewMixtapePage(props) {
 
     const createListeningRoomButtonHandler = () => {
         if (mixtape) {
+            setCurrentSong({});
             createListeningRoom(mixtape._id)
                 .then(listeningRoomId => history.push(`/listeningRoom/${listeningRoomId}`))
                 .catch(err => alert(err));
