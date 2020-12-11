@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Grid, Slider as VolumeSlider, Snackbar } from '@material-ui/core';
+import { CircularProgress, Grid, Slider as VolumeSlider, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
@@ -97,12 +97,14 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame }) {
     useInterval(() => {
         if (playerRef.current && playing && listeningRoom?.startedAt && listeningRoom?.wasAt) {
             const time = ((Date.now() / 1000) - listeningRoom.startedAt) + listeningRoom.wasAt;
-            if (time >= 0) {
+            if (time > listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration) {
+                setCurrentTime(listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration);
+            } else if (time >= 0) {
                 setCurrentTime(time);
                 if (rhythmGame && listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration - currentTime <= 6) {
                     setRhythmGameStartingPopup(true);
                 }
-            } else {
+            } else if (time < 0) {
                 setCurrentTime(0);
             }
         }
@@ -216,18 +218,15 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame }) {
                         onClick={atmosphereButtonHandler}
                     />
                 </div>
-                <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-                {playing ?
-                    <PlayerIcon.Pause width={32} height={32} style={{ marginRight: 32 }} /> :
-                    <PlayerIcon.Play width={32} height={32} style={{ marginRight: 32 }} />
-                }
-                <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
-                <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-                    <ShuffleIcon onClick={handleSetShuffle} />
-                </div>
-                <div style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-                    <LoopIcon onClick={handleSetLoop} />
-                </div>
+                {playing ? <>
+                        <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
+                        <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
+                        <div style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+                            <ShuffleIcon onClick={handleSetShuffle} />
+                        </div>
+                        <div style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+                            <LoopIcon onClick={handleSetLoop} />
+                        </div>
                 <VolumeSlider
                     value={musicVolume}
                     onChange={handleMusicVolumeChange}
@@ -236,7 +235,8 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame }) {
                     min={0}
                     max={1}
                     style={{ width: '20%' }} aria-labelledby="continuous-slider"
-                />
+                /> </>
+                : <CircularProgress />}
             </Grid>
             <ReactPlayer
                 onEnded={handleNextSong}
