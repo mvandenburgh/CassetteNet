@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import MixtapeList from '../MixtapeList';
 import UserContext from '../../contexts/UserContext';
 import { createMixtape, getMyMixtapes } from '../../utils/api';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
     fab: {
@@ -20,9 +20,19 @@ function MyMixtapesPage(props) {
     const classes = useStyles();
 
     let { user, setUser } = useContext(UserContext);
-    if (!user.isLoggedIn) {
-        user = JSON.parse(localStorage.getItem('user'));
+    // if (!user.isLoggedIn) {
+    //     user = JSON.parse(localStorage.getItem('user'));
+    // }
+    const history = useHistory();
+    const goBack = () => history.goBack();
+
+    if(!user?.isLoggedIn) {
+        // return(
+        //   <Redirect to="/" />
+        // );
+        history.push('/');
     }
+
     const [mixtapes, setMixtapes] = useState(null);
 
     const { _id } = user;
@@ -34,9 +44,6 @@ function MyMixtapesPage(props) {
             setMixtapes(updatedMixtapes);
         }
      }, []);
-
-    const history = useHistory();
-    const goBack = () => history.goBack();
 
     const createNewMixtape = () => {
         createMixtape().then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
