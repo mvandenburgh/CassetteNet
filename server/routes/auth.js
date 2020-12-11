@@ -174,8 +174,11 @@ router.put('/setOAuthUsername', async (req, res) => {
         if (user.username || user.local) {
             return res.status(400).send('username already set.');
         } else {
+            // this new user should be an admin if there are 0 users currently
+            const userCount = await User.estimatedDocumentCount();
             user.username = username;
             user.verified = true;
+            user.admin = userCount === 0;
             await user.save();
             return res.send('successfully set username');
         }
