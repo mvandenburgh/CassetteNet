@@ -21,7 +21,8 @@ import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import { getUser, getUserProfilePictureUrl, getCreatedMixtapes, getFavoritedMixtapes, sendAnonymousMessage, sendMixtapeMessage, sendDM } from '../../utils/api';
 import FollowUserButton from '../FollowUserButton';
-import SendMessageButton from '../SendMessageButton';
+import UserContext from '../../contexts/UserContext';
+import Tooltip from '@material-ui/core/Tooltip';
 import MixtapeRows from '../MixtapeRows';
 import SocketIOContext from '../../contexts/SocketIOContext';
 
@@ -65,7 +66,9 @@ function ViewUserPage(props) {
 
   const { id } = props.match.params;
 
-  const [user, setUser] = useState({});
+  const { user, setUser } = useContext(UserContext);
+
+  const [userState, setUserState] = useState({});
 
   const [createdMixtapes, setCreatedMixtapes] = useState([]);
   const [favoritedMixtapes, setFavoritedMixtapes] = useState([]);
@@ -74,7 +77,7 @@ function ViewUserPage(props) {
     async function getUserInfo() {
       if (id) {
         const userInfo = await getUser(id);
-        setUser(userInfo);
+        setUserState(userInfo);
         const userCreatedMixtapes = await getCreatedMixtapes(id);
         setCreatedMixtapes(userCreatedMixtapes);
         const userFavoritedMixtapes = await getFavoritedMixtapes(id);
@@ -84,8 +87,8 @@ function ViewUserPage(props) {
     getUserInfo();
   }, []);
 
-  const userSince = new Date(user.createdAt);
-  const lastActivity = new Date(user.updatedAt);
+  const userSince = new Date(userState.createdAt);
+  const lastActivity = new Date(userState.updatedAt);
 
   const history = useHistory();
   const goBack = () => history.goBack();
@@ -104,17 +107,20 @@ function ViewUserPage(props) {
 
   const sendDMHandler = () => {
     if (message) {
-      sendDM(user._id, message).then(() => socket.emit('sendInboxMessage', { recipientId: user._id }));
+      sendDM(userState._id, message).then(() => socket.emit('sendInboxMessage', { recipientId: userState._id }));
     }
     setWriteMessageDialogOpen(false);
     setMessage('');
   }
 
-  if (!user.username) {
+  if (!userState.username) {
     return null;
   }
 
-
+  // const printThis = () => {
+  //   console.log("printThis");
+  //   console.log("user:" + user._id);
+  // }
 
   return (
     <div style={{ color: 'white', left: 0 }}>
@@ -166,20 +172,35 @@ function ViewUserPage(props) {
           width: '85%',
           height: '30%'
         }} boxShadow={3} borderRadius={12}>
-          <ReactRoundedImage image={getUserProfilePictureUrl(user?._id)} roundedSize="1" imageWidth="300" imageHeight="300" />
+          <ReactRoundedImage image={getUserProfilePictureUrl(userState?._id)} roundedSize="1" imageWidth="300" imageHeight="300" />
           <div style={{ display: 'inline-flex', flexDirection: 'column', paddingLeft: '30px', }}>
             <span style={{ display: 'inline-flex', flexDirection: 'row', paddingTop: '30px', paddingBottom: '30px', height: '25%', }}>
-              <Typography style={{ fontSize: '40px' }} variant="h3">{user.username}</Typography>
-              <Typography style={{ fontSize: '20px' }} variant="h3">#{user.uniqueId.toString(36).padStart(4, '0').toUpperCase()}</Typography>
+              <Typography style={{ fontSize: '40px' }} variant="h3">{userState.username}</Typography>
+              <Typography style={{ fontSize: '20px' }} variant="h3">#{userState.uniqueId.toString(36).padStart(4, '0').toUpperCase()}</Typography>
             </span>
             <Typography style={{ fontSize: '20px' }} variant="h3">User since: {userSince.getMonth() + 1}/{userSince.getDate()}/{userSince.getFullYear()}</Typography>
             <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth() + 1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>
-            <Typography style={{ fontSize: '20px' }} variant="h3">Followers: {user.followers}</Typography>
-            <FollowUserButton id={user?._id} />
-            <SendMessageButton 
-              id={user?._id}
-              onClick={() => setWriteMessageDialogOpen(true)}>
-            </SendMessageButton>
+            <Typography style={{ fontSize: '20px' }} variant="h3">Followers: {userState.followers}</Typography>
+            <FollowUserButton id={userState?._id} />
+            <Tooltip title="You may not message yourself"  
+              disableHoverListener={!(userState?._id == user?._id)}
+            >
+              <span>
+                <Button
+                  disabled={userState?._id == user?._id}
+                  variant="contained"
+                  style={{
+                    marginTop: '20px',
+                    height: '45px',
+                    width: '80px',
+                    backgroundColor: props.backgroundColor,
+                  }}
+                  onClick={() => setWriteMessageDialogOpen(true)}
+                > 
+                  send message
+                </Button>
+              </span>
+            </Tooltip>
           </div>
         </Box>
         <Box style={{ marginLeft: '100px', width: '86%', backgroundColor: colors.tabsContainer }} boxShadow={3} borderRadius={12}>
