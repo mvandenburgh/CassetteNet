@@ -43,6 +43,7 @@
     "soundcloud-downloader": "^0.2.1",
     "spotify-web-api-node": "^5.0.0",
     "text-to-picture-kazari": "^3.0.0",
-    "ytdl-core": "^4.1.4"
+    "ytdl-core": "^4.1.4",
+    "ytpl": "^2.0.0-alpha.3"
   }
 }

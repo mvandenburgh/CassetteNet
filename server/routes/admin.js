@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { InboxMessage, Mixtape, User } = require('../models');
-const generateTestData = require('../testing/generateTestData');
+const { generateUsers, generateMixtapes, generateTestData } = require('../testing/generateTestData');
 
 const router = express.Router();
 
@@ -9,23 +9,14 @@ router.post('/populateDatabase', async (req, res) => {
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
+    let { userCount } = req.body;
+    if (!userCount) userCount = 50;
     try {
-        const { inboxMessages, mixtapes, users } = await generateTestData();
-        await Promise.all([
-            ...users.map(user => User.register({
-                _id: mongoose.Types.ObjectId(user._id),
-                username: user.username,
-                email: user.email,
-                favoritedMixtapes: user.favoritedMixtapes,
-                followedUsers: user.followedUsers,
-                admin: user.admin,
-                verified: true, // verify all test users
-                local: true,
-                profilePicture: user.profilePicture
-            }, user.password)),
-            InboxMessage.insertMany(inboxMessages),
-            Mixtape.insertMany(mixtapes)
-        ]);
+        
+        const generatedMixtapes = await generateMixtapes();
+        const generatedUsers = await generateUsers(userCount);
+        const { inboxMessages, mixtapes, users } = await generateTestData(generatedMixtapes, generatedUsers);
+        await InboxMessage.insertMany(inboxMessages);
         res.send('success');
     } catch (err) {
         console.log(err);

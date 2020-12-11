@@ -14,7 +14,7 @@ import { useHistory } from 'react-router-dom';
 const MixtapeRows = ({ mixtapes, history }) => (
     <>
   
-      {mixtapes.map(mixtape => (
+      {mixtapes?.map(mixtape => (
         <Box
           style={{
             margin: "5px",
@@ -27,7 +27,7 @@ const MixtapeRows = ({ mixtapes, history }) => (
           }}
         >
           <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/mixtape/${mixtape._id}`)}> {mixtape.name} </Box>
-          <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/user/${mixtape.collaborators.filter(c => c.permissions === 'owner')[0].user}`)}> {mixtape.collaborators.filter(c => c.permissions === 'owner')[0].username} </Box>
+          <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/user/${mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.user}`)}> {mixtape.collaborators.filter(c => c?.permissions === 'owner')[0]?.username} </Box>
           <Box style={{ width: "33%", display: 'flex', flexDirection: "row", justifyContent: "center" }}>
             <FavoriteMixtapeButton id={mixtape._id} />
             {/* <CommentIcon /> */}
