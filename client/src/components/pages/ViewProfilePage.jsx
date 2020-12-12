@@ -107,78 +107,7 @@ function ViewProfilePage(props) {
               }}>Change Picture</Button>
           </Grid>
         </Box>
-        <Typography style={{ marginLeft: '100px', fontSize: '40px' }} variant="h2">Add Social Media Authentication</Typography>
-        <Box style={{
-          display: 'inline-flex',
-          flexDirection: 'row',
-          backgroundColor: colors.namePfpContainer,
-          marginRight: '10px',
-          marginBottom: '20px',
-          marginLeft: '100px',
-          paddingLeft: '20px',
-          paddingTop: '20px',
-          paddingBottom: '30px',
-          width: '85%',
-          height: '30%'
-        }} boxShadow={3} borderRadius={12}>
-          <Grid container>
-            <Grid item xs={1}>
-            </Grid>
-            <Grid item xs={2}>
-              <ReactRoundedImage image={fb} roundedSize="1" imageWidth="100" imageHeight="100" />
-            </Grid>
-            <Grid item xs={6}>
-              <Button variant="outlined"
-                style={{
-                  marginLeft: '0px',
-                  marginTop: '10px',
-                  height: '100px',
-                  width: '500px',
-                  backgroundColor: blueGrey[600],
-                  color: 'white'
-                }}
-              >Link Facebook Account</Button>
-            </Grid>
-            <Grid item xs={3}></Grid>
 
-          </Grid>
-        </Box>
-        <Box style={{
-          display: 'inline-flex',
-          flexDirection: 'row',
-          backgroundColor: colors.namePfpContainer,
-          marginRight: '10px',
-          marginBottom: '20px',
-          paddingLeft: '20px',
-          marginLeft: '100px',
-          paddingTop: '20px',
-          paddingBottom: '30px',
-          width: '85%',
-          height: '30%'
-        }} boxShadow={3} borderRadius={12}>
-          <Grid container>
-            <Grid item xs={1}>
-            </Grid>
-            <Grid item xs={2}>
-              <ReactRoundedImage image={twitter} roundedSize="1" imageWidth="100" imageHeight="100" />
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                variant="outlined"
-                style={{
-                  marginLeft: '0px',
-                  marginTop: '10px',
-                  height: '100px',
-                  width: '500px',
-                  backgroundColor:
-                    blueGrey[600],
-                  color: 'white'
-                }}>Link Twitter Account</Button>
-            </Grid>
-            <Grid item xs={3}></Grid>
-
-          </Grid>
-        </Box>
         <Grid container>
           <Grid item xs={2}>
             {user?.strategy === 'local' ?
