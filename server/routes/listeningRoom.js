@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
-const { ListeningRoom, Mixtape, User } = require('../models');
-// const { getAudioAnalysisFromYoutube } = require('../external_apis/spotify');
+const { ListeningRoom, Mixtape, User, UserActivity } = require('../models');
+const { USER_ACTIVITIES } = require('../constants');
 
 let STREAM_SERVER_ROOT_URL;
 try {
@@ -104,6 +104,7 @@ router.post('/', async (req, res) => {
         currentSong: 0,
         snakeScores: new Map(),
         rhythmScores: new Map(),
+        isPublic: true, // TODO: let client set listening room to private
     });
 
     let stream;
@@ -129,6 +130,13 @@ router.post('/', async (req, res) => {
 
     await listeningRoom.save();
 
+    UserActivity.create({
+        action: USER_ACTIVITIES.CREATE_LISTENING_ROOM,
+        target: listeningRoom._id,
+        targetUrl: `/listeningRoom/${listeningRoom._id}`,
+        user: req.user._id,
+    });
+
     return res.send(listeningRoom._id);
 });
 
@@ -141,7 +149,7 @@ router.get('/:id', async (req, res) => {
     try {
         const listeningRoom = await ListeningRoom.findById(req.params.id).lean();
         if (!listeningRoom) return res.status(404).send('listening room not found');
-        // if (!listeningRoom.owner.equals(req.user.id) && !listeningRoom.invitedUsers.includes(req.user.id)) return res.status(401).send('unauthorized');
+        if (!listeningRoom.isPublic && !listeningRoom.owner.equals(req.user.id) && !listeningRoom.invitedUsers.includes(req.user.id)) return res.status(401).send('unauthorized');
         const listenersDenormalized = [];
         for (const listener of listeningRoom.currentListeners) {
             const user = await User.findById(listener).lean();

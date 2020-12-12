@@ -36,7 +36,7 @@ function MixtapeSearchResultsPage(props) {
             setTotalPages(res.totalPages);
             setTotalResults(res.totalResults);
         });
-    }, [currentPage]);
+    }, [currentPage, new URLSearchParams(props.location.search).get('query')]);
 
 
     const clickUserHandler = (e, userId) => {

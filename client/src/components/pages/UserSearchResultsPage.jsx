@@ -20,7 +20,7 @@ function UserSearchResults(props) {
             setTotalPages(res.totalPages);
             setTotalResults(res.totalResults);
         });
-    }, [currentPage]);
+    }, [currentPage, new URLSearchParams(props.location.search).get('query')]);
 
     const changePageHandler = (event, pageNumber) => {
         setCurrentPage(pageNumber)

@@ -5,6 +5,7 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 const mongoosePartialTextSearch = require('mongoose-partial-search');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
+const { USER_ACTIVITIES } = require('./constants');
 
 const userSchema = new Schema({
   username: {
@@ -48,6 +49,14 @@ userSchema.plugin(AutoIncrement, { inc_field: 'uniqueId' });
 userSchema.plugin(mongoosePartialTextSearch);
 userSchema.plugin(mongoosePaginate);
 
+
+const userActivitySchema = new Schema({
+  action: String,
+  target: mongoose.Types.ObjectId,
+  targetUrl: String, // link to mixtape/listeningroom/etc
+  user: mongoose.Types.ObjectId,
+}, { timestamps: true });
+
 const songSchema = new Schema({
   name: {
     type: String,
@@ -76,6 +85,10 @@ const mixtapeSchema = new Schema({
   },
   isPublic: Boolean,
   comments: Array, // { comment: String, createdAt: Date }
+  favorites: { // number of favorites the mixtape has
+    type: Number,
+    default: 0,
+  },
 });
 
 mixtapeSchema.plugin(mongoosePaginate);
@@ -108,6 +121,7 @@ const listeningRoomSchema = new Schema({
   rhythmGameQueue: Array,
   startedAt: String, // real life time when current song started playing
   wasAt: String, // timestamp of the song at `startedAt`
+  isPublic: Boolean, // whether users need to be invited to join this listening room
 });
 
 module.exports = {
@@ -115,4 +129,5 @@ module.exports = {
   ListeningRoom: model('ListeningRoom', listeningRoomSchema),
   Mixtape: model('Mixtape', mixtapeSchema),
   User: model('User', userSchema),
+  UserActivity: model('UserActivity', userActivitySchema),
 };

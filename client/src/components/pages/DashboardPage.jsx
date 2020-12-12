@@ -1,199 +1,174 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Button, Grid, IconButton, Card, Box, Typography } from '@material-ui/core';
-import indigo from '@material-ui/core/colors/indigo';
+import React, { useEffect, useState } from 'react';
+import { IconButton, Box, Grid, Typography } from '@material-ui/core';
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import MixtapeList from '../MixtapeList';
-import { DataGrid } from '@material-ui/data-grid';
-import logo from '../../images/logo.png';
-import { makeStyles } from "@material-ui/core/styles";
-import UserContext from '../../contexts/UserContext';
+import ReactRoundedImage from 'react-rounded-image';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { getPopularMixtapes, getRandomMixtapes } from '../../utils/api';
+import { getPopularMixtapes, getFollowedUsersActivity, getUserProfilePictureUrl, getRandomMixtapes, getMixtapeCoverImageUrl } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
+import parse from 'html-react-parser';
+
 const MixtapeRows = ({ mixtapes, history }) => (
-    <>
-  
-      {mixtapes?.map(mixtape => (
-        <Box
-          style={{
-            margin: "5px",
-            padding: "10px",
-            backgroundColor: blueGrey[700],
-            display: "flex",
-            flexDirection: "row",
-            borderRadius: 6,
-            fontSize: 12,
-          }}
-        >
-          <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/mixtape/${mixtape._id}`)}> {mixtape.name} </Box>
-          <Box style={{ width: "33%", display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/user/${mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.user}`)}> {mixtape.collaborators.filter(c => c?.permissions === 'owner')[0]?.username} </Box>
-          <Box style={{ width: "33%", display: 'flex', flexDirection: "row", justifyContent: "center" }}>
-            <FavoriteMixtapeButton id={mixtape._id} />
+  <>
+
+    {mixtapes?.map(mixtape => (
+      <Box
+        style={{
+          margin: "5px",
+          padding: "10px",
+          backgroundColor: blueGrey[700],
+          display: "flex",
+          flexDirection: "row",
+          borderRadius: 6,
+          fontSize: 18,
+        }}
+      >
+        <Grid container>
+          <Grid style={{ cursor: 'pointer' }} item xs={4} onClick={() => history.push(`/mixtape/${mixtape._id}`)}>
+            <figure>
+              <img style={{ height: '3em' }} src={getMixtapeCoverImageUrl(mixtape._id)} />
+              <figcaption>{mixtape.name}</figcaption>
+            </figure>
+          </Grid>
+          {/* <Grid item xs={2} style={{ display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/mixtape/${mixtape._id}`)}> {mixtape.name} </Grid> */}
+          <Grid item xs={4} style={{ display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/user/${mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.user}`)}>
+            <figure>
+              {/* <ReactRoundedImage image={getUserProfilePictureUrl(mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.user)} roundedSize="1" style={{ height: '1em' }} /> */}
+              <img style={{ height: '2em' }} src={getUserProfilePictureUrl(mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.user)} />
+              <figcaption>{mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.username}</figcaption>
+            </figure>
+          </Grid>
+          <Grid item xs={4} style={{ display: 'flex', flexDirection: "row", justifyContent: "center" }}>
+            {mixtape.favorites}
+            {/* <FavoriteMixtapeButton id={mixtape._id} /> */}
             {/* <CommentIcon /> */}
             {/* <ShareIcon /> */}
-          </Box>
-        </Box>
-      ))}
-    </>
-  );
+          </Grid>
+        </Grid>
+      </Box>
+    ))}
+  </>
+);
 
 function DashboardPage(props) {
+  const [userActivities, setUserActivities] = useState([]);
 
-    var userActivities = [
-        "DrizzyD favorited a mixtape: summertime",
-        "bob created a new mixtape: bob's hits"
-    ];
+  const colors = {
+    namePfpContainer: blueGrey[900],
+    tabsContainer: blueGrey[900],
+    mixtapeRowColor: blueGrey[800]
+  }
 
-    const colors = {
-        namePfpContainer: blueGrey[900],
-        tabsContainer: blueGrey[900],
-        mixtapeRowColor: blueGrey[800]
-    }
-
-    const ActivityRows = ({activities}) => (
-      <>
-      {activities.map(activity => (
-        <Box style={{
-            margin: "5px",
-            padding: "10px",
-            backgroundColor: blueGrey[700],
-            display: "flex", 
-            flexDirection: "row",
-            borderRadius: 6,
-            fontSize: 12,
-        }}>
-            <Box style={{ display: 'flex', justifyContent: "center"}}> {activity} </Box>
-        </Box>
-      ))}
-    </>
-    ); 
-
-    const history = useHistory();
-    const [mixtapes, setMixtapes] = useState([]);
+  const history = useHistory();
+  const [mixtapes, setMixtapes] = useState([]);
 
   useEffect(() => {
-    getRandomMixtapes(10, 'daily').then(mixtapes => setMixtapes(mixtapes));
+    getPopularMixtapes(5).then(mixtapes => setMixtapes(mixtapes));
+    getFollowedUsersActivity().then(activities => {
+      if (activities?.length > 0) {
+        setUserActivities(activities.map(activity => (
+          <>
+            <Box style={{
+              margin: "5px",
+              padding: "10px",
+              backgroundColor: blueGrey[700],
+              display: "flex",
+              flexDirection: "row",
+              borderRadius: 6,
+              fontSize: '1.5em',
+            }}>
+              <Box style={{ display: 'flex', justifyContent: "center" }}>
+                <div>
+                  <img style={{ height: '1em', width: '1em', cursor: 'pointer' }} src={getUserProfilePictureUrl(activity.user)} onCLick={() => history.push(`/user/${activity.user}`)} />
+                  <a style={{ color: 'white', cursor: 'pointer' }} onClick={() => history.push(activity.targetUrl)}>{activity.username} {activity.action}</a>
+                </div>
+              </Box>
+            </Box>
+
+          </>
+        )));
+      } else {
+        setUserActivities(['No recent activity.']);
+      }
+    });
   }, []);
 
-    const goBack = () => { history.push('/') }
+  const goBack = () => history.goBack();
 
-    const [value, setValue] = React.useState(0);
+  return (
+    <div style={{ color: 'white', left: 0, marginBottom: '10%' }}>
+      <IconButton color="secondary" aria-label="back" onClick={goBack}>
+        <ArrowBackIcon />
+      </IconButton>
+      <br />
+      <Box style={{
+        backgroundColor: blueGrey[900],
+        //marginRight: '50px',
+        margin: 'auto',
+        padding: '10px',
+        textAlign: "center",
+        borderRadius: 6,
+        boxShadow: 6,
+        width: '80%'
+      }}>
+        <Typography variant="h3"> Most Popular Mixtapes </Typography>
+        <br />
+        <Box style={{ backgroundColor: blueGrey[900], display: "flex", flexDirection: "row" }} >
+          <Grid container>
+            <Grid item xs={4}>
+              <Box style={{
+                backgroundColor: blueGrey[800],
+                textAlign: "center",
+                boxShadow: "3",
+                borderRadius: 6
+              }}>Name</Box>
+            </Grid>
+            <Grid item xs={4}>
+              <Box style={{
+                backgroundColor: blueGrey[800],
+                textAlign: "center",
+                boxShadow: 3,
+                borderRadius: 6
+              }}>Owner</Box>
+            </Grid>
+            <Grid item xs={4}>
+              <Box style={{
+                backgroundColor: blueGrey[800],
+                textAlign: "center",
+                boxShadow: "3",
+                borderRadius: 6
+              }}>Favorites</Box>
+            </Grid>
+          </Grid>
+        </Box>
+        <Box style={{
+          borderRadius: 6,
+          backgroundColor: blueGrey[900],
+        }}>
+          <MixtapeRows mixtapes={mixtapes} history={history} />
+        </Box>
+      </Box>
 
-    const [open, setOpen] = useState(false);
-
-    const handleClickOpen = () => {
-        return;
-        setOpen(true);
-      };
-    
-      const handleClose = () => {
-        setOpen(false);
-      };
-
-
-
-    console.log(mixtapes);
-  
-    const handleChange = (event, newValue) => {
-      setValue(newValue);
-    };
-
-    return (
-        <div  style={{ color: 'white', left:0 }}>
-            <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
-                <ArrowBackIcon/>
-            </IconButton>
-            <br/>
-            <Box style={{ 
-                    backgroundColor: blueGrey[900],
-                    //marginRight: '50px',
-                    margin: 'auto',
-                    padding: '10px',
-                    textAlign: "center",
-                    borderRadius: 6,
-                    boxShadow: 6,
-                    width: '80%'
-                }}> 
-                <Typography variant="h3"> Popular Mixtapes This Week</Typography>
-                <br/>
-                {/* <Box style={{backgroundColor: blueGrey[900], width: "99%", display: "flex", flexDirection: "row"}} >
-                    <Box style={{ backgroundColor: blueGrey[800],
-                                width: "33%",
-                                textAlign: "center",
-                                boxShadow: "3",
-                                borderRadius: 6
-                                }}>
-                        Name
-                    </Box>
-                    <Box style={{ backgroundColor: blueGrey[800],
-                                width: "33%",
-                                textAlign: "center",
-                                boxShadow: 3,
-                                borderRadius: 6
-                                }}>
-                        Collaborators
-                    </Box>
-                    <Box style={{ backgroundColor: blueGrey[800],
-                                width: "34%",
-                                textAlign: "center",
-                                boxShadow: "3",
-                                borderRadius: 6
-                                }}>
-                        Favorites
-                    </Box>
-                </Box> */}
-                <Box onClick={handleClickOpen} style={{
-                        marginLeft: "170px",
-                        marginTop: '5px',
-                        marginRight: '10px',
-                        padding: '5px',
-                        borderRadius: 6,
-                        backgroundColor: blueGrey[900],
-                        width: '80%'
-                    }}> 
-                    <MixtapeRows mixtapes={mixtapes} history={history} />
-                </Box>
-                {/* <Box style={{
-                            maxHeight: '60vh',
-                            overflow: 'auto',
-                            display: 'inline-flex', 
-                            flexDirection: 'row', 
-                            backgroundColor: blueGrey[900], 
-                            marginRight: '10px',
-                            marginBottom: '30px',
-                            paddingLeft: '20px',
-                            paddingTop: '20px',  
-                            paddingBottom: '20px',
-                            width: '85%', 
-                            height: '30%'}} boxShadow={3} borderRadius={12}>
-                    <Grid container justify="center">
-                        <MixtapeRows mixtapes={mixtapes} setMixtapes={setMixtapes} />
-                    </Grid>
-                </Box> */}
-            </Box>
-
-            <br/>
-            <Box style={{ 
-                    backgroundColor: blueGrey[900],
-                    margin: 'auto',
-                    padding: '10px',
-                    textAlign: "center",
-                    borderRadius: 6,
-                    boxShadow: 6,
-                    width: '80%'
-                    }}> 
-                <Typography variant="h3">Followed User Activity</Typography>
-                <br/>
-                <Box style={{
-                        marginTop: "5px",
-                        backgroundColor: colors.tabsContainer,
-                        }}> 
-                    <ActivityRows activities={userActivities} />
-                </Box>
-            </Box>
-        </div>
-    );
+      <br />
+      <Box style={{
+        backgroundColor: blueGrey[900],
+        margin: 'auto',
+        padding: '10px',
+        textAlign: "center",
+        borderRadius: 6,
+        boxShadow: 6,
+        width: '80%'
+      }}>
+        <Typography variant="h3">Followed User Activity</Typography>
+        <br />
+        <Box style={{
+          marginTop: "5px",
+          backgroundColor: colors.tabsContainer,
+        }}>
+          {userActivities}
+        </Box>
+      </Box>
+    </div>
+  );
 }
 
 export default DashboardPage;
