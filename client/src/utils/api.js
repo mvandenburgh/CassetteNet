@@ -228,6 +228,10 @@ async function getUser(userId) {
     return user.data;
 }
 
+async function deleteUser(userID){
+    
+}
+
 async function getCreatedMixtapes(userId) {
     const mixtapes = await axios.get(new URL(`/api/mixtape/createdMixtapes`, SERVER_ROOT_URL).href, { params: { userId } });
     return mixtapes.data;
@@ -320,6 +324,7 @@ async function getGameScores(listeningRoomId, gameType) {
 async function resetGameScores(listeningRoomId, gameType) {
     await axios.delete(new URL(`/api/listeningroom/${listeningRoomId}/${gameType}/scores`, SERVER_ROOT_URL).href);
 }
+
 
 export {
     createMixtape,
