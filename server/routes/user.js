@@ -2,12 +2,58 @@ const express = require('express');
 const avatars = require('avatars');
 const jimp = require('jimp');
 const { Types } = require('mongoose');
-const { InboxMessage, Mixtape, User } = require('../models');
+const { InboxMessage, ListeningRoom, Mixtape, User, UserActivity } = require('../models');
+const { USER_ACTIVITIES } = require('../constants');
 
 // how many results per page when searching
 const PAGINATION_COUNT = process.env.PAGINATION_COUNT || 10;
 
+// max number of activities to show in Recent Followed User Activity section of dashboard
+const MAX_USER_ACTIVITY = process.env.MAX_USER_ACTIVITY || 10;
+
 const router = express.Router();
+
+router.get('/followedUserActivity', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // exclude hour/mins/seconds since we want today's activities
+    const unfilteredActivities = await UserActivity.find({
+        createdAt: { 
+            $gte: today 
+        },
+        user: {
+            $in: req.user.followedUsers
+        },
+    }).sort('-createdAt').lean(); // sort so newest activity is first element
+    const activities = [];
+    
+    for (const activity of unfilteredActivities) {
+        if (activities.length > 20) {
+            break;
+        }
+        if (activity.action === USER_ACTIVITIES.CREATE_MIXTAPE || activity.action === USER_ACTIVITIES.FAVORITE_MIXTAPE || activity.action === USER_ACTIVITIES.COMMENT_ON_MIXTAPE) {
+            const mixtape = await Mixtape.findById(activity.target);
+            if (!mixtape.isPublic && !mixtape.collaborators.filter(c => c.user).includes(req.user._id)) {
+                continue;
+            }
+        } else if (activity.action === USER_ACTIVITIES.CREATE_LISTENING_ROOM) {  // TODO: implement listening room public/private
+            const listeningRoom = await ListeningRoom.findById(activity.target);
+            if (!listeningRoom) {
+                UserActivity.deleteOne({ _id: activity._id });
+                continue;
+            } else if (!listeningRoom.isPublic && !listeningRoom.invitedUsers.includes(req.user._id)) {
+                continue;
+            }
+        } else if (activity.action === USER_ACTIVITIES.FOLLOW_USER) {
+            const followedUser = await User.findById(activity.target).lean();
+            activity.action = `${activity.action} ${followedUser.username}.`
+        }
+        const user = await User.findById(activity.user);
+        activities.push({ username: user.username, ...activity });
+    }
+
+    res.send(activities.slice(0, MAX_USER_ACTIVITY));
+});
 
 router.get('/search', async (req, res) => {
     const { query, page } = req.query;
@@ -101,6 +147,15 @@ router.put('/favoriteMixtape', async (req, res) => {
         user.favoritedMixtapes.push(Types.ObjectId(id));
         await user.save();
     }
+    await UserActivity.create({ // use await because i'm not sure if the transaction is prone to race conditions with /unfavorite mixtape
+        action: USER_ACTIVITIES.FAVORITE_MIXTAPE,
+        target: id,
+        targetUrl: `/mixtape/${id}`,
+        user: req.user._id,
+    });
+    const mixtape = await Mixtape.findById(id);
+    mixtape.favorites = mixtape.favorites + 1;
+    await mixtape.save();
     return res.send(user.favoritedMixtapes);
 });
 
@@ -112,6 +167,15 @@ router.put('/unfavoriteMixtape', async (req, res) => {
         user.favoritedMixtapes.splice(user.favoritedMixtapes.indexOf(id), 1);
         await user.save();
     }
+    await UserActivity.deleteOne({
+        action: USER_ACTIVITIES.FAVORITE_MIXTAPE,
+        target: id,
+        targetUrl: `/mixtape/${id}`,
+        user: req.user._id,
+    });
+    const mixtape = await Mixtape.findById(id);
+    mixtape.favorites = mixtape.favorites - 1;
+    await mixtape.save();
     return res.send(user.favoritedMixtapes);
 });
 
@@ -141,6 +205,12 @@ router.put('/followUser', async (req, res) => {
             followers: followedUser.followers, 
         });
     }
+    await UserActivity.create({
+        action: USER_ACTIVITIES.FOLLOW_USER,
+        target: id,
+        targetUrl: `/user/${id}`,
+        user: req.user._id,
+    });
     return res.send(followedUsersDenormalized);
 });
 
@@ -171,6 +241,12 @@ router.put('/unfollowUser', async (req, res) => {
             followers: followedUser.followers, 
         });
     }
+    await UserActivity.deleteOne({
+        action: USER_ACTIVITIES.FOLLOW_USER,
+        target: id,
+        targetUrl: `/user/${id}`,
+        user: req.user._id,
+    });
     return res.send(followedUsersDenormalized);
 });
 
@@ -230,18 +306,6 @@ router.get('/:id/profilePicture', async (req, res) => {
     } else {
         res.status(404).send('user not found');
     }
-});
-
-router.get('/popular', async (req, res) => {
-    console.log("Inside user.js");
-    const { count } = req.params.count; //req.query;
-    console.log("count: " + count);
-    var group = {$group:{favoritedMixtapes:"$favoritedMixtapes", fullDocument:{$push:"$$ROOT"}, count:{$sum:1}}}
-    var sort = {$sort:{"_id":-1}}
-    var limit= {$limit:5}
-    const result = await User.aggregate([group, sort, limit])
-    console.log(result);
-    return res.send(result);
 });
 
 // Get info about any user. Exclude sensitive fields since this is public.

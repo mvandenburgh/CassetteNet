@@ -246,7 +246,10 @@ async function generateTestData(mixtapes, users) {
         const favoritedCount = randInt(MIN_FAVORITED_MIXTAPES_PER_USER, MAX_FAVORITED_MIXTAPES_PER_USER); // current users favorited mixtapes
         const favoritedMixtapes = new Set();
         for (let i = 0; i < favoritedCount; i++) {
-            favoritedMixtapes.add(mixtapes[randInt(0, mixtapes.length)]._id);
+            let mixtapeIndex = randInt(0, mixtapes.length);
+            favoritedMixtapes.add(mixtapes[mixtapeIndex]._id);
+            mixtapes[mixtapeIndex].favorites = mixtapes[mixtapeIndex].favorites + 1;
+            await mixtapes[mixtapeIndex].save();
         }
         user.favoritedMixtapes = Array.from(favoritedMixtapes);
 
