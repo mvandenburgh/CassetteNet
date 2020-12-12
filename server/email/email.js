@@ -11,10 +11,7 @@ const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
 
 const CLIENT_ROOT_URL = process.env.CLIENT_ROOT_URL || 'http://localhost:3000';
 
-let mg;
-if (process.env.NODE_ENV === 'production') {
-    mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: MAILGUN_DOMAIN });
-}
+const mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: MAILGUN_DOMAIN });
 
 const sendVerificationEmail = async (recipient, verificationToken) => {
     const verificationUrl = new URL(`/verify/${verificationToken}`, CLIENT_ROOT_URL).href;

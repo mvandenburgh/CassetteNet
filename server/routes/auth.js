@@ -18,13 +18,13 @@ router.post('/signup', async (req, res) => {
 
     User.register(new User({ username, email, token, verified: userCount === 0, admin: userCount === 0, local: true }), password, async (err, user) => {
         if (err) return res.status(500).send(err); // TODO: error handling
-        if (process.env.NODE_ENV === 'production') { // only send email in production deployment (i.e. heroku)
+//         if (process.env.NODE_ENV === 'production') { // only send email in production deployment (i.e. heroku)
             try {
                 await sendVerificationEmail(email, token);
             } catch(err) {
                 console.log(err); // TODO: error handling    
             }
-        }
+//         }
         let responsePayload;
         
         // send back full user object if running in development.
