@@ -141,13 +141,16 @@ router.get('/createdMixtapes', async (req, res) => {
 router.get('/search', async (req, res) => {
     const { query, page } = req.query;
     if (!query) return res.status(400).send('missing search query');
-    const results = await Mixtape.paginate(Mixtape.searchBuilder(query), { lean: true, limit: PAGINATION_COUNT, page: page ? page : 1 });
-    const resultsAuthorized = results.docs.filter(mixtape => isAuthorized(req.user, mixtape));
+    const conditions = [{ isPublic: true }]; // only show public mixtapes in search results
+    if (req.user) {
+        conditions.push({ 'collaborators.user': Types.ObjectId(req.user._id) }); // also show non-public mixtapes if logged-in user has permission to see them
+    }
+    const results = await Mixtape.paginate({ $or: conditions, ...Mixtape.searchBuilder(query) }, { lean: true, limit: PAGINATION_COUNT, page: page ? page : 1 });
     res.send({
-        results: resultsAuthorized,
+        results: results.docs,
         currentPage: results.page,
-        totalPages: Math.floor(resultsAuthorized.length / PAGINATION_COUNT),
-        totalResults: resultsAuthorized.length,
+        totalPages: results.totalPages,
+        totalResults: results.totalDocs,
     });
 });
 

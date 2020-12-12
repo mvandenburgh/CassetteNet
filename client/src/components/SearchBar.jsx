@@ -102,7 +102,7 @@ function SearchBar(props) {
     const handleSearch = () => {
       history.push({
         pathname: `/search/${type}`,
-        search: `?query=${searchQuery}&page=1`
+        search: `?query=${searchQuery}`,
       });
     }
 

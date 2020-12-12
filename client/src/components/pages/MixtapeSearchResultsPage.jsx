@@ -17,8 +17,10 @@ function MixtapeSearchResultsPage(props) {
     }
 
     const [mixtapes, setMixtapes] = useState([]);
+
     const [totalPages, setTotalPages] = useState(1);
     const [totalResults, setTotalResults] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const [mixtapeToShare, setMixtapeToShare] = useState(null);
 
@@ -28,24 +30,13 @@ function MixtapeSearchResultsPage(props) {
     const goBack = () => history.goBack();
 
     useEffect(() => {
-        const page = new URLSearchParams(props.location.search).get('page');
-        mixtapeSearch(new URLSearchParams(props.location.search).get('query'), page)
+        mixtapeSearch(new URLSearchParams(props.location.search).get('query'), currentPage)
         .then(res => {
             setMixtapes(res.results);
             setTotalPages(res.totalPages);
             setTotalResults(res.totalResults);
-            let currentPage;
-            if (page && page <= res.totalPages) {
-                currentPage = page;
-            } else {
-                currentPage = 1;
-            }
-            history.push({
-                pathname: '/search/mixtapes',
-                search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${currentPage}`
-            });
         });
-    }, [props.location.search]);
+    }, [currentPage]);
 
 
     const clickUserHandler = (e, userId) => {
@@ -65,10 +56,7 @@ function MixtapeSearchResultsPage(props) {
         } else {
             newPageNumber = pageNumber;
         }
-        history.push({
-            pathname: '/search/mixtapes',
-            search: `?query=${new URLSearchParams(props.location.search).get('query')}&page=${newPageNumber}`
-        });
+        setCurrentPage(pageNumber);
     };
 
     const MixtapeRows = ({ mixtapes }) => (
@@ -83,7 +71,7 @@ function MixtapeSearchResultsPage(props) {
                         display: "flex",
                         flexDirection: "row",
                         borderRadius: 6,
-                        fontSize: '1.25em',
+                        fontSize: '1em',
                     }}
                 >
                     <Grid container style={{ height: '10vh' }}>
@@ -127,12 +115,6 @@ function MixtapeSearchResultsPage(props) {
             <br />
             <br />
             <Typography style={{ marginLeft: '100px', textAlign: "left" }} variant="h4">Search results for "{new URLSearchParams(props.location.search).get('query')}" ({totalResults}):</Typography>
-            {totalPages > 1 ?
-                <Paper style={{display: 'inline-block'}}>
-                    <Pagination count={totalPages} page={new URLSearchParams(props.location.search).get('page')} onChange={changePageHandler} />
-                </Paper>
-                : undefined
-            }
             <Grid container >
                 <Box style={{
                     maxHeight: '60vh',
@@ -140,9 +122,9 @@ function MixtapeSearchResultsPage(props) {
                     display: 'inline-flex',
                     flexDirection: 'row',
                     backgroundColor: blueGrey[900],
-                    marginRight: '10px',
-                    marginBottom: '30px',
-                    marginLeft: '100px',
+                    marginTop: '2%',
+                    marginLeft: '10%',
+                    marginRight: '10%',
                     paddingLeft: '20px',
                     paddingTop: '20px',
                     paddingBottom: '20px',
@@ -178,22 +160,23 @@ function MixtapeSearchResultsPage(props) {
             </Box>
                 </Box>
                 <Box style={{
-                    marginLeft: "100px",
-                    marginTop: '5px',
-                    marginRight: '10px',
+                    marginLeft: "10%",
+                    marginTop: '2%',
+                    marginRight: '10%',
+                    marginBottom: '10%',
                     padding: '10px',
                     borderRadius: 6,
                     backgroundColor: blueGrey[900],
-                    width: '90%'
+                    width: '90%',
                 }}>
                     <MixtapeRows mixtapes={mixtapes} />
+                    {totalPages > 1 ?
+                        <Paper style={{display: 'inline-block'}}>
+                            <Pagination count={totalPages} page={new URLSearchParams(props.location.search).get('page')} onChange={changePageHandler} />
+                        </Paper>
+                        : undefined
+                    }
                 </Box>
-            {totalPages > 1 ?
-                <Paper style={{display: 'inline-block'}}>
-                    <Pagination count={totalPages} page={new URLSearchParams(props.location.search).get('page')} onChange={changePageHandler} />
-                </Paper>
-                : undefined
-            }
             </Grid>
         </div>
     )
