@@ -85,6 +85,10 @@ const mixtapeSchema = new Schema({
   },
   isPublic: Boolean,
   comments: Array, // { comment: String, createdAt: Date }
+  favorites: { // number of favorites the mixtape has
+    type: Number,
+    default: 0,
+  },
 });
 
 mixtapeSchema.plugin(mongoosePaginate);

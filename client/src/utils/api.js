@@ -297,8 +297,7 @@ async function getRandomMixtapes(count, type) {
 }
 
 async function getPopularMixtapes(count) {
-    console.log("inside api.js");
-    const mixtapes = await axios.get(new URL('/api/user/popular', SERVER_ROOT_URL).href, { params: { count } });
+    const mixtapes = await axios.get(new URL('/api/mixtape/popular', SERVER_ROOT_URL).href, { params: { count } });
     return mixtapes.data;
 }
 

@@ -153,6 +153,9 @@ router.put('/favoriteMixtape', async (req, res) => {
         targetUrl: `/mixtape/${id}`,
         user: req.user._id,
     });
+    const mixtape = await Mixtape.findById(id);
+    mixtape.favorites = mixtape.favorites + 1;
+    await mixtape.save();
     return res.send(user.favoritedMixtapes);
 });
 
@@ -170,6 +173,9 @@ router.put('/unfavoriteMixtape', async (req, res) => {
         targetUrl: `/mixtape/${id}`,
         user: req.user._id,
     });
+    const mixtape = await Mixtape.findById(id);
+    mixtape.favorites = mixtape.favorites - 1;
+    await mixtape.save();
     return res.send(user.favoritedMixtapes);
 });
 
@@ -300,18 +306,6 @@ router.get('/:id/profilePicture', async (req, res) => {
     } else {
         res.status(404).send('user not found');
     }
-});
-
-router.get('/popular', async (req, res) => {
-    console.log("Inside user.js");
-    const { count } = req.params.count; //req.query;
-    console.log("count: " + count);
-    var group = {$group:{favoritedMixtapes:"$favoritedMixtapes", fullDocument:{$push:"$$ROOT"}, count:{$sum:1}}}
-    var sort = {$sort:{"_id":-1}}
-    var limit= {$limit:5}
-    const result = await User.aggregate([group, sort, limit])
-    console.log(result);
-    return res.send(result);
 });
 
 // Get info about any user. Exclude sensitive fields since this is public.
