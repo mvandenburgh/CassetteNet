@@ -81,7 +81,7 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
 )
 
 
-function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame }) {
+function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setSongStarted }) {
     const playerRef = useRef();
 
     const { socket } = useContext(SocketIOContext);
@@ -243,6 +243,8 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame }) {
                 ref={playerRef} playing={playing} style={{ display: 'none' }}
                 url={listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.listeningRoomPlaybackUrl}
                 volume={musicVolume}
+                onStart={() => setSongStarted(true)}
+                onEnded={() => setSongStarted(false)}
             />
             <ReactPlayer
                 loop
