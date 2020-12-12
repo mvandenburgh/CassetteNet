@@ -58,24 +58,6 @@ function DashboardPage(props) {
     mixtapeRowColor: blueGrey[800]
   }
 
-  const ActivityRows = ({ activities }) => (
-    <>
-      {activities.map(activity => (
-        <Box style={{
-          margin: "5px",
-          padding: "10px",
-          backgroundColor: blueGrey[700],
-          display: "flex",
-          flexDirection: "row",
-          borderRadius: 6,
-          fontSize: '1.5em',
-        }}>
-          <Box style={{ display: 'flex', justifyContent: "center" }}> {activity} </Box>
-        </Box>
-      ))}
-    </>
-  );
-
   const history = useHistory();
   const [mixtapes, setMixtapes] = useState([]);
 
@@ -83,14 +65,27 @@ function DashboardPage(props) {
     getPopularMixtapes(5).then(mixtapes => setMixtapes(mixtapes));
     getFollowedUsersActivity().then(activities => {
       if (activities?.length > 0) {
-        setUserActivities(activities.map(activity => parse(`
-          <span>
-            <a href="/user/${activity.user}">
-              <img style="height: 1em; width: 1em;" src="${getUserProfilePictureUrl(activity.user)}">
-            </a>
-            <a style="color: white;" href=${activity.targetUrl}>${activity.username} ${activity.action}</a>
-          </span>
-        `)));
+        setUserActivities(activities.map(activity => (
+          <>
+            <Box style={{
+              margin: "5px",
+              padding: "10px",
+              backgroundColor: blueGrey[700],
+              display: "flex",
+              flexDirection: "row",
+              borderRadius: 6,
+              fontSize: '1.5em',
+            }}>
+              <Box style={{ display: 'flex', justifyContent: "center" }}>
+                <div>
+                  <img style={{ height: '1em', width: '1em', cursor: 'pointer' }} src={getUserProfilePictureUrl(activity.user)} onCLick={() => history.push(`/user/${activity.user}`)} />
+                  <a style={{ color: 'white', cursor: 'pointer' }} onClick={() => history.push(activity.targetUrl)}>{activity.username} {activity.action}</a>
+                </div>
+              </Box>
+            </Box>
+
+          </>
+        )));
       } else {
         setUserActivities(['No recent activity.']);
       }
@@ -100,7 +95,7 @@ function DashboardPage(props) {
   const goBack = () => history.goBack();
 
   return (
-    <div style={{ color: 'white', left: 0 }}>
+    <div style={{ color: 'white', left: 0, marginBottom: '10%' }}>
       <IconButton color="secondary" aria-label="back" onClick={goBack}>
         <ArrowBackIcon />
       </IconButton>
@@ -115,7 +110,7 @@ function DashboardPage(props) {
         boxShadow: 6,
         width: '80%'
       }}>
-        <Typography variant="h3"> Popular Mixtapes This Week</Typography>
+        <Typography variant="h3"> Most Popular Mixtapes </Typography>
         <br />
         <Box style={{ backgroundColor: blueGrey[900], display: "flex", flexDirection: "row" }} >
           <Grid container>
@@ -169,7 +164,7 @@ function DashboardPage(props) {
           marginTop: "5px",
           backgroundColor: colors.tabsContainer,
         }}>
-          <ActivityRows activities={userActivities} />
+          {userActivities}
         </Box>
       </Box>
     </div>
