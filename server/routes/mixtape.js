@@ -84,6 +84,12 @@ router.post('/:id/comment', async (req, res) => {
     if (!mixtape || !comment) return res.status(400).send('invalid request');
     mixtape.comments.push({ createdAt, comment, author: { user: req.user._id, username: req.user.username } });
     await mixtape.save();
+    UserActivity.create({
+        action: USER_ACTIVITIES.COMMENT_ON_MIXTAPE,
+        target: mixtape._id,
+        targetUrl: `/mixtape/${mixtape._id}`,
+        user: req.user._id,
+    });
     res.send(mixtape.comments);
 });
 

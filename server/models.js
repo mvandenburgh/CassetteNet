@@ -117,6 +117,7 @@ const listeningRoomSchema = new Schema({
   rhythmGameQueue: Array,
   startedAt: String, // real life time when current song started playing
   wasAt: String, // timestamp of the song at `startedAt`
+  isPublic: Boolean, // whether users need to be invited to join this listening room
 });
 
 module.exports = {
