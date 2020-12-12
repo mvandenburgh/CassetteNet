@@ -9,6 +9,7 @@ import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
 import UserProfilePictureUploadModal from '../modals/UserProfilePictureUploadModal';
+import DeleteAccountModal from '../modals/DeleteAccountModal';
 import ChangePasswordConfirmationModal from '../modals/ChangePasswordConfirmationModal';
 import { getUserProfilePictureUrl } from '../../utils/api';
 
@@ -38,6 +39,7 @@ function ViewProfilePage(props) {
 
   const [profilePictureUploadModalOpen, setProfilePictureUploadModalOpen] = useState(false);
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
+  const [deleteAccountModalOpen,setdeleteAccountModalOpen] = useState(false);
 
   const history = useHistory();
   const goBack = () => history.goBack();
@@ -61,6 +63,10 @@ function ViewProfilePage(props) {
         <UserProfilePictureUploadModal
           open={profilePictureUploadModalOpen}
           setOpen={setProfilePictureUploadModalOpen}
+        />
+        <DeleteAccountModal
+          open={deleteAccountModalOpen}
+          setOpen={setdeleteAccountModalOpen}
         />
 
 
@@ -139,7 +145,20 @@ function ViewProfilePage(props) {
               }}>Admin Screen</Button>
           </Grid>
         </Grid>
-
+        <br />
+        <Grid>
+            <Button
+              onClick={() => setdeleteAccountModalOpen(true)}
+              variant="outlined"
+              style={{
+                marginLeft: '100px',
+                marginTop: '10px',
+                height: '70px',
+                width: '300px',
+                backgroundColor: blueGrey[600],
+                color: 'white'
+              }}>Delete Account</Button>
+        </Grid>
       </div>
     </div>
   );
