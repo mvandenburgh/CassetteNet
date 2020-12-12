@@ -99,6 +99,7 @@ function ListeningRoomPage(props) {
     const [listeningRoom, setListeningRoom] = useState(null);
     const [mixtape, setMixtape] = useState(null);
     const [currentTab, setCurrentTab] = useState(0);
+    const [songStarted, setSongStarted] = useState(false);
 
     const { socket } = useContext(SocketIOContext);
 
@@ -328,7 +329,7 @@ function ListeningRoomPage(props) {
                                             ref={gameScreenRef} style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
                                             {screen === 'home' ? <div></div> : <Button style={{ alignItems: 'right', position: 'absolute', zIndex: 1}} onClick={exitGameHandler}> Exit Game </Button>}
                                             {screen === 'rhythm' ?
-                                                <RhythmGame gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
+                                                <RhythmGame songStarted={songStarted} gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
                                                 : screen === 'snake' ?
                                                     <SnakeGame gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
                                                         <Grid item xs={2} />
@@ -437,7 +438,7 @@ function ListeningRoomPage(props) {
                     </TabPanel>
                 </Grid>
             </Grid>
-            <ListeningRoomPlayer listeningRoom={listeningRoom} setListeningRoom={setListeningRoom} rhythmGame={queuedUpForRhythmGame} />
+            <ListeningRoomPlayer setSongStarted={setSongStarted} listeningRoom={listeningRoom} setListeningRoom={setListeningRoom} rhythmGame={queuedUpForRhythmGame} />
             <Dialog open={inviteUserPopupOpen} onClose={() => setInviteUserPopupOpen(false)}>
                 <DialogTitle>Invite a User</DialogTitle>
                 <DialogContent>

@@ -8,7 +8,7 @@ import { Spring } from 'react-spring/renderprops';
 
 const BOX_WIDTH = 90; // width of animated boxes in pixels
 
-function RhythmGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom }) {
+function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom }) {
     const [bpm, setBpm] = useState(-1);
     const bps = bpm / 60; // beats per second
     const beatDuration = 1 / bps; // how long a square should take to get from the beginning of screen to middle
@@ -60,7 +60,7 @@ function RhythmGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameSc
         }
     });
 
-    if (!gameScreenStartX || !gameScreenEndX || bpm < 0 || !playing) {
+    if (!songStarted || !gameScreenStartX || !gameScreenEndX || bpm < 0 || !playing) {
         // setScore(0);
         return null;
     }
