@@ -302,6 +302,11 @@ async function getPopularMixtapes(count) {
     return mixtapes.data;
 }
 
+async function getFollowedUsersActivity() {
+    const activities = await axios.get(new URL('/api/user/followedUserActivity', SERVER_ROOT_URL).href);
+    return activities.data;
+}
+
 async function getSongTempo(listeningRoomId, songIndex) {
     const analysis = await axios.get(new URL(`/api/listeningroom/${listeningRoomId}/audioAnalysis/${songIndex}`, SERVER_ROOT_URL).href);
     return analysis.data;
@@ -370,6 +375,7 @@ export {
     deleteInboxMessage,
     getRandomMixtapes,
     getPopularMixtapes,
+    getFollowedUsersActivity,
     getSongTempo,
     commentOnMixtape,
     sendDM,

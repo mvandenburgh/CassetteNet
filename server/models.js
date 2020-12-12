@@ -5,6 +5,7 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 const mongoosePartialTextSearch = require('mongoose-partial-search');
 const mongoosePaginate = require('mongoose-paginate-v2');
 
+const { USER_ACTIVITIES } = require('./constants');
 
 const userSchema = new Schema({
   username: {
@@ -47,6 +48,14 @@ userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(AutoIncrement, { inc_field: 'uniqueId' });
 userSchema.plugin(mongoosePartialTextSearch);
 userSchema.plugin(mongoosePaginate);
+
+
+const userActivitySchema = new Schema({
+  action: String,
+  target: mongoose.Types.ObjectId,
+  targetUrl: String, // link to mixtape/listeningroom/etc
+  user: mongoose.Types.ObjectId,
+}, { timestamps: true });
 
 const songSchema = new Schema({
   name: {
@@ -115,4 +124,5 @@ module.exports = {
   ListeningRoom: model('ListeningRoom', listeningRoomSchema),
   Mixtape: model('Mixtape', mixtapeSchema),
   User: model('User', userSchema),
+  UserActivity: model('UserActivity', userActivitySchema),
 };

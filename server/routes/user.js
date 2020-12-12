@@ -2,12 +2,44 @@ const express = require('express');
 const avatars = require('avatars');
 const jimp = require('jimp');
 const { Types } = require('mongoose');
-const { InboxMessage, Mixtape, User } = require('../models');
+const { InboxMessage, Mixtape, User, UserActivity } = require('../models');
+const { USER_ACTIVITIES } = require('../constants');
 
 // how many results per page when searching
 const PAGINATION_COUNT = process.env.PAGINATION_COUNT || 10;
 
 const router = express.Router();
+
+router.get('/followedUserActivity', async (req, res) => {
+    if (!req.user) return res.status(401).send('unauthorized');
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // exclude hour/mins/seconds since we want today's activities
+    const unfilteredActivities = await UserActivity.find({
+        createdAt: { 
+            $gte: today 
+        },
+        user: {
+            $in: req.user.followedUsers
+        },
+    }).lean();
+    const activities = [];
+    
+    for (const activity of unfilteredActivities) {
+        if (activities.length > 20) {
+            break;
+        }
+        if (activity.action === USER_ACTIVITIES.CREATE_MIXTAPE || activity.action === USER_ACTIVITIES.FAVORITE_MIXTAPE) {
+            let mixtape = await Mixtape.findById(activity.target);
+            if (!mixtape.isPublic && !mixtape.collaborators.filter(c => c.user).includes(req.user._id)) {
+                continue;
+            }
+        } // else if (activity.action === USER_ACTIVITIES.CREATE_LISTENING_ROOM) TODO: implement listening room public/private
+        const user = await User.findById(activity.user);
+        activities.push({ username: user.username, ...activity });
+    }
+
+    res.send(activities);
+});
 
 router.get('/search', async (req, res) => {
     const { query, page } = req.query;
@@ -101,6 +133,12 @@ router.put('/favoriteMixtape', async (req, res) => {
         user.favoritedMixtapes.push(Types.ObjectId(id));
         await user.save();
     }
+    await UserActivity.create({ // use await because i'm not sure if the transaction is prone to race conditions with /unfavorite mixtape
+        action: USER_ACTIVITIES.FAVORITE_MIXTAPE,
+        target: id,
+        targetUrl: `/mixtape/${id}`,
+        user: req.user._id,
+    });
     return res.send(user.favoritedMixtapes);
 });
 
@@ -112,6 +150,12 @@ router.put('/unfavoriteMixtape', async (req, res) => {
         user.favoritedMixtapes.splice(user.favoritedMixtapes.indexOf(id), 1);
         await user.save();
     }
+    await UserActivity.deleteOne({
+        action: USER_ACTIVITIES.FAVORITE_MIXTAPE,
+        target: id,
+        targetUrl: `/mixtape/${id}`,
+        user: req.user._id,
+    });
     return res.send(user.favoritedMixtapes);
 });
 

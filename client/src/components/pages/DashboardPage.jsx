@@ -1,16 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Button, Grid, IconButton, Card, Box, Typography } from '@material-ui/core';
-import indigo from '@material-ui/core/colors/indigo';
+import React, { useEffect, useState } from 'react';
+import { IconButton, Box, Typography } from '@material-ui/core';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
-import MixtapeList from '../MixtapeList';
-import { DataGrid } from '@material-ui/data-grid';
-import logo from '../../images/logo.png';
-import { makeStyles } from "@material-ui/core/styles";
-import UserContext from '../../contexts/UserContext';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { getPopularMixtapes, getRandomMixtapes } from '../../utils/api';
+import { getPopularMixtapes, getFollowedUsersActivity, getUserProfilePictureUrl, getRandomMixtapes } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
+import parse from 'html-react-parser';
+
 const MixtapeRows = ({ mixtapes, history }) => (
     <>
   
@@ -39,11 +35,7 @@ const MixtapeRows = ({ mixtapes, history }) => (
   );
 
 function DashboardPage(props) {
-
-    var userActivities = [
-        "DrizzyD favorited a mixtape: summertime",
-        "bob created a new mixtape: bob's hits"
-    ];
+    const [userActivities, setUserActivities] = useState([]);
 
     const colors = {
         namePfpContainer: blueGrey[900],
@@ -61,7 +53,7 @@ function DashboardPage(props) {
             display: "flex", 
             flexDirection: "row",
             borderRadius: 6,
-            fontSize: 12,
+            fontSize: '1.5em',
         }}>
             <Box style={{ display: 'flex', justifyContent: "center"}}> {activity} </Box>
         </Box>
@@ -74,30 +66,23 @@ function DashboardPage(props) {
 
   useEffect(() => {
     getRandomMixtapes(10, 'daily').then(mixtapes => setMixtapes(mixtapes));
+    getFollowedUsersActivity().then(activities => {
+      if (activities?.length > 0) {
+        setUserActivities(activities.map(activity => parse(`
+          <span>
+            <a href="/user/${activity.user}">
+              <img style="height: 1em; width: 1em;" src="${getUserProfilePictureUrl(activity.user)}">
+            </a>
+            <a style="color: white;" href=${activity.targetUrl}>${activity.username} ${activity.action}</a>
+          </span>
+        `)));
+      } else {
+        setUserActivities(['No recent activity.']);
+      }
+    });
   }, []);
 
     const goBack = () => { history.push('/') }
-
-    const [value, setValue] = React.useState(0);
-
-    const [open, setOpen] = useState(false);
-
-    const handleClickOpen = () => {
-        return;
-        setOpen(true);
-      };
-    
-      const handleClose = () => {
-        setOpen(false);
-      };
-
-
-
-    console.log(mixtapes);
-  
-    const handleChange = (event, newValue) => {
-      setValue(newValue);
-    };
 
     return (
         <div  style={{ color: 'white', left:0 }}>
@@ -143,7 +128,7 @@ function DashboardPage(props) {
                         Favorites
                     </Box>
                 </Box> */}
-                <Box onClick={handleClickOpen} style={{
+                <Box style={{
                         marginLeft: "170px",
                         marginTop: '5px',
                         marginRight: '10px',
