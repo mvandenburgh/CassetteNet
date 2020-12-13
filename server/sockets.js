@@ -96,6 +96,10 @@ function initSockets(io) {
             const roomId = socket.rooms.values().next().value;
             const listeningRoom = await ListeningRoom.findById(roomId);
             if (listeningRoom && listeningRoom.owner && listeningRoom.owner.equals(user._id)) {
+                if (listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId) { // stop current stream if it exists
+                    axios.delete(new URL(`/stopStream/${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}`, STREAM_SERVER_ROOT_URL).href)
+                        .catch(err => console.log(`failed to stop stream ${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}. it may not exist.`));
+                }
                 listeningRoom.currentSong = index;
                 if (listeningRoom.rhythmGameQueue.length > 0) {
                     io.in(roomId).emit('rhythmGameAboutToBegin');
@@ -124,6 +128,7 @@ function initSockets(io) {
                 const { listeningRoomPlaybackId, tempo } = stream.data;
                 const listeningRoomPlaybackUrl = new URL(`/stream/live/${listeningRoomPlaybackId}.flv`, STREAM_SERVER_ROOT_URL).href;
                 listeningRoom.mixtape.songs[index].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
+                listeningRoom.mixtape.songs[index].listeningRoomStreamId = listeningRoomPlaybackId;
                 listeningRoom.mixtape.songs[index].tempo = tempo;
                 listeningRoom.markModified('currentListeners');
                 listeningRoom.markModified('mixtape.songs');

@@ -243,7 +243,9 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
                 ref={playerRef} playing={playing} style={{ display: 'none' }}
                 url={listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.listeningRoomPlaybackUrl}
                 volume={musicVolume}
-                onStart={() => setSongStarted(true)}
+                onStart={() => { setSongStarted(true); console.log('started') }}
+                onBuffer={() => setSongStarted(false)}
+                onBufferEnd={() => setSongStarted(true)}
                 onEnded={() => setSongStarted(false)}
             />
             <ReactPlayer
