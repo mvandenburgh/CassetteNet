@@ -39,7 +39,7 @@ function getUsername(_id) {
  * @param {*} id id of the user we want to get my mixtapes of
  */
 async function getMyMixtapes(_id) {
-    const mixtapes = await axios.get(new URL('/api/user/mixtapes', SERVER_ROOT_URL), { withCredentials: true });
+    const mixtapes = await axios.get(new URL('/api/user/mixtapes', SERVER_ROOT_URL).href, { withCredentials: true });
     return mixtapes.data;
 }
 
@@ -49,7 +49,7 @@ async function getMyMixtapes(_id) {
  */
 async function getMixtape(_id) {
     try {
-        const mixtape = await axios.get(new URL(`/api/mixtape/${_id}`, SERVER_ROOT_URL));
+        const mixtape = await axios.get(new URL(`/api/mixtape/${_id}`, SERVER_ROOT_URL).href);
         return mixtape.data;
     } catch (err) {
         return null;
@@ -57,25 +57,25 @@ async function getMixtape(_id) {
 }
 
 async function updateMixtape(mixtape) {
-    await axios.put(new URL(`/api/mixtape/${mixtape._id}`, SERVER_ROOT_URL), { mixtape });
+    await axios.put(new URL(`/api/mixtape/${mixtape._id}`, SERVER_ROOT_URL).href, { mixtape });
 }
 
 async function updateMyMixtapes(mixtapes) {
-    await axios.put(new URL(`/api/mymixtapes`, SERVER_ROOT_URL), { mixtapes });
+    await axios.put(new URL(`/api/mymixtapes`, SERVER_ROOT_URL).href, { mixtapes });
 }
 
 async function deleteMixtape(mixtape) {
     console.log(mixtape);
-    await axios.delete(new URL(`/api/mixtape/${mixtape._id}`, SERVER_ROOT_URL), { mixtape });
+    await axios.delete(new URL(`/api/mixtape/${mixtape._id}`, SERVER_ROOT_URL).href, { mixtape });
 }
 
-async function createMixtape() {
-    const mixtape = await axios.post(new URL(`/api/mixtape`, SERVER_ROOT_URL));
-    return mixtape;
+async function createMixtape(mixtape) {
+    const newMixtape = await axios.post(new URL(`/api/mixtape`, SERVER_ROOT_URL).href, { mixtape });
+    return newMixtape;
 }
 
 async function forkMixtape(mixtape) {
-    const newMixtape = await axios.post(new URL(`/api/mixtape/${mixtape._id}/fork`, SERVER_ROOT_URL), { mixtape });
+    const newMixtape = await axios.post(new URL(`/api/mixtape/${mixtape._id}/fork`, SERVER_ROOT_URL).href, { mixtape });
     //console.log(mixtape);
     //console.log(user);
     /*const forkedMixtape = Object.assign({}, mixtape);
@@ -102,53 +102,53 @@ async function songSearch(api, query) {
  * @param {*} _id id of the user who's favorited mixtapes we want
  */
 async function getFavoritedMixtapes(_id) {
-    const favoritedMixtapes = await axios.get(new URL(`/api/user/${_id}/favoritedMixtapes`, SERVER_ROOT_URL), { withCredentials: true });
+    const favoritedMixtapes = await axios.get(new URL(`/api/user/${_id}/favoritedMixtapes`, SERVER_ROOT_URL).href, { withCredentials: true });
     return favoritedMixtapes.data;
 }
 
 async function favoriteMixtape(mixtapeId) {
-    const favoritedMixtapes = await axios.put(new URL(`/api/user/favoriteMixtape`, SERVER_ROOT_URL), { id: mixtapeId, withCredentials: true });
+    const favoritedMixtapes = await axios.put(new URL(`/api/user/favoriteMixtape`, SERVER_ROOT_URL).href, { id: mixtapeId, withCredentials: true });
     return favoritedMixtapes.data;
 }
 
 async function unfavoriteMixtape(mixtapeId) {
-    const favoritedMixtapes = await axios.put(new URL(`/api/user/unfavoriteMixtape`, SERVER_ROOT_URL), { id: mixtapeId, withCredentials: true });
+    const favoritedMixtapes = await axios.put(new URL(`/api/user/unfavoriteMixtape`, SERVER_ROOT_URL).href, { id: mixtapeId, withCredentials: true });
     return favoritedMixtapes.data;
 }
 
 async function followUser(userId) {
-    const followedUsers = await axios.put(new URL(`/api/user/followUser`, SERVER_ROOT_URL), { id: userId, withCredentials: true });
+    const followedUsers = await axios.put(new URL(`/api/user/followUser`, SERVER_ROOT_URL).href, { id: userId, withCredentials: true });
     return followedUsers.data;
 }
 
 async function unfollowUser(userId) {
-    const followedUsers = await axios.put(new URL(`/api/user/unfollowUser`, SERVER_ROOT_URL), { id: userId, withCredentials: true });
+    const followedUsers = await axios.put(new URL(`/api/user/unfollowUser`, SERVER_ROOT_URL).href, { id: userId, withCredentials: true });
     return followedUsers.data;
 }
 
 async function getFollowedUsers(){
-    const users = await axios.get(new URL(`/api/user/getFollowedUsers`,SERVER_ROOT_URL), { withCredentials: true });
+    const users = await axios.get(new URL(`/api/user/getFollowedUsers`,SERVER_ROOT_URL).href, { withCredentials: true });
     return users.data;
 }
 
 async function userSignup(email, username, password) {
     try {
-        await axios.post(new URL('/api/auth/signup', SERVER_ROOT_URL), { email, username, password });
+        await axios.post(new URL('/api/auth/signup', SERVER_ROOT_URL).href, { email, username, password });
     } catch(err) { // TODO: error handling
         console.log(err);
     }
 }
 
 async function userLogin(email, password) {
-    await axios.post(new URL('/api/auth/login', SERVER_ROOT_URL), { email, password });
+    await axios.post(new URL('/api/auth/login', SERVER_ROOT_URL).href, { email, password });
 }
 
 async function userLogout() {
-    await axios.post(new URL('/api/auth/logout', SERVER_ROOT_URL));
+    await axios.post(new URL('/api/auth/logout', SERVER_ROOT_URL).href);
 }
 
 async function userVerifyAccount(token) {
-    await axios.put(new URL('/api/auth/verify', SERVER_ROOT_URL), { token });
+    await axios.put(new URL('/api/auth/verify', SERVER_ROOT_URL).href, { token });
 }
 
 async function verifyUserLoggedIn() {
@@ -325,6 +325,11 @@ async function resetGameScores(listeningRoomId, gameType) {
     await axios.delete(new URL(`/api/listeningroom/${listeningRoomId}/${gameType}/scores`, SERVER_ROOT_URL).href);
 }
 
+async function getExternalPlaylist(source, link) {
+    const playlists = await axios.get(new URL(`/api/${source}/playlist`, SERVER_ROOT_URL).href, { params: { link } });
+    return playlists.data;
+}
+
 export {
     createMixtape,
     deleteMixtape,
@@ -380,5 +385,6 @@ export {
     sendDM,
     getGameScores,
     resetGameScores,
+    getExternalPlaylist,
     SERVER_ROOT_URL,
 };

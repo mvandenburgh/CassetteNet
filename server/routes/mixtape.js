@@ -155,12 +155,18 @@ router.get('/popular', async (req, res) => {
 // CREATE MIXTAPE
 router.post('/', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
-    const mixtape = {
-        name: 'New Mixtape',
-        collaborators: [{ user: req.user._id, permissions: 'owner', username: req.user.username }],
-        songs: [],
-        isPublic: true // TODO: set default to false, true for now to make testing easier
-    };
+    let mixtape;
+    if (req.body.mixtape) {
+        mixtape = req.body.mixtape;
+        mixtape.collaborators = [{ user: req.user._id, permissions: 'owner', username: req.user.username }];
+    } else {
+        mixtape = {
+            name: 'New Mixtape',
+            collaborators: [{ user: req.user._id, permissions: 'owner', username: req.user.username }],
+            songs: [],
+            isPublic: false
+        };
+    }
     const mixtapeObject = await Mixtape.create(mixtape);
     await UserActivity.create({
         action: USER_ACTIVITIES.CREATE_MIXTAPE,
