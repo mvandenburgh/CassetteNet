@@ -10,22 +10,20 @@ function SignUpPage(props) {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
 
-  const handleUsername = (e) => {
-    setUsername(e.target.value);
+  const handleUsername = (e) => setUsername(e.target.value);
+  const handlePassword = (e) => setPassword(e.target.value);
+  const handleEmail = (e) => setEmail(e.target.value);
+
+  const submit = () => {
     if(username.length < 4) {
       setOpen(true);
     }
     else {
       setOpen(false);
-    }
-  }
-  const handlePassword = (e) => setPassword(e.target.value);
-  const handleEmail = (e) => setEmail(e.target.value);
-
-  const submit = () => {
-    userSignup(email, username, password)
+      userSignup(email, username, password)
       .then(() => alert('Sign up successful!'))
       .catch(err => alert(err));
+    }
   };
 
   const useStyles = makeStyles((theme) => ({

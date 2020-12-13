@@ -9,7 +9,8 @@ const router = express.Router();
 const CLIENT_ROOT_URL = process.env.CLIENT_ROOT_URL || 'http://localhost:3000';
 
 router.post('/signup', async (req, res) => {
-    const { username, password, email } = req.body;
+    //const { username, password, email } = req.body;
+    const { email, username, password } = req.body;
     // this new user should be an admin if there are 0 users currently
     const userCount = await User.estimatedDocumentCount();
 
