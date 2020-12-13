@@ -27,7 +27,6 @@ router.post('/signup', async (req, res) => {
             }
 //         }
         let responsePayload;
-        
         // send back full user object if running in development.
         // otherwise don't, due to security
         if (process.env.NODE_ENV === 'production') {
