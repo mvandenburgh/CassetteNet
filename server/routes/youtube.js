@@ -1,7 +1,20 @@
 const express = require('express');
 const { parse, toSeconds } = require('iso8601-duration');
-
+const ytpl = require('ytpl');
 const { getVideoInfo, searchVideo } = require('../external_apis/youtube');
+
+const parseYtplDuration = (s) => {
+    const splt = s.split(':');
+    if (splt.length === 3) {
+        return Number(splt[0]) * 3600 + Number(splt[1]) * 60 + Number(splt[2]);
+    } else if (splt.length === 2) {
+        return Number(splt[0]) * 60 + Number(splt[1]);
+    } else if (splt.length === 1) {
+        return Number(splt[0]);
+    } else {
+        return 0;
+    }
+}
 
 const router = express.Router();
 
@@ -31,6 +44,29 @@ router.get('/itemDuration', async (req, res) => {
         res.json(duration);
     } catch(err) {
         res.status(500).send(err);
+    }
+});
+
+router.get('/playlist', async (req, res) => {
+    const { link } = req.query;
+    try {
+        const results = await ytpl(link);
+        const mixtape = {
+            name: results.title,
+            songs: results.items.map(song => ({
+                name: song.title,
+                id: song.id,
+                coverImage: song.bestThumbnail.url,
+                type: 'youtube',
+                playbackUrl: song.shortUrl,
+                duration: parseYtplDuration(song.duration),
+            })),
+            isPublic: false,
+        }
+        res.send(mixtape);
+    } catch (err) {
+        console.log(err);
+        res.status(404).send('playlist not found');
     }
 });
 

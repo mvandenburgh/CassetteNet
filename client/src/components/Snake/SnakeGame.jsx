@@ -21,7 +21,7 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
   const [gameOver, setGameOver] = useState(false);
 
   const gameSize = [gameScreenWidth, gameScreenHeight]
-
+  const [currentMove,setMove] = useState(38);
   const { socket } = useContext(SocketIOContext);
 
   useInterval(() => gameLoop(), speed);
@@ -40,7 +40,7 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
     socket.emit('snakeScoreChange', 1);
   }
   const moveSnake = ({ keyCode }) =>
-    keyCode >= 37 && keyCode <= 40 && setDir(directions[keyCode]);
+    directions[keyCode]!=dir && keyCode >= 37 && keyCode <= 40 && setDir(directions[keyCode]);
 
   const createApple = () =>
     apple.map((_a, i) => Math.floor(Math.random() * (gameSize[i] / scale)));

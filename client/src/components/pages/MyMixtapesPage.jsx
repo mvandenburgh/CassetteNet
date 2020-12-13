@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { TextField, Button, Box, Fab, Grid, IconButton, Typography } from '@material-ui/core';
+import { Box, Fab, Grid, IconButton, Typography } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { Add as AddIcon, ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import MixtapeList from '../MixtapeList';
 import UserContext from '../../contexts/UserContext';
-import { createMixtape, getMyMixtapes } from '../../utils/api';
-import { useHistory, Redirect } from 'react-router-dom';
+import { getMyMixtapes } from '../../utils/api';
+import { useHistory } from 'react-router-dom';
+import CreateMixtapeModal from '../modals/CreateMixtapeModal';
 
 const useStyles = makeStyles(theme => ({
     fab: {
@@ -19,21 +20,18 @@ const useStyles = makeStyles(theme => ({
 function MyMixtapesPage(props) {
     const classes = useStyles();
 
-    let { user, setUser } = useContext(UserContext);
-    // if (!user.isLoggedIn) {
-    //     user = JSON.parse(localStorage.getItem('user'));
-    // }
+    let { user } = useContext(UserContext);
+
     const history = useHistory();
     const goBack = () => history.goBack();
 
     if(!user?.isLoggedIn) {
-        // return(
-        //   <Redirect to="/" />
-        // );
         history.push('/');
     }
 
-    const [mixtapes, setMixtapes] = useState(null);
+    const [mixtapes, setMixtapes] = useState([]);
+
+    const [createMixtapeModalOpen, setCreateMixtapeModalOpen] = useState(false);
 
     const { _id } = user;
     useEffect(async () => {
@@ -45,10 +43,6 @@ function MyMixtapesPage(props) {
         }
      }, []);
 
-    const createNewMixtape = () => {
-        createMixtape().then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
-    }
-
     if (!mixtapes) {
         return null;
     }
@@ -58,10 +52,6 @@ function MyMixtapesPage(props) {
             <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
                 <ArrowBackIcon/>
             </IconButton>
-            <br/>
-                
-            <br/>
-            <br/>
             <Grid container justify="center">
                 <Typography variant="h2">My Mixtapes</Typography>
                 <Box style={{
@@ -82,9 +72,10 @@ function MyMixtapesPage(props) {
                     </Grid>
                 </Box>
             </Grid>
-            <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => createNewMixtape()}>
+            <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => setCreateMixtapeModalOpen(true)}>
                 <AddIcon />
             </Fab>
+            <CreateMixtapeModal open={createMixtapeModalOpen} setOpen={setCreateMixtapeModalOpen} />
         </div>
     )
 }

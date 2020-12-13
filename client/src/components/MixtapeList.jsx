@@ -189,12 +189,12 @@ function MixtapeList(props) {
           )}
         </Droppable>
       </DragDropContext>
-      <Fab color="secondary" style={{position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => redoHandler()}> 
+      {/* <Fab color="secondary" style={{position: 'fixed', bottom: '15%', right: '10%',}} onClick={() => redoHandler()}> 
           <RedoIcon />
       </Fab>
       <Fab color="primary" aria-label="add" style={{ position: 'fixed', bottom: '15%', right: '15%',}} onClick={() => undoHandler()}>
                 <UndoIcon />
-      </Fab>
+      </Fab> */}
     </Box>
   );
 }
