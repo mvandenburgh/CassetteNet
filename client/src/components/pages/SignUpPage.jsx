@@ -14,8 +14,13 @@ function SignUpPage(props) {
   const handlePassword = (e) => setPassword(e.target.value);
   const handleEmail = (e) => setEmail(e.target.value);
 
+  var validator = require("email-validator");
+  const validateEmail = () => {
+    return (validator.validate(email));
+  }
+
   const validateUsername = () => {
-    return (username.length >= 4 && username.length <= 12);
+    return (username.length >= 4 && username.length <= 12 && username[0] != '#') ;
   }
 
   var passwordValidator = require('password-validator');
@@ -31,7 +36,6 @@ function SignUpPage(props) {
   //.has().oneOf(['!', '@', '#', '$', '%', '&', '*']);
 
   const validatePassword = () => {
-    console.log(schema.validate(password, { list: true }));
     return (schema.validate(password));
   }
 
@@ -48,7 +52,13 @@ function SignUpPage(props) {
     else {
       setInvalidPasswordDialogOpen(false);
     }
-    if (validateUsername() && validatePassword()){
+    if(!validateEmail()) {
+      setInvalidEmailDialogOpen(true);
+    }
+    else{
+      setInvalidEmailDialogOpen(false);
+    }
+    if (validateUsername() && validatePassword() && validateEmail()){
       userSignup(email, username, password)
       .then(() => alert('Sign up successful!'))
       .catch(err => alert(err));
@@ -68,17 +78,24 @@ function SignUpPage(props) {
       marginLeft: '20px',
       marginRight: '20px',
     },
-    root: {
+    passwordDialogRoot: {
       borderRadius: 3,
       border: 0,
       height: 48,
       bottom: 100,
+    },
+    emailDialogRoot: {
+      borderRadius: 3,
+      border: 0,
+      height: 48,
+      bottom: 170,
     },
   }));
   const classes = useStyles();
 
   const [invalidUsernameDialogOpen, setInvalidUsernameDialogOpen] = useState(false);
   const [invalidPasswordDialogOpen, setInvalidPasswordDialogOpen] = useState(false);
+  const [invalidEmailDialogOpen, setInvalidEmailDialogOpen] = useState(false);
 
   const history = useHistory();
   const goBack = () => history.goBack();
@@ -99,7 +116,7 @@ function SignUpPage(props) {
         open={invalidUsernameDialogOpen}
         autoHideDuration={4000}
         // onClose={handleClose}
-        message="Username must be between 4 and 12 characters."
+        message="Username must be between 4 and 12 characters and may not begin with #."
         // action={
         //     <React.Fragment>
         //         <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
@@ -110,7 +127,7 @@ function SignUpPage(props) {
       />
       <Snackbar
         classes={{
-         root: classes.root,
+         root: classes.passwordDialogRoot,
         }}
         anchorOrigin={{
           vertical: 'bottom',
@@ -121,6 +138,20 @@ function SignUpPage(props) {
         // onClose={handleClose}
         message="Password must be at least 8 characters in length, with no spaces 
         and at least 1 of the following: Uppercase, lowercase, number, special character (!, @, #, $, %, &, *)."
+      />
+
+      <Snackbar
+        classes={{
+         root: classes.emailDialogRoot,
+        }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={invalidEmailDialogOpen}
+        autoHideDuration={4000}
+        // onClose={handleClose}
+        message="Please enter a valid email address."
       />
 
       <Typography align="center" variant="h3">
