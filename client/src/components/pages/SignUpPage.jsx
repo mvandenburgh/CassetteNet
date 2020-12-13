@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Grid, IconButton, TextField, Typography, makeStyles } from '@material-ui/core';
+import { Button, Grid, IconButton, TextField, Typography, makeStyles, Tooltip, Snackbar } from '@material-ui/core';
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
+import InfoIcon from '@material-ui/icons/Info';
 import { useHistory } from 'react-router-dom';
 import { userSignup } from '../../utils/api';
 
@@ -14,9 +15,15 @@ function SignUpPage(props) {
   const handleEmail = (e) => setEmail(e.target.value);
 
   const submit = () => {
-    userSignup(email, username, password)
+    if(username.length < 4) {
+      setOpen(true);
+    }
+    else {
+      setOpen(false);
+      userSignup(email, username, password)
       .then(() => alert('Sign up successful!'))
       .catch(err => alert(err));
+    }
   };
 
   const useStyles = makeStyles((theme) => ({
@@ -34,6 +41,8 @@ function SignUpPage(props) {
     }
   }));
   const classes = useStyles();
+
+  const [open, setOpen] = useState(false);
 
   const history = useHistory();
   const goBack = () => history.goBack();
@@ -54,12 +63,37 @@ function SignUpPage(props) {
         <br />
       </Typography>
       <Grid container spacing={1} alignItems="center" direction="column">
-        <Grid item>
-          <TextField
-            className={classes.margin}
-            onChange={handleUsername}
-            value={username}
-            variant="outlined" label="Username" />
+        <Grid container spacing={1} alignItems="center" direction="row">
+        <Snackbar
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                open={open}
+                autoHideDuration={4000}
+                // onClose={handleClose}
+                message="Username must be between 4 and 12 characters."
+                // action={
+                //     <React.Fragment>
+                //         <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                //             <CloseIcon fontSize="small" />
+                //         </IconButton>
+                //     </React.Fragment>
+                // }
+              >
+                </Snackbar>
+            <Grid item>
+
+              <TextField
+                className={classes.margin}
+                onChange={handleUsername}
+                value={username}
+                variant="outlined" label="Username" />
+                
+            </Grid>
+            <Tooltip title="Username: must be at least 4 characters long and may not begin with #"  >
+              <InfoIcon  />
+            </Tooltip>
         </Grid>
         <Grid item>
           <TextField

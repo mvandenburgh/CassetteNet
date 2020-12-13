@@ -139,8 +139,8 @@ async function userSignup(email, username, password) {
     }
 }
 
-async function userLogin(username, password) {
-    await axios.post(new URL('/api/auth/login', SERVER_ROOT_URL), { username, password });
+async function userLogin(email, password) {
+    await axios.post(new URL('/api/auth/login', SERVER_ROOT_URL), { email, password });
 }
 
 async function userLogout() {

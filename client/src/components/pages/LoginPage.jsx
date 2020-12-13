@@ -41,11 +41,11 @@ function LoginPage(props) {
 
   const loginAsUser = async () => {
     try {
-      await userLogin(username, password);
+      await userLogin(email, password);
       history.push('/login/success');
     } catch (err) {
       if (err?.response?.status === 401) {
-        alert('Incorrect username or password');
+        alert('Incorrect email or password');
       } else if (err?.response?.status === 400) {
         alert('Please verify your account.')
       } else {
@@ -115,9 +115,9 @@ function LoginPage(props) {
           <Grid item>
             <TextField
               className={classes.margin}
-              onChange={handleUsername}
-              value={username}
-              variant="outlined" label="Username" />
+              onChange={handleEmail}
+              value={email}
+              variant="outlined" label="Email" />
           </Grid>
           <Grid item>
             <TextField
