@@ -22,6 +22,7 @@
     "humanize-duration": "^3.24.0",
     "material-ui-dropzone": "^3.5.0",
     "mongoose-paginate-v2": "^1.3.11",
+    "password-validator": "^5.1.1",
     "react": "^17.0.0",
     "react-beautiful-dnd": "^13.0.0",
     "react-chatbox-component": "0.0.5",
