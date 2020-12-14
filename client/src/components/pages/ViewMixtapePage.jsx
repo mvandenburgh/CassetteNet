@@ -114,7 +114,7 @@ function ViewMixtapePage(props) {
 
     const deleteSongs = () => {
         for (const song of songsToDelete) {
-            if (song === currentSong.mixtape.songs[currentSong.index].id) {
+            if (song === currentSong?.mixtape?.songs[currentSong?.index]?.id) {
                 setCurrentSong({});
                 break;
             }

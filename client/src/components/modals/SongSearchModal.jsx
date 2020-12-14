@@ -148,6 +148,7 @@ function SongSearchModal({ open, setOpen, addSongs, mixtape }) {
     const handleClose = () => {
         addSongs(songsToAdd);
         setOpen(false);
+        setSongsToAdd([]);
     }
 
     return (
