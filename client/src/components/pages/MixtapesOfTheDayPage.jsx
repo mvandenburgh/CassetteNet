@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import CommentIcon from '@material-ui/icons/Comment';
-import ShareIcon from '@material-ui/icons/Share';
+import React, { useContext, useEffect, useState } from 'react';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CurrentSongContext from '../../contexts/CurrentSongContext';
 import { useHistory } from 'react-router-dom';
 import { Box, Button, Grid, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
 import { getRandomMixtapes } from '../../utils/api';
@@ -36,6 +35,7 @@ const MixtapeRows = ({ mixtapes, history }) => (
 );
 
 function MixtapesOfTheDayPage(props) {
+  const { currentSong } = useContext(CurrentSongContext);
 
   const [open, setOpen] = useState(false);
 
@@ -60,7 +60,7 @@ function MixtapesOfTheDayPage(props) {
   const todaysDate = new Date();
 
   return (
-    <div style={{ color: 'white', left: 0 }}>
+    <div style={{ color: 'white', left: 0, marginBottom: `${currentSong.playBarHeight}px` }}>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Write a Message!</DialogTitle>
         <DialogContent>

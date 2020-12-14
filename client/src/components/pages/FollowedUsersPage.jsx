@@ -1,74 +1,27 @@
 import React, { useEffect, useContext, useState } from 'react';
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  IconButton,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  DialogActions
-} from '@material-ui/core';
-import { lightBlue } from '@material-ui/core/colors';
-import { Autocomplete } from '@material-ui/lab';
-
-import { followUser, getFollowedUsers } from '../../utils/api';
+import { Box, Typography, IconButton } from '@material-ui/core';
+import { getFollowedUsers } from '../../utils/api';
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
-import UserContext from '../../contexts/UserContext';
-import UserSearchBar from '../UserSearchBar';
+import CurrentSongContext from '../../contexts/CurrentSongContext';
 import UserList from '../UserList';
 
-function FollowedUsersPage(props) {
-  const [open, setOpen] = useState(false);
+function FollowedUsersPage() {
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const { currentSong } = useContext(CurrentSongContext);
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [followedUsers, setFollowedUsers] = useState([]);
 
-  const colors = {
-    searchButtonColor: lightBlue[700],
-}
-
-const [followedUsers, setFollowedUsers] = useState([]);
-
-    useEffect(async () => {
-        const followedUsers = await getFollowedUsers();
-        setFollowedUsers(followedUsers);
-     }, []);
-
-  const { user } = useContext(UserContext);
+  useEffect(() => {
+    getFollowedUsers().then(users => setFollowedUsers(users));
+  }, []);
 
   const history = useHistory();
   const goBack = () => history.goBack();
 
-  const followUserHandler = async(user) => {
-    if(user){
-        await followUser(user._id);
-        handleClose();
-    }
-}
-
   return (
-
-    <div style={{ color: 'white', left: 0 }}>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Follow a User!</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Enter the username of the user you wish to follow
-          </DialogContentText>
-          <UserSearchBar userSelectHandler={followUserHandler} adminSearchBool={false} />
-          
-        </DialogContent>
-      </Dialog>
-      <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
+    <div style={{ color: 'white', left: 0, marginBottom: `${currentSong.playBarHeight}px` }}>
+      <IconButton color="secondary" aria-label="back" onClick={goBack}>
         <ArrowBackIcon />
       </IconButton>
       <br />

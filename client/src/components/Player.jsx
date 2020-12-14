@@ -8,7 +8,6 @@ import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import PlayerAnimationContext from '../contexts/PlayerAnimationContext';
 import AtmosphereSoundContext from '../contexts/AtmosphereSoundContext';
-import { getMixtapeCoverImageUrl } from '../utils/api';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
 import { motion } from 'framer-motion';
 
@@ -102,10 +101,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Player(props) {
+function Player() {
   const classes = useStyles();
 
   const playerRef = useRef();
+
+  const playerBarRef = useRef();
+
+  useEffect(() => {
+    if (playerBarRef?.current) {
+      const { clientHeight } = playerBarRef.current;
+      setCurrentSong({ playBarHeight: (clientHeight + (clientHeight / 4)), ...currentSong })
+    }
+  }, [playerBarRef]);
 
   const [currentTime, setCurrentTime] = useState(null);
 
@@ -252,7 +260,7 @@ function Player(props) {
   }
 
   return (
-    <div>
+    <div ref={playerBarRef}>
       <Grid container alignItems="center">
         <Grid item xs={2} style={{height: '60%'}}>
           <Card className={classes.root}>
