@@ -33,7 +33,10 @@ router.get('/followedUserActivity', async (req, res) => {
         }
         if (activity.action === USER_ACTIVITIES.CREATE_MIXTAPE || activity.action === USER_ACTIVITIES.FAVORITE_MIXTAPE || activity.action === USER_ACTIVITIES.COMMENT_ON_MIXTAPE) {
             const mixtape = await Mixtape.findById(activity.target);
-            if (!mixtape.isPublic && !mixtape.collaborators.filter(c => c.user).includes(req.user._id)) {
+            if (!mixtape || (!mixtape.isPublic && !mixtape.collaborators.filter(c => c.user).includes(req.user._id))) {
+                if (!mixtape) {
+                    UserActivity.deleteOne({ _id: activity._id });
+                }
                 continue;
             }
         } else if (activity.action === USER_ACTIVITIES.CREATE_LISTENING_ROOM) {  // TODO: implement listening room public/private
