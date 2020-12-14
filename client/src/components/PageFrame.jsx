@@ -1,17 +1,28 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { AppBar, Badge, Button, Typography, InputBase, Divider, Drawer, Grid, List, IconButton, ListItem, ListItemIcon, ListItemText, TextField, Toolbar } from '@material-ui/core';
-import { PlayCircleFilledWhite as PlayIcon, PauseCircleFilled as PauseIcon, Person as MyProfileIcon, Language as MixtapesOfTheDayIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
+import {
+  Avatar,
+  AppBar,
+  Badge,
+  Button,
+  Divider,
+  Drawer,
+  Grid,
+  List,
+  IconButton,
+  ListItem,
+  ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
+import { Person as MyProfileIcon, Language as MixtapesOfTheDayIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import SearchBar from './SearchBar';
+import SearchBarDropdown from './SearchBarDropdown';
 import Player from './Player';
-import ListeningRoomPlayer from './listeningroom/ListeningRoomPlayer';
 import dashboard from '../images/dashboard.png';
 import UserContext from '../contexts/UserContext';
 import CurrentSongContext from '../contexts/CurrentSongContext';
-import { userLogout } from '../utils/api';
+import { userLogout, getUserProfilePictureUrl } from '../utils/api';
 
 
 const drawerWidth = 240;
@@ -111,6 +122,7 @@ function PageFrame(props) {
     setOpen(false);
   };
 
+  const [searchType, setSearchType] = useState('mixtapes');
 
   if (!user.isLoggedIn) {
     return (<div />);
@@ -119,14 +131,28 @@ function PageFrame(props) {
     <div style={{ position: 'relative' }}>
       <AppBar className={classes.navbar} position="static">
         <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
-            {user.username}
-          </Typography>
-          <SearchBar showDropdown />
-          {user?.isLoggedIn ?
-            <Button onClick={() => logout()} style={{ margin: '1em', backgroundColor: '#4f7aa1', align: 'right' }} variant="contained">Logout</Button>
-            : undefined
-          }
+          <Grid container>
+            <Grid item xs={4} />
+            <Grid item xs={2} />
+            <Grid item xs={1}>
+              <SearchBarDropdown type={searchType} setType={setSearchType} />
+            </Grid>
+            <Grid item xs={2} style={{ margin: 'auto' }}>
+              <SearchBar searchType={searchType} />
+            </Grid>
+            <Grid item xs={1} />
+            <Grid item xs={1}>
+              <Avatar onClick={() => history.push('/me')} alt={user.username} style={{ left: '50%', cursor: 'pointer' }} src={getUserProfilePictureUrl(user._id)} />
+            </Grid>
+            <Grid alignItems="center" item xs={0.5}>
+              {user?.isLoggedIn ?
+                <Button style={{ margin: 'auto' }} onClick={() => logout()} variant="contained">Logout</Button>
+                : undefined
+              }
+            </Grid>
+            <Grid item xs={0.5} />
+          </Grid>
+
         </Toolbar>
       </AppBar>
       <Drawer

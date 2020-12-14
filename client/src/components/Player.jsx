@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
 import { Grid, Slider as VolumeSlider } from '@material-ui/core';
-import { Mood as AnimatingIcon,Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
+import { Mood as AnimatingIcon, Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import { useInterval } from '../hooks';
 import CurrentSongContext from '../contexts/CurrentSongContext';
@@ -10,7 +10,7 @@ import PlayerAnimationContext from '../contexts/PlayerAnimationContext';
 import AtmosphereSoundContext from '../contexts/AtmosphereSoundContext';
 import SocketIOContext from '../contexts/SocketIOContext';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
-import {motion} from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const WHITE_SMOKE = '#eee'
 const GRAY = '#878c88'
@@ -86,7 +86,7 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
 function Player(props) {
   const playerRef = useRef();
 
-  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState(null);
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
@@ -98,9 +98,12 @@ function Player(props) {
 
   useInterval(() => {
     if (playerRef.current && playing) {
-      const time = playerRef.current.getCurrentTime()
+      const time = playerRef.current.getCurrentTime();
       setCurrentTime(time);
       localStorage.setItem('timestamp', time);
+    } else if (playerRef.current) {
+      const time = playerRef.current.getCurrentTime();
+      setCurrentTime(time);
     }
   }, 500);
 
@@ -108,10 +111,10 @@ function Player(props) {
   const [loop, setLoop] = useState(false);
 
   const handleAnimation = () => {
-    if(animating==true){
+    if (animating == true) {
       setAnimating(false);
     }
-    else{
+    else {
       setAnimating(true);
     }
   }
@@ -159,28 +162,28 @@ function Player(props) {
     setPlaying(true);
   };
 
-  const togglesVariants={
-    hidden:{
-      scale:1
+  const togglesVariants = {
+    hidden: {
+      scale: 1
     },
-    visible:{
-      scale:1.5,
-      transition:{
-        yoyo:Infinity
+    visible: {
+      scale: 1.5,
+      transition: {
+        yoyo: Infinity
       }
     }
   }
-const playVariants={
-  hidden:{
-    scale:1
-  },
-  visible:{
-    scale:1.1,
-    transition:{
-      yoyo:Infinity
+  const playVariants = {
+    hidden: {
+      scale: 1
+    },
+    visible: {
+      scale: 1.1,
+      transition: {
+        yoyo: Infinity
+      }
     }
   }
-}
 
   const handleSetLoop = () => {
     const loopState = loop;
@@ -244,19 +247,19 @@ const playVariants={
         </div>
       </Grid>
       <Grid style={{ margin: '10px 0' }} container justify="center">
-      {animating ? 
-      <motion.div variants={togglesVariants}
-      initial="hidden"
-      animate="visible"
-       style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-          <AnimatingIcon onClick={handleAnimation} />
-        </motion.div>
-        :
-        <div 
-       style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-          <AnimatingIcon onClick={handleAnimation} />
-        </div>
-      }
+        {animating ?
+          <motion.div variants={togglesVariants}
+            initial="hidden"
+            animate="visible"
+            style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+            <AnimatingIcon onClick={handleAnimation} />
+          </motion.div>
+          :
+          <div
+            style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+            <AnimatingIcon onClick={handleAnimation} />
+          </div>
+        }
         <VolumeSlider
           value={atmosphereVolume}
           onChange={handleAtmosphereVolumeChange}
@@ -267,77 +270,77 @@ const playVariants={
           style={{ width: '10%' }} aria-labelledby="continuous-slider"
           disabled={!atmosphereSound.isPlaying}
         />
-        {animating ? 
-        <motion.div variants={togglesVariants}
-      initial="hidden"
-      animate="visible"
-      style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-          <AtmosphereSoundsIcon
-            style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
-            onClick={atmosphereButtonHandler}
-          />
-        </motion.div>
-        :
-        <div
-      style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-          <AtmosphereSoundsIcon
-            style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
-            onClick={atmosphereButtonHandler}
-          />
-        </div>
+        {animating ?
+          <motion.div variants={togglesVariants}
+            initial="hidden"
+            animate="visible"
+            style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+            <AtmosphereSoundsIcon
+              style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
+              onClick={atmosphereButtonHandler}
+            />
+          </motion.div>
+          :
+          <div
+            style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+            <AtmosphereSoundsIcon
+              style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
+              onClick={atmosphereButtonHandler}
+            />
+          </div>
         }
-        {animating?
-        <motion.div
-        variants={playVariants}
-      initial="hidden"
-      animate="visible">
-        <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-        {playing ?
-          <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-          <PlayerIcon.Play 
-            onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+        {animating ?
+          <motion.div
+            variants={playVariants}
+            initial="hidden"
+            animate="visible">
+            <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
+            {playing ?
+              <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+              <PlayerIcon.Play
+                onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+            }
+            <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
+          </motion.div>
+          :
+          <div>
+            <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
+            {playing ?
+              <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+              <PlayerIcon.Play
+                onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+            }
+            <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
+          </div>
         }
-        <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
-        </motion.div>
-        :
-        <div>
-        <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-        {playing ?
-          <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-          <PlayerIcon.Play 
-            onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
-        }
-        <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
-        </div>
-      }
 
-      {animating ? 
-      <motion.div variants={togglesVariants}
-      initial="hidden"
-      animate="visible"
-      style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-          <ShuffleIcon onClick={handleSetShuffle} />
-        </motion.div>
-      :
-      <div
-      style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-          <ShuffleIcon onClick={handleSetShuffle} />
-        </div>
-      }
-      {animating ? 
-      <motion.div variants={togglesVariants}
-      initial="hidden"
-      animate="visible"
-       style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-          <LoopIcon onClick={handleSetLoop} />
-        </motion.div>
-        :
-        <div 
-       style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-          <LoopIcon onClick={handleSetLoop} />
-        </div>
-      }
-        
+        {animating ?
+          <motion.div variants={togglesVariants}
+            initial="hidden"
+            animate="visible"
+            style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+            <ShuffleIcon onClick={handleSetShuffle} />
+          </motion.div>
+          :
+          <div
+            style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+            <ShuffleIcon onClick={handleSetShuffle} />
+          </div>
+        }
+        {animating ?
+          <motion.div variants={togglesVariants}
+            initial="hidden"
+            animate="visible"
+            style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+            <LoopIcon onClick={handleSetLoop} />
+          </motion.div>
+          :
+          <div
+            style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+            <LoopIcon onClick={handleSetLoop} />
+          </div>
+        }
+
 
 
         <VolumeSlider

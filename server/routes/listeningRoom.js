@@ -86,7 +86,7 @@ router.post('/', async (req, res) => {
         return res.status(401).send('unauthorized');
     }
 
-    const { mixtapeId } = req.body;
+    const { mixtapeId, isPublic } = req.body;
     const mixtape = await Mixtape.findById(mixtapeId).lean();
 
     if (!isAuthorized(req.user, mixtape)) {
@@ -104,7 +104,7 @@ router.post('/', async (req, res) => {
         currentSong: 0,
         snakeScores: new Map(),
         rhythmScores: new Map(),
-        isPublic: true, // TODO: let client set listening room to private
+        isPublic,
     });
 
     let stream;
