@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
-import { Button, Grid, Typography, makeStyles, IconButton } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  TextField,
+  Typography,
+  makeStyles,
+  IconButton
+} from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { Alert } from '@material-ui/lab';
 import { useHistory } from 'react-router-dom';
 import { userLogin, oauthLogin, requestPasswordReset } from '../../utils/api';
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import GoogleButton from 'react-google-button';
-import { FacebookLoginButton } from "react-social-login-buttons";
+import { FacebookLoginButton } from 'react-social-login-buttons';
 
 function LoginPage(props) {
   const useStyles = makeStyles((theme) => ({
@@ -45,19 +51,30 @@ function LoginPage(props) {
       history.push('/login/success');
     } catch (err) {
       if (err?.response?.status === 401) {
-        alert('Incorrect email or password');
+        setLoginError('Incorrect email or password.');
       } else if (err?.response?.status === 400) {
-        alert('Please verify your account.')
+        setLoginError('Please verify your account.');
       } else {
-        alert('Error logging in. Please try again later.')
+        setLoginError('Error logging in. Please try again later.')
       }
     }
   }
 
-  const forgotPassword = async (email) => {
-    requestPasswordReset(email)
+  const [loginError, setLoginError] = useState(null);
+
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
+  const [invalidForgotPasswordEmail, setInvalidForgotPasswordEmail] = useState(false);
+  const handleResetPasswordEmail = (e) => {
+    if (invalidForgotPasswordEmail) {
+      setInvalidForgotPasswordEmail(false);
+    }
+    setForgotPasswordEmail(e.target.value);
+  }
+
+  const forgotPassword = async () => {
+    requestPasswordReset(forgotPasswordEmail)
       .then(res => alert('Password reset email sent.'))
-      .catch(err => alert(err));
+      .catch(err => setInvalidForgotPasswordEmail(true));
   }
 
   const history = useHistory();
@@ -89,12 +106,15 @@ function LoginPage(props) {
             label="Email"
             type="email"
             fullWidth
-            onChange={handleEmail}
-            value={email}
+            onChange={handleResetPasswordEmail}
+            value={forgotPasswordEmail}
           />
+          {invalidForgotPasswordEmail ?
+          <Alert severity="error">A user with that email does not exist.</Alert>
+          : undefined}
         </DialogContent>
         <DialogActions>
-          <Button align="center" onClick={() => forgotPassword(email)} color="primary">
+          <Button align="center" onClick={forgotPassword} color="primary">
             OK
           </Button>
         </DialogActions>
@@ -112,6 +132,10 @@ function LoginPage(props) {
               <span>Sign in with Facebook</span>
             </FacebookLoginButton>
           </Grid>
+          <Typography variant="h6">OR</Typography>
+          {loginError ?
+            <Alert severity="error">{loginError}</Alert>
+          : undefined}
           <Grid item>
             <TextField
               className={classes.margin}

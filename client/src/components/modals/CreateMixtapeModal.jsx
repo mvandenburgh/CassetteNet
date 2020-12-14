@@ -39,11 +39,17 @@ function CreateMixtapeModal({ open, setOpen }) {
             .catch(err => setInvalidLink(true));
     }
 
+    const handleClose = () => {
+        setOpen(false);
+        setPage('main');
+        setYoutubePlaylistLink('');
+    }
+
     return (
         <Modal
             className={classes.modal}
             open={open}
-            onClose={() => setOpen(false)}
+            onClose={handleClose}
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
@@ -72,7 +78,7 @@ function CreateMixtapeModal({ open, setOpen }) {
                         </Grid>
                         <Grid item xs={1} />
                     </> : <>
-                            <Slide direction="right" in={page === 'youtube'} mountOnEnter unmountOnExit>
+                            <Slide direction="left" in={page === 'youtube'} mountOnEnter unmountOnExit>
                                 <Grid container justify="center">
                                     <Grid item xs={12}>
                                         <Typography align="center" variant="h6">Please enter the URL of the YouTube playlist you wish to import:</Typography>

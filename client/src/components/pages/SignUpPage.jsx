@@ -1,11 +1,32 @@
 import React, { useState } from 'react';
-import { Button, Grid, IconButton, TextField, Typography, makeStyles, Tooltip, Snackbar } from '@material-ui/core';
-import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
-import InfoIcon from '@material-ui/icons/Info';
+import { Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography, makeStyles, Tooltip } from '@material-ui/core';
+import { ArrowBack as ArrowBackIcon, Info as InfoIcon } from '@material-ui/icons';
+import { Alert } from '@material-ui/lab';
+import clsx from 'clsx';
 import { useHistory } from 'react-router-dom';
 import { userSignup } from '../../utils/api';
+import passwordValidator from 'password-validator';
+import emailValidator from 'email-validator';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  withoutLabel: {
+    marginTop: theme.spacing(3),
+  },
+  textField: {
+    width: '25ch',
+  },
+}));
 
 function SignUpPage(props) {
+  const classes = useStyles();
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -14,145 +35,49 @@ function SignUpPage(props) {
   const handlePassword = (e) => setPassword(e.target.value);
   const handleEmail = (e) => setEmail(e.target.value);
 
-  var validator = require("email-validator");
-  const validateEmail = () => {
-    return (validator.validate(email));
-  }
+  const validateEmail = () => emailValidator.validate(email);
+  const validateUsername = () => username.length >= 4 && username.length <= 12 && username[0] != '#';
 
-  const validateUsername = () => {
-    return (username.length >= 4 && username.length <= 12 && username[0] != '#') ;
-  }
-
-  var passwordValidator = require('password-validator');
-  var schema = new passwordValidator();
+  const schema = new passwordValidator();
   schema
-  .is().min(8)                                    // Minimum length 8
-  .is().max(100)                                  // Maximum length 100
-  .has().uppercase()                              // Must have uppercase letters
-  .has().lowercase()                              // Must have lowercase letters
-  .has().digits(1)                                // Must have at least 1 digits
-  .has().not().spaces()                           // Should not have spaces
-  .has().symbols(1)
+    .is().min(8)                                    // Minimum length 8
+    .is().max(100)                                  // Maximum length 100
+    .has().uppercase()                              // Must have uppercase letters
+    .has().lowercase()                              // Must have lowercase letters
+    .has().digits(1)                                // Must have at least 1 digits
+    .has().not().spaces()                           // Should not have spaces
+    .has().symbols(1)
   //.has().oneOf(['!', '@', '#', '$', '%', '&', '*']);
 
-  const validatePassword = () => {
-    return (schema.validate(password));
-  }
+  const validatePassword = () => schema.validate(password);
 
   const submit = () => {
-    if(!validateUsername() ) {
-      setInvalidUsernameDialogOpen(true);
+    if (!validateUsername()) {
+      setErrorText('Username must be between 4 and 12 characters and may not begin with #.');
+    } else if (!validatePassword()) {
+      setErrorText('Password must be at least 8 characters in length, with no spaces and at least 1 of the following: Uppercase, lowercase, number, special character (!, @, #, $, %, &, *).');
+    } else if (!validateEmail()) {
+      setErrorText('Please enter a valid email address.');
+    } else {
+      setErrorText(null);
     }
-    else { 
-      setInvalidUsernameDialogOpen(false);
-    }
-    if(!validatePassword()) {
-      setInvalidPasswordDialogOpen(true);
-    }
-    else {
-      setInvalidPasswordDialogOpen(false);
-    }
-    if(!validateEmail()) {
-      setInvalidEmailDialogOpen(true);
-    }
-    else{
-      setInvalidEmailDialogOpen(false);
-    }
-    if (validateUsername() && validatePassword() && validateEmail()){
+    if (validateUsername() && validatePassword() && validateEmail()) {
       userSignup(email, username, password)
-      .then(() => alert('Sign up successful!'))
-      .catch(err => alert(err));
+        .then(() => alert('Sign up successful! Please check your email for a verification link.'))
+        .catch(err => setErrorText(err?.response?.data?.message));
     }
   };
 
-  const useStyles = makeStyles((theme) => ({
-    margin: {
-      margin: theme.spacing(1),
-    },
-    TextStyle: {
-      color: "white",
-    },
-    photo: {
-      height: '100px',
-      width: '100px',
-      marginLeft: '20px',
-      marginRight: '20px',
-    },
-    passwordDialogRoot: {
-      borderRadius: 3,
-      border: 0,
-      height: 48,
-      bottom: 100,
-    },
-    emailDialogRoot: {
-      borderRadius: 3,
-      border: 0,
-      height: 48,
-      bottom: 170,
-    },
-  }));
-  const classes = useStyles();
-
-  const [invalidUsernameDialogOpen, setInvalidUsernameDialogOpen] = useState(false);
-  const [invalidPasswordDialogOpen, setInvalidPasswordDialogOpen] = useState(false);
-  const [invalidEmailDialogOpen, setInvalidEmailDialogOpen] = useState(false);
+  const [errorText, setErrorText] = useState(null);
 
   const history = useHistory();
   const goBack = () => history.goBack();
 
-  //TODO: Possibly re-align fields
   return (
     <div style={{ color: 'white', left: 0 }}>
-
       <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
         <ArrowBackIcon />
       </IconButton>
-
-      <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-        open={invalidUsernameDialogOpen}
-        autoHideDuration={4000}
-        // onClose={handleClose}
-        message="Username must be between 4 and 12 characters and may not begin with #."
-        // action={
-        //     <React.Fragment>
-        //         <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-        //             <CloseIcon fontSize="small" />
-        //         </IconButton>
-        //     </React.Fragment>
-        // }
-      />
-      <Snackbar
-        classes={{
-         root: classes.passwordDialogRoot,
-        }}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={invalidPasswordDialogOpen}
-        autoHideDuration={4000}
-        // onClose={handleClose}
-        message="Password must be at least 8 characters in length, with no spaces 
-        and at least 1 of the following: Uppercase, lowercase, number, special character (!, @, #, $, %, &, *)."
-      />
-
-      <Snackbar
-        classes={{
-         root: classes.emailDialogRoot,
-        }}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={invalidEmailDialogOpen}
-        autoHideDuration={4000}
-        // onClose={handleClose}
-        message="Please enter a valid email address."
-      />
 
       <Typography align="center" variant="h3">
         <br />
@@ -161,43 +86,53 @@ function SignUpPage(props) {
         <br />
       </Typography>
       <Grid container spacing={1} alignItems="center" direction="column">
-        <Grid container spacing={1} alignItems="center" direction="row">
-
-            <Grid item>
-
-              <TextField
-                className={classes.margin}
-                onChange={handleUsername}
-                value={username}
-                variant="outlined" label="Username" />
-                
-            </Grid>
-            <Tooltip title="Username: must be at least 4 characters long and may not begin with #"  >
-              <InfoIcon  />
-            </Tooltip>
-        </Grid>
-        <Grid item>
-          <TextField
-            className={classes.margin}
+        {errorText ?
+          <Grid item>
+            <Alert className={classes.margin} style={{ maxWidth: '70%', margin: '0 auto', textAlign: 'center' }} align="center" severity="error">{errorText}</Alert>
+          </Grid>
+          : undefined
+        }
+        <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
+          <InputLabel htmlFor="username">Username</InputLabel>
+          <OutlinedInput
+            id="username"
+            InputLabelProps={{ style: { pointerEvents: "auto" } }}
+            onChange={handleUsername}
+            value={username}
+            variant="outlined" label="Username"
+            endAdornment={
+              <InputAdornment position="end">
+                <Tooltip style={{ cursor: 'default' }} title="Username: must be at least 4 characters long and may not begin with #"  >
+                  <InfoIcon />
+                </Tooltip>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
+        <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <OutlinedInput
             onChange={handlePassword}
             value={password}
-            variant="outlined" type="Password" label="Password" />
-        </Grid>
-        <Grid item>
+            variant="outlined"
+            type="Password"
+            id="password"
+          />
+        </FormControl>
+        <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
           <TextField
-            className={classes.margin}
             onChange={handleEmail}
             value={email}
             label="Email"
             variant="outlined"
             id="custom-css-outlined-input"
           />
-        </Grid>
-        <Button variant="filled" color="inherit" onClick={submit}>
-          Create My Account
+        </FormControl>
+      <Button variant="filled" color="inherit" onClick={submit}>
+        Create My Account
           </Button>
       </Grid>
-    </div>
+    </div >
   );
 }
 
