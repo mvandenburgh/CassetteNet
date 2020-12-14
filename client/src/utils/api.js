@@ -121,6 +121,7 @@ async function followUser(userId) {
     return followedUsers.data;
 }
 
+
 async function unfollowUser(userId) {
     const followedUsers = await axios.put(new URL(`/api/user/unfollowUser`, SERVER_ROOT_URL).href, { id: userId, withCredentials: true });
     return followedUsers.data;
@@ -129,6 +130,10 @@ async function unfollowUser(userId) {
 async function getFollowedUsers(page){
     const users = await axios.get(new URL(`/api/user/getFollowedUsers`, SERVER_ROOT_URL).href, { params: { page }, withCredentials: true });
     return users.data;
+}
+
+async function deleteUser(userId) {
+    await axios.delete(new URL(`/api/user/deleteUser/${userId}`, SERVER_ROOT_URL).href, { id: userId, withCredentials: true });
 }
 
 async function userSignup(email, username, password) {
@@ -390,5 +395,6 @@ export {
     getGameScores,
     resetGameScores,
     getExternalPlaylist,
+    deleteUser,
     SERVER_ROOT_URL,
 };

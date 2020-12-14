@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Backdrop, Modal, Fade, Grid, Typography, Button } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
+import {deleteUser} from '../../utils/api';
+import UserContext from '../../contexts/UserContext';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -13,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function DeleteAccountModal(props) {
+    const { user, setUser } = useContext(UserContext);
     const classes = useStyles();
     const { open, setOpen } = props;
 
@@ -22,6 +25,7 @@ function DeleteAccountModal(props) {
         },
       });
       const deleteAccountHandler = async () => {
+        deleteUser(user._id);
         setOpen(false);
     }
 

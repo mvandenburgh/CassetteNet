@@ -49,9 +49,13 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
     setScores(newScores);
     socket.emit('snakeScoreChange', 1);
   }
-  console.log(snake)
-  const moveSnake = ({ keyCode }) =>
-    keyCode >= 37 && keyCode <= 40 && setDir(directions[keyCode]);
+  const moveSnake = ({ keyCode }) => {
+    if(dir!==directions[keyCode] && keyCode >= 37 && keyCode <= 40){
+      setDir(directions[keyCode]);
+      setMove(keyCode);
+    }
+  };
+    
 
   const createApple = () =>
     apple.map((_a, i) => Math.floor(Math.random() * (gameSize[i] / scale)));
