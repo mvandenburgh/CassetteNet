@@ -130,8 +130,8 @@ function PageFrame(props) {
     return (<div />);
   }
   return (
-    <div style={{ position: 'relative' }}>
-      <AppBar className={classes.navbar} position="static">
+    <div style={{ position: 'relative', zIndex: 1 }}>
+      <AppBar className={classes.navbar} style={{zIndex: 0}} position="static">
         <Toolbar>
           <Grid container>
             <Grid item xs={4} />
