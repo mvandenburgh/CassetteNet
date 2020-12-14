@@ -284,6 +284,7 @@ function ListeningRoomPage(props) {
                                         </Grid>
                                         <Grid item xs={1} />
                                     </Grid>
+                                    <br />
                                     <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
                                         <Grid container>
                                             <Grid item xs={12} style={{}}>

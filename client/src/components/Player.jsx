@@ -86,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     width: '95%',
-    fontSize: '0.9em',
+    fontSize: '0.75em',
     margin: 'auto',
   },
   details: {
