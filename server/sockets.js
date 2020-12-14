@@ -10,6 +10,12 @@ try {
     STREAM_SERVER_ROOT_URL = new URL('http://localhost:5001/').href;
 }
 
+function stopCurrentStream(listeningRoom) {
+    console.log(`attempting to stop stream ${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}...`);
+    axios.delete(new URL(`/stopStream/${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}`, STREAM_SERVER_ROOT_URL).href)
+        .catch(err => console.log(`failed to stop stream ${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}. it may not exist.`))
+        .then(() => console.log(`successfully stopped stream ${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}.`));
+}
 
 function initSockets(io) {
     io.on('connection', async (socket) => {
@@ -74,8 +80,9 @@ function initSockets(io) {
                 await lr.save();
                 socket.to(lrId).emit('userJoinedOrLeft');
                 if (lr.owner.equals(user._id)) {
-                    io.in(lrId).emit('endListeningRoom');
-                    await lr.deleteOne();
+                    io.in(lrId).emit('endListeningRoom'); // notify all connected clients that the session is about to end
+                    stopCurrentStream(lr); // end the currently streaming song
+                    lr.deleteOne(); // delete the listening room
                 }
             }
 
@@ -97,8 +104,7 @@ function initSockets(io) {
             const listeningRoom = await ListeningRoom.findById(roomId);
             if (listeningRoom && listeningRoom.owner && listeningRoom.owner.equals(user._id)) {
                 if (listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId) { // stop current stream if it exists
-                    axios.delete(new URL(`/stopStream/${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}`, STREAM_SERVER_ROOT_URL).href)
-                        .catch(err => console.log(`failed to stop stream ${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}. it may not exist.`));
+                    stopCurrentStream(listeningRoom);
                 }
                 listeningRoom.currentSong = index;
                 if (listeningRoom.rhythmGameQueue.length > 0) {

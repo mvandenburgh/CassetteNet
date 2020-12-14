@@ -3,17 +3,10 @@ import _ from 'lodash';
 import {
     Button,
     Box,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     Fab,
     Grid,
     IconButton,
-    MenuItem,
     Paper,
-    Select,
     Snackbar,
     TextField,
     Toolbar,
@@ -38,6 +31,7 @@ import SettingsModal from '../modals/SettingsModal';
 import PlayingSongContext from '../../contexts/PlayingSongContext';
 import { useEventListener } from '../../hooks';
 import SongSearchModal from '../modals/SongSearchModal';
+import CreateListeningRoomModal from '../modals/CreateListeningRoomModal';
 
 const usePrevious = (value) => {
     const ref = useRef();
@@ -334,12 +328,12 @@ function ViewMixtapePage(props) {
         }
     }
 
+    const [createListeningRoomModalOpen, setCreateListeningRoomModalOpen] = useState(false);
+
     const createListeningRoomButtonHandler = () => {
         if (mixtape) {
             setCurrentSong({});
-            createListeningRoom(mixtape._id)
-                .then(listeningRoomId => history.push(`/listeningRoom/${listeningRoomId}`))
-                .catch(err => alert(err));
+            setCreateListeningRoomModalOpen(true);
         }
     }
 
@@ -375,6 +369,7 @@ function ViewMixtapePage(props) {
 
     return (
         <div>
+            <CreateListeningRoomModal open={createListeningRoomModalOpen} setOpen={setCreateListeningRoomModalOpen} mixtape={mixtape} />
             <SongSearchModal open={addSongPopupIsOpen} setOpen={setAddSongPopupIsOpen} addSongs={addSongs} mixtape={mixtape} />
             <SettingsModal
                 mixtape={mixtape}

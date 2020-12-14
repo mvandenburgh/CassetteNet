@@ -248,8 +248,13 @@ function getMixtapeUrl(mixtapeId) {
     return new URL(`/mixtape/${mixtapeId}`, CLIENT_ROOT_URL).href;
 }
 
-async function createListeningRoom(mixtapeId) {
-    const listeningRoomId = await axios.post(new URL('/api/listeningroom', SERVER_ROOT_URL).href, { mixtapeId });
+async function createListeningRoom(mixtapeId, isPublic, invitedUsers) {
+    const listeningRoomId = await axios.post(new URL('/api/listeningroom', SERVER_ROOT_URL).href, { mixtapeId, isPublic });
+    if (invitedUsers) {
+        for (const user of invitedUsers) {
+            sendListeningRoomInvitation(user._id, listeningRoomId.data, mixtapeId);
+        }
+    }
     return listeningRoomId.data;
 }
 
@@ -281,7 +286,6 @@ async function sendDM(recipient, message) {
 }
 
 async function sendListeningRoomInvitation(recipient, listeningRoomId, mixtapeId) {
-    console.log("Inside api.js - sendListeningRoomInvitation");
     await axios.put(new URL(`/api/listeningRoom/${listeningRoomId}/inviteUser`, SERVER_ROOT_URL).href, { user: recipient });
     const message = `You have been invited to a listening room. <form action="/listeningRoom/${listeningRoomId}"><input type="submit" value="Join Listening Room" /></form>`;
     await axios.post(new URL('/api/user/sendMessage', SERVER_ROOT_URL).href, { recipient, message, mixtapeId, isAnonymous: false });
