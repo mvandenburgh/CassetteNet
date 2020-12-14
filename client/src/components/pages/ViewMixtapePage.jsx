@@ -113,6 +113,12 @@ function ViewMixtapePage(props) {
     }
 
     const deleteSongs = () => {
+        for (const song of songsToDelete) {
+            if (song === currentSong.mixtape.songs[currentSong.index].id) {
+                setCurrentSong({});
+                break;
+            }
+        }
         const deleteSongTransaction = new DeleteSong_Transaction(mixtape.songs, songsToDelete, mixtape);
         tps.addTransaction(deleteSongTransaction);
         setMixtape(mixtape);
