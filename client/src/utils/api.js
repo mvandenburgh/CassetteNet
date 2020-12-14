@@ -132,11 +132,7 @@ async function getFollowedUsers(){
 }
 
 async function userSignup(email, username, password) {
-    try {
-        await axios.post(new URL('/api/auth/signup', SERVER_ROOT_URL).href, { email, username, password });
-    } catch(err) { // TODO: error handling
-        console.log(err);
-    }
+    await axios.post(new URL('/api/auth/signup', SERVER_ROOT_URL).href, { email, username, password });
 }
 
 async function userLogin(email, password) {

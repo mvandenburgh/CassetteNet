@@ -44,7 +44,7 @@ const userSchema = new Schema({
 }, { timestamps: true, toJSON: { getters: true } });
 
 
-userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
 userSchema.plugin(AutoIncrement, { inc_field: 'uniqueId' });
 userSchema.plugin(mongoosePartialTextSearch);
 userSchema.plugin(mongoosePaginate);
