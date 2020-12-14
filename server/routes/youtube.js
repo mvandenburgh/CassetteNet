@@ -1,5 +1,6 @@
 const express = require('express');
 const { parse, toSeconds } = require('iso8601-duration');
+const ytsr = require('ytsr');
 const ytpl = require('ytpl');
 const { getVideoInfo, searchVideo } = require('../external_apis/youtube');
 
@@ -19,20 +20,46 @@ const parseYtplDuration = (s) => {
 const router = express.Router();
 
 router.get('/search', async (req, res) => {
-    const { q } = req.query;
+    const { q, page } = req.query;
+    if (!q) return res.status(400).send('invalid request');
     try {
-        const results = await searchVideo(q);
-        const response = results.filter(result => result.id.kind === 'youtube#video').map((result) => ({
-            id: result.id.videoId,
-            name: result.snippet.title,
-            description: result.snippet.description,
-            coverImage: result.snippet.thumbnails.default.url,
+        const results = await ytsr(q, { limit: 70 });
+        if (!results) {
+            throw new Error();
+        }
+        const response = results.items.filter(res => res.type === 'video').map(result => ({
+            id: result.id,
+            name: result.title,
+            description: result.description,
+            coverImage: result.bestThumbnail.url,
+            duration: parseYtplDuration(result.duration),
             type: 'youtube',
-            playbackUrl: `https://www.youtube.com/watch?v=${result.id.videoId}`,
+            playbackUrl: `https://www.youtube.com/watch?v=${result.id}`,
         }));
-        res.send(response);
+
+        if (page) {
+            return res.send(response.slice(page*10, (page*10) + 10));
+        } else {
+            return res.send(response.slice(0, 10));
+        }
+
+        
     } catch (err) {
-        res.status(500).send(err);
+        console.log(err)
+        try {
+            const results = await searchVideo(q);
+            const response = results.filter(result => result.id.kind === 'youtube#video').map((result) => ({
+                id: result.id.videoId,
+                name: result.snippet.title,
+                description: result.snippet.description,
+                coverImage: result.snippet.thumbnails.default.url,
+                type: 'youtube',
+                playbackUrl: `https://www.youtube.com/watch?v=${result.id.videoId}`,
+            }));
+            res.send(response);
+        } catch (err) {
+            res.status(500).send(err);
+        }
     }
 });
 

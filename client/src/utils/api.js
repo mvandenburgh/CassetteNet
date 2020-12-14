@@ -92,8 +92,8 @@ async function forkMixtape(mixtape) {
 }
 
 
-async function songSearch(api, query) {
-    const results = await axios.get(new URL(`/api/${api}/search`, SERVER_ROOT_URL).href, { params: { q: query } });
+async function songSearch(api, query, page) {
+    const results = await axios.get(new URL(`/api/${api}/search`, SERVER_ROOT_URL).href, { params: { q: query, page } });
     return results.data;
 }
 

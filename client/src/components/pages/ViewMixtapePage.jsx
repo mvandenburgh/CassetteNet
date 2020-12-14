@@ -35,11 +35,9 @@ import humanizeDuration from 'humanize-duration';
 import { DeleteSong_Transaction } from '../transactions/DeleteSong_Transaction';
 import { AddSong_Transaction } from '../transactions/AddSong_Transaction';
 import SettingsModal from '../modals/SettingsModal';
-import SongSearchBar from '../SongSearchBar';
-import { throttle } from 'lodash';
 import PlayingSongContext from '../../contexts/PlayingSongContext';
-import SocketIOContext from '../../contexts/SocketIOContext';
 import { useEventListener } from '../../hooks';
+import SongSearchModal from '../modals/SongSearchModal';
 
 const usePrevious = (value) => {
     const ref = useRef();
@@ -87,20 +85,28 @@ function ViewMixtapePage(props) {
     const [addSongPopupIsOpen, setAddSongPopupIsOpen] = useState(false); // whether add song popup is open
     const [songToAdd, setSongToAdd] = useState({});
     const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
+    const [songSearchOpen, setSongSearchOpen] = useState(true);
 
     const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
     const { user } = useContext(UserContext);
 
     const [apiToUse, setApiToUse] = useState('soundcloud');
 
-    const addSong = async () => {
-        if (mixtape.songs.map(s => s.id).includes(songToAdd.id)) return;
+    // add array of songs to current mixtape
+    const addSongs = async (songs) => {
+        // if (mixtape.songs.map(s => s.id).includes(song.id)) return;
         const newSongs = [...mixtape.songs];
-        const duration = await getSongDuration(apiToUse, songToAdd.id);
-        songToAdd.duration = duration;
-        newSongs.push(songToAdd);
-        const addSongTransaction = new AddSong_Transaction(mixtape.songs, newSongs, mixtape);
-        tps.addTransaction(addSongTransaction);
+        for (const song of songs) {
+            console.log(song)
+            if (!song.duration) {
+                const duration = await getSongDuration(song.type, song.id);
+                song.duration = duration;
+            }
+            newSongs.push(song);
+            const addSongTransaction = new AddSong_Transaction(mixtape.songs, newSongs, mixtape);
+            tps.addTransaction(addSongTransaction);
+        }
+        
         mixtape.songs = newSongs;
         setMixtape(mixtape);
         setSongToAdd({});
@@ -363,6 +369,7 @@ function ViewMixtapePage(props) {
 
     return (
         <div>
+            <SongSearchModal open={addSongPopupIsOpen} setOpen={setAddSongPopupIsOpen} addSongs={addSongs} mixtape={mixtape} />
             <SettingsModal
                 mixtape={mixtape}
                 setMixtape={setMixtape}
@@ -379,7 +386,7 @@ function ViewMixtapePage(props) {
 
             <MixtapeCoverImageUploadModal coverImageUrl={coverImageUrl} setCoverImageUrl={setCoverImageUrl} mixtape={mixtape} setMixtape={setMixtape} open={uploadCoverImagePopup} setOpen={setUploadCoverImagePopup} />
 
-            <Dialog open={addSongPopupIsOpen} onClose={() => setAddSongPopupIsOpen(false)}>
+            {/* <Dialog open={false} onClose={() => setAddSongPopupIsOpen(false)}>
                 <DialogTitle id="form-dialog-title">Add a Song!</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -404,7 +411,7 @@ function ViewMixtapePage(props) {
                         Add
                     </Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog> */}
 
 
             <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
