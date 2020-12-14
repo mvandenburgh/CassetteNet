@@ -60,12 +60,12 @@ function MyMixtapesPage(props) {
                             display: 'inline-flex', 
                             flexDirection: 'row', 
                             backgroundColor: blueGrey[900], 
-                            //marginRight: '10px',
+                            marginRight: '10px',
                             marginBottom: '30px',
-                            paddingLeft: '5px',
+                            paddingLeft: '20px',
                             paddingTop: '20px',  
                             paddingBottom: '20px',
-                            width: '95%', 
+                            width: '85%', 
                             height: '30%'}} boxShadow={3} borderRadius={12}>
                     <Grid container justify="center">
                         <MixtapeList mixtapes={mixtapes} setMixtapes={setMixtapes} />
