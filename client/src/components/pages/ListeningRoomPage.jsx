@@ -238,11 +238,16 @@ function ListeningRoomPage(props) {
         setScreen('snake');
     }
 
+    const changeListeningRoomSong = (index) => {
+        if (user._id === listeningRoom?.owner.user) {
+            setPlaying(false);
+            socket.emit('changeSong', index);
+        }
+    }
+
     if (!listeningRoom) {
         return null;
     }
-
-    console.log(scores);
 
     return (
         <div>
@@ -265,7 +270,7 @@ function ListeningRoomPage(props) {
                                     </Typography>
                                     <Typography variant="h5">~Listening to {mixtape?.name}~</Typography>
                                 </Paper>
-                                <Mixtape mixtape={mixtape} enableEditing={false} listeningRoom={true} />
+                                <Mixtape mixtape={mixtape} enableEditing={false} listeningRoom={true} changeListeningRoomSong={changeListeningRoomSong} />
                             </Grid>
                             <Grid item xs={1} />
                             <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>
@@ -279,7 +284,6 @@ function ListeningRoomPage(props) {
                                         </Grid>
                                         <Grid item xs={1} />
                                     </Grid>
-                                    <Grid container style={{ height: '5%' }} />
                                     <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
                                         <Grid container>
                                             <Grid item xs={12} style={{}}>
@@ -309,7 +313,7 @@ function ListeningRoomPage(props) {
                         </Grid>
                     </TabPanel>
                     <TabPanel value={currentTab} index={1}>
-                        <Grid style={{ height: '50%' }} container>
+                        <Grid style={{ height: '80vh' }} container>
                             <Grid style={{}} container xs={9}>
                                 <Grid style={{ backgroundColor: 'red' }} item xs={12}>
                                     <Typography variant="h7">Invite</Typography>
@@ -364,7 +368,7 @@ function ListeningRoomPage(props) {
                                 </Grid>
                             </Grid>
                             <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>
-                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '28%' }}>
+                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '48%' }}>
                                     <Grid container alignItems="center" direction="row" style={{ height: '10%' }}>
                                         <Grid item xs={12}>
                                             <Typography style={{ fontSize: '2em' }} alignItems="center">Scores</Typography>
@@ -381,7 +385,7 @@ function ListeningRoomPage(props) {
                                         </Grid>
                                     </Grid>
                                 </Paper>
-                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '68%' }}>
+                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '48%' }}>
                                     <Grid container style={{ height: '10%' }}>
                                         <Typography style={{ fontSize: '2em' }} alignItems="center">Chat</Typography>
                                     </Grid>

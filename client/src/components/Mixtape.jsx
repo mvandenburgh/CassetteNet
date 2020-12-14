@@ -29,7 +29,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 
 
 function Mixtape(props) {
-  const { isEditing, songsToDelete, setSongsToDelete, mixtape, setMixtape, listeningRoom } = props;
+  const { isEditing, songsToDelete, setSongsToDelete, mixtape, setMixtape, listeningRoom, changeListeningRoomSong } = props;
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
@@ -59,6 +59,8 @@ function Mixtape(props) {
         index,
         disabled: currentSong?.disabled,
       });
+    } else if (changeListeningRoomSong) {
+      changeListeningRoomSong(index);
     }
   };
 
