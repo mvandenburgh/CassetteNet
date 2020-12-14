@@ -97,8 +97,8 @@ function Player(props) {
   const { animating, setAnimating } = useContext(PlayerAnimationContext);
 
   useInterval(() => {
-    if (playerRef.current && playing) {
-      const time = playerRef.current.getCurrentTime()
+    if (playerRef.current) {
+      const time = playerRef.current.getCurrentTime();
       setCurrentTime(time);
       localStorage.setItem('timestamp', time);
     }
