@@ -93,22 +93,19 @@ router.get('/mixtapes', async (req, res) => {
 
 router.get('/getFollowedUsers', async (req, res) => {
     if (!req.user) return res.status(401).send(null);
+    const { page } = req.query;
     const requser = await User.findById(req.user._id).lean();
-    const results = [];
-    for (const followedUserID of requser.followedUsers) {
-        const user = await User.findById(followedUserID).lean();
-        const updatedAt =new Date(user.updatedAt);
-        const createdAt = new Date(user.createdAt);
-        results.push({
-            _id: user._id,
-            username: user.username,
-            uniqueId: user.uniqueId,
-            createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
-            updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
-            followers: user.followers,
-        });
+    const followedUsers = await User.paginate({ _id: { $in: requser.followedUsers } }, { lean: true, limit: PAGINATION_COUNT, page: page ? page : 1});
+    for (const user of followedUsers.docs) {
+        user.createdAt = `${user.createdAt.getMonth()+1}/${user.createdAt.getDate()}/${user.createdAt.getFullYear()}`;
+        user.updatedAt = `${user.updatedAt.getMonth()+1}/${user.updatedAt.getDate()}/${user.updatedAt.getFullYear()}`;
     }
-    return res.send(results);
+    return res.send({
+        users: followedUsers.docs,
+        currentPage: followedUsers.page,
+        totalPages: followedUsers.totalPages,
+        totalResults: followedUsers.totalDocs,
+    });
 });
 
 
@@ -287,6 +284,22 @@ router.delete('/deleteMessage/:id', async (req, res) => {
     const inboxMessages = await InboxMessage.find({ recipient: req.user.id }).lean();
     res.send(inboxMessages);
 })
+
+// router.delete('/deleteUser/:id',async (req, res) => {
+//     if (!req.user) return res.status(401).send('unauthorized');
+//     const inboxMessagesRec = await InboxMessage.find({ recipient: req.user.id }).lean();
+//     const inboxMessagesSent = await InboxMessage.find({ senderId: req.user.id }).lean();
+
+//     const mixtapes = await Mixtape.find({collaborators[0].user: req.user.id}).lean();
+//     const activites = await UserActivity.find({ user: req.user.id}).lean();
+//     const followers =  ??
+
+//     if (message) {
+//         await message.deleteOne();
+//     }
+//     const inboxMessages = await InboxMessage.find({ recipient: req.user.id }).lean();
+//     res.send(inboxMessages);
+// })
 
 router.get('/:id/profilePicture', async (req, res) => {
     const user = await User.findById(req.params.id).select('+profilePicture').lean();

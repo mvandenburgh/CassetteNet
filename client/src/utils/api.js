@@ -126,8 +126,8 @@ async function unfollowUser(userId) {
     return followedUsers.data;
 }
 
-async function getFollowedUsers(){
-    const users = await axios.get(new URL(`/api/user/getFollowedUsers`,SERVER_ROOT_URL).href, { withCredentials: true });
+async function getFollowedUsers(page){
+    const users = await axios.get(new URL(`/api/user/getFollowedUsers`, SERVER_ROOT_URL).href, { params: { page }, withCredentials: true });
     return users.data;
 }
 

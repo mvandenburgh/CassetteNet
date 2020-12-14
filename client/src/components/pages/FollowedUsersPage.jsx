@@ -1,5 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { Box, Typography, IconButton } from '@material-ui/core';
+import { Box, Grid, Typography, IconButton } from '@material-ui/core';
+import { Pagination } from '@material-ui/lab';
 import { getFollowedUsers } from '../../utils/api';
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
@@ -12,9 +13,22 @@ function FollowedUsersPage() {
 
   const [followedUsers, setFollowedUsers] = useState([]);
 
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const changePageHandler = (event, pageNumber) => {
+    setCurrentPage(pageNumber)
+  }
+
   useEffect(() => {
-    getFollowedUsers().then(users => setFollowedUsers(users));
-  }, []);
+    getFollowedUsers(currentPage).then(users => {
+      setFollowedUsers(users.users);
+      setCurrentPage(users.currentPage);
+      setTotalPages(users.totalPages);
+      setTotalResults(users.totalResults);
+    });
+  }, [currentPage]);
 
   const history = useHistory();
   const goBack = () => history.goBack();
@@ -33,6 +47,9 @@ function FollowedUsersPage() {
       <div style={{ width: "70%", margin: 'auto' }}>
         <UserList users={followedUsers} />
       </div>
+      <Grid container alignItems="center" style={{backgroundColor: 'lightblue', width: '70%', margin: 'auto'}}>
+        <Pagination align="center" justify="center" style={{ margin: 'auto' }} count={totalPages} page={currentPage} onChange={changePageHandler} />
+      </Grid>
     </div>
   );
 }
