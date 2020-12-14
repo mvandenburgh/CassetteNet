@@ -110,7 +110,7 @@ function Player() {
 
   useEffect(() => {
     if (playerBarRef?.current) {
-      const { clientHeight } = playerBarRef.current;
+      const clientHeight = playerBarRef.current.clientHeight + 10;
       setCurrentSong({ playBarHeight: (clientHeight + (clientHeight / 4)), ...currentSong })
     }
   }, [playerBarRef]);
@@ -260,9 +260,9 @@ function Player() {
   }
 
   return (
-    <div ref={playerBarRef}>
+    <div ref={playerBarRef} style={{ margin: '10px 0px' }}>
       <Grid container alignItems="center">
-        <Grid item xs={2} style={{height: '60%'}}>
+        <Grid item xs={2} style={{ height: '70%' }}>
           <Card className={classes.root}>
             <CardMedia
               className={classes.cover}
