@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
-import { Grid, Slider as VolumeSlider } from '@material-ui/core';
+import { makeStyles, Card, CardContent, CardMedia, Grid, Typography, IconButton, Slider as VolumeSlider } from '@material-ui/core';
 import { Mood as AnimatingIcon, Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import { useInterval } from '../hooks';
@@ -8,7 +8,7 @@ import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import PlayerAnimationContext from '../contexts/PlayerAnimationContext';
 import AtmosphereSoundContext from '../contexts/AtmosphereSoundContext';
-import SocketIOContext from '../contexts/SocketIOContext';
+import { getMixtapeCoverImageUrl } from '../utils/api';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
 import { motion } from 'framer-motion';
 
@@ -68,7 +68,7 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
     direction={direction}
     onChange={(value) => console.log(value)}
     style={{
-      width: '80%',//=direction === Direction.HORIZONTAL ? 500 : 8,
+      width: '60%',//=direction === Direction.HORIZONTAL ? 500 : 8,
       height: direction === Direction.HORIZONTAL ? 8 : 130,
       borderRadius: 4,
       background: WHITE_SMOKE,
@@ -82,8 +82,29 @@ const ProgressBar = ({ isEnabled, direction, value, ...props }) => (
   </Slider>
 )
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    width: '95%',
+    fontSize: '0.9em',
+    margin: 'auto',
+  },
+  details: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  content: {
+    flex: '1 0 auto',
+  },
+  cover: {
+    objectFit: 'contain',
+    width: '60%',
+  },
+}));
 
 function Player(props) {
+  const classes = useStyles();
+
   const playerRef = useRef();
 
   const [currentTime, setCurrentTime] = useState(null);
@@ -232,126 +253,147 @@ function Player(props) {
 
   return (
     <div>
-      <Grid style={{ margin: '10px 0' }} container justify="center">
-        <div style={{ color: 'black', marginRight: '20px' }}>
-          <FormattedTime numSeconds={currentTime} />
-        </div>
-        <ProgressBar
-          isEnabled
-          direction={Direction.HORIZONTAL}
-          value={currentSong?.mixtape?.songs[currentSong?.index].duration ? (currentTime / currentSong?.mixtape.songs[currentSong?.index].duration) : 0}
-          onChange={value => seek(value)}
-        />
-        <div style={{ color: 'black', marginRight: '20px' }}>
-          <FormattedTime numSeconds={currentSong?.mixtape?.songs[currentSong?.index].duration ? ((currentSong?.mixtape?.songs[currentSong?.index].duration - currentTime) * -1) : 0} />
-        </div>
-      </Grid>
-      <Grid style={{ margin: '10px 0' }} container justify="center">
-        {animating ?
-          <motion.div variants={togglesVariants}
-            initial="hidden"
-            animate="visible"
-            style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-            <AnimatingIcon onClick={handleAnimation} />
-          </motion.div>
-          :
-          <div
-            style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-            <AnimatingIcon onClick={handleAnimation} />
-          </div>
-        }
-        <VolumeSlider
-          value={atmosphereVolume}
-          onChange={handleAtmosphereVolumeChange}
-          defaultValue={0.5}
-          step={0.001}
-          min={0}
-          max={1}
-          style={{ width: '10%' }} aria-labelledby="continuous-slider"
-          disabled={!atmosphereSound.isPlaying}
-        />
-        {animating ?
-          <motion.div variants={togglesVariants}
-            initial="hidden"
-            animate="visible"
-            style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-            <AtmosphereSoundsIcon
-              style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
-              onClick={atmosphereButtonHandler}
+      <Grid container alignItems="center">
+        <Grid item xs={2} style={{height: '60%'}}>
+          <Card className={classes.root}>
+            <CardMedia
+              className={classes.cover}
+              image={currentSong?.mixtape?.songs[currentSong?.index]?.coverImage}
+              title={currentSong?.mixtape?.songs[currentSong?.index]?.name}
             />
-          </motion.div>
-          :
-          <div
-            style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-            <AtmosphereSoundsIcon
-              style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
-              onClick={atmosphereButtonHandler}
+            <div className={classes.details}>
+              <CardContent className={classes.content}>
+                <Typography variant="h7">
+                  {currentSong?.mixtape?.songs[currentSong?.index]?.name}
+                </Typography>
+              </CardContent>
+            </div>
+
+          </Card>
+        </Grid>
+        <Grid item xs={10}>
+          <Grid container justify="center">
+            <div style={{ color: 'black', marginRight: '20px' }}>
+              <FormattedTime numSeconds={currentTime} />
+            </div>
+            <ProgressBar
+              isEnabled
+              direction={Direction.HORIZONTAL}
+              value={currentSong?.mixtape?.songs[currentSong?.index].duration ? (currentTime / currentSong?.mixtape.songs[currentSong?.index].duration) : 0}
+              onChange={value => seek(value)}
             />
-          </div>
-        }
-        {animating ?
-          <motion.div
-            variants={playVariants}
-            initial="hidden"
-            animate="visible">
-            <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-            {playing ?
-              <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-              <PlayerIcon.Play
-                onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+            <div style={{ color: 'black', marginRight: '20px' }}>
+              <FormattedTime numSeconds={currentSong?.mixtape?.songs[currentSong?.index].duration ? ((currentSong?.mixtape?.songs[currentSong?.index].duration - currentTime) * -1) : 0} />
+            </div>
+          </Grid>
+          <Grid style={{ margin: '10px 0' }} container justify="center">
+            {animating ?
+              <motion.div variants={togglesVariants}
+                initial="hidden"
+                animate="visible"
+                style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+                <AnimatingIcon onClick={handleAnimation} />
+              </motion.div>
+              :
+              <div
+                style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+                <AnimatingIcon onClick={handleAnimation} />
+              </div>
             }
-            <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
-          </motion.div>
-          :
-          <div>
-            <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-            {playing ?
-              <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-              <PlayerIcon.Play
-                onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+            <VolumeSlider
+              value={atmosphereVolume}
+              onChange={handleAtmosphereVolumeChange}
+              defaultValue={0.5}
+              step={0.001}
+              min={0}
+              max={1}
+              style={{ width: '10%' }} aria-labelledby="continuous-slider"
+              disabled={!atmosphereSound.isPlaying}
+            />
+            {animating ?
+              <motion.div variants={togglesVariants}
+                initial="hidden"
+                animate="visible"
+                style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+                <AtmosphereSoundsIcon
+                  style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
+                  onClick={atmosphereButtonHandler}
+                />
+              </motion.div>
+              :
+              <div
+                style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+                <AtmosphereSoundsIcon
+                  style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
+                  onClick={atmosphereButtonHandler}
+                />
+              </div>
             }
-            <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
-          </div>
-        }
+            {animating ?
+              <motion.div
+                variants={playVariants}
+                initial="hidden"
+                animate="visible">
+                <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
+                {playing ?
+                  <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+                  <PlayerIcon.Play
+                    onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+                }
+                <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
+              </motion.div>
+              :
+              <div>
+                <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
+                {playing ?
+                  <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+                  <PlayerIcon.Play
+                    onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+                }
+                <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
+              </div>
+            }
 
-        {animating ?
-          <motion.div variants={togglesVariants}
-            initial="hidden"
-            animate="visible"
-            style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-            <ShuffleIcon onClick={handleSetShuffle} />
-          </motion.div>
-          :
-          <div
-            style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
-            <ShuffleIcon onClick={handleSetShuffle} />
-          </div>
-        }
-        {animating ?
-          <motion.div variants={togglesVariants}
-            initial="hidden"
-            animate="visible"
-            style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-            <LoopIcon onClick={handleSetLoop} />
-          </motion.div>
-          :
-          <div
-            style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
-            <LoopIcon onClick={handleSetLoop} />
-          </div>
-        }
+            {animating ?
+              <motion.div variants={togglesVariants}
+                initial="hidden"
+                animate="visible"
+                style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+                <ShuffleIcon onClick={handleSetShuffle} />
+              </motion.div>
+              :
+              <div
+                style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+                <ShuffleIcon onClick={handleSetShuffle} />
+              </div>
+            }
+            {animating ?
+              <motion.div variants={togglesVariants}
+                initial="hidden"
+                animate="visible"
+                style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+                <LoopIcon onClick={handleSetLoop} />
+              </motion.div>
+              :
+              <div
+                style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+                <LoopIcon onClick={handleSetLoop} />
+              </div>
+            }
 
 
 
-        <VolumeSlider
-          value={musicVolume}
-          onChange={handleMusicVolumeChange}
-          defaultValue={0.5}
-          step={0.001}
-          min={0}
-          max={1}
-          style={{ width: '20%' }} aria-labelledby="continuous-slider"
-        />
+            <VolumeSlider
+              value={musicVolume}
+              onChange={handleMusicVolumeChange}
+              defaultValue={0.5}
+              step={0.001}
+              min={0}
+              max={1}
+              style={{ width: '20%' }} aria-labelledby="continuous-slider"
+            />
+          </Grid>
+        </Grid>
       </Grid>
       <ReactPlayer
         onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}

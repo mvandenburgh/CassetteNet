@@ -129,6 +129,9 @@ function ViewMixtapePage(props) {
             )
         ) {
             getMixtape(props.match.params.id).then((updatedMixtape) => {
+                if (!updatedMixtape) {
+                    return;
+                }
                 if (updatedMixtape.songs.length > 0) {
                     updatedMixtape.duration = updatedMixtape.songs.map(song => song.duration).reduce((mixtapeDuration, songDuration) => mixtapeDuration + songDuration);
                 } else {

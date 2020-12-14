@@ -147,7 +147,7 @@ router.get('/search', async (req, res) => {
 
 router.get('/popular', async (req, res) => {
     const { count } = req.query;
-    const mostPopular = await Mixtape.find().sort('-favorites').limit(Number(count)).lean();
+    const mostPopular = await Mixtape.find({ isPublic: true }).sort('-favorites').limit(Number(count)).lean();
     return res.send(mostPopular);
 });
 

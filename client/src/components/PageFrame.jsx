@@ -42,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
+    position: 'fixed',
+    zIndex: 0,
   },
   drawerOpen: {
     width: drawerWidth,
