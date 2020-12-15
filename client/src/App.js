@@ -47,13 +47,14 @@ function App() {
         const newUser = { isLoggedIn: true, isGuest: false, ...user };
         setUser(newUser);
         socket.emit('setUserSocketId', { userId: newUser._id });
-
-        // check if song is playing
-        let currentSongDefault = JSON.parse(localStorage.getItem('currentSong'));
-        if (!currentSongDefault || localStorage.getItem('user') !== user?._id) {
-          currentSongDefault = {};
+        if (!currentSong) {
+          // check if song is playing
+          let currentSongDefault = JSON.parse(localStorage.getItem('currentSong'));
+          if (!currentSongDefault || localStorage.getItem('user') !== user?._id) {
+            currentSongDefault = {};
+          }
+          setCurrentSong(currentSongDefault);
         }
-        setCurrentSong(currentSongDefault);
       })
       .catch(err => setUser({ isLoggedIn: false }));
   }, []);
