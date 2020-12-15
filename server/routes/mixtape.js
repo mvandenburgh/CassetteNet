@@ -147,7 +147,7 @@ router.get('/search', async (req, res) => {
 
 router.get('/popular', async (req, res) => {
     const { count } = req.query;
-    const mostPopular = await Mixtape.find().sort('-favorites').limit(Number(count)).lean();
+    const mostPopular = await Mixtape.find({ isPublic: true }).sort('-favorites').limit(Number(count)).lean();
     return res.send(mostPopular);
 });
 
@@ -181,13 +181,14 @@ router.post('/', async (req, res) => {
 router.post('/:id/fork', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
 
-    const mixtape = await Mixtape.findById(req.params.id).lean();
+    const mixtape = await Mixtape.findById(req.params.id).select('+coverImage').lean();
 
     const newMixtape = {
         name: mixtape.name,
         collaborators: [{ user: req.user._id, permissions: 'owner', username: req.user.username }],
         songs: mixtape.songs,
-        isPublic: true // TODO: set default to false, true for now to make testing easier
+        isPublic: false,
+        coverImage: mixtape.coverImage,
     };
 
     const mixtapeObject = await Mixtape.create(newMixtape);

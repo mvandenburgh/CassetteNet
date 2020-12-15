@@ -41,7 +41,7 @@ function initSockets(io) {
                 from: { username: '#ChatBot' }, // will always be unique since usernames aren't allowed to start with #
             });
             if (!lr.startedAt) {
-                lr.startedAt = Date.now() / 1000 + 4;
+                lr.startedAt = Date.now() / 1000 + 8;
                 lr.wasAt = 0;
             }
             await lr.save();
@@ -138,7 +138,7 @@ function initSockets(io) {
                 listeningRoom.mixtape.songs[index].tempo = tempo;
                 listeningRoom.markModified('currentListeners');
                 listeningRoom.markModified('mixtape.songs');
-                listeningRoom.startedAt = (Date.now() / 1000) + 4; // its usually off by about 4 seconds
+                listeningRoom.startedAt = (Date.now() / 1000) + 8; // its usually off by about 4 seconds
                 listeningRoom.wasAt = 0;
                 listeningRoom.rhythmScores = new Map();
                 listeningRoom.snakeScores = new Map();

@@ -3,7 +3,7 @@ import { Button, Card, CardContent, CardMedia, IconButton, Grid, Typography, mak
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import AtmosphereSoundContext from '../../contexts/AtmosphereSoundContext';
-
+import CurrentSongContext from '../../contexts/CurrentSongContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,6 +39,8 @@ function AtmospherePage() {
     const goBack = () => history.goBack();
 
     const { setAtmosphereSound } = useContext(AtmosphereSoundContext);
+    
+    const { currentSong } = useContext(CurrentSongContext);
 
     const sounds = [
       { title: 'Rainy Day', filename: '/atmosphere/rain.mp3', img: '/atmosphere/rainy_window.png' },
@@ -47,7 +49,7 @@ function AtmospherePage() {
     ];
 
     return (
-        <div style={{ color: 'white', left:0}}>
+        <div style={{ color: 'white', left: 0, marginBottom: `${currentSong.playBarHeight}px` }}>
           <IconButton color="secondary" aria-label="back"  onClick={() => { goBack() }}>
             <ArrowBackIcon/>
           </IconButton>

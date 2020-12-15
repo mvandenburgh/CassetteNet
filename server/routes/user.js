@@ -33,7 +33,10 @@ router.get('/followedUserActivity', async (req, res) => {
         }
         if (activity.action === USER_ACTIVITIES.CREATE_MIXTAPE || activity.action === USER_ACTIVITIES.FAVORITE_MIXTAPE || activity.action === USER_ACTIVITIES.COMMENT_ON_MIXTAPE) {
             const mixtape = await Mixtape.findById(activity.target);
-            if (!mixtape.isPublic && !mixtape.collaborators.filter(c => c.user).includes(req.user._id)) {
+            if (!mixtape || (!mixtape.isPublic && !mixtape.collaborators.filter(c => c.user).includes(req.user._id))) {
+                if (!mixtape) {
+                    UserActivity.deleteOne({ _id: activity._id });
+                }
                 continue;
             }
         } else if (activity.action === USER_ACTIVITIES.CREATE_LISTENING_ROOM) {  // TODO: implement listening room public/private
@@ -93,22 +96,19 @@ router.get('/mixtapes', async (req, res) => {
 
 router.get('/getFollowedUsers', async (req, res) => {
     if (!req.user) return res.status(401).send(null);
+    const { page } = req.query;
     const requser = await User.findById(req.user._id).lean();
-    const results = [];
-    for (const followedUserID of requser.followedUsers) {
-        const user = await User.findById(followedUserID).lean();
-        const updatedAt =new Date(user.updatedAt);
-        const createdAt = new Date(user.createdAt);
-        results.push({
-            _id: user._id,
-            username: user.username,
-            uniqueId: user.uniqueId,
-            createdAt: `${createdAt.getMonth()+1}/${createdAt.getDate()}/${createdAt.getFullYear()}`,
-            updatedAt: `${updatedAt.getMonth()+1}/${updatedAt.getDate()}/${updatedAt.getFullYear()}`,
-            followers: user.followers,
-        });
+    const followedUsers = await User.paginate({ _id: { $in: requser.followedUsers } }, { lean: true, limit: PAGINATION_COUNT, page: page ? page : 1});
+    for (const user of followedUsers.docs) {
+        user.createdAt = `${user.createdAt.getMonth()+1}/${user.createdAt.getDate()}/${user.createdAt.getFullYear()}`;
+        user.updatedAt = `${user.updatedAt.getMonth()+1}/${user.updatedAt.getDate()}/${user.updatedAt.getFullYear()}`;
     }
-    return res.send(results);
+    return res.send({
+        users: followedUsers.docs,
+        currentPage: followedUsers.page,
+        totalPages: followedUsers.totalPages,
+        totalResults: followedUsers.totalDocs,
+    });
 });
 
 
@@ -310,31 +310,34 @@ router.delete('/deleteMessage/:id', async (req, res) => {
         for(var x=0;x<collabMixtapes[i].collaborators.length;x++){
             if(collabMixtapes[i].collaborators[x].user==req.user.id && collabMixtapes[i].collaborators[x].permissions!="owner"){
                 collabMixtapes[i].collaborators.splice(x,1);
+                await collabMixtapes[i].save();
                 console.log(collabMixtapes[i].collaborators);
                 break;
             }
         }
     }
-    await collabMixtapes.save();
+    
 
 
-    // //DELETE MIXTAPES CREATED
+    //DELETE MIXTAPES CREATED
     const ownedMixtapes = await Mixtape.find({  'collaborators.user': Types.ObjectId(req.user.id)});
     var numMixtapes=ownedMixtapes.length;
      for(var i=0;i<numMixtapes;i++){
         for(var x=0;x<ownedMixtapes[i].collaborators.length;x++){
             if(ownedMixtapes[i].collaborators[x].user==req.user.id && ownedMixtapes[i].collaborators[x].permissions=="owner"){
-                ownedMixtapes.splice(i,1);
-                i=i-1;
-                numMixtapes--;
+                const mixtape = Types.ObjectId(ownedMixtapes[i]._id);
+                console.log("id " +mixtape);
+                await Mixtape.findByIdAndDelete(mixtape);
+                //i=i-1;
+                //numMixtapes--;
                 break;
             }
         }
     }
-    await ownedMixtapes.save();
+    
 
     //DELETE USER FROM FOLLOWED USERS
-    const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)}).lean();
+    const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)});
     console.log("users that follow me: " + followedUser);
     var usersArrMax= followedUser.length;
     for(var i=0;i<usersArrMax;i++){
@@ -342,12 +345,13 @@ router.delete('/deleteMessage/:id', async (req, res) => {
         for(var x=0;x<numFollowed;x++){
             if(followedUser[i].followedUsers[x]==req.user.id){
                 followedUser[i].followedUsers.splice(x,1);
-                x--;
-                numFollowed--;
+                followedUser[i].save();
+                //x--;
+                //numFollowed--;
             }
         }
     }
-    await followedUser.save();
+   // await followedUser.save();
 
     //DELETE COMMENTS BY USER ON MIXTAPES
     const commentedMixtapes = await Mixtape.find({ 'comments.author.user':req.user.id});
@@ -359,12 +363,13 @@ router.delete('/deleteMessage/:id', async (req, res) => {
             if(commentedMixtapes[i].comments[x].author.user==req.user.id){
                 console.log("good compar");
                 commentedMixtapes[i].comments.splice(x,1);
-                x--;
-                numComments--;
+                commentedMixtapes[i].save();
+                //x--;
+                //numComments--;
             }
         }
     }
-    await commentedMixtapes.save();
+    //await commentedMixtapes.save();
 
     await User.findByIdAndDelete(Types.ObjectId(req.user.id));
  })

@@ -188,8 +188,8 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
     };
 
     return (
-        <div>
-            <Grid style={{ margin: '10px 0' }} container justify="center">
+        <div style={{backgroundColor: '#30A9ED', width: '90%', margin: 'auto'}}>
+            <Grid container justify="center">
                 <div style={{ color: 'black', marginRight: '20px' }}>
                     <FormattedTime numSeconds={currentTime} />
                 </div>

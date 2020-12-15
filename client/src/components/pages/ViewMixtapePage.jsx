@@ -15,7 +15,7 @@ import {
 import Mixtape from '../Mixtape';
 import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
 import MixtapeComments from '../MixtapeComments';
-import { createListeningRoom, forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
+import { forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
 import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
@@ -129,6 +129,9 @@ function ViewMixtapePage(props) {
             )
         ) {
             getMixtape(props.match.params.id).then((updatedMixtape) => {
+                if (!updatedMixtape) {
+                    return;
+                }
                 if (updatedMixtape.songs.length > 0) {
                     updatedMixtape.duration = updatedMixtape.songs.map(song => song.duration).reduce((mixtapeDuration, songDuration) => mixtapeDuration + songDuration);
                 } else {
@@ -368,7 +371,7 @@ function ViewMixtapePage(props) {
 
 
     return (
-        <div>
+        <div style={{marginBottom: `${currentSong.playBarHeight}px`}}>
             <CreateListeningRoomModal open={createListeningRoomModalOpen} setOpen={setCreateListeningRoomModalOpen} mixtape={mixtape} />
             <SongSearchModal open={addSongPopupIsOpen} setOpen={setAddSongPopupIsOpen} addSongs={addSongs} mixtape={mixtape} />
             <SettingsModal

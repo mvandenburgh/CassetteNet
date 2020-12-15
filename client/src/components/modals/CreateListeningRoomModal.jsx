@@ -21,7 +21,9 @@ function CreateListeningRoomModal({ open, setOpen, mixtape }) {
     const history = useHistory();
 
     const handleClose = () => {
-        setOpen(false);
+        if (!loading) {
+            setOpen(false);
+        }
     }
 
     const [invitedUsers, setInvitedUsers] = useState([]);
