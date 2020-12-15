@@ -110,7 +110,9 @@ function PageFrame({ setSidebarLength }) {
   const { user, setUser } = useContext(UserContext);
 
   const logout = async () => {
-    await userLogout();
+    if (!user?.isGuest) {
+      await userLogout();
+    }
     history.push('/');
     setUser({ isLoggedIn: false });
   }
@@ -156,7 +158,7 @@ function PageFrame({ setSidebarLength }) {
               <Avatar onClick={() => history.push('/me')} alt={user.username} style={{ left: '50%', cursor: 'pointer' }} src={getUserProfilePictureUrl(user._id)} />
             </Grid>
             <Grid alignItems="center" item xs={0.5}>
-              {user?.isLoggedIn && !user?.isGuest ?
+              {user?.isLoggedIn ?
                 <Button style={{ margin: 'auto' }} onClick={() => logout()} variant="contained">Logout</Button>
                 : undefined
               }
