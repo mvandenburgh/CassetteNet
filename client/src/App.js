@@ -47,24 +47,21 @@ function App() {
         const newUser = { isLoggedIn: true, isGuest: false, ...user };
         setUser(newUser);
         socket.emit('setUserSocketId', { userId: newUser._id });
-        if (!currentSong) {
-          // check if song is playing
-          let currentSongDefault = JSON.parse(localStorage.getItem('currentSong'));
-          if (!currentSongDefault || localStorage.getItem('user') !== user?._id) {
-            currentSongDefault = {};
-          }
-          setCurrentSong(currentSongDefault);
-        }
       })
       .catch(err => setUser({ isLoggedIn: false }));
   }, []);
 
+  // check if song is playing
+  let currentSongDefault = JSON.parse(localStorage.getItem('currentSong'));
+  if (!currentSongDefault) {
+    currentSongDefault = {};
+  }
+  const [currentSong, setCurrentSong] = useState(currentSongDefault);
 
   const [currentSong, setCurrentSong] = useState({});
   useEffect(() => {
     if (user) {
       localStorage.setItem('currentSong', JSON.stringify(currentSong));
-      localStorage.setItem('user', user._id);
     }
   }, [JSON.stringify(currentSong)]);
 
