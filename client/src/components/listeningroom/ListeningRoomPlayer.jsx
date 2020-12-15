@@ -255,7 +255,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
                 volume={atmosphereVolume}
             />
             <Snackbar
-                open={rhythmGameStartingPopup}
+                open={!playing}
                 autoHideDuration={8000}
                 onClose={() => setRhythmGameStartingPopup(false)}
                 anchorOrigin={{
@@ -263,7 +263,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
                     horizontal: 'center',
                 }}
             >
-                <Alert severity="info">Rhythm game will start in {Math.ceil(listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration - currentTime)}</Alert>
+                <Alert severity="info">The next rhythm game is about to begin. Press Ctrl + DELETE at any point to cancel/exit the game.</Alert>
             </Snackbar>
         </div>
     )
