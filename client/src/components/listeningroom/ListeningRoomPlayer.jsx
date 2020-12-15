@@ -118,6 +118,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
             return;
         }
         setPlaying(false);
+        setSongStarted(false)
         const newListeningRoom = { ...listeningRoom };
         if (shuffle) {
             newListeningRoom.currentSong = Math.floor(Math.random() * newListeningRoom.mixtape.songs.length);
@@ -134,6 +135,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
             return;
         }
         setPlaying(false);
+        setSongStarted(false)
         const newListeningRoom = { ...listeningRoom };
         if (shuffle) {
             newListeningRoom.currentSong = Math.floor(Math.random() * newListeningRoom.mixtape.songs.length);
@@ -246,7 +248,6 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
                 onStart={() => { setSongStarted(true); console.log('started') }}
                 onBuffer={() => setSongStarted(false)}
                 onBufferEnd={() => setSongStarted(true)}
-                onEnded={() => setSongStarted(false)}
             />
             <ReactPlayer
                 loop
@@ -255,7 +256,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
                 volume={atmosphereVolume}
             />
             <Snackbar
-                open={!playing}
+                open={!playing && rhythmGame}
                 autoHideDuration={8000}
                 onClose={() => setRhythmGameStartingPopup(false)}
                 anchorOrigin={{

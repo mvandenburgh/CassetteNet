@@ -159,6 +159,14 @@ function initSockets(io) {
             }
         });
 
+        socket.on('dequeueRhythmGame', async () => {
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+
+            listeningRoom.rhythmGameQueue = listeningRoom.rhythmGameQueue.filter(u => !u.equals(user._id));
+            await listeningRoom.save();
+        });
+
         socket.on('rhythmScoreChange', async (changeBy) => {
             console.log(`Change ${user.username}'s (${user._id.toString()}) rhythm score by ${changeBy}`)
             const roomId = socket.rooms.values().next().value;

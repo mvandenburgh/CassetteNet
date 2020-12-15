@@ -218,7 +218,7 @@ function PageFrame({ setSidebarLength }) {
                 <ListItemIcon>
                   <FavoritedMixtapesIcon className={classes.icon} />
                 </ListItemIcon>
-                <ListItemText primary="Favorited Mixtapes" />
+                <ListItemText primary="Favorite Mixtapes" />
               </ListItem>
               <ListItem onClick={() => history.push('/inbox')} button style={user.isGuest ? { display: 'none' } : {}}>
                 <ListItemIcon>
