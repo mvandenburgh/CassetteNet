@@ -5,6 +5,8 @@ import { useHistory } from 'react-router-dom';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import UserSearchBar from '../UserSearchBar';
 import { adminFillDatabase, adminDropDatabase, getAdmins, deleteAdmin, addAdmin } from '../../utils/api';
+import AdminDropConfirmationModal from '../modals/AdminDropConfirmationModal';
+import AdminFillConfirmationModal from '../modals/AdminFillConfirmationModal';
 
 function AdminPage(props) {
     const colors = {
@@ -88,18 +90,9 @@ function AdminPage(props) {
 
     const history = useHistory();
     const goBack = () => history.goBack();
-
-    const fillDatabaseHandler = async () => {
-        setDisabled(true);
-        await adminFillDatabase(usersToGenerate);
-        setDisabled(false);
-    }
-
-    const dropDatabaseHandler = async () => {
-        setDisabled(true);
-        await adminDropDatabase();
-        setDisabled(false);
-    }
+    const [adminDropModalOpen, setAdminDropModalOpen] = useState(false);
+    const [adminFillModalOpen, setAdminFillModalOpen] = useState(false);
+    const [loading,setLoading] = useState(false);
 
     const addAdminHandler = async (admin) => {
         if (admin) {
@@ -113,15 +106,18 @@ function AdminPage(props) {
         const admins = await getAdmins();
         setAdmins(admins);
     }
-
+    
     const [usersToGenerate, setUsersToGenerate] = useState(50);
 
     const [disabled, setDisabled] = useState(false); // if DB operation buttons are enabled or not
 
     //TODO: Possibly re-align fields
     return (
-
+        
         <div style={{ color: 'white', left: 0 }}>
+
+            <AdminDropConfirmationModal usersToGenerate={usersToGenerate} loading={loading} setLoading={setLoading} disabled={disabled} setDisabled={setDisabled} open={adminDropModalOpen} setOpen={setAdminDropModalOpen} />
+            <AdminFillConfirmationModal  loading={loading} setLoading={setLoading} disabled={disabled} setDisabled={setDisabled} open={adminFillModalOpen} setOpen={setAdminFillModalOpen} />
             <IconButton color="secondary" aria-label="back" onClick={() => goBack()}>
                 <ArrowBackIcon />
             </IconButton>
@@ -159,7 +155,7 @@ function AdminPage(props) {
                     backgroundColor: blueGrey[600],
                     color: 'white'
                 }}
-                onClick={fillDatabaseHandler}
+                onClick={()=>setAdminFillModalOpen(true)}
             >Fill Database</Button>
             <Button
                 variant="outlined"
@@ -173,7 +169,7 @@ function AdminPage(props) {
                     backgroundColor: blueGrey[600],
                     color: 'white'
                 }}
-                onClick={dropDatabaseHandler}
+                onClick={()=>setAdminDropModalOpen(true)}
             >Clear Database</Button>
             <br />
             <TextField
