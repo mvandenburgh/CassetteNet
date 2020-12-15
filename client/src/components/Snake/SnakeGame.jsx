@@ -9,41 +9,69 @@ import {
 } from "./constants";
 import { Typography } from "@material-ui/core";
 import SocketIOContext from '../../contexts/SocketIOContext';
-import { resetGameScores } from '../../utils/api';
+import UserContext from '../../contexts/UserContext';
+import { resetPlayerScore } from '../../utils/api';
 
-function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom }) {
+function SnakeGame({ gameOver, setGameOver, gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom, scores, setScores }) {
   const canvasRef = useRef();
   const [snake, setSnake] = useState(snakePos);
   const [apple, setApple] = useState(goalPos);
   const [score,setScore] = useState(0);
   const [dir, setDir] = useState([0, -1]);
   const [speed, setSpeed] = useState(null);
-  const [gameOver, setGameOver] = useState(false);
 
   const gameSize = [gameScreenWidth, gameScreenHeight]
 
+  const [move, setMove] = useState(null);
+
   const { socket } = useContext(SocketIOContext);
+  const { user } = useContext(UserContext);
 
   useInterval(() => gameLoop(), speed);
 
+  useEffect(() => gameOver ? setSpeed(null) : undefined, [gameOver]);
+
   const endGame = () => {
-    resetGameScores(listeningRoom._id, 'snake').then(() => {
-      setSpeed(null);
+    setSpeed(null);
     setGameOver(true);
-    setScore(0);
+    resetPlayerScore(listeningRoom._id).then(() => {
+      setScore(0);
+      const newScores = [...scores];
+      for (const s of newScores) {
+        if (s.user === user._id) {
+          s.score = 0;
+          break;
+        }
+      }
+      setScores(newScores);
     });
 
-    
+
   };
   const addScore=()=>{
     setScore(score+1);
+    const newScores = [...scores];
+    for (const s of newScores) {
+      if (s.user === user._id) {
+        s.score++;
+        break;
+      }
+    }
+    setScores(newScores);
     socket.emit('snakeScoreChange', 1);
   }
-  const moveSnake = ({ keyCode }) =>
-    keyCode >= 37 && keyCode <= 40 && setDir(directions[keyCode]);
+  const moveSnake = ({ keyCode }) => {
+    
+    var inputDir = directions[keyCode];
+    if((dir[0]!=(inputDir[0] * -1) || dir[1]!=(inputDir[1] * -1)) && keyCode >= 37 && keyCode <= 40){
+      setDir(directions[keyCode]);
+      setMove(keyCode);
+    }
+  };
+
 
   const createApple = () =>
-    apple.map((_a, i) => Math.floor(Math.random() * (gameSize[i] / scale)));
+    apple.map((_a, i) => Math.floor(Math.random() * ((gameSize[i] / scale)*0.85)));
 
   const checkCollision = (piece, snk = snake) => {
     if (
@@ -83,6 +111,8 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
   };
 
   const startGame = () => {
+    console.log("width " + gameScreenWidth);
+    console.log("height " + gameScreenHeight);
     setScore(0);
     setSnake(snakePos);
     setApple(goalPos);

@@ -13,10 +13,12 @@ import {
     Grid,
     Modal,
     Paper,
+    Snackbar,
     Tabs,
     Tab,
     Typography,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import { AddCircleOutline as InviteUserIcon } from '@material-ui/icons';
@@ -34,7 +36,7 @@ import { ChatBox } from 'react-chatbox-component';
 import RhythmGame from '../listeningroom/RhythmGame';
 import SnakeGame from '../Snake/SnakeGame';
 import ListeningRoomPlayer from '../listeningroom/ListeningRoomPlayer';
-import { useInterval } from '../../hooks';
+import { useInterval, useEventListener } from '../../hooks';
 
 
 function TabPanel(props) {
@@ -108,15 +110,22 @@ function ListeningRoomPage(props) {
     const [endSessionPopupOpen, setEndSessionPopupOpen] = useState(false);
 
     const [queuedUpForRhythmGame, setQueuedUpForRhythmGame] = useState(false);
+    const queuedUpForRhythmGameRef = useRef();
+    useEffect(() => queuedUpForRhythmGameRef.current = queuedUpForRhythmGame, [queuedUpForRhythmGame]);
+
+    // show alerts for queueing/dequeing from rhythm game
+    const [showQueueSuccessMessage, setShowQueueSuccessMessage] = useState(false);
+    const [showDequeueSuccessMessage, setShowDequeueSuccessMessage] = useState(false);
 
     const [scores, setScores] = useState([]);
+
+    const [gameOver, setGameOver] = useState(false);
 
     useInterval(() => {
         if (screen !== 'home') {
             getGameScores(listeningRoom._id, screen).then(newScores => setScores(newScores));
         }
     }, 3000);
-
     const lrRef = useRef(listeningRoom);
 
     useEffect(() => lrRef.current = listeningRoom);
@@ -141,7 +150,12 @@ function ListeningRoomPage(props) {
                     newListeningRoom.chatMessages = newChatMessages;
                     setListeningRoom(newListeningRoom);
                 });
-                socket.on('changeSong', () => {
+                socket.on('changeSong', ({snakeScores, rhythmScores}) => {
+                    setGameOver(true);
+                    // TODO: have popup here showing final scores and winner
+                    console.log(snakeScores)
+                    setScores([]);
+                    // setScreen('home');
                     getListeningRoom(props.match.params.id).then(lr => {
                         setListeningRoom(lr);
                         setPlaying(true);
@@ -152,12 +166,14 @@ function ListeningRoomPage(props) {
                     setTimeout(history.goBack, 4000);
                 });
                 socket.on('rhythmGameAboutToBegin', () => {
-                    getListeningRoom(props.match.params.id).then(lr => {
-                        setListeningRoom(lr);
-                    });
-                    setCurrentTab(1); // TODO: prompt user that game is about to start before changing tabs
-                    setScreen('rhythm');
-
+                    if (queuedUpForRhythmGameRef.current) {
+                        setPlaying(false);
+                        getListeningRoom(props.match.params.id).then(lr => {
+                            setListeningRoom(lr);
+                        });
+                        setCurrentTab(1); // TODO: prompt user that game is about to start before changing tabs
+                        setScreen('rhythm');
+                    }
                 });
             })
             .catch(err => history.goBack());
@@ -199,12 +215,7 @@ function ListeningRoomPage(props) {
     useEffect(() => {
         if (screen !== 'home') {
             getGameScores(listeningRoom._id, screen).then(newScores => {
-                const scoresArray = [];
-                for (const score in newScores) {
-                    scoresArray.push({ score: newScores[score], user: score });
-                }
-                console.log(scoresArray)
-                setScores(scoresArray);
+                setScores(newScores);
             });
         }
     }, [screen]);
@@ -230,9 +241,23 @@ function ListeningRoomPage(props) {
         }
     });
 
-    const rhythmGameHandler = () => {
-        socket.emit('queueRhythmGame');
-        setQueuedUpForRhythmGame(true);
+    const rhythmGameHandler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!queuedUpForRhythmGame) {
+            setQueuedUpForRhythmGame(true);
+            setShowQueueSuccessMessage(true);
+            setShowDequeueSuccessMessage(false);
+            socket.emit('queueRhythmGame');
+            
+        } else {
+            setQueuedUpForRhythmGame(false);
+            setShowDequeueSuccessMessage(true);
+            setShowQueueSuccessMessage(false);
+            socket.emit('dequeueRhythmGame');
+        }
+        
+        
     }
     const snakeGameHandler = () => {
         setScreen('snake');
@@ -244,6 +269,19 @@ function ListeningRoomPage(props) {
             socket.emit('changeSong', index);
         }
     }
+
+    useEventListener('keypress', e => {
+        if (e.ctrlKey && e.code === 'Delete') {
+            e.preventDefault();
+            if (queuedUpForRhythmGame) {
+                socket.emit('dequeueRhythmGame');
+                setQueuedUpForRhythmGame(false);
+                setShowQueueSuccessMessage(false);
+                setShowDequeueSuccessMessage(true);
+                setScreen('home');
+            }
+        }
+    });
 
     if (!listeningRoom) {
         return null;
@@ -316,27 +354,25 @@ function ListeningRoomPage(props) {
                     <TabPanel value={currentTab} index={1}>
                         <Grid style={{ height: '80vh' }} container>
                             <Grid style={{}} container xs={9}>
-                                <Grid style={{ backgroundColor: 'red' }} item xs={12}>
+                                {/* <Grid style={{ backgroundColor: 'red' }} item xs={12}>
                                     <Typography variant="h7">Invite</Typography>
-                                </Grid>
+                                </Grid> */}
                                 <Grid style={{ height: '75vh' }} item xs={12}>
                                     <Grid container style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
-                                        <Paper onKeyDown={e => {        //ignores scrolling on arrow keys
-                                            console.log(e);
+                                        <Paper onKeyDown={e => {      
                                             if (e.key === "ArrowUp" || e.key === "ArrowDown") {
                                                 e.stopPropagation();
                                                 e.preventDefault();
-                                                console.log(e.key);
                                                 return false;
                                             }
                                             e.stopPropagation();
                                         }}
                                             ref={gameScreenRef} style={{ height: '90%', width: '95%', backgroundColor: '#6FE5FF' }}>
-                                            {screen === 'home' ? <div></div> : <Button style={{ alignItems: 'right', position: 'absolute', zIndex: 1}} onClick={exitGameHandler}> Exit Game </Button>}
+                                            {screen === 'snake' ? <Button style={{ alignItems: 'right', position: 'absolute', zIndex: 1}} onClick={exitGameHandler}> Exit Game </Button> : undefined}
                                             {screen === 'rhythm' ?
-                                                <RhythmGame songStarted={songStarted} gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
+                                                <RhythmGame scores={scores} setScores={setScores} songStarted={songStarted} gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
                                                 : screen === 'snake' ?
-                                                    <SnakeGame gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
+                                                    <SnakeGame gameOver={gameOver} setGameOver={setGameOver} gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} scores={scores} setScores={setScores} /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
                                                         <Grid item xs={2} />
                                                         <Grid item xs={10}>
                                                             <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>
@@ -404,41 +440,6 @@ function ListeningRoomPage(props) {
                                     </Grid>
                                 </Paper>
                             </Grid>
-                            {/* <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>
-                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '68%' }}>
-                                    <Grid container style={{ height: '10%' }}>
-                                        <Typography style={{ fontSize: '2em' }} alignItems="center">Chat</Typography>
-                                    </Grid>
-                                    <Grid container style={{ height: '5%' }} />
-                                    <Grid direction="row" container style={{ height: 'calc(95% - 2em)', overflow: 'auto' }}>
-                                        <Grid container>
-                                            <Grid item xs={12}>
-                                                <ChatBox
-                                                    messages={chatMessages}
-                                                    onSubmit={sendChatHandler}
-                                                    isLoading={chatMessages?.length === 0}
-                                                />
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                </Paper>
-                            </Grid> */}
-
-                            {/* <Grid container xs={3}>
-                                <Grid item xs={12} style={{ backgroundColor: 'white', height: '50%' }} >
-                                    <Paper style={{ backgroundColor: "#ACDCFF" }}>
-                                        <Typography alignItems="center" variant="h4">Scoreboard</Typography>
-                                    </Paper>
-                                    {scores ? scores?.map(score => (
-                                        <div>{score.username}: {score.score}</div>
-                                    )) : undefined}
-                                </Grid>
-                                <Grid item xs={12} style={{ backgroundColor: 'white', height: '50%' }} >
-                                    <Paper style={{ backgroundColor: "#ACDCFF" }}>
-                                        <Typography alignItems="center" variant="h4">Chat</Typography>
-                                    </Paper>
-                                </Grid>
-                            </Grid> */}
                         </Grid>
                     </TabPanel>
                 </Grid>
@@ -471,6 +472,28 @@ function ListeningRoomPage(props) {
                     </Grid>
                 </Fade>
             </Modal>
+            <Snackbar
+                open={showDequeueSuccessMessage}
+                autoHideDuration={5000}
+                onClose={() => setShowDequeueSuccessMessage(false)}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <Alert severity="info">Successfully dequeued from the rhythm game.</Alert>
+            </Snackbar>
+            <Snackbar
+                open={showQueueSuccessMessage}
+                autoHideDuration={5000}
+                onClose={() => setShowQueueSuccessMessage(false)}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <Alert severity="info">Successfully queued up for the next rhythm game.</Alert>
+            </Snackbar>
         </div>
     )
 }

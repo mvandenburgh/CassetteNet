@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
-import { makeStyles, Card, CardContent, CardMedia, Grid, Typography, IconButton, Slider as VolumeSlider } from '@material-ui/core';
+import { makeStyles, Card, CardContent, CardMedia, Grid, Typography, CircularProgress, Slider as VolumeSlider } from '@material-ui/core';
 import { Mood as AnimatingIcon, Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import { useInterval } from '../hooks';
@@ -8,7 +8,6 @@ import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import PlayerAnimationContext from '../contexts/PlayerAnimationContext';
 import AtmosphereSoundContext from '../contexts/AtmosphereSoundContext';
-import { getMixtapeCoverImageUrl } from '../utils/api';
 import { Direction, FormattedTime, PlayerIcon, Slider } from 'react-player-controls';
 import { motion } from 'framer-motion';
 
@@ -102,12 +101,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Player(props) {
+function Player() {
   const classes = useStyles();
 
   const playerRef = useRef();
 
+  const playerBarRef = useRef();
+
+  useEffect(() => {
+    if (playerBarRef?.current) {
+      const clientHeight = playerBarRef.current.clientHeight + 10;
+      setCurrentSong({ playBarHeight: (clientHeight + (clientHeight / 4)), ...currentSong })
+    }
+  }, [playerBarRef]);
+
   const [currentTime, setCurrentTime] = useState(null);
+
+  const [buffering, setBuffering] = useState(false);
 
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
@@ -143,6 +153,7 @@ function Player(props) {
     if (currentSong.disabled === currentSong.mixtape._id) {
       return;
     }
+    setBuffering(true);
     setPlaying(true);
     if (!currentTime) {
       playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
@@ -157,6 +168,7 @@ function Player(props) {
 
   const handleNextSong = () => {
     setPlaying(false);
+    setBuffering(true);
     const newCurrentSong = { ...currentSong };
     if (shuffle) {
       newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
@@ -171,6 +183,7 @@ function Player(props) {
 
   const handlePrevSong = () => {
     setPlaying(false);
+    setBuffering(true);
     const newCurrentSong = { ...currentSong };
     if (shuffle) {
       newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
@@ -188,7 +201,7 @@ function Player(props) {
       scale: 1
     },
     visible: {
-      scale: 1.5,
+      scale: 1.1,
       transition: {
         yoyo: Infinity
       }
@@ -199,7 +212,7 @@ function Player(props) {
       scale: 1
     },
     visible: {
-      scale: 1.1,
+      scale: 1.05,
       transition: {
         yoyo: Infinity
       }
@@ -252,9 +265,9 @@ function Player(props) {
   }
 
   return (
-    <div>
+    <div ref={playerBarRef} style={{ margin: '10px 0px' }}>
       <Grid container alignItems="center">
-        <Grid item xs={2} style={{height: '60%'}}>
+        <Grid item xs={2} style={{ height: '70%' }}>
           <Card className={classes.root}>
             <CardMedia
               className={classes.cover}
@@ -314,17 +327,17 @@ function Player(props) {
               <motion.div variants={togglesVariants}
                 initial="hidden"
                 animate="visible"
-                style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+                style={{ marginRight: '20px' }}>
                 <AtmosphereSoundsIcon
-                  style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
+                  style={{ color: atmosphereSound.isPlaying ? 'blue' : 'black' }}
                   onClick={atmosphereButtonHandler}
                 />
               </motion.div>
               :
               <div
-                style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+                style={{ marginRight: '20px' }}>
                 <AtmosphereSoundsIcon
-                  style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
+                  style={{ color: atmosphereSound.isPlaying ? 'blue' : 'black' }}
                   onClick={atmosphereButtonHandler}
                 />
               </div>
@@ -335,20 +348,26 @@ function Player(props) {
                 initial="hidden"
                 animate="visible">
                 <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-                {playing ?
-                  <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-                  <PlayerIcon.Play
-                    onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+                {
+                  buffering ? <CircularProgress /> :
+                    playing ?
+                      <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+                      <PlayerIcon.Play
+                        onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
                 }
                 <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
               </motion.div>
               :
               <div>
                 <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-                {playing ?
-                  <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-                  <PlayerIcon.Play
-                    onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+                {
+                  buffering ?
+                  <CircularProgress direction="column" style={{marginRight: '2em'}} /> 
+                  :
+                    playing ?
+                      <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+                      <PlayerIcon.Play
+                        onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
                 }
                 <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
               </div>
@@ -397,6 +416,9 @@ function Player(props) {
       </Grid>
       <ReactPlayer
         onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
+        onStart={() => setBuffering(false)}
+        onBuffer={() => setBuffering(true)}
+        onBufferEnd={() => setBuffering(false)}
         ref={playerRef} playing={playing} style={{ display: 'none' }}
         url={currentSong?.mixtape?.songs[currentSong.index].playbackUrl}
         volume={musicVolume}

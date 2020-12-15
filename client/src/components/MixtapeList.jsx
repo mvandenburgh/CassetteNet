@@ -111,7 +111,7 @@ function MixtapeList(props) {
   }
 
   return (
-    <Box>
+    <Box style={{width: '100%' }} align="center">
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId='droppable'>
           {(provided) => (

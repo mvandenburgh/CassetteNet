@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-    Avatar, Box, Button, Dialog,
+    Avatar, Box, Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
@@ -12,7 +12,10 @@ import { ArrowBack as ArrowBackIcon, Delete as DeleteIcon } from '@material-ui/i
 import UserContext from '../../contexts/UserContext';
 import { useHistory } from 'react-router-dom';
 import parse from 'html-react-parser';
-import { getMixtapeCoverImageUrl, getUserProfilePictureUrl, deleteInboxMessage } from '../../utils/api';
+import { getUserProfilePictureUrl, deleteInboxMessage } from '../../utils/api';
+import CurrentSongContext from '../../contexts/CurrentSongContext';
+import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
+import { motion } from 'framer-motion';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -28,9 +31,21 @@ const useStyles = makeStyles((theme) => ({
 function InboxPage() {
     const classes = useStyles();
 
-    let { user, setUser } = useContext(UserContext);
-    if (!user.isLoggedIn) {
-        user = JSON.parse(localStorage.getItem('user'));
+    const { user, setUser } = useContext(UserContext);
+
+    const { currentSong } = useContext(CurrentSongContext);
+    const { animating, setAnimating } = useContext(PlayerAnimationContext);
+
+    const togglesVariants = {
+        hidden: {
+        scale: 1
+        },
+        visible: {
+        scale: 1.2,
+        transition: {
+            yoyo: Infinity
+        }
+        }
     }
 
     const [viewMessageDialogIsOpen, setViewMessageDialogIsOpen] = useState(false); // whether add song popup is open
@@ -53,15 +68,23 @@ function InboxPage() {
     const history = useHistory();
     const goBack = () => history.goBack();
     return (
-        <div style={{ color: 'white', left: 0 }}>
+        <div style={{ color: 'white', left: 0, marginBottom: `${currentSong.playBarHeight}px` }}>
             <IconButton color="secondary" aria-label="back" onClick={() => goBack()}>
                 <ArrowBackIcon />
             </IconButton>
-            <br />
-            <br />
-            <br />
             <Grid container align="center" justify="center">
-                <Typography variant="h2">Inbox</Typography>
+            {animating?
+                    <motion.div variants={togglesVariants}
+                    initial="hidden"
+                    animate="visible">
+                        <Typography variant="h2">Inbox</Typography>
+                    </motion.div>
+                    :
+                    <div>
+                        <Typography variant="h2">Inbox</Typography>
+                    </div>
+                }
+                
             </Grid>
             <Grid container align="center" justify="center">
                 <Box style={{

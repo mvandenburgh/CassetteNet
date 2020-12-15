@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PlayingSongContext from '../../contexts/PlayingSongContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
+import UserContext from '../../contexts/UserContext';
 import { useEventListener, useInterval } from '../../hooks';
 import { Typography } from '@material-ui/core';
 import { Spring } from 'react-spring/renderprops';
@@ -8,7 +9,7 @@ import { Spring } from 'react-spring/renderprops';
 
 const BOX_WIDTH = 90; // width of animated boxes in pixels
 
-function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom }) {
+function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom, scores, setScores }) {
     const [bpm, setBpm] = useState(-1);
     const bps = bpm / 60; // beats per second
     const beatDuration = 1 / bps; // how long a square should take to get from the beginning of screen to middle
@@ -20,6 +21,8 @@ function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenS
     const [onBeat, setOnBeat] = useState(false);
 
     const [score, setScore] = useState(0);
+
+    const { user } = useContext(UserContext);
 
     const { playing, setPlaying } = useContext(PlayingSongContext);
 
@@ -37,7 +40,7 @@ function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenS
     };
 
     useEffect(() => {
-        setBpm(listeningRoom.mixtape.songs[listeningRoom.currentSong].tempo/2);
+        setBpm(listeningRoom.mixtape.songs[listeningRoom.currentSong].tempo / 2);
         setStartNewAnimation(true);
     }, [listeningRoom]);
 
@@ -47,12 +50,26 @@ function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenS
         } else if (e.code === 'Space') {
             e.preventDefault();
             if (onBeat) {
-                setScore(score+1);
+                setScore(score + 1);
+                const newScores = [...scores];
+                for (const s of newScores) {
+                    if (s.user === user._id) {
+                        s.score++;
+                        break;
+                    }
+                }
                 socket.emit('rhythmScoreChange', 1);
                 console.log('point!')
             } else {
                 if (score > 0) {
-                    setScore(score-1)
+                    setScore(score - 1)
+                    const newScores = [...scores];
+                    for (const s of newScores) {
+                        if (s.user === user._id) {
+                            s.score--;
+                            break;
+                        }
+                    }
                     socket.emit('rhythmScoreChange', -1);
                 }
                 console.log('miss!')
@@ -81,8 +98,8 @@ function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenS
 
     return (
         <div>
-            <Typography variant="h1" style={{float: 'right'}}>{score}</Typography>
-            <div style={{position: 'absolute', left: gameScreenStartX, width: gameScreenWidth, height: '100px', backgroundColor: 'yellow',top: `${gameScreenEndY - (gameScreenHeight/2)}px`,}}>
+            <Typography variant="h1" style={{ float: 'right' }}>{score}</Typography>
+            <div style={{ position: 'absolute', left: gameScreenStartX, width: gameScreenWidth, height: '100px', backgroundColor: 'yellow', top: `${gameScreenEndY - (gameScreenHeight / 2)}px`, }}>
 
             </div>
             <Spring
@@ -91,12 +108,12 @@ function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenS
                 config={{ duration: beatDuration * 1000 }}
                 reset={startNewAnimation}
                 onRest={onAnimationEnd}
-                onFrame={s => s.left > (gameScreenStartX + (gameScreenWidth / 2) - (BOX_WIDTH / 2)*2) ? setOnBeat(true) : undefined }
+                onFrame={s => s.left > (gameScreenStartX + (gameScreenWidth / 2) - (BOX_WIDTH / 2) * 2) ? setOnBeat(true) : undefined}
                 onStart={() => setStartNewAnimation(false)}
             >
                 {props => (
                     <div style={props}>
-                        <div style={{ position: 'absolute', left: `${props.x}px`,top: `${gameScreenHeight/3}px`, ...c2Style }} />
+                        <div style={{ position: 'absolute', left: `${props.x}px`, top: `${gameScreenHeight / 3}px`, ...c2Style }} />
                     </div>
                 )}
             </Spring>
@@ -107,12 +124,12 @@ function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenS
                     config={{ duration: beatDuration * 1000 }}
                     reset={startNewAnimation}
                     // onStart={() => setOnBeat(true)}
-                    onFrame={(s) => s.left > ((gameScreenEndX+gameScreenStartX)/2)-(BOX_WIDTH/2) + 200 ? setOnBeat(false) : undefined}
-                    // onFrame={(s) => console.log(s.left, ((gameScreenEndX+gameScreenStartX)/2)-(BOX_WIDTH/2) + 20)}
+                    onFrame={(s) => s.left > ((gameScreenEndX + gameScreenStartX) / 2) - (BOX_WIDTH / 2) + 200 ? setOnBeat(false) : undefined}
+                // onFrame={(s) => console.log(s.left, ((gameScreenEndX+gameScreenStartX)/2)-(BOX_WIDTH/2) + 20)}
                 >
                     {props => (
                         <div style={props}>
-                            <div style={{ position: 'absolute', left: `${props.x}px`, top: `${gameScreenHeight/3}px`, ...c1Style }} />
+                            <div style={{ position: 'absolute', left: `${props.x}px`, top: `${gameScreenHeight / 3}px`, ...c1Style }} />
                         </div>
                     )}
                 </Spring>

@@ -1,7 +1,11 @@
 const soundcloud = require('soundcloud-downloader').default;
 
-async function searchSong(song) {
-    const songs = await soundcloud.search('tracks', song);
+async function searchSong(song, page) {
+    let query = song;
+    if (page) {
+        query = `?q=${query}&offset=${(page-1)*10}&limit=${(page-1)*10}`
+    }
+    const songs = await soundcloud.search('tracks', `q=${query}`);
     return songs.collection;
 }
 

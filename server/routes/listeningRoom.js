@@ -65,12 +65,28 @@ router.get('/:id/snake/scores', async (req, res) => {
     }
 });
 
-router.delete('/:id/snake/scores', async (req, res) => {
+router.delete('/:id/playerScores', async (req, res) => {
+    if (!req.user) return res.status(401).send();
     const listeningRoom = await ListeningRoom.findById(req.params.id);
-    console.log('clearing snake scores.')
+    if (!listeningRoom) return res.status(404).send();
+    if (listeningRoom.rhythmScores.delete(req.user.id)) {
+        listeningRoom.markModified('rhythmScores');
+    }
+    if (listeningRoom.snakeScores.delete(req.user.id)) {
+        listeningRoom.markModified('snakeScores');
+    }
+    await listeningRoom.save();
+    return res.send();
+});
+
+router.delete('/:id/scores', async (req, res) => {
+    const listeningRoom = await ListeningRoom.findById(req.params.id);
+    console.log('clearing scores.')
     if (listeningRoom) {
         listeningRoom.snakeScores = new Map();
         listeningRoom.markModified('snakeScores');
+        listeningRoom.rhythmScores = new Map();
+        listeningRoom.markModified('rhythmScores');
         await listeningRoom.save();
         res.send('success');
     } else {

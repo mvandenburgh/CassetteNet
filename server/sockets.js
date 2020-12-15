@@ -140,12 +140,14 @@ function initSockets(io) {
                 listeningRoom.markModified('mixtape.songs');
                 listeningRoom.startedAt = (Date.now() / 1000) + 8; // its usually off by about 4 seconds
                 listeningRoom.wasAt = 0;
+                const rhythmScores = listeningRoom.rhythmScores;
+                const snakeScores = listeningRoom.snakeScores;
                 listeningRoom.rhythmScores = new Map();
                 listeningRoom.snakeScores = new Map();
                 listeningRoom.markModified('rhythmScores');
                 listeningRoom.markModified('snakeScores');
                 await listeningRoom.save();
-                io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl });
+                io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl, snakeScores: snakeScores, rhythmScores: rhythmScores });
             }
         });
 
@@ -157,6 +159,14 @@ function initSockets(io) {
                 listeningRoom.rhythmGameQueue.push(Types.ObjectId(user._id));
                 await listeningRoom.save();
             }
+        });
+
+        socket.on('dequeueRhythmGame', async () => {
+            const roomId = socket.rooms.values().next().value;
+            const listeningRoom = await ListeningRoom.findById(roomId);
+
+            listeningRoom.rhythmGameQueue = listeningRoom.rhythmGameQueue.filter(u => !u.equals(user._id));
+            await listeningRoom.save();
         });
 
         socket.on('rhythmScoreChange', async (changeBy) => {
@@ -171,6 +181,7 @@ function initSockets(io) {
                 listeningRoom.rhythmScores.set(user._id.toString(), changeBy);
             }
             await listeningRoom.save();
+            io.in(roomId).emit('rhythmScoreChange');
         });
 
         socket.on('snakeScoreChange', async (changeBy) => {
@@ -185,6 +196,7 @@ function initSockets(io) {
                 listeningRoom.snakeScores.set(user._id.toString(), changeBy);
             }
             await listeningRoom.save();
+            io.in(roomId).emit('snakeScoreChange');
         });
     });
 }

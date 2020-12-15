@@ -11,10 +11,7 @@ import { useHistory } from 'react-router-dom';
 import mixtapes from '../../testData/mixtapes.json';
 
 function SearchResultsPage(props) {
-    let { user } = useContext(UserContext);
-    if (!user.isLoggedIn) {
-        user = JSON.parse(localStorage.getItem('user'));
-    }
+    const { user } = useContext(UserContext);
 
     const [mixtapes, setMixtapes] = useState([]);
 

@@ -51,15 +51,17 @@ function App() {
       .catch(err => setUser({ isLoggedIn: false }));
   }, []);
 
-
   // check if song is playing
   let currentSongDefault = JSON.parse(localStorage.getItem('currentSong'));
   if (!currentSongDefault) {
     currentSongDefault = {};
   }
   const [currentSong, setCurrentSong] = useState(currentSongDefault);
+
   useEffect(() => {
-    localStorage.setItem('currentSong', JSON.stringify(currentSong));
+    if (user) {
+      localStorage.setItem('currentSong', JSON.stringify(currentSong));
+    }
   }, [JSON.stringify(currentSong)]);
 
 
@@ -69,6 +71,9 @@ function App() {
   const [tps, setTps] = useState(new jsTPS());
 
   const [atmosphereSound, setAtmosphereSound] = useState({});
+
+  // used to shift page when sidebar is open
+  const [sidebarLength, setSidebarLength] = useState(null);
 
   useEffect(() => {
     socket.on('newInboxMessage', () => {
@@ -93,45 +98,45 @@ function App() {
             <CurrentSongContext.Provider value={{currentSong, setCurrentSong}}>
               <PlayingSongContext.Provider value={{playing, setPlaying}}>
                 <PlayerAnimationContext.Provider value = {{animating, setAnimating}}>
-                <AtmosphereSoundContext.Provider value={{atmosphereSound, setAtmosphereSound}}>
-                  <BrowserRouter>
-                      <PageFrame loggedIn={user?.isLoggedIn} />
-                        <div style={{ marginBottom: '105px', position: 'absolute', left: 8*9, height: 'calc(100vh - 8*9)', width: '90%'}}>
-                          <Switch>
-                            <Route exact path="/" component={user?.isLoggedIn ? DashboardPage : StartPage} />
-                            <Route exact path="/directory" component={Directory} /> {/* TODO: remove? */}
-                            <Route exact path="/login" component={LoginPage} />
-                            <Route exact path="/login/oauth" component={OAuthUsernamePage} />
-                            <Route exact path="/login/success" component={VerifyLoginPage} />
-                            <Route exact path="/resetPassword/:token" component={ResetPasswordPage} />
-                            <Route exact path="/atmosphere" component={AtmospherePage} />
-                            <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
-                            <Route exact path="/mymixtapes" component={MyMixtapesPage} />
-                            <Route exact path="/favoritedmixtapes" component={FavoritedMixtapesPage} />
-                            <Route exact path="/viewuser" component={ViewUserPage} />
-                            <Route exact path="/followedusers" component={FollowedUsersPage}/>
-                            <Route exact path="/mixtapesoftheday" component={MixtapesOfTheDayPage}/>
-                            <Route exact path="/inbox" component={InboxPage} />
-                            <Route exact path="/NotFound" component={NotFoundPage}/>
-                            <Route exact path="/SignUp" component={SignUpPage}/>
-                            <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
-                            <Route exact path="/verify/:token" component={VerifyAccountPage} />
-                            <Route exact path="/SnakeGame" component={SnakeGame} />
-                            <Route exact path="/Admin">
-                              {user?.admin ? <AdminPage /> : <Redirect to="/" />}
-                            </Route>
-                            <Route exact path="/me" component={ViewProfilePage}/>
-                            <Route exact path="/user/:id" component={ViewUserPage}/>
-                            <Route exact path="/search/mixtapes" component={MixtapeSearchResultsPage} />
-                            <Route exact path="/search/users" render={(props) => <UserSearchResultsPage location={{search: props.location.search}} usersToExclude={new Set([user._id])} />} />
-                            <Route exact path="/listeningRoom/:id" component={ListeningRoomPage} />
-                            <Route path="/*">
-                              <Redirect to="/" />
-                            </Route>
-                          </Switch>
-                        </div>
-                  </BrowserRouter>
-                </AtmosphereSoundContext.Provider>
+                  <AtmosphereSoundContext.Provider value={{atmosphereSound, setAtmosphereSound}}>
+                    <BrowserRouter>
+                        <PageFrame loggedIn={user?.isLoggedIn} setSidebarLength={setSidebarLength} />
+                          <div style={{ marginBottom: '105px', position: 'absolute', left: sidebarLength, height: 'calc(100vh - 8*9)', width: '90%'}}>
+                            <Switch>
+                              <Route exact path="/" component={user?.isLoggedIn ? DashboardPage : StartPage} />
+                              <Route exact path="/directory" component={Directory} /> {/* TODO: remove? */}
+                              <Route exact path="/login" component={LoginPage} />
+                              <Route exact path="/login/oauth" component={OAuthUsernamePage} />
+                              <Route exact path="/login/success" component={VerifyLoginPage} />
+                              <Route exact path="/resetPassword/:token" component={ResetPasswordPage} />
+                              <Route exact path="/atmosphere" component={AtmospherePage} />
+                              <Route exact path="/mixtape/:id" component={ViewMixtapePage} />
+                              <Route exact path="/mymixtapes" component={MyMixtapesPage} />
+                              <Route exact path="/favoritedmixtapes" component={FavoritedMixtapesPage} />
+                              <Route exact path="/viewuser" component={ViewUserPage} />
+                              <Route exact path="/followedusers" component={FollowedUsersPage}/>
+                              <Route exact path="/mixtapesoftheday" component={MixtapesOfTheDayPage}/>
+                              <Route exact path="/inbox" component={InboxPage} />
+                              <Route exact path="/NotFound" component={NotFoundPage}/>
+                              <Route exact path="/SignUp" component={SignUpPage}/>
+                              <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
+                              <Route exact path="/verify/:token" component={VerifyAccountPage} />
+                              <Route exact path="/SnakeGame" component={SnakeGame} />
+                              <Route exact path="/Admin">
+                                {user?.admin ? <AdminPage /> : <Redirect to="/" />}
+                              </Route>
+                              <Route exact path="/me" component={ViewProfilePage}/>
+                              <Route exact path="/user/:id" component={ViewUserPage}/>
+                              <Route exact path="/search/mixtapes" component={MixtapeSearchResultsPage} />
+                              <Route exact path="/search/users" render={(props) => <UserSearchResultsPage location={{search: props.location.search}} usersToExclude={new Set([user._id])} />} />
+                              <Route exact path="/listeningRoom/:id" component={ListeningRoomPage} />
+                              <Route path="/*">
+                                <Redirect to="/" />
+                              </Route>
+                            </Switch>
+                          </div>
+                    </BrowserRouter>
+                  </AtmosphereSoundContext.Provider>
                 </PlayerAnimationContext.Provider>
               </PlayingSongContext.Provider>
             </CurrentSongContext.Provider>

@@ -100,7 +100,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-function PageFrame(props) {
+function PageFrame({ setSidebarLength }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const history = useHistory();
@@ -115,6 +115,15 @@ function PageFrame(props) {
     setUser({ isLoggedIn: false });
   }
 
+  const sidebarRef = useRef();
+
+  useEffect(() => {
+    if (open) {
+      setSidebarLength(240);
+    } else {
+      setSidebarLength(72);
+    }
+  }, [open]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -158,6 +167,7 @@ function PageFrame(props) {
         </Toolbar>
       </AppBar>
       <Drawer
+        ref={sidebarRef}
         variant="permanent"
         className={clsx(classes.drawer, {
           [classes.drawerOpen]: open,
@@ -208,7 +218,7 @@ function PageFrame(props) {
                 <ListItemIcon>
                   <FavoritedMixtapesIcon className={classes.icon} />
                 </ListItemIcon>
-                <ListItemText primary="Favorited Mixtapes" />
+                <ListItemText primary="Favorite Mixtapes" />
               </ListItem>
               <ListItem onClick={() => history.push('/inbox')} button style={user.isGuest ? { display: 'none' } : {}}>
                 <ListItemIcon>
