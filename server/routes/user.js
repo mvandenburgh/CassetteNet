@@ -289,7 +289,7 @@ router.delete('/deleteMessage/:id', async (req, res) => {
 })
 
  router.delete('/deleteUser/:id',async (req, res) => {
-    if (!req.user) return res.status(401).send('unauthorized');
+    if (!req.user || req.user.id !== req.params.id) return res.status(401).send('unauthorized');
 
     //REMOVE MESSAGES SENT OR RECIEVED BY USER
     const inboxMessagesRec = await InboxMessage.deleteMany({ recipient: Types.ObjectId(req.user.id) });
@@ -304,34 +304,25 @@ router.delete('/deleteMessage/:id', async (req, res) => {
     //activities.splice(0,activities.length);
     //activities.save();
 
-    // //REMOVE USER FROM COLLABORATED MIXTAPES
+    // DELETE USER CREATED MIXTAPES AND REMOVE THEM FROM COLLABORATOR MIXTAPES
+    const promises = [];
     const collabMixtapes = await Mixtape.find({'collaborators.user': Types.ObjectId(req.user.id)});
-    for(var i=0;i<collabMixtapes.length;i++){
-        for(var x=0;x<collabMixtapes[i].collaborators.length;x++){
-            if(collabMixtapes[i].collaborators[x].user==req.user.id && collabMixtapes[i].collaborators[x].permissions!="owner"){
-                collabMixtapes[i].collaborators.splice(x,1);
-                console.log(collabMixtapes[i].collaborators);
+
+    for (const mixtape of collabMixtapes) {
+        for (const collaborator of mixtape.collaborators) {
+            if (collaborator.user.equals(req.user.id)) {
+                if (collaborator.permissions === 'owner') { // if the user owns this mixtape, just delete the whole thing
+                    promises.push(mixtape.deleteOne());
+                } else { // otherwise, just remove them from the collaborators list
+                    const newCollaborators = mixtape.collaborators.filter(c => !c.user.equals(req.user.id));
+                    mixtape.collaborators = newCollaborators;
+                    promises.push(mixtape.save());
+                }
                 break;
             }
         }
     }
-    await collabMixtapes.save();
-
-
-    // //DELETE MIXTAPES CREATED
-    const ownedMixtapes = await Mixtape.find({  'collaborators.user': Types.ObjectId(req.user.id)});
-    var numMixtapes=ownedMixtapes.length;
-     for(var i=0;i<numMixtapes;i++){
-        for(var x=0;x<ownedMixtapes[i].collaborators.length;x++){
-            if(ownedMixtapes[i].collaborators[x].user==req.user.id && ownedMixtapes[i].collaborators[x].permissions=="owner"){
-                ownedMixtapes.splice(i,1);
-                i=i-1;
-                numMixtapes--;
-                break;
-            }
-        }
-    }
-    await ownedMixtapes.save();
+    await Promise.all(promises);
 
     //DELETE USER FROM FOLLOWED USERS
     const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)}).lean();

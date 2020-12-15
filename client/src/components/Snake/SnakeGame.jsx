@@ -23,6 +23,8 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
 
   const gameSize = [gameScreenWidth, gameScreenHeight]
 
+  const [move, setMove] = useState(null);
+
   const { socket } = useContext(SocketIOContext);
   const { user } = useContext(UserContext);
 

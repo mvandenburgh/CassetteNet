@@ -3,7 +3,7 @@ import { Backdrop, Modal, Fade, Grid, Typography, Button } from '@material-ui/co
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
-import {deleteUser} from '../../utils/api';
+import { deleteUser } from '../../utils/api';
 import UserContext from '../../contexts/UserContext';
 
 const useStyles = makeStyles((theme) => ({
