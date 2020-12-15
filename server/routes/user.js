@@ -288,21 +288,99 @@ router.delete('/deleteMessage/:id', async (req, res) => {
     res.send(inboxMessages);
 })
 
-// router.delete('/deleteUser/:id',async (req, res) => {
-//     if (!req.user) return res.status(401).send('unauthorized');
-//     const inboxMessagesRec = await InboxMessage.find({ recipient: req.user.id }).lean();
-//     const inboxMessagesSent = await InboxMessage.find({ senderId: req.user.id }).lean();
+ router.delete('/deleteUser/:id',async (req, res) => {
+    if (!req.user || req.user.id !== req.params.id) return res.status(401).send('unauthorized');
 
-//     const mixtapes = await Mixtape.find({collaborators[0].user: req.user.id}).lean();
-//     const activites = await UserActivity.find({ user: req.user.id}).lean();
-//     const followers =  ??
+    //REMOVE MESSAGES SENT OR RECIEVED BY USER
+    const inboxMessagesRec = await InboxMessage.deleteMany({ recipient: Types.ObjectId(req.user.id) });
+    //inboxMessagesRec.splice(0,inboxMessagesRec.length);
+    //inboxMessagesRec.save();
+    const inboxMessagesSent = await InboxMessage.deleteMany({ senderId: Types.ObjectId(req.user.id) });
+    //inboxMessagesSent.splice(0,inboxMessagesSent.length);
+    //inboxMessagesSent.save();
 
-//     if (message) {
-//         await message.deleteOne();
-//     }
-//     const inboxMessages = await InboxMessage.find({ recipient: req.user.id }).lean();
-//     res.send(inboxMessages);
-// })
+    // //REMOVE USER ACTIVITIES
+    const activities = await UserActivity.deleteMany({ user: Types.ObjectId(req.user.id)});
+    //activities.splice(0,activities.length);
+    //activities.save();
+
+   
+    // DELETE USER CREATED MIXTAPES AND REMOVE THEM FROM COLLABORATOR MIXTAPES
+    const promises = [];
+    const collabMixtapes = await Mixtape.find({'collaborators.user': Types.ObjectId(req.user.id)});
+
+    for (const mixtape of collabMixtapes) {
+        for (const collaborator of mixtape.collaborators) {
+            if (collaborator.user.equals(req.user.id)) {
+                if (collaborator.permissions === 'owner') { // if the user owns this mixtape, just delete the whole thing
+                    promises.push(mixtape.deleteOne());
+                } else { // otherwise, just remove them from the collaborators list
+                    const newCollaborators = mixtape.collaborators.filter(c => !c.user.equals(req.user.id));
+                    mixtape.collaborators = newCollaborators;
+                    promises.push(mixtape.save());
+                }
+                break;
+            }
+        }
+    }
+    await Promise.all(promises);
+
+    //DELETE USER FROM FOLLOWED USERS
+    const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)});
+    //console.log("users that follow me: " + followedUser);
+    var usersArrMax= followedUser.length;
+    for(var i=0;i<usersArrMax;i++){
+        var numFollowed=followedUser[i].followedUsers.length;
+        for(var x=0;x<numFollowed;x++){
+            if(followedUser[i].followedUsers[x]==req.user.id){
+                followedUser[i].followedUsers.splice(x,1);
+                followedUser[i].save();
+                //x--;
+                //numFollowed--;
+            }
+        }
+    }
+    // await followedUser.save();
+ 
+     //DELETE COMMENTS BY USER ON MIXTAPES
+     const commentedMixtapes = await Mixtape.find({ 'comments.author.user':req.user.id});
+     
+     //console.log(commentedMixtapes);
+     for(var i =0;i<commentedMixtapes.length;i++){
+         var numComments = commentedMixtapes[i].comments.length;
+         for(var x =0; x<numComments;x++){
+             if(commentedMixtapes[i].comments[x].author.user==Types.ObjectId(req.user.id)){
+                 console.log("good compar");
+                 commentedMixtapes[i].comments.splice(x,1);
+                 commentedMixtapes[i].save();
+                 //x--;
+                 //numComments--;
+             }
+         }
+     }
+     //DECREASE FAVORITE COUNT FOR MIXTAPES FAVORITED
+    //console.log(Types.ObjectId(req.user.id));
+    const user = await User.findOne({_id: req.user.id});
+    console.log(user);
+    const favMixtapes=user.favoritedMixtapes;
+    for(var x=0;x<favMixtapes.length;x++){
+        var mix = await Mixtape.findById(favMixtapes[i]);
+        console.log(mix);
+        mix.favorites = mix.favorites-1;
+        mix.save(); 
+    }
+ 
+ 
+     //DECREASE FOLLOWER COUNT FOR FOLLOWED USERS
+     const usersFollowed = user.followedUsers;
+     for(var x=0;x<usersFollowed.length;x++){
+         var users = await User.findById(usersFollowed[i]);
+         users.followers = users.followers-1;
+         users.save(); 
+     }
+
+    await User.findByIdAndDelete(Types.ObjectId(req.user.id));
+ })
 
 router.get('/:id/profilePicture', async (req, res) => {
     const user = await User.findById(req.params.id).select('+profilePicture').lean();
