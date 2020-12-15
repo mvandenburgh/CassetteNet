@@ -292,72 +292,81 @@ router.delete('/deleteMessage/:id', async (req, res) => {
     if (!req.user) return res.status(401).send('unauthorized');
 
     //REMOVE MESSAGES SENT OR RECIEVED BY USER
-    // const inboxMessagesRec = await InboxMessage.find({ recipient: Types.ObjectId(req.user.id) });
-    // inboxMessagesRec.splice(0,inboxMessagesRec.length);
-    // inboxMessagesRec.save();
-    // const inboxMessagesSent = await InboxMessage.find({ senderId: Types.ObjectId(req.user.id) });
-    // inboxMessagesSent.splice(0,inboxMessagesSent.length);
-    // inboxMessagesSent.save();
+    const inboxMessagesRec = await InboxMessage.deleteMany({ recipient: Types.ObjectId(req.user.id) });
+    //inboxMessagesRec.splice(0,inboxMessagesRec.length);
+    //inboxMessagesRec.save();
+    const inboxMessagesSent = await InboxMessage.find({ senderId: Types.ObjectId(req.user.id) });
+    //inboxMessagesSent.splice(0,inboxMessagesSent.length);
+    //inboxMessagesSent.save();
 
     // //REMOVE USER ACTIVITIES
-    // const activities = await UserActivity.find({ user: Types.ObjectId(req.user.id)});
-    // activities.splice(0,activities.length);
-    // activities.save();
+    const activities = await UserActivity.deleteMany({ user: Types.ObjectId(req.user.id)});
+    //activities.splice(0,activities.length);
+    //activities.save();
 
     // //REMOVE USER FROM COLLABORATED MIXTAPES
-    // const collabMixtapes = await Mixtape.find({'collaborators.user': Types.ObjectId(req.user.id)});
-    // for(var i=0;i<collabMixtapes.length;i++){
-    //     for(var x=0;x<collabMixtapes[i].collaborators.length;x++){
-    //         if(collabMixtapes[i].collaborators[x].user==req.user.id && collabMixtapes[i].collaborators[x].permissions!="owner"){
-    //             collabMixtapes[i].collaborators.splice(x,1);
-    //             console.log(collabMixtapes[i].collaborators);
-    //             break;
-    //         }
-    //     }
-    // }
-    // collabMixtapes.save();
+    const collabMixtapes = await Mixtape.find({'collaborators.user': Types.ObjectId(req.user.id)});
+    for(var i=0;i<collabMixtapes.length;i++){
+        for(var x=0;x<collabMixtapes[i].collaborators.length;x++){
+            if(collabMixtapes[i].collaborators[x].user==req.user.id && collabMixtapes[i].collaborators[x].permissions!="owner"){
+                collabMixtapes[i].collaborators.splice(x,1);
+                console.log(collabMixtapes[i].collaborators);
+                break;
+            }
+        }
+    }
+    await collabMixtapes.save();
 
 
     // //DELETE MIXTAPES CREATED
-    // var numMixtapes=ownedMixtapes.length;
-    // const ownedMixtapes = await Mixtape.find({  'collaborators.user': Types.ObjectId(req.user.id)});
-    //  for(var i=0;i<numMixtapes;i++){
-    //     for(var x=0;x<ownedMixtapes[i].collaborators.length;x++){
-    //         if(ownedMixtapes[i].collaborators[x].user==req.user.id && ownedMixtapes[i].collaborators[x].permissions=="owner"){
-    //             ownedMixtapes.splice(i,1);
-    //             i=i-1;
-    //             numMixtapes--;
-    //         }
-    //     }
-    // }
-    // ownedMixtapes.save();
+    const ownedMixtapes = await Mixtape.find({  'collaborators.user': Types.ObjectId(req.user.id)});
+    var numMixtapes=ownedMixtapes.length;
+     for(var i=0;i<numMixtapes;i++){
+        for(var x=0;x<ownedMixtapes[i].collaborators.length;x++){
+            if(ownedMixtapes[i].collaborators[x].user==req.user.id && ownedMixtapes[i].collaborators[x].permissions=="owner"){
+                ownedMixtapes.splice(i,1);
+                i=i-1;
+                numMixtapes--;
+                break;
+            }
+        }
+    }
+    await ownedMixtapes.save();
 
     //DELETE USER FROM FOLLOWED USERS
-    // const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)}).lean();
-    // console.log("users that follow me: " + followedUser);
-    // var usersArrMax= followedUser.length;
-    // for(var i=0;i<usersArrMax;i++){
-    //     var numFollowed=followedUser[i].followedUsers.length;
-    //     for(var x=0;x<numFollowed;x++){
-    //         if(followedUser[i].followedUsers[x]==req.user.id){
-    //             followedUser[i].followedUsers.splice(x,1);
-    //             x--;
-    //             numFollowed--;
-    //         }
-    //     }
-    // }
-    // followedUser.save();
+    const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)}).lean();
+    console.log("users that follow me: " + followedUser);
+    var usersArrMax= followedUser.length;
+    for(var i=0;i<usersArrMax;i++){
+        var numFollowed=followedUser[i].followedUsers.length;
+        for(var x=0;x<numFollowed;x++){
+            if(followedUser[i].followedUsers[x]==req.user.id){
+                followedUser[i].followedUsers.splice(x,1);
+                x--;
+                numFollowed--;
+            }
+        }
+    }
+    await followedUser.save();
 
     //DELETE COMMENTS BY USER ON MIXTAPES
-    const commentedMixtapes = await Mixtape.find({ 'comments': {'author':{ 'user':Types.ObjectId(req.user.id)}}});
+    const commentedMixtapes = await Mixtape.find({ 'comments.author.user':req.user.id});
+    
     console.log(commentedMixtapes);
-    //console.log("delete user");
-    //console.log(ownedMixtapes);
-    // const comments = await Mixtapes.find({
+    for(var i =0;i<commentedMixtapes.length;i++){
+        var numComments = commentedMixtapes[i].comments.length;
+        for(var x =0; x<numComments;x++){
+            if(commentedMixtapes[i].comments[x].author.user==req.user.id){
+                console.log("good compar");
+                commentedMixtapes[i].comments.splice(x,1);
+                x--;
+                numComments--;
+            }
+        }
+    }
+    await commentedMixtapes.save();
 
-    // })
-
-//  const user = await User.deleteOne()
+    await User.findByIdAndDelete(Types.ObjectId(req.user.id));
  })
 
 router.get('/:id/profilePicture', async (req, res) => {
