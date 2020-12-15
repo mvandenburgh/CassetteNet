@@ -308,34 +308,6 @@ router.delete('/deleteMessage/:id', async (req, res) => {
     //activities.splice(0,activities.length);
     //activities.save();
 
-<<<<<<< HEAD
-    // //REMOVE USER FROM COLLABORATED MIXTAPES
-    const collabMixtapes = await Mixtape.find({'collaborators.user': Types.ObjectId(req.user.id)});
-    for(var i=0;i<collabMixtapes.length;i++){
-        for(var x=0;x<collabMixtapes[i].collaborators.length;x++){
-            if(collabMixtapes[i].collaborators[x].user==req.user.id && collabMixtapes[i].collaborators[x].permissions!="owner"){
-                collabMixtapes[i].collaborators.splice(x,1);
-                await collabMixtapes[i].save();
-                console.log(collabMixtapes[i].collaborators);
-                break;
-            }
-        }
-    }
-    
-
-
-    //DELETE MIXTAPES CREATED
-    const ownedMixtapes = await Mixtape.find({  'collaborators.user': Types.ObjectId(req.user.id)});
-    var numMixtapes=ownedMixtapes.length;
-     for(var i=0;i<numMixtapes;i++){
-        for(var x=0;x<ownedMixtapes[i].collaborators.length;x++){
-            if(ownedMixtapes[i].collaborators[x].user==req.user.id && ownedMixtapes[i].collaborators[x].permissions=="owner"){
-                const mixtape = Types.ObjectId(ownedMixtapes[i]._id);
-                console.log("id " +mixtape);
-                await Mixtape.findByIdAndDelete(mixtape);
-                //i=i-1;
-                //numMixtapes--;
-=======
     // DELETE USER CREATED MIXTAPES AND REMOVE THEM FROM COLLABORATOR MIXTAPES
     const promises = [];
     const collabMixtapes = await Mixtape.find({'collaborators.user': Types.ObjectId(req.user.id)});
@@ -350,22 +322,14 @@ router.delete('/deleteMessage/:id', async (req, res) => {
                     mixtape.collaborators = newCollaborators;
                     promises.push(mixtape.save());
                 }
->>>>>>> e2ee036922834edca825bee36254f70db98858ad
                 break;
             }
         }
     }
-<<<<<<< HEAD
-    
-
-    //DELETE USER FROM FOLLOWED USERS
-    const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)});
-=======
     await Promise.all(promises);
 
     //DELETE USER FROM FOLLOWED USERS
     const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)}).lean();
->>>>>>> e2ee036922834edca825bee36254f70db98858ad
     console.log("users that follow me: " + followedUser);
     var usersArrMax= followedUser.length;
     for(var i=0;i<usersArrMax;i++){
@@ -373,22 +337,12 @@ router.delete('/deleteMessage/:id', async (req, res) => {
         for(var x=0;x<numFollowed;x++){
             if(followedUser[i].followedUsers[x]==req.user.id){
                 followedUser[i].followedUsers.splice(x,1);
-<<<<<<< HEAD
-                followedUser[i].save();
-                //x--;
-                //numFollowed--;
-            }
-        }
-    }
-   // await followedUser.save();
-=======
                 x--;
                 numFollowed--;
             }
         }
     }
     await followedUser.save();
->>>>>>> e2ee036922834edca825bee36254f70db98858ad
 
     //DELETE COMMENTS BY USER ON MIXTAPES
     const commentedMixtapes = await Mixtape.find({ 'comments.author.user':req.user.id});
@@ -400,22 +354,12 @@ router.delete('/deleteMessage/:id', async (req, res) => {
             if(commentedMixtapes[i].comments[x].author.user==req.user.id){
                 console.log("good compar");
                 commentedMixtapes[i].comments.splice(x,1);
-<<<<<<< HEAD
-                commentedMixtapes[i].save();
-                //x--;
-                //numComments--;
-            }
-        }
-    }
-    //await commentedMixtapes.save();
-=======
                 x--;
                 numComments--;
             }
         }
     }
     await commentedMixtapes.save();
->>>>>>> e2ee036922834edca825bee36254f70db98858ad
 
     await User.findByIdAndDelete(Types.ObjectId(req.user.id));
  })
