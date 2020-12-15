@@ -77,10 +77,13 @@ function ViewUserPage(props) {
     async function getUserInfo() {
       if (id) {
         const userInfo = await getUser(id);
+        console.log("userinfo:" + userInfo);
         setUserState(userInfo);
         const userCreatedMixtapes = await getCreatedMixtapes(id);
+        console.log("user created mixtapes: " + userCreatedMixtapes);
         setCreatedMixtapes(userCreatedMixtapes);
         const userFavoritedMixtapes = await getFavoritedMixtapes(id);
+        console.log("user favorited mixtapes: " + userFavoritedMixtapes);
         setFavoritedMixtapes(userFavoritedMixtapes);
       }
     }
