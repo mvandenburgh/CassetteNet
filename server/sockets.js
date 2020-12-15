@@ -140,12 +140,14 @@ function initSockets(io) {
                 listeningRoom.markModified('mixtape.songs');
                 listeningRoom.startedAt = (Date.now() / 1000) + 8; // its usually off by about 4 seconds
                 listeningRoom.wasAt = 0;
+                const rhythmScores = listeningRoom.rhythmScores;
+                const snakeScores = listeningRoom.snakeScores;
                 listeningRoom.rhythmScores = new Map();
                 listeningRoom.snakeScores = new Map();
                 listeningRoom.markModified('rhythmScores');
                 listeningRoom.markModified('snakeScores');
                 await listeningRoom.save();
-                io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl });
+                io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl, snakeScores: snakeScores, rhythmScores: rhythmScores });
             }
         });
 

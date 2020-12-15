@@ -131,12 +131,13 @@ function ListeningRoomPage(props) {
 
     const [scores, setScores] = useState([]);
 
+    const [gameOver, setGameOver] = useState(false);
+
     useInterval(() => {
         if (screen !== 'home') {
             getGameScores(listeningRoom._id, screen).then(newScores => setScores(newScores));
         }
     }, 3000);
-
     const lrRef = useRef(listeningRoom);
 
     useEffect(() => lrRef.current = listeningRoom);
@@ -161,7 +162,12 @@ function ListeningRoomPage(props) {
                     newListeningRoom.chatMessages = newChatMessages;
                     setListeningRoom(newListeningRoom);
                 });
-                socket.on('changeSong', () => {
+                socket.on('changeSong', ({snakeScores, rhythmScores}) => {
+                    setGameOver(true);
+                    // TODO: have popup here showing final scores and winner
+                    console.log(snakeScores)
+                    setScores([]);
+                    // setScreen('home');
                     getListeningRoom(props.match.params.id).then(lr => {
                         setListeningRoom(lr);
                         setPlaying(true);
@@ -221,12 +227,7 @@ function ListeningRoomPage(props) {
     useEffect(() => {
         if (screen !== 'home') {
             getGameScores(listeningRoom._id, screen).then(newScores => {
-                const scoresArray = [];
-                for (const score in newScores) {
-                    scoresArray.push({ score: newScores[score], user: score });
-                }
-                console.log(scoresArray)
-                setScores(scoresArray);
+                setScores(newScores);
             });
         }
     }, [screen]);
@@ -289,7 +290,7 @@ function ListeningRoomPage(props) {
                 setQueuedUpForRhythmGame(false);
                 setShowQueueSuccessMessage(false);
                 setShowDequeueSuccessMessage(true);
-                setScreen('main');
+                setScreen('home');
             }
         }
     });
@@ -370,12 +371,10 @@ function ListeningRoomPage(props) {
                                 </Grid> */}
                                 <Grid style={{ height: '75vh' }} item xs={12}>
                                     <Grid container style={{ height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
-                                        <Paper onKeyDown={e => {        //ignores scrolling on arrow keys
-                                            console.log(e);
+                                        <Paper onKeyDown={e => {      
                                             if (e.key === "ArrowUp" || e.key === "ArrowDown") {
                                                 e.stopPropagation();
                                                 e.preventDefault();
-                                                console.log(e.key);
                                                 return false;
                                             }
                                             e.stopPropagation();
@@ -385,7 +384,7 @@ function ListeningRoomPage(props) {
                                             {screen === 'rhythm' ?
                                                 <RhythmGame scores={scores} setScores={setScores} songStarted={songStarted} gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} />
                                                 : screen === 'snake' ?
-                                                    <SnakeGame gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} scores={scores} setScores={setScores} /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
+                                                    <SnakeGame gameOver={gameOver} setGameOver={setGameOver} gameScreenStartX={gameScreenStartX} gameScreenEndX={gameScreenEndX} gameScreenStartY={gameScreenStartY} gameScreenEndY={gameScreenEndY} gameScreenHeight={gameScreenHeight} gameScreenWidth={gameScreenWidth} listeningRoom={listeningRoom} scores={scores} setScores={setScores} /> : <Grid container style={{ height: '90%', display: 'flex', justifyContent: 'center', marginTop: '5%' }}>
                                                         <Grid item xs={2} />
                                                         <Grid item xs={10}>
                                                             <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>
