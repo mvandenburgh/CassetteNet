@@ -156,7 +156,7 @@ function PageFrame({ setSidebarLength }) {
               <Avatar onClick={() => history.push('/me')} alt={user.username} style={{ left: '50%', cursor: 'pointer' }} src={getUserProfilePictureUrl(user._id)} />
             </Grid>
             <Grid alignItems="center" item xs={0.5}>
-              {user?.isLoggedIn ?
+              {user?.isLoggedIn && !user?.isGuest ?
                 <Button style={{ margin: 'auto' }} onClick={() => logout()} variant="contained">Logout</Button>
                 : undefined
               }
