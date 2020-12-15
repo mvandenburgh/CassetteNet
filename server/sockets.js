@@ -115,6 +115,7 @@ function initSockets(io) {
                             console.log(score, max);
                             if (score > max) {
                                 winners = [{user: userId, username: scoreUser.username}];
+                                max = score;
                             } else if (score === max) {
                                 winners.push({user: userId, username: scoreUser.username});
                             }

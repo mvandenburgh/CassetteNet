@@ -405,13 +405,13 @@ function ListeningRoomPage(props) {
                                                                 </Grid>
                                                             <Grid item xs={3} />
                                                         </Grid>
-                                                        <Grid container style={{ height: '20%', backgroundColor: 'yellow' }}>
+                                                        {/* <Grid container style={{ height: '20%', backgroundColor: 'yellow' }}>
                                                             <Grid style={{ backgroundColor: 'pink' }} item xs={4} />
                                                             <Grid item xs={4}>
                                                                 <Button style={{ height: '100%', width: '100%' }} variant="contained">Start Game</Button>
                                                             </Grid>
                                                             <Grid style={{ backgroundColor: 'orange' }} item xs={4} />
-                                                        </Grid>
+                                                        </Grid> */}
                                                     </Grid>
                                             }
                                         </Paper>
@@ -431,7 +431,7 @@ function ListeningRoomPage(props) {
                                         <Grid container>
                                             <Grid item xs={12} style={{}}>
                                                 {scores ? scores?.map(score => (
-                                                    <> {score.username}: {score.score} </>
+                                                    <div> {score.username}: {score.score} </div>
                                                 )) : undefined}
                                             </Grid>
                                         </Grid>
