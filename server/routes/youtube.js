@@ -32,7 +32,7 @@ router.get('/search', async (req, res) => {
             name: result.title,
             description: result.description,
             coverImage: result.bestThumbnail.url,
-            duration: parseYtplDuration(result.duration),
+            duration: result && result.duration ? parseYtplDuration(result.duration) : null,
             type: 'youtube',
             playbackUrl: `https://www.youtube.com/watch?v=${result.id}`,
         }));
