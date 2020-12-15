@@ -196,13 +196,13 @@ function PageFrame({ setSidebarLength }) {
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
               </ListItem>
-              <ListItem onClick={() => history.push('/me')} button>
+              <ListItem onClick={() => history.push('/me')} button style={user.isGuest ? { display: 'none' } : {}}>
                 <ListItemIcon>
                   <MyProfileIcon className={classes.icon} />
                 </ListItemIcon>
                 <ListItemText primary="My Profile" />
               </ListItem>
-              <ListItem onClick={() => history.push('/mymixtapes')} button>
+              <ListItem onClick={() => history.push('/mymixtapes')} button style={user.isGuest ? { display: 'none' } : {}}>
                 <ListItemIcon>
                   <CassetteTapeIcon className={classes.icon} />
                 </ListItemIcon>

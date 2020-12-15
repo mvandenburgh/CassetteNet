@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Avatar from '@atlaskit/avatar';
 import Comment, { CommentAuthor, CommentTime } from '@atlaskit/comment';
 import TextArea from '@atlaskit/textarea';
 import { Button, Grid, Paper } from '@material-ui/core';
 import dateFormat from 'dateformat';
 import { commentOnMixtape, getUserProfilePictureUrl } from '../utils/api';
+import UserContext from '../contexts/UserContext';
+import Tooltip from '@material-ui/core/Tooltip';
 
 function MixtapeComments({ mixtape, setMixtape }) {
     const [comment, setComment] = useState('');
-
+    const { user, setUser } = useContext(UserContext);
     const postComment = () => {
         commentOnMixtape(mixtape._id, comment)
             .then(newComments => {
@@ -30,7 +32,25 @@ function MixtapeComments({ mixtape, setMixtape }) {
                     />
                 </Grid>
                 <Grid item xs={1}>
-                    <Button onClick={postComment} variant="contained" style={{ height: '100%', width: '100%' }}>POST COMMENT</Button>
+                    <Tooltip title={(!user._id) ? 'Log in to use this feature!' : '' } >
+                        <span>
+                            <Button onClick={postComment} 
+                                variant="contained" 
+                                disabled={!user._id}
+                                style={ !user._id ? 
+                                        {
+                                            height: '100%', 
+                                            width: '100%'
+                                        } :
+                                        { 
+                                            height: '100%', 
+                                            width: '100%' }
+                                        
+                                        }>
+                                    POST COMMENT
+                            </Button>
+                        </span>
+                    </Tooltip>
                 </Grid>
             </Grid>
             {mixtape?.comments?.map(comment => (

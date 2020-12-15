@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { followUser, unfollowUser } from '../utils/api';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -17,20 +17,34 @@ function FollowUserButton(props) {
             followedUsers = await followUser(props.id);
         }
         const newUser = { ...user };
-        newUser.followedUsers = followedUsers;
+        if(followedUsers) {
+            newUser.followedUsers = followedUsers;
+        }
+        else {
+            newUser.followedUsers = [];
+        }
+        
         setUser(newUser);
         setDisabled(false);
     }
     return (
-        <Tooltip title="You may not follow yourself"  
-        disableHoverListener={!(props.id == user?._id)}
-        >
+        
+        <Tooltip title={(!user._id
+                            ? 'Log in to use this feature!'
+                            : user._id == props.id ? 'You may not follow yourself.' : '' )} >
             <span>
                 <Button
-                    disabled={disabled || user._id == props.id}
+                    disabled={(!user._id|| disabled || user._id == props.id)}
                     variant="contained"
                     boxShadow={3}
-                    style={{
+                    style={!user.followedUsers ? {
+                        marginTop: '20px',
+                        height: '45px',
+                        width: '80px',
+                        color: 'white',
+                        background: 'linear-gradient(45deg, #6b6b6b 30%, #3b3b3b 90%)'
+                    } : 
+                    {
                         marginTop: '20px',
                         height: '45px',
                         width: '80px',
@@ -38,10 +52,10 @@ function FollowUserButton(props) {
                     }}
                     onClick={followButtonHandler}
                 > 
-                {user.followedUsers.map(u => u._id).includes(props.id) ? 'Unfollow' : 'Follow'} 
+                    {user.followedUsers ? (user.followedUsers?.map(u => u._id).includes(props.id) ? 'Unfollow' : 'Follow') : 'follow'} 
                 </Button>
             </span>
-        </Tooltip>
+            </Tooltip>
     )
 }
 
