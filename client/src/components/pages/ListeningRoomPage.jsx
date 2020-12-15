@@ -39,9 +39,6 @@ import ListeningRoomPlayer from '../listeningroom/ListeningRoomPlayer';
 import { useInterval, useEventListener } from '../../hooks';
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import MusicVideoIcon from '@material-ui/icons/MusicVideo';
-import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
-import { motion } from 'framer-motion';
-import { green } from '@material-ui/core/colors';
 import snakeIcon from '../../images/snakeIcon.png';
 
 function TabPanel(props) {
