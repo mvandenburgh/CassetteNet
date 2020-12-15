@@ -20,7 +20,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { blueGrey } from '@material-ui/core/colors';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles,ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { AddCircleOutline as InviteUserIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import Mixtape from '../Mixtape';
@@ -37,7 +37,12 @@ import RhythmGame from '../listeningroom/RhythmGame';
 import SnakeGame from '../Snake/SnakeGame';
 import ListeningRoomPlayer from '../listeningroom/ListeningRoomPlayer';
 import { useInterval, useEventListener } from '../../hooks';
-
+import MusicNoteIcon from '@material-ui/icons/MusicNote';
+import MusicVideoIcon from '@material-ui/icons/MusicVideo';
+import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
+import { motion } from 'framer-motion';
+import { green } from '@material-ui/core/colors';
+import snakeIcon from '../../images/snakeIcon.png';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -95,6 +100,13 @@ function ListeningRoomPage(props) {
         return unlisten;
     }, []);
 
+    const theme = createMuiTheme({
+        palette: {
+          primary: {
+            main:'#FFFFFF',
+          },
+        },
+      });
 
     const { user } = useContext(UserContext);
 
@@ -377,18 +389,23 @@ function ListeningRoomPage(props) {
                                                         <Grid item xs={2} />
                                                         <Grid item xs={10}>
                                                             <Paper variant="outlined" style={{ background: '#305B8D', color: 'white', height: '70%', width: '80%' }}>
-                                                                <Typography variant="h5">Select the game you want to play:</Typography>
+                                                                <Typography align="center" variant="h4">Select the game you want to play:</Typography>
                                                             </Paper>
                                                             <Grid item xs={2} />
                                                         </Grid>
                                                         <Grid container style={{ height: '30%' }}>
                                                             <Grid item xs={3} />
                                                             <Grid style={{ backgroundColor: 'yellow', cursor: 'pointer' }} item xs={2} onClick={rhythmGameHandler}>
-                                                                Rhythm Game
+                                                                <MusicVideoIcon  style={{fontSize: 150, alignItems: 'center'}}/>
+                                                                <Typography align="center" variant="h5">Rhythm Game</Typography>
                                                                 </Grid>
                                                             <Grid item xs={2} />
-                                                            <Grid style={{ backgroundColor: 'green', cursor: 'pointer' }} item xs={2} onClick={snakeGameHandler}>
-                                                                Snake Game
+                                                            <Grid style={{ backgroundColor: 'black', cursor: 'pointer' }} item xs={2} onClick={snakeGameHandler}>
+                                                            <img align="center" src={snakeIcon} alt='logo' />
+                                                            <ThemeProvider theme={theme}>
+
+                                                            <Typography align="center" color="primary" variant="h5">Snake Game</Typography>
+                                                            </ThemeProvider>
                                                                 </Grid>
                                                             <Grid item xs={3} />
                                                         </Grid>
