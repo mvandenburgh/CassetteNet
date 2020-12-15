@@ -256,7 +256,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
                 volume={atmosphereVolume}
             />
             <Snackbar
-                open={!playing}
+                open={!playing && rhythmGame}
                 autoHideDuration={8000}
                 onClose={() => setRhythmGameStartingPopup(false)}
                 anchorOrigin={{

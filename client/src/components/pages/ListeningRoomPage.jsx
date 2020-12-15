@@ -110,6 +110,8 @@ function ListeningRoomPage(props) {
     const [endSessionPopupOpen, setEndSessionPopupOpen] = useState(false);
 
     const [queuedUpForRhythmGame, setQueuedUpForRhythmGame] = useState(false);
+    const queuedUpForRhythmGameRef = useRef();
+    useEffect(() => queuedUpForRhythmGameRef.current = queuedUpForRhythmGame, [queuedUpForRhythmGame]);
 
     // show alerts for queueing/dequeing from rhythm game
     const [showQueueSuccessMessage, setShowQueueSuccessMessage] = useState(false);
@@ -158,7 +160,7 @@ function ListeningRoomPage(props) {
                     setTimeout(history.goBack, 4000);
                 });
                 socket.on('rhythmGameAboutToBegin', () => {
-                    if (queuedUpForRhythmGame) {
+                    if (queuedUpForRhythmGameRef.current) {
                         setPlaying(false);
                         getListeningRoom(props.match.params.id).then(lr => {
                             setListeningRoom(lr);
@@ -242,14 +244,18 @@ function ListeningRoomPage(props) {
         e.preventDefault();
         e.stopPropagation();
         if (!queuedUpForRhythmGame) {
+            setQueuedUpForRhythmGame(true);
             setShowQueueSuccessMessage(true);
             setShowDequeueSuccessMessage(false);
+            socket.emit('queueRhythmGame');
+            
         } else {
+            setQueuedUpForRhythmGame(false);
             setShowDequeueSuccessMessage(true);
             setShowQueueSuccessMessage(false);
+            socket.emit('dequeueRhythmGame');
         }
-        socket.emit('queueRhythmGame');
-        setQueuedUpForRhythmGame(!queuedUpForRhythmGame);
+        
         
     }
     const snakeGameHandler = () => {
@@ -267,7 +273,7 @@ function ListeningRoomPage(props) {
         if (e.ctrlKey && e.code === 'Delete') {
             e.preventDefault();
             if (queuedUpForRhythmGame) {
-                socket.emit('queueRhythmGame');
+                socket.emit('dequeueRhythmGame');
                 setQueuedUpForRhythmGame(false);
                 setShowQueueSuccessMessage(false);
                 setShowDequeueSuccessMessage(true);
