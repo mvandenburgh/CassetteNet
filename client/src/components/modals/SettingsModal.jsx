@@ -237,7 +237,7 @@ function SettingsModal(props) {
                                                             value={unsavedCollaborators[index]?.permissions}
                                                             onChange={(e) => handleRoleChange(e, index)}
                                                         >
-                                                            <MenuItem value={'owner'}>Owner</MenuItem>
+                                                            {/* <MenuItem value={'owner'}>Owner</MenuItem> */}
                                                             <MenuItem value={'viewer'}>Viewer</MenuItem>
                                                             <MenuItem value={'editor'}>Editor</MenuItem>
                                                         </Select>
