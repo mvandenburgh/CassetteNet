@@ -63,7 +63,10 @@ function SnakeGame({ gameOver, setGameOver, gameScreenStartX, gameScreenEndX, ga
   const moveSnake = ({ keyCode }) => {
     
     var inputDir = directions[keyCode];
-    if((dir[0]!=(inputDir[0] * -1) || dir[1]!=(inputDir[1] * -1)) && keyCode >= 37 && keyCode <= 40){
+    if(inputDir==null || dir == null){
+      console.log("invalid input ");
+    }
+    else if((dir[0]!=(inputDir[0] * -1) || dir[1]!=(inputDir[1] * -1)) && keyCode >= 37 && keyCode <= 40){
       setDir(directions[keyCode]);
       setMove(keyCode);
     }
