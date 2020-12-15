@@ -21,7 +21,7 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
   const [speed, setSpeed] = useState(null);
   const [gameOver, setGameOver] = useState(false);
 
-  const gameSize = [gameScreenWidth, gameScreenHeight]
+  const gameSize = [gameScreenWidth-5, gameScreenHeight-5]
 
   const [move, setMove] = useState(null);
 
@@ -32,7 +32,7 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
 
   const endGame = () => {
     // resetGameScores(listeningRoom._id, 'snake').then(() => {
-      setSpeed(null);
+    setSpeed(null);
     setGameOver(true);
     setScore(0);
     // });
@@ -52,7 +52,10 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
     socket.emit('snakeScoreChange', 1);
   }
   const moveSnake = ({ keyCode }) => {
-    if(dir!==directions[keyCode] && keyCode >= 37 && keyCode <= 40){
+    
+    var inputDir = directions[keyCode];
+    console.log("input[0] " + inputDir[0] + "input[1] "+ inputDir[1]);
+    if((dir[0]!=(inputDir[0] * -1) || dir[1]!=(inputDir[1] * -1)) && keyCode >= 37 && keyCode <= 40){
       setDir(directions[keyCode]);
       setMove(keyCode);
     }
