@@ -289,11 +289,7 @@ router.delete('/deleteMessage/:id', async (req, res) => {
 })
 
  router.delete('/deleteUser/:id',async (req, res) => {
-<<<<<<< HEAD
-    if (!req.user) return res.status(401).send('unauthorized');
-=======
     if (!req.user || req.user.id !== req.params.id) return res.status(401).send('unauthorized');
->>>>>>> e2ee036922834edca825bee36254f70db98858ad
 
     //REMOVE MESSAGES SENT OR RECIEVED BY USER
     const inboxMessagesRec = await InboxMessage.deleteMany({ recipient: Types.ObjectId(req.user.id) });
