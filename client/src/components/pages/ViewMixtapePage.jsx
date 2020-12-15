@@ -369,6 +369,9 @@ function ViewMixtapePage(props) {
         setShareModalOpen(true);
     }
 
+    if (!mixtape) {
+        return null;
+    }
 
     return (
         <div style={{marginBottom: `${currentSong.playBarHeight}px`}}>
