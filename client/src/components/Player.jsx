@@ -304,12 +304,12 @@ function Player() {
               <motion.div variants={togglesVariants}
                 initial="hidden"
                 animate="visible"
-                style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+                style={{ color: 'black', marginRight: '20px' }}>
                 <AnimatingIcon onClick={handleAnimation} />
               </motion.div>
               :
               <div
-                style={{ color: loop ? 'red' : 'black', marginRight: '20px' }}>
+                style={{ color: 'black', marginRight: '20px' }}>
                 <AnimatingIcon onClick={handleAnimation} />
               </div>
             }
