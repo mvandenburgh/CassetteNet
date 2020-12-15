@@ -183,7 +183,7 @@ function ViewUserPage(props) {
             >
               <span>
                 <Button
-                  disabled={(user._id == userState._id)}
+                  disabled={(user._id == userState._id) || !user._id}
                   variant="contained"
                   style={!user._id ? 
                   {
