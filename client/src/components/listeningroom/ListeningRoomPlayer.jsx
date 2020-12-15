@@ -238,7 +238,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
                     max={1}
                     style={{ width: '20%' }} aria-labelledby="continuous-slider"
                 /> </>
-                : <CircularProgress />}
+                : <CircularProgress onClick={handleNextSong} />}
             </Grid>
             <ReactPlayer
                 onEnded={handleNextSong}

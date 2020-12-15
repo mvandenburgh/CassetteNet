@@ -106,36 +106,37 @@ function initSockets(io) {
                 if (listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId) { // stop current stream if it exists
                     stopCurrentStream(listeningRoom);
                 }
-                let max = 0;
-                let winners = [];
-                for ([userId, score] of listeningRoom.rhythmScores) {
-                    const scoreUser = await User.findById(userId).lean();
-                    if (scoreUser) {
-                        console.log(score, max);
-                        if (score > max) {
-                            winners = [{user: userId, username: scoreUser.username}];
-                        } else if (score === max) {
-                            winners.push({user: userId, username: scoreUser.username});
+                if (listeningRoom.rhythmScores && listeningRoom.rhythmScores.size > 0) {
+                    let max = 0;
+                    let winners = [];
+                    for ([userId, score] of listeningRoom.rhythmScores) {
+                        const scoreUser = await User.findById(userId).lean();
+                        if (scoreUser) {
+                            console.log(score, max);
+                            if (score > max) {
+                                winners = [{user: userId, username: scoreUser.username}];
+                            } else if (score === max) {
+                                winners.push({user: userId, username: scoreUser.username});
+                            }
                         }
                     }
-                }
-                let message;
-                if (winners.length === 1) {
-                    message = `${winners[0].username} won the rhythm game!`;
-                } else if (winners.length === 0) {
-                    message = 'No one wins the rhythm game!';
-                } else {
-                    message = 'It was a tie between '
-                    for (let i = 0; i < winners.length; i++) {
-                        message += winners[i].username;
-                        if (i < winners.length-1) {
-                            message += ', ';
+                    let message;
+                    if (winners.length === 1) {
+                        message = `${winners[0].username} won the rhythm game!`;
+                    } else if (winners.length === 0) {
+                        message = 'No one wins the rhythm game!';
+                    } else {
+                        message = 'It was a tie between '
+                        for (let i = 0; i < winners.length; i++) {
+                            message += winners[i].username;
+                            if (i < winners.length-1) {
+                                message += ', ';
+                            }
                         }
+                        message += '!';
                     }
-                    message += '!';
+                    listeningRoom.chatMessages.push({ message, timestamp: Date.now(), from: { username: '#ChatBot' }}); // will always be unique since usernames aren't allowed to start with #
                 }
-                listeningRoom.chatMessages.push({ message, timestamp: Date.now(), from: { username: '#ChatBot' }}); // will always be unique since usernames aren't allowed to start with #
-
                 listeningRoom.currentSong = index;
                 if (listeningRoom.rhythmGameQueue.length > 0) {
                     io.in(roomId).emit('rhythmGameAboutToBegin');

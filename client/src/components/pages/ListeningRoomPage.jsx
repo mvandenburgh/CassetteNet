@@ -128,7 +128,7 @@ function ListeningRoomPage(props) {
 
     const [scores, setScores] = useState([]);
 
-    const [gameOver, setGameOver] = useState(false);
+    // const [gameOver, setGameOver] = useState(false);
 
     useInterval(() => {
         if (screen !== 'home') {
@@ -419,6 +419,7 @@ function ListeningRoomPage(props) {
                                 </Grid>
                             </Grid>
                             <Grid item xs={3} style={{ backgroundColor: '#ACDCFF', height: '100%' }}>
+                                {screen === 'rhythm' ?
                                 <Paper style={{ margin: '2%', backgroundColor: "white", height: '48%' }}>
                                     <Grid container alignItems="center" direction="row" style={{ height: '10%' }}>
                                         <Grid item xs={12}>
@@ -436,7 +437,8 @@ function ListeningRoomPage(props) {
                                         </Grid>
                                     </Grid>
                                 </Paper>
-                                <Paper style={{ margin: '2%', backgroundColor: "white", height: '48%' }}>
+                                : undefined}
+                                <Paper style={{ margin: '2%', backgroundColor: "white", height: screen === 'rhythm' ? '48%' : '95%' }}>
                                     <Grid container style={{ height: '10%' }}>
                                         <Typography style={{ fontSize: '2em' }} alignItems="center">Chat</Typography>
                                     </Grid>

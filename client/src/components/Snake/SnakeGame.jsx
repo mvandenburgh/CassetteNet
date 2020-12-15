@@ -12,13 +12,14 @@ import SocketIOContext from '../../contexts/SocketIOContext';
 import UserContext from '../../contexts/UserContext';
 import { resetPlayerScore } from '../../utils/api';
 
-function SnakeGame({ gameOver, setGameOver, gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom, scores, setScores }) {
+function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom, scores, setScores }) {
   const canvasRef = useRef();
   const [snake, setSnake] = useState(snakePos);
   const [apple, setApple] = useState(goalPos);
   const [score,setScore] = useState(0);
   const [dir, setDir] = useState([0, -1]);
   const [speed, setSpeed] = useState(null);
+  const [gameOver, setGameOver] = useState(false);
 
   const gameSize = [gameScreenWidth, gameScreenHeight]
 
