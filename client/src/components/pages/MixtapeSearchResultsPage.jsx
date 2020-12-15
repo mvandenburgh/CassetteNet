@@ -11,10 +11,7 @@ import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
 import ShareMixtapeModal from '../modals/ShareMixtapeModal';
 
 function MixtapeSearchResultsPage(props) {
-    let { user } = useContext(UserContext);
-    if (!user.isLoggedIn) {
-        user = JSON.parse(localStorage.getItem('user'));
-    }
+    const { user } = useContext(UserContext);
 
     const [mixtapes, setMixtapes] = useState([]);
 

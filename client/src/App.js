@@ -51,15 +51,17 @@ function App() {
       .catch(err => setUser({ isLoggedIn: false }));
   }, []);
 
-
   // check if song is playing
   let currentSongDefault = JSON.parse(localStorage.getItem('currentSong'));
   if (!currentSongDefault) {
     currentSongDefault = {};
   }
   const [currentSong, setCurrentSong] = useState(currentSongDefault);
+
   useEffect(() => {
-    localStorage.setItem('currentSong', JSON.stringify(currentSong));
+    if (user) {
+      localStorage.setItem('currentSong', JSON.stringify(currentSong));
+    }
   }, [JSON.stringify(currentSong)]);
 
 
