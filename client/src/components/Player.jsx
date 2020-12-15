@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
-import { makeStyles, Card, CardContent, CardMedia, Grid, Typography, IconButton, Slider as VolumeSlider } from '@material-ui/core';
+import { makeStyles, Card, CardContent, CardMedia, Grid, Typography, CircularProgress, Slider as VolumeSlider } from '@material-ui/core';
 import { Mood as AnimatingIcon, Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
 import ReactPlayer from 'react-player';
 import { useInterval } from '../hooks';
@@ -117,6 +117,8 @@ function Player() {
 
   const [currentTime, setCurrentTime] = useState(null);
 
+  const [buffering, setBuffering] = useState(false);
+
   const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
 
   const currentSongRef = useRef();
@@ -151,6 +153,7 @@ function Player() {
     if (currentSong.disabled === currentSong.mixtape._id) {
       return;
     }
+    setBuffering(true);
     setPlaying(true);
     if (!currentTime) {
       playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
@@ -165,6 +168,7 @@ function Player() {
 
   const handleNextSong = () => {
     setPlaying(false);
+    setBuffering(true);
     const newCurrentSong = { ...currentSong };
     if (shuffle) {
       newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
@@ -179,6 +183,7 @@ function Player() {
 
   const handlePrevSong = () => {
     setPlaying(false);
+    setBuffering(true);
     const newCurrentSong = { ...currentSong };
     if (shuffle) {
       newCurrentSong.index = Math.floor(Math.random() * currentSong.mixtape.songs.length);
@@ -322,7 +327,7 @@ function Player() {
               <motion.div variants={togglesVariants}
                 initial="hidden"
                 animate="visible"
-                style={{marginRight: '20px' }}>
+                style={{ marginRight: '20px' }}>
                 <AtmosphereSoundsIcon
                   style={{ color: atmosphereSound.isPlaying ? 'blue' : 'black' }}
                   onClick={atmosphereButtonHandler}
@@ -330,7 +335,7 @@ function Player() {
               </motion.div>
               :
               <div
-                style={{marginRight: '20px' }}>
+                style={{ marginRight: '20px' }}>
                 <AtmosphereSoundsIcon
                   style={{ color: atmosphereSound.isPlaying ? 'blue' : 'black' }}
                   onClick={atmosphereButtonHandler}
@@ -343,20 +348,26 @@ function Player() {
                 initial="hidden"
                 animate="visible">
                 <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-                {playing ?
-                  <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-                  <PlayerIcon.Play
-                    onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+                {
+                  buffering ? <CircularProgress /> :
+                    playing ?
+                      <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+                      <PlayerIcon.Play
+                        onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
                 }
                 <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
               </motion.div>
               :
               <div>
                 <PlayerIcon.Previous onClick={handlePrevSong} width={32} height={32} style={{ marginRight: 32 }} />
-                {playing ?
-                  <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
-                  <PlayerIcon.Play
-                    onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
+                {
+                  buffering ?
+                  <CircularProgress direction="column" style={{marginRight: '2em'}} /> 
+                  :
+                    playing ?
+                      <PlayerIcon.Pause onClick={throttle(handlePause, 1000)} width={32} height={32} style={{ marginRight: 32 }} /> :
+                      <PlayerIcon.Play
+                        onClick={throttle(handlePlay, 1000)} width={32} height={32} style={{ marginRight: 32 }} />
                 }
                 <PlayerIcon.Next onClick={handleNextSong} width={32} height={32} style={{ marginRight: 32 }} />
               </div>
@@ -405,6 +416,9 @@ function Player() {
       </Grid>
       <ReactPlayer
         onEnded={() => loop ? playerRef.current.seekTo(0) : handleNextSong()}
+        onStart={() => setBuffering(false)}
+        onBuffer={() => setBuffering(true)}
+        onBufferEnd={() => setBuffering(false)}
         ref={playerRef} playing={playing} style={{ display: 'none' }}
         url={currentSong?.mixtape?.songs[currentSong.index].playbackUrl}
         volume={musicVolume}
