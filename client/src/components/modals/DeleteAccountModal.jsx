@@ -5,6 +5,7 @@ import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/sty
 import { green } from '@material-ui/core/colors';
 import { deleteUser } from '../../utils/api';
 import UserContext from '../../contexts/UserContext';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -18,6 +19,7 @@ function DeleteAccountModal(props) {
     const { user, setUser } = useContext(UserContext);
     const classes = useStyles();
     const { open, setOpen } = props;
+    const history = useHistory();
 
     const theme = createMuiTheme({
         palette: {
@@ -27,6 +29,7 @@ function DeleteAccountModal(props) {
       const deleteAccountHandler = async () => {
         deleteUser(user._id);
         setOpen(false);
+        window.location.reload();
     }
 
     return (
