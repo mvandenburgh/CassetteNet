@@ -289,7 +289,11 @@ router.delete('/deleteMessage/:id', async (req, res) => {
 })
 
  router.delete('/deleteUser/:id',async (req, res) => {
+<<<<<<< HEAD
     if (!req.user) return res.status(401).send('unauthorized');
+=======
+    if (!req.user || req.user.id !== req.params.id) return res.status(401).send('unauthorized');
+>>>>>>> e2ee036922834edca825bee36254f70db98858ad
 
     //REMOVE MESSAGES SENT OR RECIEVED BY USER
     const inboxMessagesRec = await InboxMessage.deleteMany({ recipient: Types.ObjectId(req.user.id) });
@@ -304,6 +308,7 @@ router.delete('/deleteMessage/:id', async (req, res) => {
     //activities.splice(0,activities.length);
     //activities.save();
 
+<<<<<<< HEAD
     // //REMOVE USER FROM COLLABORATED MIXTAPES
     const collabMixtapes = await Mixtape.find({'collaborators.user': Types.ObjectId(req.user.id)});
     for(var i=0;i<collabMixtapes.length;i++){
@@ -330,14 +335,37 @@ router.delete('/deleteMessage/:id', async (req, res) => {
                 await Mixtape.findByIdAndDelete(mixtape);
                 //i=i-1;
                 //numMixtapes--;
+=======
+    // DELETE USER CREATED MIXTAPES AND REMOVE THEM FROM COLLABORATOR MIXTAPES
+    const promises = [];
+    const collabMixtapes = await Mixtape.find({'collaborators.user': Types.ObjectId(req.user.id)});
+
+    for (const mixtape of collabMixtapes) {
+        for (const collaborator of mixtape.collaborators) {
+            if (collaborator.user.equals(req.user.id)) {
+                if (collaborator.permissions === 'owner') { // if the user owns this mixtape, just delete the whole thing
+                    promises.push(mixtape.deleteOne());
+                } else { // otherwise, just remove them from the collaborators list
+                    const newCollaborators = mixtape.collaborators.filter(c => !c.user.equals(req.user.id));
+                    mixtape.collaborators = newCollaborators;
+                    promises.push(mixtape.save());
+                }
+>>>>>>> e2ee036922834edca825bee36254f70db98858ad
                 break;
             }
         }
     }
+<<<<<<< HEAD
     
 
     //DELETE USER FROM FOLLOWED USERS
     const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)});
+=======
+    await Promise.all(promises);
+
+    //DELETE USER FROM FOLLOWED USERS
+    const followedUser = await User.find({followedUsers: Types.ObjectId(req.user.id)}).lean();
+>>>>>>> e2ee036922834edca825bee36254f70db98858ad
     console.log("users that follow me: " + followedUser);
     var usersArrMax= followedUser.length;
     for(var i=0;i<usersArrMax;i++){
@@ -345,6 +373,7 @@ router.delete('/deleteMessage/:id', async (req, res) => {
         for(var x=0;x<numFollowed;x++){
             if(followedUser[i].followedUsers[x]==req.user.id){
                 followedUser[i].followedUsers.splice(x,1);
+<<<<<<< HEAD
                 followedUser[i].save();
                 //x--;
                 //numFollowed--;
@@ -352,6 +381,14 @@ router.delete('/deleteMessage/:id', async (req, res) => {
         }
     }
    // await followedUser.save();
+=======
+                x--;
+                numFollowed--;
+            }
+        }
+    }
+    await followedUser.save();
+>>>>>>> e2ee036922834edca825bee36254f70db98858ad
 
     //DELETE COMMENTS BY USER ON MIXTAPES
     const commentedMixtapes = await Mixtape.find({ 'comments.author.user':req.user.id});
@@ -363,6 +400,7 @@ router.delete('/deleteMessage/:id', async (req, res) => {
             if(commentedMixtapes[i].comments[x].author.user==req.user.id){
                 console.log("good compar");
                 commentedMixtapes[i].comments.splice(x,1);
+<<<<<<< HEAD
                 commentedMixtapes[i].save();
                 //x--;
                 //numComments--;
@@ -370,6 +408,14 @@ router.delete('/deleteMessage/:id', async (req, res) => {
         }
     }
     //await commentedMixtapes.save();
+=======
+                x--;
+                numComments--;
+            }
+        }
+    }
+    await commentedMixtapes.save();
+>>>>>>> e2ee036922834edca825bee36254f70db98858ad
 
     await User.findByIdAndDelete(Types.ObjectId(req.user.id));
  })

@@ -171,6 +171,7 @@ function initSockets(io) {
                 listeningRoom.rhythmScores.set(user._id.toString(), changeBy);
             }
             await listeningRoom.save();
+            io.in(roomId).emit('rhythmScoreChange');
         });
 
         socket.on('snakeScoreChange', async (changeBy) => {
@@ -185,6 +186,7 @@ function initSockets(io) {
                 listeningRoom.snakeScores.set(user._id.toString(), changeBy);
             }
             await listeningRoom.save();
+            io.in(roomId).emit('snakeScoreChange');
         });
     });
 }

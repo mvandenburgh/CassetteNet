@@ -9,9 +9,10 @@ import {
 } from "./constants";
 import { Typography } from "@material-ui/core";
 import SocketIOContext from '../../contexts/SocketIOContext';
+import UserContext from '../../contexts/UserContext';
 import { resetGameScores } from '../../utils/api';
 
-function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom }) {
+function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom, scores, setScores }) {
   const canvasRef = useRef();
   const [snake, setSnake] = useState(snakePos);
   const [apple, setApple] = useState(goalPos);
@@ -21,22 +22,37 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
   const [gameOver, setGameOver] = useState(false);
 
   const gameSize = [gameScreenWidth, gameScreenHeight]
+<<<<<<< HEAD
   const [currentMove,setMove] = useState(38);
+=======
+
+  const [move, setMove] = useState(null);
+
+>>>>>>> e2ee036922834edca825bee36254f70db98858ad
   const { socket } = useContext(SocketIOContext);
+  const { user } = useContext(UserContext);
 
   useInterval(() => gameLoop(), speed);
 
   const endGame = () => {
-    resetGameScores(listeningRoom._id, 'snake').then(() => {
+    // resetGameScores(listeningRoom._id, 'snake').then(() => {
       setSpeed(null);
     setGameOver(true);
     setScore(0);
-    });
+    // });
 
     
   };
   const addScore=()=>{
     setScore(score+1);
+    const newScores = [...scores];
+    for (const s of newScores) {
+      if (s.user === user._id) {
+        s.score++;
+        break;
+      }
+    }
+    setScores(newScores);
     socket.emit('snakeScoreChange', 1);
   }
   const moveSnake = ({ keyCode }) => {
