@@ -295,7 +295,7 @@ router.delete('/deleteMessage/:id', async (req, res) => {
     const inboxMessagesRec = await InboxMessage.deleteMany({ recipient: Types.ObjectId(req.user.id) });
     //inboxMessagesRec.splice(0,inboxMessagesRec.length);
     //inboxMessagesRec.save();
-    const inboxMessagesSent = await InboxMessage.find({ senderId: Types.ObjectId(req.user.id) });
+    const inboxMessagesSent = await InboxMessage.deleteMany({ senderId: Types.ObjectId(req.user.id) });
     //inboxMessagesSent.splice(0,inboxMessagesSent.length);
     //inboxMessagesSent.save();
 
