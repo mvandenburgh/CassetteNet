@@ -58,7 +58,6 @@ function App() {
   }
   const [currentSong, setCurrentSong] = useState(currentSongDefault);
 
-  const [currentSong, setCurrentSong] = useState({});
   useEffect(() => {
     if (user) {
       localStorage.setItem('currentSong', JSON.stringify(currentSong));
