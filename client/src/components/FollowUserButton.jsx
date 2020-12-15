@@ -30,7 +30,7 @@ function FollowUserButton(props) {
     return (
         
         <Tooltip title={(!user._id
-                            ? 'Sign in to use this feature!'
+                            ? 'Log in to use this feature!'
                             : user._id == props.id ? 'You may not follow yourself.' : '' )} >
             <span>
                 <Button

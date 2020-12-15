@@ -77,13 +77,10 @@ function ViewUserPage(props) {
     async function getUserInfo() {
       if (id) {
         const userInfo = await getUser(id);
-        console.log("userinfo:" + userInfo);
         setUserState(userInfo);
         const userCreatedMixtapes = await getCreatedMixtapes(id);
-        console.log("user created mixtapes: " + userCreatedMixtapes);
         setCreatedMixtapes(userCreatedMixtapes);
         const userFavoritedMixtapes = await getFavoritedMixtapes(id);
-        console.log("user favorited mixtapes: " + userFavoritedMixtapes);
         setFavoritedMixtapes(userFavoritedMixtapes);
       }
     }
@@ -119,11 +116,6 @@ function ViewUserPage(props) {
   if (!userState.username) {
     return null;
   }
-
-  // const printThis = () => {
-  //   console.log("printThis");
-  //   console.log("user:" + user._id);
-  // }
 
   return (
     <div style={{ color: 'white', left: 0 }}>
@@ -185,14 +177,23 @@ function ViewUserPage(props) {
             <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth() + 1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>
             <Typography style={{ fontSize: '20px' }} variant="h3">Followers: {userState.followers}</Typography>
             <FollowUserButton id={userState?._id} />
-            <Tooltip title="You may not message yourself"  
-              disableHoverListener={!(userState?._id == user?._id)}
+            <Tooltip title={(!user._id
+                            ? 'Log in to use this feature!'
+                            : user._id == userState._id ? 'You may not message yourself.' : '' )}  
             >
               <span>
                 <Button
-                  disabled={userState?._id == user?._id}
+                  disabled={(user._id == userState._id)}
                   variant="contained"
-                  style={{
+                  style={!user._id ? 
+                  {
+                    marginTop: '20px',
+                    height: '45px',
+                    width: '80px',
+                    color: 'white',
+                    background: 'linear-gradient(45deg, #6b6b6b 30%, #3b3b3b 90%)'
+                    } :
+                  {
                     marginTop: '20px',
                     height: '45px',
                     width: '80px',
