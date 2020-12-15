@@ -88,8 +88,14 @@ function ViewMixtapePage(props) {
     const [apiToUse, setApiToUse] = useState('soundcloud');
 
     // add array of songs to current mixtape
-    const addSongs = async (songs) => {
-        // if (mixtape.songs.map(s => s.id).includes(song.id)) return;
+    const addSongs = async (songsToAdd) => {
+        const songs = [];
+        const mixtapeSongs = mixtape.songs.map(s => s.id);
+        for (const song of songsToAdd) {
+            if (!mixtapeSongs.includes(song.id)) {
+                songs.push(song);
+            }
+        }
         const newSongs = [...mixtape.songs];
         for (const song of songs) {
             console.log(song)
