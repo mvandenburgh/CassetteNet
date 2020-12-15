@@ -196,7 +196,7 @@ function PageFrame({ setSidebarLength }) {
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
               </ListItem>
-              <ListItem onClick={() => history.push('/me')} button>
+              <ListItem onClick={() => history.push('/me')} button style={user.isGuest ? { display: 'none' } : {}}>
                 <ListItemIcon>
                   <MyProfileIcon className={classes.icon} />
                 </ListItemIcon>

@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Favorite as FavoriteIcon } from '@material-ui/icons';
 import { favoriteMixtape, unfavoriteMixtape } from '../utils/api';
 import UserContext from '../contexts/UserContext';
+import Tooltip from '@material-ui/core/Tooltip';
 
 function FavoriteMixtapeButton(props) {
     const { user, setUser } = useContext(UserContext);
@@ -21,7 +22,22 @@ function FavoriteMixtapeButton(props) {
         setDisabled(false);
     }
     return (
-        <FavoriteIcon onClick={() => favoriteButtonClickHandler()} style={{color: disabled ? 'grey' : user?.favoritedMixtapes?.includes(props.id) ? 'red' : 'black', cursor:'pointer'}} /> 
+        <Tooltip title={(!user._id) ? 'Log in to use this feature!' : '' } >
+        <span>
+            <FavoriteIcon 
+                disabled={!user._id}
+                onClick={() => favoriteButtonClickHandler()} 
+                style={
+                    !user._id ? 
+                    {
+                        color: 'linear-gradient(45deg, #6b6b6b 30%, #3b3b3b 90%)', 
+                        display: 'none'
+                    } :
+                    {color: disabled ? 'grey' : user?.favoritedMixtapes?.includes(props.id) ? 'red' : 'black', cursor:'pointer'}
+                }
+            /> 
+        </span>
+        </Tooltip>
     )
 }
 
