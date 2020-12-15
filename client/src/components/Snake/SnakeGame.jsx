@@ -10,16 +10,15 @@ import {
 import { Typography } from "@material-ui/core";
 import SocketIOContext from '../../contexts/SocketIOContext';
 import UserContext from '../../contexts/UserContext';
-import { resetGameScores } from '../../utils/api';
+import { resetPlayerScore } from '../../utils/api';
 
-function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom, scores, setScores }) {
+function SnakeGame({ gameOver, setGameOver, gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScreenEndY, gameScreenHeight, gameScreenWidth, listeningRoom, scores, setScores }) {
   const canvasRef = useRef();
   const [snake, setSnake] = useState(snakePos);
   const [apple, setApple] = useState(goalPos);
   const [score,setScore] = useState(0);
   const [dir, setDir] = useState([0, -1]);
   const [speed, setSpeed] = useState(null);
-  const [gameOver, setGameOver] = useState(false);
 
   const gameSize = [gameScreenWidth, gameScreenHeight]
 
@@ -30,12 +29,22 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
 
   useInterval(() => gameLoop(), speed);
 
+  useEffect(() => gameOver ? setSpeed(null) : undefined, [gameOver]);
+
   const endGame = () => {
-    // resetGameScores(listeningRoom._id, 'snake').then(() => {
     setSpeed(null);
     setGameOver(true);
-    setScore(0);
-    // });
+    resetPlayerScore(listeningRoom._id).then(() => {
+      setScore(0);
+      const newScores = [...scores];
+      for (const s of newScores) {
+        if (s.user === user._id) {
+          s.score = 0;
+          break;
+        }
+      }
+      setScores(newScores);
+    });
 
 
   };
@@ -59,7 +68,7 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
       setMove(keyCode);
     }
   };
-    
+
 
   const createApple = () =>
     apple.map((_a, i) => Math.floor(Math.random() * ((gameSize[i] / scale)*0.85)));

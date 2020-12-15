@@ -326,8 +326,12 @@ async function getGameScores(listeningRoomId, gameType) {
     return scores.data;
 }
 
-async function resetGameScores(listeningRoomId, gameType) {
-    await axios.delete(new URL(`/api/listeningroom/${listeningRoomId}/${gameType}/scores`, SERVER_ROOT_URL).href);
+async function resetGameScores(listeningRoomId) {
+    await axios.delete(new URL(`/api/listeningroom/${listeningRoomId}/scores`, SERVER_ROOT_URL).href);
+}
+
+async function resetPlayerScore(listeningRoomId) {
+    await axios.delete(new URL(`/api/listeningroom/${listeningRoomId}/playerScores`, SERVER_ROOT_URL).href);
 }
 
 async function getExternalPlaylist(source, link) {
@@ -391,6 +395,7 @@ export {
     sendDM,
     getGameScores,
     resetGameScores,
+    resetPlayerScore,
     getExternalPlaylist,
     deleteUser,
     SERVER_ROOT_URL,
