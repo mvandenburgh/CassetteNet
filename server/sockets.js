@@ -106,6 +106,36 @@ function initSockets(io) {
                 if (listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId) { // stop current stream if it exists
                     stopCurrentStream(listeningRoom);
                 }
+                let max = 0;
+                let winners = [];
+                for ([userId, score] of listeningRoom.rhythmScores) {
+                    const scoreUser = await User.findById(userId).lean();
+                    if (scoreUser) {
+                        console.log(score, max);
+                        if (score > max) {
+                            winners = [{user: userId, username: scoreUser.username}];
+                        } else if (score === max) {
+                            winners.push({user: userId, username: scoreUser.username});
+                        }
+                    }
+                }
+                let message;
+                if (winners.length === 1) {
+                    message = `${winners[0].username} won the rhythm game!`;
+                } else if (winners.length === 0) {
+                    message = 'No one wins the rhythm game!';
+                } else {
+                    message = 'It was a tie between '
+                    for (let i = 0; i < winners.length; i++) {
+                        message += winners[i].username;
+                        if (i < winners.length-1) {
+                            message += ', ';
+                        }
+                    }
+                    message += '!';
+                }
+                listeningRoom.chatMessages.push({ message, timestamp: Date.now(), from: { username: '#ChatBot' }}); // will always be unique since usernames aren't allowed to start with #
+
                 listeningRoom.currentSong = index;
                 if (listeningRoom.rhythmGameQueue.length > 0) {
                     io.in(roomId).emit('rhythmGameAboutToBegin');
@@ -140,14 +170,16 @@ function initSockets(io) {
                 listeningRoom.markModified('mixtape.songs');
                 listeningRoom.startedAt = (Date.now() / 1000) + 8; // its usually off by about 4 seconds
                 listeningRoom.wasAt = 0;
-                const rhythmScores = listeningRoom.rhythmScores;
-                const snakeScores = listeningRoom.snakeScores;
+
+                await listeningRoom.save();
+
+                io.in(roomId).emit('newChatMessage', listeningRoom.chatMessages);
                 listeningRoom.rhythmScores = new Map();
                 listeningRoom.snakeScores = new Map();
                 listeningRoom.markModified('rhythmScores');
                 listeningRoom.markModified('snakeScores');
                 await listeningRoom.save();
-                io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl, snakeScores: snakeScores, rhythmScores: rhythmScores });
+                io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl });
             }
         });
 
