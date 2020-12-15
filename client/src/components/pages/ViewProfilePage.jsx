@@ -12,7 +12,8 @@ import UserProfilePictureUploadModal from '../modals/UserProfilePictureUploadMod
 import DeleteAccountModal from '../modals/DeleteAccountModal';
 import ChangePasswordConfirmationModal from '../modals/ChangePasswordConfirmationModal';
 import { getUserProfilePictureUrl } from '../../utils/api';
-
+import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
+import { motion } from 'framer-motion';
 
 function ViewProfilePage(props) {
   const useStyles = makeStyles((theme) => ({
@@ -23,7 +24,19 @@ function ViewProfilePage(props) {
       color: "white",
     }
   }));
-
+  
+  const { animating, setAnimating } = useContext(PlayerAnimationContext);
+  const togglesVariants = {
+    hidden: {
+      scale: 1
+    },
+    visible: {
+      scale: 1.2,
+      transition: {
+        yoyo: Infinity
+      }
+    }
+  }
   const colors = {
     namePfpContainer: blueGrey[900],
     tabsContainer: blueGrey[900],
@@ -90,8 +103,24 @@ function ViewProfilePage(props) {
             <Grid item xs={6}>
               <div style={{ display: 'inline-flex', flexDirection: 'column', paddingLeft: '30px', }}>
                 <span style={{ display: 'inline-flex', flexDirection: 'row', paddingTop: '30px', paddingBottom: '30px', height: '25%', }}>
+                
+                {animating?
+                <motion.div variants={togglesVariants}
+                initial="hidden"
+                animate="visible">
+                    
                   <Typography style={{ fontSize: '40px' }} variant="h3">{user.username}</Typography>
                   <Typography style={{ fontSize: '20px' }} variant="h3">#{user.uniqueId}</Typography>
+                </motion.div>
+                :
+                  <div>
+                    
+                  <Typography style={{ fontSize: '40px' }} variant="h3">{user.username}</Typography>
+                  <Typography style={{ fontSize: '20px' }} variant="h3">#{user.uniqueId}</Typography>
+                  </div>
+              
+                }
+                  
                 </span>
                 <Typography style={{ fontSize: '20px' }} variant="h3">User since: {userSince.getMonth() + 1}/{userSince.getDate()}/{userSince.getFullYear()}</Typography>
                 <Typography style={{ fontSize: '20px' }} variant="h3">Last activity: {lastActivity.getMonth() + 1}/{lastActivity.getDate()}/{lastActivity.getFullYear()}</Typography>

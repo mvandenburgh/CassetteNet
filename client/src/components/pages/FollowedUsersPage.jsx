@@ -6,6 +6,8 @@ import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
 import UserList from '../UserList';
+import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
+import { motion } from 'framer-motion';
 
 function FollowedUsersPage() {
 
@@ -16,6 +18,20 @@ function FollowedUsersPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { animating, setAnimating } = useContext(PlayerAnimationContext);
+
+    const togglesVariants = {
+        hidden: {
+        scale: 1
+        },
+        visible: {
+        scale: 1.1,
+        transition: {
+            yoyo: Infinity
+        }
+        }
+    }
 
   const changePageHandler = (event, pageNumber) => {
     setCurrentPage(pageNumber)
@@ -39,7 +55,18 @@ function FollowedUsersPage() {
         <ArrowBackIcon />
       </IconButton>
       <br />
-      <Typography variant="h2" style={{ textAlign: "center" }}> Followed Users </Typography>
+      {animating?
+                    <motion.div variants={togglesVariants}
+                    initial="hidden"
+                    animate="visible">
+                        <Typography variant="h2" style={{ textAlign: "center" }}> Followed Users </Typography>
+                    </motion.div>
+                    :
+                    <div>
+                        <Typography variant="h2" style={{ textAlign: "center" }}> Followed Users </Typography>
+                    </div>
+                }
+      
       <br />
       <Box style={{ width: "25%", display: 'flex', paddingLeft: '120px' }}>
         <br />
