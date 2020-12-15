@@ -21,7 +21,7 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
   const [speed, setSpeed] = useState(null);
   const [gameOver, setGameOver] = useState(false);
 
-  const gameSize = [gameScreenWidth-5, gameScreenHeight-5]
+  const gameSize = [gameScreenWidth, gameScreenHeight]
 
   const [move, setMove] = useState(null);
 
@@ -37,7 +37,7 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
     setScore(0);
     // });
 
-    
+
   };
   const addScore=()=>{
     setScore(score+1);
@@ -54,7 +54,6 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
   const moveSnake = ({ keyCode }) => {
     
     var inputDir = directions[keyCode];
-    console.log("input[0] " + inputDir[0] + "input[1] "+ inputDir[1]);
     if((dir[0]!=(inputDir[0] * -1) || dir[1]!=(inputDir[1] * -1)) && keyCode >= 37 && keyCode <= 40){
       setDir(directions[keyCode]);
       setMove(keyCode);
@@ -63,7 +62,7 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
     
 
   const createApple = () =>
-    apple.map((_a, i) => Math.floor(Math.random() * (gameSize[i] / scale)));
+    apple.map((_a, i) => Math.floor(Math.random() * ((gameSize[i] / scale)*0.85)));
 
   const checkCollision = (piece, snk = snake) => {
     if (
@@ -103,6 +102,8 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
   };
 
   const startGame = () => {
+    console.log("width " + gameScreenWidth);
+    console.log("height " + gameScreenHeight);
     setScore(0);
     setSnake(snakePos);
     setApple(goalPos);

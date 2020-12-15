@@ -196,7 +196,7 @@ function Player() {
       scale: 1
     },
     visible: {
-      scale: 1.5,
+      scale: 1.1,
       transition: {
         yoyo: Infinity
       }
@@ -207,7 +207,7 @@ function Player() {
       scale: 1
     },
     visible: {
-      scale: 1.1,
+      scale: 1.05,
       transition: {
         yoyo: Infinity
       }
@@ -322,17 +322,17 @@ function Player() {
               <motion.div variants={togglesVariants}
                 initial="hidden"
                 animate="visible"
-                style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+                style={{marginRight: '20px' }}>
                 <AtmosphereSoundsIcon
-                  style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
+                  style={{ color: atmosphereSound.isPlaying ? 'blue' : 'black' }}
                   onClick={atmosphereButtonHandler}
                 />
               </motion.div>
               :
               <div
-                style={{ color: shuffle ? 'red' : 'black', marginRight: '20px' }}>
+                style={{marginRight: '20px' }}>
                 <AtmosphereSoundsIcon
-                  style={{ color: atmosphereSound.isPlaying ? 'blue' : '' }}
+                  style={{ color: atmosphereSound.isPlaying ? 'blue' : 'black' }}
                   onClick={atmosphereButtonHandler}
                 />
               </div>

@@ -14,6 +14,8 @@ import { useHistory } from 'react-router-dom';
 import parse from 'html-react-parser';
 import { getUserProfilePictureUrl, deleteInboxMessage } from '../../utils/api';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
+import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
+import { motion } from 'framer-motion';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,6 +34,19 @@ function InboxPage() {
     const { user, setUser } = useContext(UserContext);
 
     const { currentSong } = useContext(CurrentSongContext);
+    const { animating, setAnimating } = useContext(PlayerAnimationContext);
+
+    const togglesVariants = {
+        hidden: {
+        scale: 1
+        },
+        visible: {
+        scale: 1.2,
+        transition: {
+            yoyo: Infinity
+        }
+        }
+    }
 
     const [viewMessageDialogIsOpen, setViewMessageDialogIsOpen] = useState(false); // whether add song popup is open
     const [displayedMessage, setDisplayedMessage] = useState(""); // whether add song popup is open
@@ -58,7 +73,18 @@ function InboxPage() {
                 <ArrowBackIcon />
             </IconButton>
             <Grid container align="center" justify="center">
-                <Typography variant="h2">Inbox</Typography>
+            {animating?
+                    <motion.div variants={togglesVariants}
+                    initial="hidden"
+                    animate="visible">
+                        <Typography variant="h2">Inbox</Typography>
+                    </motion.div>
+                    :
+                    <div>
+                        <Typography variant="h2">Inbox</Typography>
+                    </div>
+                }
+                
             </Grid>
             <Grid container align="center" justify="center">
                 <Box style={{

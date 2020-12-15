@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { IconButton, Box, Grid, Typography } from '@material-ui/core';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import ReactRoundedImage from 'react-rounded-image';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { getPopularMixtapes, getFollowedUsersActivity, getUserProfilePictureUrl, getRandomMixtapes, getMixtapeCoverImageUrl } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
+import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
+import { motion } from 'framer-motion';
+
 import parse from 'html-react-parser';
 
 const MixtapeRows = ({ mixtapes, history }) => (
@@ -51,7 +54,19 @@ const MixtapeRows = ({ mixtapes, history }) => (
 
 function DashboardPage(props) {
   const [userActivities, setUserActivities] = useState([]);
+  const { animating, setAnimating } = useContext(PlayerAnimationContext);
 
+  const togglesVariants = {
+    hidden: {
+      scale: 1
+    },
+    visible: {
+      scale: 1.1,
+      transition: {
+        yoyo: Infinity
+      }
+    }
+  }
   const colors = {
     namePfpContainer: blueGrey[900],
     tabsContainer: blueGrey[900],
@@ -110,7 +125,15 @@ function DashboardPage(props) {
         boxShadow: 6,
         width: '80%'
       }}>
+       {animating? 
+        <motion.div variants={togglesVariants}
+        initial="hidden"
+        animate="visible">
+          <Typography variant="h3"> Most Popular Mixtapes </Typography>
+        </motion.div>
+        :
         <Typography variant="h3"> Most Popular Mixtapes </Typography>
+       }
         <br />
         <Box style={{ backgroundColor: blueGrey[900], display: "flex", flexDirection: "row" }} >
           <Grid container>
@@ -158,7 +181,16 @@ function DashboardPage(props) {
         boxShadow: 6,
         width: '80%'
       }}>
+        {animating? 
+        <motion.div variants={togglesVariants}
+        initial="hidden"
+        animate="visible">
+          <Typography variant="h3">Followed User Activity</Typography>
+        </motion.div>
+        :
         <Typography variant="h3">Followed User Activity</Typography>
+       }
+        
         <br />
         <Box style={{
           marginTop: "5px",

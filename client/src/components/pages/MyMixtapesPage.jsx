@@ -9,6 +9,8 @@ import UserContext from '../../contexts/UserContext';
 import { getMyMixtapes } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
 import CreateMixtapeModal from '../modals/CreateMixtapeModal';
+import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
+import { motion } from 'framer-motion';
 
 const useStyles = makeStyles(theme => ({
     fab: {
@@ -26,7 +28,19 @@ function MyMixtapesPage(props) {
 
     const history = useHistory();
     const goBack = () => history.goBack();
+    const { animating, setAnimating } = useContext(PlayerAnimationContext);
 
+    const togglesVariants = {
+        hidden: {
+        scale: 1
+        },
+        visible: {
+        scale: 1.2,
+        transition: {
+            yoyo: Infinity
+        }
+        }
+    }
     if (!user?.isLoggedIn) {
         history.push('/');
     }
@@ -55,7 +69,17 @@ function MyMixtapesPage(props) {
                 <ArrowBackIcon />
             </IconButton>
             <Grid container justify="center">
-                <Typography variant="h2">My Mixtapes</Typography>
+                {animating?
+                    <motion.div variants={togglesVariants}
+                    initial="hidden"
+                    animate="visible">
+                        <Typography variant="h2">My Mixtapes</Typography>
+                    </motion.div>
+                    :
+                    <div>
+                        <Typography variant="h2">My Mixtapes</Typography>
+                    </div>
+                }
                 <Box style={{
                     maxHeight: '60vh',
                     overflow: 'auto',

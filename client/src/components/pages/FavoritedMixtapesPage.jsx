@@ -7,6 +7,8 @@ import CurrentSongContext from '../../contexts/CurrentSongContext';
 import UserContext from '../../contexts/UserContext';
 import { getFavoritedMixtapes } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
+import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
+import { motion } from 'framer-motion';
 
 function FavoritedMixtapesPage(props) {
     const { user } = useContext(UserContext);
@@ -14,6 +16,19 @@ function FavoritedMixtapesPage(props) {
         history.push('/');
     }
     const { currentSong } = useContext(CurrentSongContext);
+    const { animating, setAnimating } = useContext(PlayerAnimationContext);
+
+    const togglesVariants = {
+        hidden: {
+          scale: 1
+        },
+        visible: {
+          scale: 1.1,
+          transition: {
+            yoyo: Infinity
+          }
+        }
+      }
 
     const [mixtapes, setMixtapes] = useState(null);
 
@@ -40,7 +55,16 @@ function FavoritedMixtapesPage(props) {
                 <ArrowBackIcon />
             </IconButton>
             <Grid container justify="center">
+            {animating? 
+                <motion.div variants={togglesVariants}
+                initial="hidden"
+                animate="visible">
                 <Typography variant="h2">Favorite Mixtapes</Typography>
+                </motion.div>
+                :
+                <Typography variant="h2">Favorite Mixtapes</Typography>
+            }
+                
                 <Box style={{
                     maxHeight: '60vh',
                     overflow: 'auto',
