@@ -247,8 +247,7 @@ function PageFrame({ setSidebarLength }) {
         </List>
         <Divider />
       </Drawer>
-      <AppBar style={{ backgroundColor: '#fff', display: currentSong ? '' : 'none', top: 'auto', bottom: 0, }}>
-        {/* {currentSong.listeningRoom ? undefined : <Player />} */}
+      <AppBar style={{ backgroundColor: '#fff', top: 'auto', bottom: 0, }}>
         <Player />
       </AppBar>
     </div>

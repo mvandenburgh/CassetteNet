@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function AdminFillConfirmationModal({usersToGenerate, disabled, setDisabled, loading, setLoading, open, setOpen}) {
+function AdminFillConfirmationModal({ usersToGenerate, disabled, setDisabled, loading, setLoading, open, setOpen }) {
     const classes = useStyles();
 
     const fillDatabaseHandler = async () => {
@@ -25,20 +25,18 @@ function AdminFillConfirmationModal({usersToGenerate, disabled, setDisabled, loa
         await adminFillDatabase(usersToGenerate);
         setLoading(false);
         setDisabled(false);
-        
+
         setOpen(false);
     }
 
     const theme = createMuiTheme({
         palette: {
-          primary: green,
+            primary: green,
         },
-      });
-    
+    });
+
 
     return (
-
-        
         <Modal
             className={classes.modal}
             open={open}
@@ -51,30 +49,29 @@ function AdminFillConfirmationModal({usersToGenerate, disabled, setDisabled, loa
         >
             <Fade in={open}>
                 <Grid container justify="center" alignContent="center" style={{ backgroundColor: blueGrey[400], height: '20%', width: '30%' }}>
-                    {loading? 
-                    <div>
-                        <Typography variant="h5">Filling the database...</Typography>
-                        <CircularProgress color="inherit" size={20} />
-                    </div>
-                    :   
-                    <div>
-                        <Typography variant="h5">Are you sure you want to fill the database with data?</Typography>
-                    
-                    <br/>
-                    <Grid container justify="right" alignContent="right" style={{ backgroundColor: blueGrey[400], height: '20%', width: '100%' }}>
-                    
-                    <Grid item xs={3}/>
-                    <Grid item xs={3}> 
-                            <Button onClick={fillDatabaseHandler}  variant="contained">Yes</Button> 
-                    </Grid>
-                    <Grid item xs={3}>
-                        <Button onClick={()=> setOpen(false)} variant="contained">No</Button>
-                    </Grid>
-                    </Grid>
-                    </div>
+                    {loading ?
+                        <div>
+                            <Typography variant="h5">Filling the database...</Typography>
+                            <CircularProgress color="inherit" size={20} />
+                        </div>
+                        :
+                        <Grid>
+                            <Typography variant="h5" style={{padding: '10px'}}>Are you sure you want to fill the database with data?</Typography>
+
+                            <br />
+                            <Grid container justify="center" alignContent="center" style={{ backgroundColor: blueGrey[400], height: '20%', width: '100%' }}>
+                                <Grid item align="center" style={{textAlign: 'center'}} xs={5}>
+                                    <Button onClick={fillDatabaseHandler} variant="contained">Yes</Button>
+                                </Grid>
+                                <Grid item xs={2} />
+                                <Grid item align="center" style={{textAlign: 'center'}} xs={5}>
+                                    <Button onClick={() => setOpen(false)} variant="contained">No</Button>
+                                </Grid>
+                            </Grid>
+                        </Grid>
                     }
-                            
-                   
+
+
                 </Grid>
             </Fade>
         </Modal>

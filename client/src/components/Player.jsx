@@ -150,7 +150,10 @@ function Player() {
     }
   }
   const handlePlay = () => {
-    if (currentSong.disabled === currentSong.mixtape._id) {
+    if (!currentSong?.mixtape) {
+      return;
+    }
+    if (currentSong?.disabled === currentSong?.mixtape?._id) {
       return;
     }
     setBuffering(true);
@@ -167,6 +170,9 @@ function Player() {
   };
 
   const handleNextSong = () => {
+    if (!currentSong?.mixtape) {
+      return;
+    }
     setPlaying(false);
     setBuffering(true);
     const newCurrentSong = { ...currentSong };
@@ -182,6 +188,9 @@ function Player() {
   };
 
   const handlePrevSong = () => {
+    if (!currentSong?.mixtape) {
+      return;
+    }
     setPlaying(false);
     setBuffering(true);
     const newCurrentSong = { ...currentSong };
@@ -259,10 +268,6 @@ function Player() {
   const handleMusicVolumeChange = (event, newValue) => {
     setMusicVolume(newValue);
   };
-
-  if (!currentSong?.index && currentSong.index !== 0) {
-    return null;
-  }
 
   return (
     <div ref={playerBarRef} style={{ margin: '10px 0px' }}>

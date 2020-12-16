@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, List, Box, Grid, IconButton, Typography, makeStyles, TextField } from '@material-ui/core';
-import { ArrowBack as ArrowBackIcon, Delete as DeleteIcon, TextFields } from '@material-ui/icons';
+import { Button, List, Box, Divider, Grid, IconButton, Typography, makeStyles, TextField } from '@material-ui/core';
+import { ArrowBack as ArrowBackIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import blueGrey from '@material-ui/core/colors/blueGrey';
+import CurrentSongContext from '../../contexts/CurrentSongContext';
 import UserSearchBar from '../UserSearchBar';
-import { adminFillDatabase, adminDropDatabase, getAdmins, deleteAdmin, addAdmin } from '../../utils/api';
+import { getAdmins, deleteAdmin, addAdmin } from '../../utils/api';
 import AdminDropConfirmationModal from '../modals/AdminDropConfirmationModal';
 import AdminFillConfirmationModal from '../modals/AdminFillConfirmationModal';
 
 function AdminPage(props) {
+    const { currentSong } = useContext(CurrentSongContext);
+
     const colors = {
         namePfpContainer: blueGrey[900],
         tabsContainer: blueGrey[900],
@@ -92,7 +95,7 @@ function AdminPage(props) {
     const goBack = () => history.goBack();
     const [adminDropModalOpen, setAdminDropModalOpen] = useState(false);
     const [adminFillModalOpen, setAdminFillModalOpen] = useState(false);
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const addAdminHandler = async (admin) => {
         if (admin) {
@@ -106,21 +109,22 @@ function AdminPage(props) {
         const admins = await getAdmins();
         setAdmins(admins);
     }
-    
-    const [usersToGenerate, setUsersToGenerate] = useState(50);
+
+    const [usersToGenerate, setUsersToGenerate] = useState(100);
 
     const [disabled, setDisabled] = useState(false); // if DB operation buttons are enabled or not
 
-    //TODO: Possibly re-align fields
     return (
-        
-        <div style={{ color: 'white', left: 0 }}>
+
+        <div style={{ color: 'white', left: 0, marginBottom: `${currentSong.playBarHeight}px` }}>
 
             <AdminDropConfirmationModal usersToGenerate={usersToGenerate} loading={loading} setLoading={setLoading} disabled={disabled} setDisabled={setDisabled} open={adminDropModalOpen} setOpen={setAdminDropModalOpen} />
-            <AdminFillConfirmationModal  loading={loading} setLoading={setLoading} disabled={disabled} setDisabled={setDisabled} open={adminFillModalOpen} setOpen={setAdminFillModalOpen} />
+            <AdminFillConfirmationModal loading={loading} setLoading={setLoading} disabled={disabled} setDisabled={setDisabled} open={adminFillModalOpen} setOpen={setAdminFillModalOpen} />
             <IconButton color="secondary" aria-label="back" onClick={() => goBack()}>
                 <ArrowBackIcon />
             </IconButton>
+            <br />
+            <Typography style={{ textAlign: "center" }} align="center" variant="h2">Admin Screen</Typography>
             <br />
             <Box style={{
                 display: 'inline-flex',
@@ -135,58 +139,43 @@ function AdminPage(props) {
                 width: '85%',
                 height: '30%'
             }} boxShadow={3} borderRadius={12}>
-                <div style={{ display: 'inline-flex', flexDirection: 'column', paddingLeft: '30px', }}>
-                    <span style={{ display: 'inline-flex', flexDirection: 'row', paddingTop: '30px', paddingBottom: '30px', height: '25%', }}>
-                        <Typography style={{ fontSize: '40px' }} align="center" variant="h3">Admin Screen</Typography>
-                    </span>
-
-
-                </div>
+                <Grid container style={{ width: '70%', marginBottom: '4%' }} justify="center" style={{ textAlign: 'center' }}>
+                    {/* <TextFiel
+                 */}
+                    <Button
+                        variant="outlined"
+                        disabled={disabled}
+                        style={{
+                            // marginLeft: '100px',
+                            margin: '0 5em',
+                            padding: '50px',
+                            marginTop: '10px',
+                            height: '40px',
+                            width: '30%',
+                            backgroundColor: blueGrey[600],
+                            color: 'white'
+                        }}
+                        onClick={() => setAdminFillModalOpen(true)}
+                    >Fill Database</Button>
+                    <Button
+                        variant="outlined"
+                        disabled={disabled}
+                        style={{
+                            // display: 'inline-block',
+                            // marginLeft: '200px',
+                            margin: '0 5em',
+                            padding: '50px',
+                            marginTop: '10px',
+                            height: '40px',
+                            width: '30%',
+                            backgroundColor: blueGrey[600],
+                            color: 'white'
+                        }}
+                        onClick={() => setAdminDropModalOpen(true)}
+                    >Clear Database</Button>
+                </Grid>
             </Box>
-            <br />
-            <Button
-                variant="outlined"
-                disabled={disabled}
-                style={{
-                    marginLeft: '100px',
-                    padding: '50px',
-                    marginTop: '10px',
-                    height: '40px', width: '200px',
-                    backgroundColor: blueGrey[600],
-                    color: 'white'
-                }}
-                onClick={()=>setAdminFillModalOpen(true)}
-            >Fill Database</Button>
-            <Button
-                variant="outlined"
-                disabled={disabled}
-                style={{
-                    marginLeft: '200px',
-                    padding: '50px',
-                    marginTop: '10px',
-                    height: '40px',
-                    width: '200px',
-                    backgroundColor: blueGrey[600],
-                    color: 'white'
-                }}
-                onClick={()=>setAdminDropModalOpen(true)}
-            >Clear Database</Button>
-            <br />
-            <TextField
-                label="Number of users to generate"
-                type="number"
-                InputLabelProps={{
-                    shrink: true,
-                    inputProps: { 
-                        min: 1
-                    }
-                }}
-                value={usersToGenerate}
-                onChange={(e) => setUsersToGenerate(e.target.value)}
-                variant="filled"
-            />
-            <br />
-            <br />
+            <Divider style={{ margin: '2em 0' }} />
             <Box flexDirection="row" >
                 <Grid container style={{ marginLeft: '100px' }}>
 
@@ -210,11 +199,9 @@ function AdminPage(props) {
                     </Grid>
                     <Grid item xs={1} />
                     <Grid item xs={3}>
-                        <Typography style={{ fontSize: '40px' }} variant="h3">Add An Admin</Typography>
+                        <Typography align="center" style={{ fontSize: '40px' }} variant="h3">Add An Admin</Typography>
                         <br />
-                        <Grid item xs={10}>
-                            <UserSearchBar userSelectHandler={addAdminHandler} adminSearchBool={true} />
-                        </Grid>
+                        <UserSearchBar userSelectHandler={addAdminHandler} adminSearchBool={true} />
                     </Grid>
                 </Grid>
 

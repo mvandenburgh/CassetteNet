@@ -1,12 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { CircularProgress, Backdrop, Modal, Fade, Grid, Typography, Button } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
-import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { makeStyles, createMuiTheme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import { adminDropDatabase } from '../../utils/api';
-import { deleteUser } from '../../utils/api';
-import UserContext from '../../contexts/UserContext';
-import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -16,25 +13,17 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function AdminDropConfirmationModal({loading, setLoading, disabled, setDisabled, open, setOpen}) {
+function AdminDropConfirmationModal({ loading, setLoading, disabled, setDisabled, open, setOpen }) {
     const classes = useStyles();
 
-    const theme = createMuiTheme({
-        palette: {
-          primary: green,
-        },
-      });
-      const dropDatabaseHandler = async () => {
+    const dropDatabaseHandler = async () => {
         setDisabled(true);
         setLoading(true);
         await adminDropDatabase();
-        setLoading(false);
-        setDisabled(false);
+        window.location.reload();
     }
-    
-    return (
 
-        
+    return (
         <Modal
             className={classes.modal}
             open={open}
@@ -47,31 +36,30 @@ function AdminDropConfirmationModal({loading, setLoading, disabled, setDisabled,
         >
             <Fade in={open}>
                 <Grid container justify="center" alignContent="center" style={{ backgroundColor: blueGrey[400], height: '20%', width: '30%' }}>
-                {loading? 
-                    <div>
-                        <Typography variant="h5">Clearing the database...</Typography>
-                        <CircularProgress color="inherit" size={20} />
-                    </div>
-                    :   
-                    <div>
-                        <Typography variant="h5">Are you sure you want to drop all data in the database?</Typography>
-                    <br/>
-                    <Grid container justify="right" alignContent="right" style={{ backgroundColor: blueGrey[400], height: '20%', width: '100%' }}>
-                    
-                    <Grid item xs={3}/>
-                    <Grid item xs={3}> 
-                            <Button onClick={dropDatabaseHandler}  variant="contained">Yes</Button> 
-                    </Grid>
-                    <Grid item xs={3}>
-                        <Button onClick={()=> setOpen(false)} variant="contained">No</Button>
-                    </Grid>
-                    </Grid>
-                    </div>
+                    {loading ?
+                        <div>
+                            <Typography variant="h5">Clearing the database...</Typography>
+                            <CircularProgress color="inherit" size={20} />
+                        </div>
+                        :
+                        <Grid container>
+                            <Typography align="center" style={{ padding: '10px' }} variant="h5">Are you sure you want to drop all data in the database?</Typography>
+                            <br />
+                            <Grid container justify="center" alignContent="center" style={{ backgroundColor: blueGrey[400], height: '20%', width: '100%' }}>
+                                <Grid item align="center" style={{textAlign: 'center'}} xs={5}>
+                                    <Button onClick={dropDatabaseHandler} variant="contained">Yes</Button>
+                                </Grid>
+                                <Grid item xs={2} />
+                                <Grid item align="center" style={{textAlign: 'center'}} xs={5}>
+                                    <Button onClick={() => setOpen(false)} variant="contained">No</Button>
+                                </Grid>
+                            </Grid>
+                        </Grid>
                     }
 
-                            
-                        
-                   
+
+
+
                 </Grid>
             </Fade>
         </Modal>
