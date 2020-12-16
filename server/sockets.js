@@ -149,7 +149,7 @@ function initSockets(io) {
                 // only request tempo of song if:
                 //   1) there is at least one person in the rhythm game queue AND
                 //   2) the tempo hasn't already been calculated prior
-                const getTempo = listeningRoom.rhythmGameQueue.length > 0 && !Boolean(listeningRoom.mixtape.songs[index].tempo || listeningRoom.mixtape.songs[index].tempo === 0);
+                const getTempo = listeningRoom.rhythmGameQueue.length > 0 && !listeningRoom.mixtape.songs[index].tempo;
 
                 try {
                     stream = await axios.post(new URL('/startStream', STREAM_SERVER_ROOT_URL).href,
@@ -167,13 +167,13 @@ function initSockets(io) {
                 const listeningRoomPlaybackUrl = new URL(`/stream/live/${listeningRoomPlaybackId}.flv`, STREAM_SERVER_ROOT_URL).href;
                 listeningRoom.mixtape.songs[index].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
                 listeningRoom.mixtape.songs[index].listeningRoomStreamId = listeningRoomPlaybackId;
-                listeningRoom.mixtape.songs[index].tempo = tempo;
+                if (tempo) {
+                    listeningRoom.mixtape.songs[index].tempo = tempo;
+                }
                 listeningRoom.markModified('currentListeners');
                 listeningRoom.markModified('mixtape.songs');
                 listeningRoom.startedAt = (Date.now() / 1000) + 8; // its usually off by about 4 seconds
                 listeningRoom.wasAt = 0;
-
-                await listeningRoom.save();
 
                 io.in(roomId).emit('newChatMessage', listeningRoom.chatMessages);
                 listeningRoom.rhythmScores = new Map();

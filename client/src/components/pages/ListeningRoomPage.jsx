@@ -134,7 +134,7 @@ function ListeningRoomPage(props) {
         if (screen !== 'home') {
             getGameScores(listeningRoom._id, screen).then(newScores => setScores(newScores));
         }
-    }, 3000);
+    }, 500);
     const lrRef = useRef(listeningRoom);
 
     useEffect(() => lrRef.current = listeningRoom);
