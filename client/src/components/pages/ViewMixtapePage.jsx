@@ -107,7 +107,7 @@ function ViewMixtapePage(props) {
             const addSongTransaction = new AddSong_Transaction(mixtape.songs, newSongs, mixtape);
             tps.addTransaction(addSongTransaction);
         }
-        
+
         mixtape.songs = newSongs;
         setMixtape(mixtape);
         setSongToAdd({});
@@ -381,7 +381,7 @@ function ViewMixtapePage(props) {
     }
 
     return (
-        <div style={{marginBottom: `${currentSong.playBarHeight}px`}}>
+        <div style={{ marginBottom: `${currentSong.playBarHeight}px` }}>
             <CreateListeningRoomModal open={createListeningRoomModalOpen} setOpen={setCreateListeningRoomModalOpen} mixtape={mixtape} />
             <SongSearchModal open={addSongPopupIsOpen} setOpen={setAddSongPopupIsOpen} addSongs={addSongs} mixtape={mixtape} />
             <SettingsModal
@@ -459,15 +459,17 @@ function ViewMixtapePage(props) {
                                     </Button>
                                 </Grid>
                                 <Grid item xs={2}>
-                                    <Button
-                                        onClick={() => setAddSongPopupIsOpen(!addSongPopupIsOpen)}
-                                        style={{ marginRight: '5%', float: 'right' }}
-                                        variant="contained"
-                                        color="primary"
-                                        startIcon={<AddIcon />}
-                                    >
-                                        Add a Song
+                                    <Tooltip title={(mixtape.songs.length >= 100) ? 'Song limit of 100 reached. Please delete some songs or create a new mixtape.' : ''}>
+                                        <Button
+                                            onClick={() => mixtape.songs.length >= 100 ? undefined : setAddSongPopupIsOpen(!addSongPopupIsOpen)}
+                                            style={{ cursor: mixtape.songs.length >= 100 ? 'default' : 'pointer', marginRight: '5%', float: 'right' }}
+                                            variant="contained"
+                                            color="primary"
+                                            startIcon={<AddIcon />}
+                                        >
+                                            Add a Song
                                      </Button>
+                                    </Tooltip>
                                 </Grid>
                                 <Grid item xs={2}>
                                     <Button
@@ -485,86 +487,87 @@ function ViewMixtapePage(props) {
                             user?.isLoggedIn ?
                                 <Grid container>
                                     <Grid item xs={4}>
-                                    <Tooltip title={(!user._id) ? 'Log in to use this feature!' : '' } >
-                                        <span>
-                                        <Button
-                                            disabled={!user._id}
-                                            style={!user._id ? 
-                                                    {
-                                                        marginRight: '5%', 
-                                                        float: 'left', 
-                                                        color: 'white',
-                                                        background: 'linear-gradient(45deg, #6b6b6b 30%, #3b3b3b 90%)'      
-                                                    } :
-                                                    {   marginRight: '5%', 
-                                                        float: 'left', 
-                                                        backgroundColor: 'steelblue' 
-                                                    }}
-                                            variant="contained"
-                                            color="secondary"
-                                            startIcon={<MusicNoteIcon />}
-                                            onClick={createListeningRoomButtonHandler}
-                                        >
-                                            Create Listening Room
+                                        <Tooltip title={(!user._id) ? 'Log in to use this feature!' : ''}>
+                                            <span>
+                                                <Button
+                                                    disabled={!user._id}
+                                                    style={!user._id ?
+                                                        {
+                                                            marginRight: '5%',
+                                                            float: 'left',
+                                                            color: 'white',
+                                                            background: 'linear-gradient(45deg, #6b6b6b 30%, #3b3b3b 90%)'
+                                                        } :
+                                                        {
+                                                            marginRight: '5%',
+                                                            float: 'left',
+                                                            backgroundColor: 'steelblue'
+                                                        }}
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    startIcon={<MusicNoteIcon />}
+                                                    onClick={createListeningRoomButtonHandler}
+                                                >
+                                                    Create Listening Room
                                         </Button>
-                                        </span>
+                                            </span>
                                         </Tooltip>
                                     </Grid>
                                     <Grid item xs={2} />
                                     <Grid item xs={2}>
-                                    <Tooltip title={(!user._id) ? 'Log in to use this feature!' : '' } >
-                                        <span>
-                                        <Button
-                                            disabled={!user._id}
-                                            style={!user._id ? 
-                                                {
-                                                    marginRight: '5%', 
-                                                    float: 'right', 
-                                                    color: 'white',
-                                                    background: 'linear-gradient(45deg, #6b6b6b 30%, #3b3b3b 90%)'
-                                                } :
-                                                { 
-                                                    marginRight: '5%', 
-                                                    float: 'right', 
-                                                    backgroundColor: 'green' 
-                                                }
-                                            }
-                                            variant="contained"
-                                            color="secondary"
-                                            startIcon={<SettingsIcon />}
-                                            onClick={() => setSettingsPopupIsOpen(!settingsPopupIsOpen)}
-                                        >
-                                            Settings
+                                        <Tooltip title={(!user._id) ? 'Log in to use this feature!' : ''} >
+                                            <span>
+                                                <Button
+                                                    disabled={!user._id}
+                                                    style={!user._id ?
+                                                        {
+                                                            marginRight: '5%',
+                                                            float: 'right',
+                                                            color: 'white',
+                                                            background: 'linear-gradient(45deg, #6b6b6b 30%, #3b3b3b 90%)'
+                                                        } :
+                                                        {
+                                                            marginRight: '5%',
+                                                            float: 'right',
+                                                            backgroundColor: 'green'
+                                                        }
+                                                    }
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    startIcon={<SettingsIcon />}
+                                                    onClick={() => setSettingsPopupIsOpen(!settingsPopupIsOpen)}
+                                                >
+                                                    Settings
                                         </Button>
-                                        </span>
+                                            </span>
                                         </Tooltip>
                                     </Grid>
                                     <Grid item xs={2} >
-                                    <Tooltip title={(!user._id) ? 'Log in to use this feature!' : '' } >
-                                        <span>
-                                            <Button
-                                                disabled={!user._id}
-                                                style={!user._id ? 
-                                                    {
-                                                        marginRight: '5%', 
-                                                        float: 'right',
-                                                        color: 'white',
-                                                        background: 'linear-gradient(45deg, #6b6b6b 30%, #3b3b3b 90%)'      
-                                                    } :
-                                                    { 
-                                                        marginRight: '5%', 
-                                                        float: 'right', 
-                                                        backgroundColor: 'purple' 
-                                                    }}
-                                                variant="contained"
-                                                color="secondary"
-                                                startIcon={<FileCopyIcon />}
-                                                onClick={() => handleClick(mixtape)}
-                                            >
-                                                Copy
+                                        <Tooltip title={(!user._id) ? 'Log in to use this feature!' : ''} >
+                                            <span>
+                                                <Button
+                                                    disabled={!user._id}
+                                                    style={!user._id ?
+                                                        {
+                                                            marginRight: '5%',
+                                                            float: 'right',
+                                                            color: 'white',
+                                                            background: 'linear-gradient(45deg, #6b6b6b 30%, #3b3b3b 90%)'
+                                                        } :
+                                                        {
+                                                            marginRight: '5%',
+                                                            float: 'right',
+                                                            backgroundColor: 'purple'
+                                                        }}
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    startIcon={<FileCopyIcon />}
+                                                    onClick={() => handleClick(mixtape)}
+                                                >
+                                                    Copy
                                             </Button>
-                                        </span>
-                                    </Tooltip>
+                                            </span>
+                                        </Tooltip>
                                         <Snackbar
                                             anchorOrigin={{
                                                 vertical: 'bottom',
