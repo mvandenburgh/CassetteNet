@@ -34,17 +34,20 @@ function initSockets(io) {
 
             if (!lr.currentListeners.map(l => l.user).includes(Types.ObjectId(user._id))) {
                 lr.currentListeners.push(Types.ObjectId(user._id));
+                await lr.save();
             }
             lr.chatMessages.push({
                 message: `${user.username} joined the room!`,
                 timestamp: Date.now(),
                 from: { username: '#ChatBot' }, // will always be unique since usernames aren't allowed to start with #
             });
+            await lr.save();
             if (!lr.startedAt) {
                 lr.startedAt = Date.now() / 1000 + 8;
+                await lr.save();
                 lr.wasAt = 0;
+                await lr.save();
             }
-            await lr.save();
             socket.emit('userJoinedOrLeft');
             socket.to(listeningRoom._id).to(defaultRoom).emit('userJoinedOrLeft');
             socket.to(listeningRoom._id).to(defaultRoom).emit('newChatMessage', lr.chatMessages);
@@ -137,13 +140,13 @@ function initSockets(io) {
                         message += '!';
                     }
                     listeningRoom.chatMessages.push({ message, timestamp: Date.now(), from: { username: '#ChatBot' }}); // will always be unique since usernames aren't allowed to start with #
+                    await listeningRoom.save();
                 }
                 listeningRoom.currentSong = index;
+                await listeningRoom.save();
                 if (listeningRoom.rhythmGameQueue.length > 0) {
                     io.in(roomId).emit('rhythmGameAboutToBegin');
                 }
-                listeningRoom.startedAt = null;
-                listeningRoom.wasAt = null;
                 let stream;
 
                 // only request tempo of song if:
@@ -166,19 +169,29 @@ function initSockets(io) {
                 const { listeningRoomPlaybackId, tempo } = stream.data;
                 const listeningRoomPlaybackUrl = new URL(`/stream/live/${listeningRoomPlaybackId}.flv`, STREAM_SERVER_ROOT_URL).href;
                 listeningRoom.mixtape.songs[index].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
+                await listeningRoom.save();
                 listeningRoom.mixtape.songs[index].listeningRoomStreamId = listeningRoomPlaybackId;
+                await listeningRoom.save();
                 if (tempo) {
                     listeningRoom.mixtape.songs[index].tempo = tempo;
+                    await listeningRoom.save();
                 }
                 listeningRoom.markModified('currentListeners');
+                await listeningRoom.save();
                 listeningRoom.markModified('mixtape.songs');
+                await listeningRoom.save();
                 listeningRoom.startedAt = (Date.now() / 1000) + 8; // its usually off by about 4 seconds
+                await listeningRoom.save();
                 listeningRoom.wasAt = 0;
+                await listeningRoom.save();
 
                 io.in(roomId).emit('newChatMessage', listeningRoom.chatMessages);
                 listeningRoom.rhythmScores = new Map();
+                await listeningRoom.save();
                 listeningRoom.snakeScores = new Map();
+                await listeningRoom.save();
                 listeningRoom.markModified('rhythmScores');
+                await listeningRoom.save();
                 listeningRoom.markModified('snakeScores');
                 await listeningRoom.save();
                 io.in(roomId).emit('changeSong', { index, url: listeningRoomPlaybackUrl });

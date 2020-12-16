@@ -59,7 +59,7 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
       }
     }
     setScores(newScores);
-    socket.emit('snakeScoreChange', 1);
+    // socket.emit('snakeScoreChange', 1);
   }
   const moveSnake = ({ keyCode }) => {
     
