@@ -185,7 +185,6 @@ function SongSearchModal({ open, setOpen, addSongs, mixtape }) {
                             onChange={(e) => setApi(e.target.value)}
                             input={<BootstrapInput />}
                         >
-                            <option value="" />
                             <option value={'youtube'}>YouTube</option>
                             <option value={'soundcloud'}>SoundCloud</option>
                         </NativeSelect>
