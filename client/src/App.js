@@ -106,7 +106,12 @@ function App() {
                             <Switch>
                               <Route exact path="/" component={user?.isLoggedIn ? DashboardPage : StartPage} />
                               <Route exact path="/directory" component={Directory} /> {/* TODO: remove? */}
-                              <Route exact path="/login" component={LoginPage} />
+                              {!user?.isLoggedIn ? 
+                                <>
+                                  <Route exact path="/SignUp" component={SignUpPage}/>
+                                  <Route exact path="/login" component={LoginPage} />
+                                </>
+                                : undefined}
                               <Route exact path="/login/oauth" component={OAuthUsernamePage} />
                               <Route exact path="/login/success" component={VerifyLoginPage} />
                               <Route exact path="/resetPassword/:token" component={ResetPasswordPage} />
@@ -119,7 +124,6 @@ function App() {
                               <Route exact path="/mixtapesoftheday" component={MixtapesOfTheDayPage}/>
                               <Route exact path="/inbox" component={InboxPage} />
                               <Route exact path="/NotFound" component={NotFoundPage}/>
-                              <Route exact path="/SignUp" component={SignUpPage}/>
                               <Route exact path="/ChangePassword" component={ChangePasswordPage}/>
                               <Route exact path="/verify/:token" component={VerifyAccountPage} />
                               <Route exact path="/SnakeGame" component={SnakeGame} />
