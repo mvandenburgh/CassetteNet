@@ -131,7 +131,7 @@ function Player() {
     if (playerRef.current && playing) {
       const time = playerRef.current.getCurrentTime();
       setCurrentTime(time);
-      localStorage.setItem('timestamp', time);
+      // localStorage.setItem('timestamp', time);
     } else if (playerRef.current) {
       const time = playerRef.current.getCurrentTime();
       setCurrentTime(time);
@@ -158,9 +158,9 @@ function Player() {
     }
     setBuffering(true);
     setPlaying(true);
-    if (!currentTime) {
-      playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
-    }
+    // if (!currentTime) {
+    //   playerRef.current.seekTo(parseFloat(localStorage.getItem('timestamp')));
+    // }
   };
 
   const handlePause = () => {

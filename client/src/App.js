@@ -52,17 +52,18 @@ function App() {
   }, []);
 
   // check if song is playing
-  let currentSongDefault = JSON.parse(localStorage.getItem('currentSong'));
-  if (!currentSongDefault) {
-    currentSongDefault = {};
-  }
-  const [currentSong, setCurrentSong] = useState(currentSongDefault);
+  // let currentSongDefault = JSON.parse(localStorage.getItem('currentSong'));
+  // if (!currentSongDefault) {
+  //   currentSongDefault = {};
+  // }
+  // const [currentSong, setCurrentSong] = useState(currentSongDefault);
+  const [currentSong, setCurrentSong] = useState({});
 
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('currentSong', JSON.stringify(currentSong));
-    }
-  }, [JSON.stringify(currentSong)]);
+  // useEffect(() => {
+  //   if (user) {
+  //     localStorage.setItem('currentSong', JSON.stringify(currentSong));
+  //   }
+  // }, [JSON.stringify(currentSong)]);
 
 
   const [playing, setPlaying] = useState(false);

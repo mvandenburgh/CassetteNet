@@ -1,7 +1,6 @@
 const { Types } = require('mongoose');
 const axios = require('axios');
 const { ListeningRoom, User } = require('./models');
-const { getAudioAnalysisFromYoutube } = require('./external_apis/spotify');
 
 let STREAM_SERVER_ROOT_URL;
 try {
