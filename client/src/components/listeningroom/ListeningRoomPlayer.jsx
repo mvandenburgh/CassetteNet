@@ -248,6 +248,7 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
                 onStart={() => { setSongStarted(true); console.log('started') }}
                 onBuffer={() => setSongStarted(false)}
                 onBufferEnd={() => setSongStarted(true)}
+                onError={handleNextSong}
             />
             <ReactPlayer
                 loop
