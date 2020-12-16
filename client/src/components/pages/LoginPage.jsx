@@ -128,9 +128,9 @@ function LoginPage(props) {
             <GoogleButton onClick={handleGoogleSignUp} />
           </Grid>
           <Grid item sz={1}>
-            <FacebookLoginButton onClick={handleFacebookSignUp}>
+            {/* <FacebookLoginButton onClick={handleFacebookSignUp}>
               <span>Sign in with Facebook</span>
-            </FacebookLoginButton>
+            </FacebookLoginButton> */}
           </Grid>
           <Typography variant="h6">OR</Typography>
           {loginError ?
