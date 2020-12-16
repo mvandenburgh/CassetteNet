@@ -105,13 +105,8 @@ function App() {
                           <div style={{ marginBottom: '105px', position: 'absolute', left: sidebarLength, height: 'calc(100vh - 8*9)', width: '90%'}}>
                             <Switch>
                               <Route exact path="/" component={user?.isLoggedIn ? DashboardPage : StartPage} />
-                              <Route exact path="/directory" component={Directory} /> {/* TODO: remove? */}
-                              {!user?.isLoggedIn ? 
-                                <>
-                                  <Route exact path="/SignUp" component={SignUpPage}/>
-                                  <Route exact path="/login" component={LoginPage} />
-                                </>
-                                : undefined}
+                              <Route exact path="/SignUp" component={SignUpPage}/>
+                              <Route exact path="/login" component={LoginPage} />
                               <Route exact path="/login/oauth" component={OAuthUsernamePage} />
                               <Route exact path="/login/success" component={VerifyLoginPage} />
                               <Route exact path="/resetPassword/:token" component={ResetPasswordPage} />
