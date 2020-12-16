@@ -63,7 +63,10 @@ function SignUpPage(props) {
     }
     if (validateUsername() && validatePassword() && validateEmail()) {
       userSignup(email, username, password)
-        .then(() => alert('Sign up successful! Please check your email for a verification link.'))
+        .then(() => {
+            alert('Sign up successful! Please check your email for a verification link.');
+            history.push('/');
+          })
         .catch(err => setErrorText(err?.response?.data?.message));
     }
   };
