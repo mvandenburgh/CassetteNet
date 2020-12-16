@@ -34,6 +34,9 @@ function CreateMixtapeModal({ open, setOpen }) {
         getExternalPlaylist(page, youtubePlaylistLink)
             .then(playlist => {
                 console.log(playlist)
+                if (playlist.songs.length > 999) {
+                    playlist.songs = playlist.songs.slice(0, 999);
+                }
                 createMixtape(playlist).then(newMixtape => history.push(`/mixtape/${newMixtape.data._id}`));
             })
             .catch(err => setInvalidLink(true));

@@ -459,7 +459,7 @@ function ViewMixtapePage(props) {
                                     </Button>
                                 </Grid>
                                 <Grid item xs={2}>
-                                    <Tooltip title={(mixtape.songs.length >= 100) ? 'Song limit of 100 reached. Please delete some songs or create a new mixtape.' : ''}>
+                                    <Tooltip title={(mixtape.songs.length >= 100) ? 'Song limit of 999 reached. Please delete some songs or create a new mixtape.' : ''}>
                                         <Button
                                             onClick={() => mixtape.songs.length >= 100 ? undefined : setAddSongPopupIsOpen(!addSongPopupIsOpen)}
                                             style={{ cursor: mixtape.songs.length >= 100 ? 'default' : 'pointer', marginRight: '5%', float: 'right' }}

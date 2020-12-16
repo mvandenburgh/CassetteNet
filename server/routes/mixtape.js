@@ -156,7 +156,7 @@ router.get('/popular', async (req, res) => {
 router.post('/', async (req, res) => {
     if (!req.user) return res.status(401).send([]);
     let mixtape;
-    if (req.body.mixtape) {
+    if (req.body.mixtape && req.body.mixtape.songs && req.body.mixtape.songs.length < 1000) {
         mixtape = req.body.mixtape;
         mixtape.collaborators = [{ user: req.user._id, permissions: 'owner', username: req.user.username }];
     } else {
