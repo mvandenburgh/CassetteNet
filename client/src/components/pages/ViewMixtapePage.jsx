@@ -342,7 +342,7 @@ function ViewMixtapePage(props) {
 
     const createListeningRoomButtonHandler = () => {
         if (mixtape) {
-            setCurrentSong({});
+            setCurrentSong({ listeningRoom: true });
             setCreateListeningRoomModalOpen(true);
         }
     }

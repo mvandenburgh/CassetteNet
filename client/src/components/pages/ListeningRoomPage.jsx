@@ -91,7 +91,7 @@ function ListeningRoomPage(props) {
 
     useEffect(() => {
         const unlisten = history.listen(location => {
-            setCurrentSong({});
+            setCurrentSong({ listeningRoom: true });
             window.location.reload();
         });
         return unlisten;
@@ -140,7 +140,7 @@ function ListeningRoomPage(props) {
     useEffect(() => lrRef.current = listeningRoom);
 
     useEffect(() => {
-        setCurrentSong({});
+        setCurrentSong({ listeningRoom: true });
         getListeningRoom(props.match.params.id)
             .then(listeningRoom => {
                 setPlaying(true);

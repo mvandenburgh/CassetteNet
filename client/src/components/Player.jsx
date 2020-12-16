@@ -269,6 +269,10 @@ function Player() {
     setMusicVolume(newValue);
   };
 
+  if (currentSong?.listeningRoom) {
+    return null;
+  }
+
   return (
     <div ref={playerBarRef} style={{ margin: '10px 0px' }}>
       <Grid container alignItems="center">

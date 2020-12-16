@@ -109,6 +109,8 @@ router.post('/', async (req, res) => {
         return res.status(401).send('unauthorized');
     }
 
+    mixtape.songs = mixtape.songs.filter(song => song.duration >= 15);
+
     // remove fields that aren't needed for listening room
     delete mixtape.isPublic;
     delete mixtape.collaborators;
