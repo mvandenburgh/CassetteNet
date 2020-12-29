@@ -94,7 +94,7 @@ router.get('/mixtapes', async (req, res) => {
     res.send(mixtapes);
 });
 
-router.get('/getFollowedUsers', async (req, res) => {
+router.get('/followedUsers', async (req, res) => {
     if (!req.user) return res.status(401).send(null);
     const { page } = req.query;
     const requser = await User.findById(req.user._id).lean();
@@ -291,18 +291,14 @@ router.delete('/deleteMessage/:id', async (req, res) => {
  router.delete('/deleteUser/:id',async (req, res) => {
     if (!req.user || req.user.id !== req.params.id) return res.status(401).send('unauthorized');
 
-    //REMOVE MESSAGES SENT OR RECIEVED BY USER
-    const inboxMessagesRec = await InboxMessage.deleteMany({ recipient: Types.ObjectId(req.user.id) });
-    //inboxMessagesRec.splice(0,inboxMessagesRec.length);
-    //inboxMessagesRec.save();
-    const inboxMessagesSent = await InboxMessage.deleteMany({ senderId: Types.ObjectId(req.user.id) });
-    //inboxMessagesSent.splice(0,inboxMessagesSent.length);
-    //inboxMessagesSent.save();
+    await Promise.all([
+        // REMOVE MESSAGES SENT OR RECIEVED BY USER
+        InboxMessage.deleteMany({ recipient: Types.ObjectId(req.user.id) }),
+        InboxMessage.deleteMany({ senderId: Types.ObjectId(req.user.id) }),
 
-    // //REMOVE USER ACTIVITIES
-    const activities = await UserActivity.deleteMany({ user: Types.ObjectId(req.user.id)});
-    //activities.splice(0,activities.length);
-    //activities.save();
+        // REMOVE USER ACTIVITIES
+        UserActivity.deleteMany({ user: Types.ObjectId(req.user.id)})
+    ]);
 
    
     // DELETE USER CREATED MIXTAPES AND REMOVE THEM FROM COLLABORATOR MIXTAPES

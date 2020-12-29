@@ -128,7 +128,7 @@ async function unfollowUser(userId) {
 }
 
 async function getFollowedUsers(page){
-    const users = await axios.get(new URL(`/api/user/getFollowedUsers`, SERVER_ROOT_URL).href, { params: { page }, withCredentials: true });
+    const users = await axios.get(new URL(`/api/user/followedUsers`, SERVER_ROOT_URL).href, { params: { page }, withCredentials: true });
     return users.data;
 }
 
@@ -201,19 +201,19 @@ async function adminFillDatabase(numOfUsers) {
 async function adminDropDatabase() {
     await axios.post(new URL('/api/admin/dropDatabase', SERVER_ROOT_URL).href);    
 }
+
 async function getAdmins(){
-    const users = await axios.get(new URL('/api/admin/getAdmins',SERVER_ROOT_URL), { withCredentials: true });
+    const users = await axios.get(new URL('/api/admin/',SERVER_ROOT_URL), { withCredentials: true });
     return users.data;
 }
 
-
 async function deleteAdmin(userId) {
-    const users = await axios.put(new URL('/api/admin/deleteAdmin', SERVER_ROOT_URL), { userId });
+    const users = await axios.delete(new URL('/api/admin/', SERVER_ROOT_URL), { userId });
     return users.data;
 }
 
 async function addAdmin(userId) {
-    const users = await axios.put(new URL('/api/admin/addAdmin', SERVER_ROOT_URL), { userId });
+    const users = await axios.patch(new URL('/api/admin/', SERVER_ROOT_URL), { userId });
     return users.data;
 }
 

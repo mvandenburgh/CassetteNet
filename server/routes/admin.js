@@ -40,7 +40,8 @@ router.post('/dropDatabase', async (req, res) => {
     }
 });
 
-router.get('/getAdmins', async (req, res) => {
+// GET ALL ADMINS
+router.get('/', async (req, res) => {
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
@@ -51,7 +52,9 @@ router.get('/getAdmins', async (req, res) => {
         uniqueId: user.uniqueId,
     })));
 });
-router.put('/deleteAdmin', async(req,res)=>{
+
+// DELETE AN ADMIN
+router.delete('/', async(req,res)=>{
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
@@ -65,7 +68,8 @@ router.put('/deleteAdmin', async(req,res)=>{
     return res.send(user._id);
 });
 
-router.put('/addAdmin', async(req,res)=>{
+// ADD NEW ADMIN
+router.patch('/', async(req,res)=>{
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
