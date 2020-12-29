@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Grid, IconButton, Paper, Typography } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import { blueGrey } from '@material-ui/core/colors';
 import ShareIcon from '@material-ui/icons/Share';
-import UserContext from '../../contexts/UserContext';
 import { mixtapeSearch, getMixtapeCoverImageUrl, getUserProfilePictureUrl } from '../../utils/api';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
@@ -11,8 +10,6 @@ import FavoriteMixtapeButton from '../FavoriteMixtapeButton';
 import ShareMixtapeModal from '../modals/ShareMixtapeModal';
 
 function MixtapeSearchResultsPage(props) {
-    const { user } = useContext(UserContext);
-
     const [mixtapes, setMixtapes] = useState([]);
 
     const [totalPages, setTotalPages] = useState(1);
@@ -33,6 +30,7 @@ function MixtapeSearchResultsPage(props) {
             setTotalPages(res.totalPages);
             setTotalResults(res.totalResults);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, new URLSearchParams(props.location.search).get('query')]);
 
 
@@ -47,12 +45,6 @@ function MixtapeSearchResultsPage(props) {
     }
 
     const changePageHandler = (event, pageNumber) => {
-        let newPageNumber;
-        if (typeof(pageNumber) === 'string') { // weird hack to make material ui paginate component work for going to next page
-            newPageNumber = Number(new URLSearchParams(props.location.search).get('page')) + 1;
-        } else {
-            newPageNumber = pageNumber;
-        }
         setCurrentPage(pageNumber);
     };
 
@@ -73,7 +65,7 @@ function MixtapeSearchResultsPage(props) {
                 >
                     <Grid container style={{ height: '10vh' }}>
                         <Grid item xs={1} align="left" onClick={() => history.push(`/mixtape/${mixtape._id}`)} style={{cursor: 'pointer'}}>
-                            <img width={'50%'} style={{ objectFit: 'contain' }} src={getMixtapeCoverImageUrl(mixtape._id)} />
+                            <img width={'50%'} style={{ objectFit: 'contain' }} src={getMixtapeCoverImageUrl(mixtape._id)} alt="cover_image" />
                         </Grid>
                         <Grid item xs={2} align="center" onClick={() => history.push(`/mixtape/${mixtape._id}`)} style={{cursor: 'pointer'}}>
                             {mixtape.name}
@@ -84,7 +76,7 @@ function MixtapeSearchResultsPage(props) {
                                 {mixtape.collaborators.map(c => (
                                     <Grid container style={{ cursor: 'pointer' }} onClick={(e) => clickUserHandler(e, c.user)}>
                                         <Grid item xs={2}>
-                                            <img width={'50%'} style={{ objectFit: 'contain' }} src={getUserProfilePictureUrl(c.user)} />
+                                            <img width={'50%'} style={{ objectFit: 'contain' }} src={getUserProfilePictureUrl(c.user)} alt="pfp" />
                                         </Grid>
                                         <Grid item xs={10} align="left">
                                             {c.username}

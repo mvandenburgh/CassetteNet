@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import PlayingSongContext from '../../contexts/PlayingSongContext';
 import SocketIOContext from '../../contexts/SocketIOContext';
 import UserContext from '../../contexts/UserContext';
-import { useEventListener, useInterval } from '../../hooks';
+import { useEventListener } from '../../hooks';
 import { Typography } from '@material-ui/core';
 import { Spring } from 'react-spring/renderprops';
 
@@ -24,7 +24,7 @@ function RhythmGame({ songStarted, gameScreenStartX, gameScreenEndX, gameScreenS
 
     const { user } = useContext(UserContext);
 
-    const { playing, setPlaying } = useContext(PlayingSongContext);
+    const { playing } = useContext(PlayingSongContext);
 
     const { socket } = useContext(SocketIOContext);
 

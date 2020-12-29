@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Backdrop, Box, Modal, Fade, Grid, Typography, Button, CircularProgress, NativeSelect, MenuItem, withStyles, InputBase } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Backdrop, Box, Modal, Fade, Grid, Typography, CircularProgress, NativeSelect, withStyles, InputBase } from '@material-ui/core';
 import { Add as AddIcon } from '@material-ui/icons';
 import { Pagination } from '@material-ui/lab';
 import { blueGrey } from '@material-ui/core/colors';
@@ -71,7 +71,7 @@ const Results = ({ results, addSongs, songsToAdd, setSongsToAdd }) => {
                 >
                     <Grid container>
                         <Grid item xs={1} align="left" style={{ cursor: 'pointer' }}>
-                            <img width="100%" style={{ objectFit: 'contain' }} src={result.coverImage} />
+                            <img width="100%" style={{ objectFit: 'contain' }} src={result.coverImage} alt="cover_image" />
                         </Grid>
                         <Grid item xs={10} align="center">
                             {result.name}

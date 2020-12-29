@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getUser, getUserProfilePictureUrl, userSearch } from '../utils/api';
-import { debounce } from 'lodash';
+import { getUserProfilePictureUrl, userSearch } from '../utils/api';
 import { CircularProgress, Grid, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
@@ -68,7 +67,7 @@ function UserSearchBar(props) {
         )}
         renderOption={(user) => (
           <React.Fragment style={{ height: '2em' }}>
-            <img style={{ height: '2em', marginRight: '2em' }} src={getUserProfilePictureUrl(user._id)} />
+            <img style={{ height: '2em', marginRight: '2em' }} src={getUserProfilePictureUrl(user._id)} alt="pfp" />
             <span>{user.username} #({user.uniqueId.toString(36).padStart(4, '0').toUpperCase()})</span>
           </React.Fragment>
         )}

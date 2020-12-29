@@ -1,9 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { AppBar, Box, Button, Grid, Tab, Tabs, Typography, makeStyles, IconButton } from '@material-ui/core';
+import { Box, Button, Grid, Typography, IconButton } from '@material-ui/core';
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import fb from '../../images/facebook.png';
-import twitter from '../../images/twitter.jpg';
 import ReactRoundedImage from 'react-rounded-image';
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
@@ -16,16 +14,7 @@ import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
 import { motion } from 'framer-motion';
 
 function ViewProfilePage(props) {
-  const useStyles = makeStyles((theme) => ({
-    margin: {
-      margin: theme.spacing(1),
-    },
-    TextStyle: {
-      color: "white",
-    }
-  }));
-  
-  const { animating, setAnimating } = useContext(PlayerAnimationContext);
+  const { animating } = useContext(PlayerAnimationContext);
   const togglesVariants = {
     hidden: {
       scale: 1
@@ -42,8 +31,6 @@ function ViewProfilePage(props) {
     tabsContainer: blueGrey[900],
     mixtapeRowColor: blueGrey[800]
   }
-
-  const { id } = props.match.params;
 
   const { user } = useContext(UserContext);
 

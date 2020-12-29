@@ -15,7 +15,6 @@ import SoundcloudIcon from './icons/SoundcloudIcon';
 import CurrentSongContext from '../contexts/CurrentSongContext';
 import PlayingSongContext from '../contexts/PlayingSongContext';
 import JSTPSContext from '../contexts/JSTPSContext';
-import SocketIOContext from '../contexts/SocketIOContext';
 import { SongPosition_Transaction } from './transactions/SongPosition_Transaction';
 
 
@@ -36,8 +35,6 @@ function Mixtape(props) {
   const { setPlaying } = useContext(PlayingSongContext);
 
   const { tps } = useContext(JSTPSContext);
-
-  const { socket } = useContext(SocketIOContext);
 
   const onDragEnd = (result) => {
     if (!result.destination || result.source.index === result.destination.index) {

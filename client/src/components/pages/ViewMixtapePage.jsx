@@ -18,7 +18,7 @@ import MixtapeComments from '../MixtapeComments';
 import { forkMixtape, getMixtape, getMixtapeCoverImageUrl, updateMixtape, getSongDuration } from '../../utils/api';
 import JSTPSContext from '../../contexts/JSTPSContext';
 import { ChangeMixtapeName_Transaction } from '../transactions/ChangeMixtapeName_Transaction';
-import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Comment as CommentIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
+import { Redo as RedoIcon, Delete as DeleteIcon, Save as SaveIcon, Add as AddIcon, MusicNote as MusicNoteIcon, Settings as SettingsIcon, Share as ShareIcon, ArrowBack as ArrowBackIcon, Edit as EditIcon, Undo as UndoIcon, FileCopy as FileCopyIcon, Close as CloseIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import MixtapeCoverImageUploadModal from '../modals/MixtapeCoverImageUploadModal';
 import ShareMixtapeModal from '../modals/ShareMixtapeModal';
@@ -74,18 +74,12 @@ function ViewMixtapePage(props) {
     const [uploadCoverImagePopup, setUploadCoverImagePopup] = useState(false);
     const [coverImageUrl, setCoverImageUrl] = useState(null);
 
-    const [shareMixtapePopupIsOpen, setShareMixtapePopupIsOpen] = useState(false);
-
     const [songsToDelete, setSongsToDelete] = useState([]);
     const [addSongPopupIsOpen, setAddSongPopupIsOpen] = useState(false); // whether add song popup is open
-    const [songToAdd, setSongToAdd] = useState({});
     const [settingsPopupIsOpen, setSettingsPopupIsOpen] = useState(false);
-    const [songSearchOpen, setSongSearchOpen] = useState(true);
 
     const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
     const { user } = useContext(UserContext);
-
-    const [apiToUse, setApiToUse] = useState('soundcloud');
 
     // add array of songs to current mixtape
     const addSongs = async (songsToAdd) => {
@@ -110,7 +104,6 @@ function ViewMixtapePage(props) {
 
         mixtape.songs = newSongs;
         setMixtape(mixtape);
-        setSongToAdd({});
     }
 
     const deleteSongs = () => {
@@ -128,7 +121,7 @@ function ViewMixtapePage(props) {
 
     // watch for changes to mixtape and update server accordingly
     const prevMixtape = usePrevious(mixtape);
-    useEffect(async () => {
+    useEffect(() => {
         if (
             !_.isEqual(
                 prevMixtape,
@@ -149,23 +142,28 @@ function ViewMixtapePage(props) {
                 setEditMixtapeNameField(updatedMixtape.name);
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mixtape, prevMixtape]);
 
     // fetch mixtape from server
-    useEffect(async () => {
-        const initialMixtape = await getMixtape(props.match.params.id);
-        if (!initialMixtape) {
-            history.push('/');
-            return;
-        }
-        const durations = initialMixtape.songs.map(song => song.duration);
-        if (durations.length > 0) {
-            initialMixtape.duration = durations.reduce((total, current) => total + current);
-        } else {
-            initialMixtape.duration = 0;
-        }
-        setMixtape(initialMixtape);
-        setCoverImageUrl(getMixtapeCoverImageUrl(initialMixtape._id));
+    useEffect(() => {
+        const getCurrentMixtape = async () => {
+            const initialMixtape = await getMixtape(props.match.params.id);
+            if (!initialMixtape) {
+                history.push('/');
+                return;
+            }
+            const durations = initialMixtape.songs.map(song => song.duration);
+            if (durations.length > 0) {
+                initialMixtape.duration = durations.reduce((total, current) => total + current);
+            } else {
+                initialMixtape.duration = 0;
+            }
+            setMixtape(initialMixtape);
+            setCoverImageUrl(getMixtapeCoverImageUrl(initialMixtape._id));
+        };
+        getCurrentMixtape();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
@@ -183,7 +181,7 @@ function ViewMixtapePage(props) {
                 }
             }
         }
-    });
+    }, [mixtape.collaborators, user._id]);
 
     const enableEditingHandler = () => {
         setIsEditing(true);
@@ -223,8 +221,7 @@ function ViewMixtapePage(props) {
         console.log("Undo Add Song");
         tps.undoTransaction();
         setMixtape(mixtape);
-        setSongToAdd({});
-        /////////////////
+
         setCurrentSong({
             mixtape: currentSong.mixtape,
             index: currentSong.index,
@@ -366,13 +363,10 @@ function ViewMixtapePage(props) {
         setOpen(false);
     };
 
-    const [mixtapeToShare, setMixtapeToShare] = useState(null);
-
     const [shareModalOpen, setShareModalOpen] = useState(false);
 
     const shareMixtapeHandler = (mixtape) => {
         console.log(mixtape);
-        setMixtapeToShare(mixtape);
         setShareModalOpen(true);
     }
 
@@ -407,7 +401,7 @@ function ViewMixtapePage(props) {
                 {/* {isEditing ? <TextField value={mixtape.name} /> : <h1>{mixtape.name || 'Mixtape Title'}</h1>} */}
                 <Grid style={{ height: '100%', width: '100%' }} container>
                     <Grid style={{ height: '100%', width: '100%' }} xs={1} item>
-                        <img onClick={() => isEditing ? setUploadCoverImagePopup(true) : undefined} style={{ cursor: isEditing ? 'pointer' : '', width: '80%', height: '100%', objectFit: 'contain' }} src={coverImageUrl ? coverImageUrl : ''} />
+                        <img onClick={() => isEditing ? setUploadCoverImagePopup(true) : undefined} style={{ cursor: isEditing ? 'pointer' : '', width: '80%', height: '100%', objectFit: 'contain' }} src={coverImageUrl ? coverImageUrl : ''} alt="cover_image" />
                     </Grid>
                     <Grid xs={8} item>
                         {

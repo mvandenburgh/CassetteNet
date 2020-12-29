@@ -1,8 +1,7 @@
 import React from 'react';
 import { CircularProgress, Backdrop, Modal, Fade, Grid, Typography, Button } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
-import { makeStyles, createMuiTheme } from '@material-ui/core/styles';
-import { green } from '@material-ui/core/colors';
+import { makeStyles } from '@material-ui/core/styles';
 import { adminDropDatabase } from '../../utils/api';
 
 const useStyles = makeStyles((theme) => ({

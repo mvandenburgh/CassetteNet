@@ -8,10 +8,12 @@ function VerifyLoginPage(props) {
 
     const { setUser } = useContext(UserContext);
 
-    useEffect(async () => {
-        const user = await verifyUserLoggedIn();
-        setUser({ isLoggedIn: true, isGuest: false, ...user });
-        history.push('/');
+    useEffect(() => {
+        verifyUserLoggedIn().then(user => {
+            setUser({ isLoggedIn: true, isGuest: false, ...user });
+            history.push('/');
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

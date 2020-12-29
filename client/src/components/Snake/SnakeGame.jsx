@@ -8,7 +8,6 @@ import {
   directions
 } from "./constants";
 import { Typography } from "@material-ui/core";
-import SocketIOContext from '../../contexts/SocketIOContext';
 import UserContext from '../../contexts/UserContext';
 import { resetPlayerScore } from '../../utils/api';
 
@@ -23,9 +22,6 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
 
   const gameSize = [gameScreenWidth, gameScreenHeight]
 
-  const [move, setMove] = useState(null);
-
-  const { socket } = useContext(SocketIOContext);
   const { user } = useContext(UserContext);
 
   useInterval(() => gameLoop(), speed);
@@ -67,9 +63,8 @@ function SnakeGame({ gameScreenStartX, gameScreenEndX, gameScreenStartY, gameScr
     if(inputDir==null || dir == null){
       console.log("invalid input ");
     }
-    else if((dir[0]!=(inputDir[0] * -1) || dir[1]!=(inputDir[1] * -1)) && keyCode >= 37 && keyCode <= 40){
+    else if((dir[0] !== (inputDir[0] * -1) || dir[1] !== (inputDir[1] * -1)) && keyCode >= 37 && keyCode <= 40) {
       setDir(directions[keyCode]);
-      setMove(keyCode);
     }
   };
 

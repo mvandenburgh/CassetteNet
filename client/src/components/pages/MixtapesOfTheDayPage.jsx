@@ -4,7 +4,7 @@ import blueGrey from '@material-ui/core/colors/blueGrey';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CurrentSongContext from '../../contexts/CurrentSongContext';
 import { useHistory } from 'react-router-dom';
-import { Box, Button, Grid, Typography, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
+import { Box, Grid, Typography, IconButton } from '@material-ui/core';
 import { getRandomMixtapes } from '../../utils/api';
 import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
 import { motion } from 'framer-motion';
@@ -39,10 +39,8 @@ const MixtapeRows = ({ mixtapes, history }) => (
 function MixtapesOfTheDayPage(props) {
   const { currentSong } = useContext(CurrentSongContext);
 
-  const [open, setOpen] = useState(false);
-
   const [mixtapes, setMixtapes] = useState([]);
-  const { animating, setAnimating } = useContext(PlayerAnimationContext);
+  const { animating } = useContext(PlayerAnimationContext);
 
     const togglesVariants = {
         hidden: {
@@ -56,16 +54,6 @@ function MixtapesOfTheDayPage(props) {
         }
       }
 
-
-  const handleClickOpen = () => {
-    return;
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   useEffect(() => {
     getRandomMixtapes(10, 'daily').then(mixtapes => setMixtapes(mixtapes));
   }, []);
@@ -77,31 +65,6 @@ function MixtapesOfTheDayPage(props) {
 
   return (
     <div style={{ color: 'white', left: 0, marginBottom: `${currentSong.playBarHeight}px` }}>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Write a Message!</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Give some feedback on the mixtape!
-          </DialogContentText>
-          <TextField
-            multiline
-            rows={17}
-            style={{ height: '300px', width: '400px' }}
-            autoFocus
-            variant="filled"
-            margin="dense"
-            id="name"
-            label="Message"
-            type="email"
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button align="center" onClick={handleClose} color="primary">
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
       <IconButton color="secondary" aria-label="back" onClick={() => { goBack() }}>
         <ArrowBackIcon />
       </IconButton>
@@ -146,7 +109,7 @@ function MixtapesOfTheDayPage(props) {
             Favorite
             </Box>
         </Box>
-        <Box onClick={handleClickOpen} style={{
+        <Box style={{
           marginLeft: "170px",
           marginTop: '5px',
           marginRight: '10px',

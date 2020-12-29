@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, List, Box, Divider, Grid, IconButton, Typography, makeStyles, TextField } from '@material-ui/core';
+import { Button, List, Box, Divider, Grid, IconButton, Typography, makeStyles } from '@material-ui/core';
 import { ArrowBack as ArrowBackIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import blueGrey from '@material-ui/core/colors/blueGrey';
@@ -110,7 +110,7 @@ function AdminPage(props) {
         setAdmins(admins);
     }
 
-    const [usersToGenerate, setUsersToGenerate] = useState(100);
+    const usersToGenerate = 100; // [usersToGenerate, setUsersToGenerate] = useState(100);
 
     const [disabled, setDisabled] = useState(false); // if DB operation buttons are enabled or not
 
@@ -139,7 +139,7 @@ function AdminPage(props) {
                 width: '85%',
                 height: '30%'
             }} boxShadow={3} borderRadius={12}>
-                <Grid container style={{ width: '70%', marginBottom: '4%' }} justify="center" style={{ textAlign: 'center' }}>
+                <Grid container style={{ width: '70%', marginBottom: '4%', textAlign: 'center' }} justify="center">
                     {/* <TextFiel
                  */}
                     <Button

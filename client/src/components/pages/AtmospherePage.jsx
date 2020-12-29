@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Button, Card, CardContent, CardMedia, IconButton, Grid, Typography, ThemeProvider, makeStyles, useTheme, createMuiTheme} from '@material-ui/core';
+import { Button, Card, CardContent, CardMedia, IconButton, Grid, Typography, ThemeProvider, makeStyles, createMuiTheme} from '@material-ui/core';
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import blueGrey from '@material-ui/core/colors/blueGrey';
@@ -69,7 +69,6 @@ const useStyles2 = makeStyles((theme) => ({
 function AtmospherePage() {
     const classes = useStyles();
     const class2 = useStyles2();
-    const theme = useTheme();
 
     const history = useHistory();
     const goBack = () => history.goBack();
@@ -77,7 +76,7 @@ function AtmospherePage() {
     const { setAtmosphereSound } = useContext(AtmosphereSoundContext);
     
     const { currentSong } = useContext(CurrentSongContext);
-    const { animating, setAnimating } = useContext(PlayerAnimationContext);
+    const { animating } = useContext(PlayerAnimationContext);
 
   const togglesVariants = {
     hidden: {

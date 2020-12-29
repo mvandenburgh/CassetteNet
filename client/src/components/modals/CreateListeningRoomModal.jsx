@@ -101,7 +101,7 @@ function CreateListeningRoomModal({ open, setOpen, mixtape }) {
                                 >
                                     <Grid container>
                                         <Grid item xs={1} align="left" style={{ cursor: 'pointer' }}>
-                                            <img width="100%" style={{ objectFit: 'contain' }} src={getUserProfilePictureUrl(user?._id)} />
+                                            <img width="100%" style={{ objectFit: 'contain' }} src={getUserProfilePictureUrl(user?._id)} alt="pfp" />
                                         </Grid>
                                         <Grid item xs={10} align="center">
                                             {user?.username}

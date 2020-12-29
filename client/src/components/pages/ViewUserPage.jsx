@@ -12,14 +12,13 @@ import {
   Tabs,
   TextField,
   Typography,
-  makeStyles,
   IconButton
 } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import ReactRoundedImage from "react-rounded-image";
 import { ArrowBack as ArrowBackIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
-import { getUser, getUserProfilePictureUrl, getCreatedMixtapes, getFavoritedMixtapes, sendAnonymousMessage, sendMixtapeMessage, sendDM } from '../../utils/api';
+import { getUser, getUserProfilePictureUrl, getCreatedMixtapes, getFavoritedMixtapes, sendDM } from '../../utils/api';
 import FollowUserButton from '../FollowUserButton';
 import UserContext from '../../contexts/UserContext';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -47,17 +46,6 @@ function TabPanel(props) {
 }
 
 function ViewUserPage(props) {
-  const useStyles = makeStyles((theme) => ({
-    margin: {
-      margin: theme.spacing(1),
-    },
-    TextStyle: {
-      color: "white",
-    }
-  }));
-
-  const classes = useStyles();
-
   const colors = {
     namePfpContainer: blueGrey[900],
     tabsContainer: blueGrey[900],
@@ -66,7 +54,7 @@ function ViewUserPage(props) {
 
   const { id } = props.match.params;
 
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   const [userState, setUserState] = useState({});
 
@@ -85,6 +73,7 @@ function ViewUserPage(props) {
       }
     }
     getUserInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const userSince = new Date(userState.createdAt);
@@ -179,11 +168,11 @@ function ViewUserPage(props) {
             <FollowUserButton id={userState?._id} />
             <Tooltip title={(!user._id
                             ? 'Log in to use this feature!'
-                            : user._id == userState._id ? 'You may not message yourself.' : '' )}  
+                            : user._id === userState._id ? 'You may not message yourself.' : '' )}  
             >
               <span>
                 <Button
-                  disabled={(user._id == userState._id) || !user._id}
+                  disabled={(user._id === userState._id) || !user._id}
                   variant="contained"
                   style={!user._id ? 
                   {

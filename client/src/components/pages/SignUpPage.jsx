@@ -36,7 +36,7 @@ function SignUpPage(props) {
   const handleEmail = (e) => setEmail(e.target.value);
 
   const validateEmail = () => emailValidator.validate(email);
-  const validateUsername = () => username.length >= 4 && username.length <= 12 && username[0] != '#';
+  const validateUsername = () => username.length >= 4 && username.length <= 12 && username[0] !== '#';
 
   const schema = new passwordValidator();
   schema

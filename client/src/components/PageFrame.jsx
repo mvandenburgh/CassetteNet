@@ -13,7 +13,7 @@ import {
   IconButton,
   ListItem,
   ListItemIcon, ListItemText, Toolbar } from '@material-ui/core';
-import { Person as MyProfileIcon, Language as MixtapesOfTheDayIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon, PersonAdd as SignUpIcon, MoodBad as NotFoundIcon } from '@material-ui/icons';
+import { Person as MyProfileIcon, Language as MixtapesOfTheDayIcon, Equalizer as AtmosphereSoundsIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Favorite as FavoritedMixtapesIcon, Mail as InboxIcon, PeopleAlt as FollowedUsersIcon } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom';
 import CassetteTapeIcon from './icons/CassetteTapeIcon';
 import SearchBar from './SearchBar';
@@ -21,7 +21,6 @@ import SearchBarDropdown from './SearchBarDropdown';
 import Player from './Player';
 import dashboard from '../images/dashboard.png';
 import UserContext from '../contexts/UserContext';
-import CurrentSongContext from '../contexts/CurrentSongContext';
 import { userLogout, getUserProfilePictureUrl } from '../utils/api';
 
 
@@ -105,8 +104,6 @@ function PageFrame({ setSidebarLength }) {
   const [open, setOpen] = useState(false);
   const history = useHistory();
 
-  const { currentSong, setCurrentSong } = useContext(CurrentSongContext);
-
   const { user, setUser } = useContext(UserContext);
 
   const logout = async () => {
@@ -125,6 +122,7 @@ function PageFrame({ setSidebarLength }) {
     } else {
       setSidebarLength(72);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const handleDrawerOpen = () => {

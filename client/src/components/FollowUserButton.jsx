@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { followUser, unfollowUser } from '../utils/api';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -31,10 +31,10 @@ function FollowUserButton(props) {
         
         <Tooltip title={(!user._id
                             ? 'Log in to use this feature!'
-                            : user._id == props.id ? 'You may not follow yourself.' : '' )} >
+                            : user._id === props.id ? 'You may not follow yourself.' : '' )} >
             <span>
                 <Button
-                    disabled={(!user._id|| disabled || user._id == props.id)}
+                    disabled={(!user._id || disabled || user._id === props.id)}
                     variant="contained"
                     boxShadow={3}
                     style={!user.followedUsers ? {

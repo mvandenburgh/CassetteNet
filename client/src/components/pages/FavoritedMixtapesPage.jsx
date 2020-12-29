@@ -11,12 +11,13 @@ import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
 import { motion } from 'framer-motion';
 
 function FavoritedMixtapesPage(props) {
+    const history = useHistory();
     const { user } = useContext(UserContext);
     if (!user?.isLoggedIn) {
         history.push('/');
     }
     const { currentSong } = useContext(CurrentSongContext);
-    const { animating, setAnimating } = useContext(PlayerAnimationContext);
+    const { animating } = useContext(PlayerAnimationContext);
 
     const togglesVariants = {
         hidden: {
@@ -40,9 +41,9 @@ function FavoritedMixtapesPage(props) {
                 setMixtapes(updatedMixtapes);
             }
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const history = useHistory();
     const goBack = () => history.goBack();
 
     if (!mixtapes) {

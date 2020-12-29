@@ -28,7 +28,7 @@ function MyMixtapesPage(props) {
 
     const history = useHistory();
     const goBack = () => history.goBack();
-    const { animating, setAnimating } = useContext(PlayerAnimationContext);
+    const { animating } = useContext(PlayerAnimationContext);
 
     const togglesVariants = {
         hidden: {
@@ -57,6 +57,7 @@ function MyMixtapesPage(props) {
                 setMixtapes(updatedMixtapes);
             }
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (!mixtapes) {

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { users } from '../testData/users.json';
-import { inboxMessages } from '../testData/inboxMessages.json';
 
 
 let SERVER_ROOT_URL;

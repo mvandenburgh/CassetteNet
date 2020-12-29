@@ -49,7 +49,8 @@ function ChangePasswordConfirmationModal(props) {
 
     const inputHandler = (e, setState) => setState(e.target.value);
 
-    useEffect(() => setDoneDisabled(!isValidInput()), [currentPassword, newPassword, confirmNewPassword]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => setDoneDisabled(!isValidInput()), [currentPassword, newPassword, confirmNewPassword], []);
 
     const closeModal = () => {
         [setCurrentPassword,setNewPassword, setConfirmNewPassword].forEach(setState => setState(''));

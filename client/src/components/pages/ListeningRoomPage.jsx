@@ -37,7 +37,6 @@ import RhythmGame from '../listeningroom/RhythmGame';
 import SnakeGame from '../Snake/SnakeGame';
 import ListeningRoomPlayer from '../listeningroom/ListeningRoomPlayer';
 import { useInterval, useEventListener } from '../../hooks';
-import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import MusicVideoIcon from '@material-ui/icons/MusicVideo';
 import snakeIcon from '../../images/snakeIcon.png';
 
@@ -95,6 +94,7 @@ function ListeningRoomPage(props) {
             window.location.reload();
         });
         return unlisten;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const theme = createMuiTheme({
@@ -186,6 +186,7 @@ function ListeningRoomPage(props) {
                 });
             })
             .catch(err => history.goBack());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const sendChatHandler = (message) => {
@@ -217,6 +218,7 @@ function ListeningRoomPage(props) {
             }));
             setChatMessages(newChatMessages);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listeningRoom]);
 
     const [screen, setScreen] = useState('home'); // can be one of ['home', 'snake', 'rhythm']
@@ -227,6 +229,7 @@ function ListeningRoomPage(props) {
                 setScores(newScores);
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [screen]);
 
     const gameScreenRef = useRef();
@@ -248,7 +251,7 @@ function ListeningRoomPage(props) {
             setGameScreenHeight(gameScreenRef.current.clientHeight);
             setGameScreenWidth(gameScreenRef.current.clientWidth);
         }
-    });
+    }, []);
 
     const rhythmGameHandler = (e) => {
         e.preventDefault();

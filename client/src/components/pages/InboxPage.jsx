@@ -34,7 +34,7 @@ function InboxPage() {
     const { user, setUser } = useContext(UserContext);
 
     const { currentSong } = useContext(CurrentSongContext);
-    const { animating, setAnimating } = useContext(PlayerAnimationContext);
+    const { animating } = useContext(PlayerAnimationContext);
 
     const togglesVariants = {
         hidden: {

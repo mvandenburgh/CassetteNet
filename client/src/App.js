@@ -21,7 +21,6 @@ import AtmosphereSoundContext from './contexts/AtmosphereSoundContext';
 import SocketIOContext from './contexts/SocketIOContext';
 import { jsTPS } from './utils/jsTPS'
 import { verifyUserLoggedIn, SERVER_ROOT_URL } from './utils/api';
-import Directory from './components/Directory';
 import ListeningRoomPage from './components/pages/ListeningRoomPage';
 import ViewProfilePage from './components/pages/ViewProfilePage';
 import ChangePasswordPage from './components/pages/ChangePasswordPage';
@@ -49,6 +48,7 @@ function App() {
         socket.emit('setUserSocketId', { userId: newUser._id });
       })
       .catch(err => setUser({ isLoggedIn: false }));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // check if song is playing
@@ -85,6 +85,7 @@ function App() {
         })
         .catch(err => setUser({ isLoggedIn: false }));
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!user) {

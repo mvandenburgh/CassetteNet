@@ -16,10 +16,9 @@ function FollowedUsersPage() {
   const [followedUsers, setFollowedUsers] = useState([]);
 
   const [totalPages, setTotalPages] = useState(1);
-  const [totalResults, setTotalResults] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { animating, setAnimating } = useContext(PlayerAnimationContext);
+  const { animating } = useContext(PlayerAnimationContext);
 
     const togglesVariants = {
         hidden: {
@@ -42,7 +41,6 @@ function FollowedUsersPage() {
       setFollowedUsers(users.users);
       setCurrentPage(users.currentPage);
       setTotalPages(users.totalPages);
-      setTotalResults(users.totalResults);
     });
   }, [currentPage]);
 

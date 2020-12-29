@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { CircularProgress, Grid, Slider as VolumeSlider, Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Loop as LoopIcon, Shuffle as ShuffleIcon, Equalizer as AtmosphereSoundsIcon } from '@material-ui/icons';
@@ -92,8 +92,6 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
 
     const { playing, setPlaying } = useContext(PlayingSongContext);
 
-    const [rhythmGameStartingPopup, setRhythmGameStartingPopup] = useState(false);
-
     useInterval(() => {
         if (playerRef.current && playing && listeningRoom?.startedAt && listeningRoom?.wasAt) {
             const time = ((Date.now() / 1000) - listeningRoom.startedAt) + listeningRoom.wasAt;
@@ -101,9 +99,6 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
                 setCurrentTime(listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration);
             } else if (time >= 0) {
                 setCurrentTime(time);
-                if (rhythmGame && listeningRoom?.mixtape.songs[listeningRoom?.currentSong]?.duration - currentTime <= 6) {
-                    setRhythmGameStartingPopup(true);
-                }
             } else if (time < 0) {
                 setCurrentTime(0);
             }
@@ -259,7 +254,6 @@ function ListeningRoomPlayer({ listeningRoom, setListeningRoom, rhythmGame, setS
             <Snackbar
                 open={!playing && rhythmGame}
                 autoHideDuration={8000}
-                onClose={() => setRhythmGameStartingPopup(false)}
                 anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'center',

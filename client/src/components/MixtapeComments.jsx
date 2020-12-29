@@ -10,7 +10,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 function MixtapeComments({ mixtape, setMixtape }) {
     const [comment, setComment] = useState('');
-    const { user, setUser } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const postComment = () => {
         commentOnMixtape(mixtape._id, comment)
             .then(newComments => {

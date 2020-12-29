@@ -18,9 +18,8 @@ import { useHistory } from 'react-router-dom';
 import { userLogin, oauthLogin, requestPasswordReset } from '../../utils/api';
 
 import GoogleButton from 'react-google-button';
-import { FacebookLoginButton } from 'react-social-login-buttons';
 
-function LoginPage(props) {
+function LoginPage() {
   const useStyles = makeStyles((theme) => ({
     margin: {
       margin: theme.spacing(1),
@@ -33,17 +32,12 @@ function LoginPage(props) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-  
-  const handleClickOpen = () => setOpen(true);
 
   const handleClose = () => setOpen(false);
 
   const handleGoogleSignUp = () => oauthLogin('google');
-
-  const handleFacebookSignUp = () => oauthLogin('facebook');
 
   const loginAsUser = async () => {
     try {
@@ -80,7 +74,6 @@ function LoginPage(props) {
   const history = useHistory();
   const goBack = () => history.goBack();
 
-  const handleUsername = (e) => setUsername(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
   const handleEmail = (e) => setEmail(e.target.value);
 

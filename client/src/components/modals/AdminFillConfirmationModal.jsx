@@ -1,12 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { CircularProgress, Backdrop, Modal, Fade, Grid, Typography, Button } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
-import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { green } from '@material-ui/core/colors';
+import { makeStyles } from '@material-ui/core/styles';
 import { adminFillDatabase } from '../../utils/api';
-import { deleteUser } from '../../utils/api';
-import UserContext from '../../contexts/UserContext';
-import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -28,13 +24,6 @@ function AdminFillConfirmationModal({ usersToGenerate, disabled, setDisabled, lo
 
         setOpen(false);
     }
-
-    const theme = createMuiTheme({
-        palette: {
-            primary: green,
-        },
-    });
-
 
     return (
         <Modal

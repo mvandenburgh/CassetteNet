@@ -1,9 +1,8 @@
 import React, { useContext } from 'react';
-import { Button, Grid, IconButton, Typography } from '@material-ui/core';
+import { Button, Grid, Typography } from '@material-ui/core';
 import logo from '../../images/logo.png';
 import { useHistory } from 'react-router-dom';
 import UserContext from '../../contexts/UserContext';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 function StartPage(props) {
     const colors = {

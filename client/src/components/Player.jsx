@@ -113,6 +113,7 @@ function Player() {
       const clientHeight = playerBarRef.current.clientHeight + 10;
       setCurrentSong({ playBarHeight: (clientHeight + (clientHeight / 4)), ...currentSong })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerBarRef]);
 
   const [currentTime, setCurrentTime] = useState(null);
@@ -142,7 +143,7 @@ function Player() {
   const [loop, setLoop] = useState(false);
 
   const handleAnimation = () => {
-    if (animating == true) {
+    if (animating === true) {
       setAnimating(false);
     }
     else {

@@ -1,14 +1,9 @@
 import React from 'react';
 import { Box, Grid } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
-import { useHistory } from 'react-router-dom';
-import { getUserProfilePictureUrl, getMixtapeCoverImageUrl } from '../utils/api';
+import { getMixtapeCoverImageUrl } from '../utils/api';
 
 function MixtapeRows({ mixtapes, history }) {
-    const clickUserHandler = (e, userId) => {
-        e.stopPropagation();
-        history.push(`/user/${userId}`);
-    }
     return (
         mixtapes.map(mixtape => (
             <Box
@@ -24,7 +19,7 @@ function MixtapeRows({ mixtapes, history }) {
                 >
                     <Grid container>
                         <Grid item xs={1} align="left" onClick={() => history.push(`/mixtape/${mixtape._id}`)} style={{cursor: 'pointer'}}>
-                            <img width={'50%'} style={{ objectFit: 'contain' }} src={getMixtapeCoverImageUrl(mixtape._id)} />
+                            <img width={'50%'} style={{ objectFit: 'contain' }} src={getMixtapeCoverImageUrl(mixtape._id)} alt="cover_image" />
                         </Grid>
                         <Grid item xs={2} align="center" onClick={() => history.push(`/mixtape/${mixtape._id}`)} style={{cursor: 'pointer'}}>
                             {mixtape.name}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box } from '@material-ui/core';
-import { blueGrey, indigo, lightBlue } from '@material-ui/core/colors'
+import { blueGrey, lightBlue } from '@material-ui/core/colors'
 import { useHistory } from 'react-router-dom';
 import ReactRoundedImage from 'react-rounded-image';
 import FollowUserButton from './FollowUserButton';

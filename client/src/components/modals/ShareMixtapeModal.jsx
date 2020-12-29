@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Backdrop, Modal, Fade, Grid, Typography, Button } from '@material-ui/core';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { blueGrey } from '@material-ui/core/colors';

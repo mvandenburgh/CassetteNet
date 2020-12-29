@@ -1,10 +1,8 @@
 import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Box, Fab, Grid, List, ListItem, ListItemText } from '@material-ui/core';
-import { Undo as UndoIcon, Redo as RedoIcon } from '@material-ui/icons';
-import { makeStyles } from '@material-ui/core/styles';
-import { getMixtapeCoverImageUrl, updateMyMixtapes } from '../utils/api';
+import { Box, Grid, List, ListItem, ListItemText } from '@material-ui/core';
+import { getMixtapeCoverImageUrl } from '../utils/api';
 import JSTPSContext from '../contexts/JSTPSContext';
 import { MixtapePosition_Transaction } from './transactions/MixtapePosition_Transaction';
 
@@ -16,22 +14,12 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   ...draggableStyle,
 });
 
-const useStyles = makeStyles(() => ({
-  fab: {
-    position: 'fixed',
-    bottom: '15%',
-    right: '5%',
-  },
-}));
-
 function MixtapeList(props) {
   const { mixtapes, setMixtapes } = props;
   console.log(mixtapes);
   const history = useHistory();
 
-  const { tps, setTps } = useContext(JSTPSContext);
-
-  const classes = useStyles();
+  const { tps } = useContext(JSTPSContext);
 
   const onDragEnd = (result) => {
     if (!result.destination) {
@@ -55,60 +43,6 @@ function MixtapeList(props) {
   const openMixtape = (index) => {
     history.push(`/mixtape/${mixtapes[index]._id}`);
   };
-
-  const undoHandler = () => {
-    if(tps.getSize() > 0) {
-      const { transactionType } = tps.transactions[tps.getSize() - 1];
-      console.log("Top of transaction stack: " + transactionType);
-      switch (transactionType) {
-        case "MixtapePosition_Transaction":
-          undoChangeMixtapePosition();
-          break;
-        default:
-          console.log("Unknown transaction.");
-      }
-    }
-  }
-
-  const undoChangeMixtapePosition = () => {
-    console.log("Undo Change Mixtape Position");
-    printMixtapes(mixtapes);
-    tps.undoTransaction();
-    setMixtapes(mixtapes);
-    printMixtapes(mixtapes);
-    updateMyMixtapes(mixtapes);
-  }
-
-  const redoHandler = () => {
-    if(tps.getSize() > 0) {
-      const { transactionType } = tps.transactions[tps.getSize() - 1];
-      console.log("Top of transaction stack: " + transactionType);
-      switch (transactionType) {
-        case "MixtapePosition_Transaction":
-          redoChangeMixtapePosition();
-          break;
-        default:
-          console.log("Unknown transaction.");
-      }
-    }
-  }
-
-  const redoChangeMixtapePosition = () => {
-    console.log("Redo Change Mixtape Position");
-    tps.doTransaction();
-    setMixtapes(mixtapes);
-    updateMyMixtapes(mixtapes);
-  }
-
-
-  const printMixtapes = (mixtapes) => {
-    console.log("PRINT");
-    var str = "";
-    for (var i=0; i < mixtapes.length; i++) {
-      str += i + ": " + mixtapes[i].name + "\n";
-    }
-    console.log(str);
-  }
 
   return (
     <Box style={{width: '100%' }} align="center">

@@ -1,14 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { IconButton, Box, Grid, Typography } from '@material-ui/core';
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import ReactRoundedImage from 'react-rounded-image';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { getPopularMixtapes, getFollowedUsersActivity, getUserProfilePictureUrl, getRandomMixtapes, getMixtapeCoverImageUrl } from '../../utils/api';
+import { getPopularMixtapes, getFollowedUsersActivity, getUserProfilePictureUrl, getMixtapeCoverImageUrl } from '../../utils/api';
 import { useHistory } from 'react-router-dom';
 import PlayerAnimationContext from '../../contexts/PlayerAnimationContext';
 import { motion } from 'framer-motion';
-
-import parse from 'html-react-parser';
 
 const MixtapeRows = ({ mixtapes, history }) => (
   <>
@@ -28,7 +25,7 @@ const MixtapeRows = ({ mixtapes, history }) => (
         <Grid container>
           <Grid style={{ cursor: 'pointer' }} item xs={4} onClick={() => history.push(`/mixtape/${mixtape._id}`)}>
             <figure>
-              <img style={{ height: '3em' }} src={getMixtapeCoverImageUrl(mixtape._id)} />
+              <img style={{ height: '3em' }} src={getMixtapeCoverImageUrl(mixtape._id)} alt="cover_image" />
               <figcaption>{mixtape.name}</figcaption>
             </figure>
           </Grid>
@@ -36,7 +33,7 @@ const MixtapeRows = ({ mixtapes, history }) => (
           <Grid item xs={4} style={{ display: 'flex', justifyContent: "center", cursor: 'pointer' }} onClick={() => history.push(`/user/${mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.user}`)}>
             <figure>
               {/* <ReactRoundedImage image={getUserProfilePictureUrl(mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.user)} roundedSize="1" style={{ height: '1em' }} /> */}
-              <img style={{ height: '2em' }} src={getUserProfilePictureUrl(mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.user)} />
+              <img style={{ height: '2em' }} src={getUserProfilePictureUrl(mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.user)} alt="pfp" />
               <figcaption>{mixtape.collaborators?.filter(c => c.permissions === 'owner')[0]?.username}</figcaption>
             </figure>
           </Grid>
@@ -52,9 +49,9 @@ const MixtapeRows = ({ mixtapes, history }) => (
   </>
 );
 
-function DashboardPage(props) {
+function DashboardPage() {
   const [userActivities, setUserActivities] = useState([]);
-  const { animating, setAnimating } = useContext(PlayerAnimationContext);
+  const { animating } = useContext(PlayerAnimationContext);
 
   const togglesVariants = {
     hidden: {
@@ -93,8 +90,8 @@ function DashboardPage(props) {
             }}>
               <Box style={{ display: 'flex', justifyContent: "center" }}>
                 <div>
-                  <img style={{ height: '1em', width: '1em', cursor: 'pointer' }} src={getUserProfilePictureUrl(activity.user)} onCLick={() => history.push(`/user/${activity.user}`)} />
-                  <a style={{ color: 'white', cursor: 'pointer' }} onClick={() => history.push(activity.targetUrl)}>{activity.username} {activity.action}</a>
+                  <img style={{ height: '1em', width: '1em', cursor: 'pointer' }} src={getUserProfilePictureUrl(activity.user)} onClick={() => history.push(`/user/${activity.user}`)} alt="pfp" />
+                  <span style={{ color: 'white', cursor: 'pointer' }} onClick={() => history.push(activity.targetUrl)}>{activity.username} {activity.action}</span>
                 </div>
               </Box>
             </Box>
@@ -105,6 +102,7 @@ function DashboardPage(props) {
         setUserActivities(['No recent activity.']);
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const goBack = () => history.goBack();

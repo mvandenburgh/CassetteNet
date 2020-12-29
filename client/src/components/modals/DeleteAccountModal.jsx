@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { Backdrop, Modal, Fade, Grid, Typography, Button } from '@material-ui/core';
 import { blueGrey } from '@material-ui/core/colors';
 import { makeStyles, ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import { deleteUser } from '../../utils/api';
 import UserContext from '../../contexts/UserContext';
-import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -16,10 +15,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function DeleteAccountModal(props) {
-    const { user, setUser } = useContext(UserContext);
+    const { user } = useContext(UserContext);
     const classes = useStyles();
     const { open, setOpen } = props;
-    const history = useHistory();
 
     const theme = createMuiTheme({
         palette: {
