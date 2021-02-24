@@ -181,7 +181,7 @@ function ViewMixtapePage(props) {
                 }
             }
         }
-    }, [mixtape.collaborators, user._id]);
+    }, [mixtape?.collaborators, user?._id]);
 
     const enableEditingHandler = () => {
         setIsEditing(true);
