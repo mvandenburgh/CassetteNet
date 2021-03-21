@@ -177,7 +177,7 @@ async function setUsernameOfOAuthAccount(username) {
 async function uploadFile(file, filename, endpoint) {
     const formData = new FormData();
     formData.append(filename, file);
-    await axios.put(new URL(endpoint, SERVER_ROOT_URL), formData);
+    await axios.put(new URL(endpoint, SERVER_ROOT_URL).href, formData);
 }
 
 function getMixtapeCoverImageUrl(mixtapeId) {
@@ -202,17 +202,18 @@ async function adminDropDatabase() {
 }
 
 async function getAdmins(){
-    const users = await axios.get(new URL('/api/admin/',SERVER_ROOT_URL), { withCredentials: true });
+    const users = await axios.get(new URL('/api/admin/',SERVER_ROOT_URL).href, { withCredentials: true });
     return users.data;
 }
 
 async function deleteAdmin(userId) {
-    const users = await axios.delete(new URL('/api/admin/', SERVER_ROOT_URL), { userId });
+    console.log(userId)
+    const users = await axios.delete(new URL('/api/admin/', SERVER_ROOT_URL).href, { params: { userId } });
     return users.data;
 }
 
 async function addAdmin(userId) {
-    const users = await axios.patch(new URL('/api/admin/', SERVER_ROOT_URL), { userId });
+    const users = await axios.patch(new URL('/api/admin/', SERVER_ROOT_URL).href, { userId });
     return users.data;
 }
 

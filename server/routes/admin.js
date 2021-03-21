@@ -54,22 +54,23 @@ router.get('/', async (req, res) => {
 });
 
 // DELETE AN ADMIN
-router.delete('/', async(req,res)=>{
+router.delete('/', async (req, res) => {
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
-    const { userId } = req.body;
-    const user = await User.findOne({ _id: userId });
-
-    if (user.admin == true ){
+    const { userId } = req.query;
+    const user = await User.findById(userId);
+    console.log(req.body);
+    if (user && user.admin) {
         user.admin = false;
         await user.save();
+        return res.send(user._id);
     }
-    return res.send(user._id);
+    return res.status(400).send();
 });
 
 // ADD NEW ADMIN
-router.patch('/', async(req,res)=>{
+router.patch('/', async (req, res) => {
     if (!req.user || !req.user.admin) {
         return res.status(401).send('unauthorized');
     }
