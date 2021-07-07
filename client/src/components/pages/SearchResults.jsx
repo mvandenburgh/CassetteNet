@@ -8,7 +8,6 @@ import UserContext from '../../contexts/UserContext';
 import { mixtapeSearch, getMixtapeCoverImageUrl, getUserProfilePictureUrl } from '../../utils/api';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useHistory } from 'react-router-dom';
-import mixtapes from '../../testData/mixtapes.json';
 
 function SearchResultsPage(props) {
     const { user } = useContext(UserContext);

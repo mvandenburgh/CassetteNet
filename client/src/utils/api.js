@@ -16,6 +16,12 @@ try {
     CLIENT_ROOT_URL = new URL('http://localhost:3000/').href;
 }
 
+console.log('SERVER_ROOT_URL')
+console.log(SERVER_ROOT_URL)
+console.log('CLIENT_ROOT_URL')
+console.log(CLIENT_ROOT_URL)
+
+
 // These functions return test data from local JSON files
 // for now. In the future they should make requests to an 
 // API on the backend server.

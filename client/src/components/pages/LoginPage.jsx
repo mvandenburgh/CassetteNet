@@ -103,8 +103,8 @@ function LoginPage() {
             value={forgotPasswordEmail}
           />
           {invalidForgotPasswordEmail ?
-          <Alert severity="error">A user with that email does not exist.</Alert>
-          : undefined}
+            <Alert severity="error">A user with that email does not exist.</Alert>
+            : undefined}
         </DialogContent>
         <DialogActions>
           <Button align="center" onClick={forgotPassword} color="primary">
@@ -117,18 +117,22 @@ function LoginPage() {
       </Typography>
       <div className={classes.margin}>
         <Grid container spacing={1} alignItems="center" direction="column">
-          <Grid item sz={1}>
-            <GoogleButton onClick={handleGoogleSignUp} />
-          </Grid>
-          <Grid item sz={1}>
-            {/* <FacebookLoginButton onClick={handleFacebookSignUp}>
+          {process.env.NODE_ENV === 'production' ?
+            <>
+              <Grid item sz={1}>
+                <GoogleButton onClick={handleGoogleSignUp} />
+              </Grid>
+              <Grid item sz={1}>
+                {/* <FacebookLoginButton onClick={handleFacebookSignUp}>
               <span>Sign in with Facebook</span>
             </FacebookLoginButton> */}
-          </Grid>
-          <Typography variant="h6">OR</Typography>
+              </Grid>
+              <Typography variant="h6">OR</Typography>
+            </>
+            : undefined}
           {loginError ?
             <Alert severity="error">{loginError}</Alert>
-          : undefined}
+            : undefined}
           <Grid item>
             <TextField
               className={classes.margin}
@@ -146,7 +150,7 @@ function LoginPage() {
           <Button variant="filled" color="inherit" onClick={loginAsUser}>
             Log In
         </Button>
-        <Button variant="filled" color="inherit" onClick={() => setOpen(true)}>
+          <Button variant="filled" color="inherit" onClick={() => setOpen(true)}>
             Forgot Password
         </Button>
         </Grid>

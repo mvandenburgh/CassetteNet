@@ -20,6 +20,6 @@
     "soundcloud-downloader": "^0.2.1",
     "uuid": "^8.3.2",
     "web-audio-api": "^0.2.2",
-    "youtube-mp3-downloader": "^0.7.6"
+    "youtube-mp3-downloader": "^0.7.7"
   }
 }

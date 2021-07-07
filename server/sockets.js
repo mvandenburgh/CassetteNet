@@ -9,6 +9,13 @@ try {
     STREAM_SERVER_ROOT_URL = new URL('http://localhost:5001/').href;
 }
 
+let STREAM_SERVER_STREAMING_URL;
+try {
+    STREAM_SERVER_STREAMING_URL = new URL(process.env.STREAM_SERVER_STREAMING_URL).href;
+} catch (err) {
+    STREAM_SERVER_STREAMING_URL = new URL('http://localhost:5001/').href;
+}
+
 function stopCurrentStream(listeningRoom) {
     console.log(`attempting to stop stream ${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}...`);
     axios.delete(new URL(`/stopStream/${listeningRoom.mixtape.songs[listeningRoom.currentSong].listeningRoomStreamId}`, STREAM_SERVER_ROOT_URL).href)
@@ -166,7 +173,7 @@ function initSockets(io) {
                     return;
                 }
                 const { listeningRoomPlaybackId, tempo } = stream.data;
-                const listeningRoomPlaybackUrl = new URL(`/stream/live/${listeningRoomPlaybackId}.flv`, STREAM_SERVER_ROOT_URL).href;
+                const listeningRoomPlaybackUrl = new URL(`/stream/live/${listeningRoomPlaybackId}.flv`, STREAM_SERVER_STREAMING_URL).href;
                 listeningRoom.mixtape.songs[index].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
                 await listeningRoom.save();
                 listeningRoom.mixtape.songs[index].listeningRoomStreamId = listeningRoomPlaybackId;

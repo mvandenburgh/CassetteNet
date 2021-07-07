@@ -10,6 +10,13 @@ try {
     STREAM_SERVER_ROOT_URL = new URL('http://localhost:5001/').href;
 }
 
+let STREAM_SERVER_STREAMING_URL;
+try {
+    STREAM_SERVER_STREAMING_URL = new URL(process.env.STREAM_SERVER_STREAMING_URL).href;
+} catch (err) {
+    STREAM_SERVER_STREAMING_URL = new URL('http://localhost:5001/').href;
+}
+
 const router = express.Router();
 
 /**
@@ -135,12 +142,15 @@ router.post('/', async (req, res) => {
             }
         );
     } catch (err) {
-        return res.send('error starting stream');
+        console.log(err);
+        return res.status(500).send('error starting stream');
     }
 
     const { listeningRoomPlaybackId } = stream.data;
 
-    const listeningRoomPlaybackUrl = new URL(`/stream/live/${listeningRoomPlaybackId}.flv`, STREAM_SERVER_ROOT_URL).href;
+    const listeningRoomPlaybackUrl = new URL(`/stream/live/${listeningRoomPlaybackId}.flv`, STREAM_SERVER_STREAMING_URL).href;
+
+    console.log(listeningRoomPlaybackUrl)
 
     mixtape.songs[0].listeningRoomPlaybackUrl = listeningRoomPlaybackUrl;
     mixtape.songs[0].listeningRoomStreamId = listeningRoomPlaybackId;

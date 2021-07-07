@@ -6,12 +6,17 @@ const ejs = require('ejs');
 const resetPasswordEmailTemplate = fs.readFileSync(path.join(__dirname, 'resetPasswordEmailTemplate.ejs'), 'utf-8');
 const verificationEmailTemplate = fs.readFileSync(path.join(__dirname, 'verificationEmailTemplate.ejs'), 'utf-8');
 
-const MAILGUN_API_KEY =  process.env.MAILGUN_API_KEY;
+const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
 const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
 
 const CLIENT_ROOT_URL = process.env.CLIENT_ROOT_URL || 'http://localhost:3000';
 
-const mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: MAILGUN_DOMAIN });
+let mg;
+if (MAILGUN_API_KEY) {
+    mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: MAILGUN_DOMAIN });
+} else if (process.env.NODE_ENV === 'production') {
+    console.warn('WARN: apiKey must be defined for mailgun to send emails!');
+}
 
 const sendVerificationEmail = async (recipient, verificationToken) => {
     const verificationUrl = new URL(`/verify/${verificationToken}`, CLIENT_ROOT_URL).href;
@@ -24,7 +29,7 @@ const sendVerificationEmail = async (recipient, verificationToken) => {
     };
     try {
         await mg.messages().send(data);
-    } catch(err) {
+    } catch (err) {
         console.log(err); // TODO: error handling
     }
 }
@@ -40,7 +45,7 @@ const sendPasswordResetEmail = async (recipient, resetPasswordToken) => {
     };
     try {
         await mg.messages().send(data);
-    } catch(err) {
+    } catch (err) {
         console.log(err); // TODO: error handling
     }
 }

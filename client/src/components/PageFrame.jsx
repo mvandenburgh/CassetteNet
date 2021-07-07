@@ -222,7 +222,7 @@ function PageFrame({ setSidebarLength }) {
               </ListItem>
               <ListItem onClick={() => history.push('/inbox')} button style={user.isGuest ? { display: 'none' } : {}}>
                 <ListItemIcon>
-                  <Badge badgeContent={user.isGuest ? null : user.inboxMessages.length } color="error">
+                  <Badge badgeContent={user.isGuest ? null : user?.inboxMessages?.length } color="error">
                     <InboxIcon className={classes.icon} />
                   </Badge>
                 </ListItemIcon>
